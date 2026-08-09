@@ -1,0 +1,1880 @@
+
+========================================================================
+2026-08-09T00:23:59  [RulesTest]
+Verdict Engine  vs  Cacophony Ramp
+Result: Verdict Engine wins on round 15
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 240 / 240
+  tower 1: 73 / 190
+  tower 2: 138 / 190
+  tower fire dealt: 618
+Cacophony Ramp (Opponent)
+  throne 0 / 240
+  tower 1: DESTROYED (max was 170)
+  tower 2: DESTROYED (max was 125)
+  tower fire dealt: 565
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Bellringer of the Court         65  (25 / 40 / 0 over 7 hits)
+    Censer Bearer                   38  (16 / 0 / 22 over 3 hits)
+    Arbiter of the Third Seal       25  (0 / 25 / 0 over 1 hits)
+  Cacophony Ramp
+    Carrion Crawler                 45  (45 / 0 / 0 over 4 hits)
+    Thornshade                      44  (22 / 22 / 0 over 2 hits)
+
+========================================================================
+2026-08-09T00:24:00  [RulesTest]
+Rise & Recur  vs  Starve
+Result: Starve wins on round 6
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 0 / 155
+  tower 1: 91 / 105
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 207
+Starve (Opponent)
+  throne 155 / 155
+  tower 1: 85 / 105
+  tower 2: 101 / 105
+  tower fire dealt: 195
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Grave Whelp                     12  (0 / 12 / 0 over 1 hits)
+  Starve
+    Rust Crawler                   152  (0 / 56 / 96 over 7 hits)
+    Ashen Pilgrim                   60  (60 / 0 / 0 over 5 hits)
+    Gnawing Absence                 46  (34 / 12 / 0 over 3 hits)
+    Hollow Acolyte                  45  (45 / 0 / 0 over 3 hits)
+    Famine of Forms                 28  (0 / 0 / 28 over 1 hits)
+
+========================================================================
+2026-08-09T00:24:02  [RulesTest]
+Lamp Wall  vs  Lamp Wall
+Result: Lamp Wall wins on round 14
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 0 / 235
+  tower 1: DESTROYED (max was 150)
+  tower 2: DESTROYED (max was 155)
+  tower fire dealt: 333
+Lamp Wall (Opponent)
+  throne 235 / 235
+  tower 1: 57 / 225  +5 dmg
+  tower 2: 42 / 185
+  tower fire dealt: 530
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Cherub of the Open Gate         18  (10 / 8 / 0 over 3 hits)
+  Lamp Wall
+    Throne of the Risen Court       49  (0 / 0 / 49 over 2 hits)
+    Cherub of the Open Gate         16  (16 / 0 / 0 over 2 hits)
+    Lantern Acolyte                  8  (0 / 0 / 8 over 1 hits)
+
+========================================================================
+2026-08-09T00:24:04  [RulesTest]
+Rise & Recur  vs  Widening Rift
+Result: Widening Rift wins on round 15
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 0 / 245
+  tower 1: DESTROYED (max was 165)
+  tower 2: DESTROYED (max was 155)
+  tower fire dealt: 439
+Widening Rift (Opponent)
+  throne 245 / 245
+  tower 1: 48 / 195
+  tower 2: 52 / 195
+  tower fire dealt: 721
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Hollow Servant                  84  (72 / 12 / 0 over 7 hits)
+    Grave Whelp                     24  (12 / 12 / 0 over 2 hits)
+  Widening Rift
+    Severance Priest                80  (55 / 25 / 0 over 4 hits)
+    Rust Crawler                    48  (0 / 0 / 48 over 2 hits)
+    Hollow Acolyte                  15  (0 / 15 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T00:24:06  [RulesTest]
+Rise & Recur  vs  Barrow Wall
+Result: Barrow Wall wins on round 15
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 0 / 245
+  tower 1: DESTROYED (max was 165)
+  tower 2: DESTROYED (max was 155)
+  tower fire dealt: 404
+Barrow Wall (Opponent)
+  throne 245 / 245
+  tower 1: 42 / 195
+  tower 2: 52 / 195
+  tower fire dealt: 804
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Bonepicker                      40  (20 / 20 / 0 over 4 hits)
+    Grave Whelp                     24  (12 / 12 / 0 over 2 hits)
+    Hollow Servant                  12  (12 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Charnel Colossus               127  (38 / 13 / 76 over 4 hits)
+    Hollow Servant                  39  (27 / 12 / 0 over 4 hits)
+    Barrow Knight                   25  (0 / 25 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T00:24:08  [RulesTest]
+Verdict Engine  vs  Widening Rift
+Result: Widening Rift wins on round 14
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 0 / 235
+  tower 1: DESTROYED (max was 155)
+  tower 2: DESTROYED (max was 135)
+  tower fire dealt: 442
+Widening Rift (Opponent)
+  throne 235 / 235
+  tower 1: 95 / 185
+  tower 2: 101 / 185
+  tower fire dealt: 593
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Court of Bells                  32  (32 / 0 / 0 over 2 hits)
+    Lantern Acolyte                  8  (8 / 0 / 0 over 1 hits)
+  Widening Rift
+    Hollow Acolyte                  73  (0 / 30 / 43 over 5 hits)
+    Null Adept                      40  (18 / 22 / 0 over 2 hits)
+    Rust Crawler                    24  (0 / 24 / 0 over 1 hits)
+    Sundered Wretch                 20  (20 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T00:24:10  [RulesTest]
+Verdict Engine  vs  Starve
+Result: Starve wins on round 17
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 0 / 265
+  tower 1: DESTROYED (max was 115)
+  tower 2: 74 / 215
+  tower fire dealt: 652
+Starve (Opponent)
+  throne 38 / 265
+  tower 1: 180 / 215
+  tower 2: DESTROYED (max was 150)
+  tower fire dealt: 737
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Censer Bearer                   48  (32 / 16 / 0 over 3 hits)
+    Bellringer of the Court         40  (10 / 30 / 0 over 4 hits)
+    Lantern Acolyte                 24  (0 / 24 / 0 over 3 hits)
+  Starve
+    Severance Priest               151  (70 / 81 / 0 over 8 hits)
+    Ashen Pilgrim                   36  (0 / 0 / 36 over 3 hits)
+    Famine of Forms                 28  (0 / 28 / 0 over 1 hits)
+    Rust Crawler                    24  (24 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T00:24:12  [RulesTest]
+Barrow Wall  vs  Rise & Recur
+Result: Rise & Recur wins on round 6
+------------------------------------------------------------------------
+Barrow Wall (You)
+  throne 0 / 155
+  tower 1: DESTROYED (max was 85)
+  tower 2: 64 / 105
+  tower fire dealt: 117
+Rise & Recur (Opponent)
+  throne 155 / 155
+  tower 1: 82 / 105
+  tower 2: 64 / 105
+  tower fire dealt: 124
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Barrow Wall
+    Thornshade                      44  (22 / 22 / 0 over 2 hits)
+    Charnel Colossus                38  (38 / 0 / 0 over 1 hits)
+  Rise & Recur
+    Grave Tide                     120  (40 / 40 / 40 over 3 hits)
+    Grave Whelp                     57  (22 / 12 / 23 over 5 hits)
+    Bonepicker                      20  (20 / 0 / 0 over 2 hits)
+    Hollow Servant                  12  (0 / 12 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T00:26:04  [RulesTest]
+Toll Engine  vs  Rise & Recur
+Result: Toll Engine wins on round 7
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 165 / 165
+  tower 1: 115 / 115
+  tower 2: 113 / 115
+  tower fire dealt: 205
+Rise & Recur (Opponent)
+  throne 0 / 165
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 282
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Barrow Knight                  302  (100 / 127 / 75 over 13 hits)
+    Hollow Servant                  55  (24 / 19 / 12 over 5 hits)
+    Carrion Crawler                 30  (0 / 15 / 15 over 2 hits)
+    Bonepicker                      17  (17 / 0 / 0 over 2 hits)
+  Rise & Recur
+    Gravebound Reaper               75  (75 / 0 / 0 over 1 hits)
+    Hollow Servant                  32  (32 / 0 / 0 over 4 hits)
+
+========================================================================
+2026-08-09T00:26:17  [RulesTest]
+Lamp Wall  vs  Starve
+Result: Starve wins on round 8
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 0 / 175
+  tower 1: DESTROYED (max was 125)
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 341
+Starve (Opponent)
+  throne 175 / 175
+  tower 1: 104 / 125
+  tower 2: 124 / 125
+  tower fire dealt: 202
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Cherub of the Open Gate         16  (8 / 8 / 0 over 2 hits)
+  Starve
+    Severance Priest               144  (0 / 44 / 100 over 6 hits)
+    Gnawing Absence                 85  (49 / 36 / 0 over 6 hits)
+    Ashen Pilgrim                   35  (0 / 35 / 0 over 3 hits)
+    Rust Crawler                    24  (0 / 24 / 0 over 1 hits)
+    Hollow Acolyte                  15  (15 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T00:26:20  [SupportTest]
+Lamp Wall  vs  Lamp Wall
+Result: Lamp Wall wins on round 15
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 0 / 240
+  tower 1: DESTROYED (max was 145)
+  tower 2: DESTROYED (max was 150)
+  tower fire dealt: 371
+Lamp Wall (Opponent)
+  throne 240 / 240
+  tower 1: 41 / 190  +5 dmg
+  tower 2: 55 / 190
+  tower fire dealt: 621
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Warden of the Lamp              90  (40 / 50 / 0 over 4 hits)
+    Cherub of the Open Gate          8  (0 / 8 / 0 over 1 hits)
+  Lamp Wall
+    Warden of the Lamp              50  (0 / 50 / 0 over 2 hits)
+    Lantern Acolyte                 24  (8 / 16 / 0 over 3 hits)
+
+========================================================================
+2026-08-09T00:26:20  [SupportTest]
+Widening Rift  vs  Toll Engine
+Result: Toll Engine wins on round 9
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 105)
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 185
+Toll Engine (Opponent)
+  throne 180 / 180
+  tower 1: 105 / 130
+  tower 2: 126 / 130
+  tower fire dealt: 259
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Sundered Wretch                 72  (72 / 0 / 0 over 2 hits)
+    Rust Crawler                    44  (44 / 0 / 0 over 2 hits)
+    Hollow Acolyte                  30  (15 / 15 / 0 over 2 hits)
+  Toll Engine
+    Grave Whelp                     96  (0 / 36 / 60 over 8 hits)
+    Carrion Crawler                 80  (20 / 45 / 15 over 6 hits)
+    Barrow Knight                   50  (50 / 0 / 0 over 2 hits)
+    Gravebound Reaper               27  (0 / 27 / 0 over 1 hits)
+    Bonepicker                       8  (0 / 8 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T00:28:05  [RulesTest]
+Verdict Engine  vs  Starve
+Result: Starve wins on round 15
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 0 / 240
+  tower 1: DESTROYED (max was 150)
+  tower 2: DESTROYED (max was 145)
+  tower fire dealt: 461
+Starve (Opponent)
+  throne 240 / 240
+  tower 1: 74 / 190
+  tower 2: 106 / 190
+  tower fire dealt: 655
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Censer Bearer                   48  (48 / 0 / 0 over 3 hits)
+    Lantern Acolyte                  8  (8 / 0 / 0 over 1 hits)
+  Starve
+    Ashen Pilgrim                   60  (24 / 36 / 0 over 5 hits)
+    Hollow Acolyte                  60  (30 / 30 / 0 over 4 hits)
+    Gnawing Absence                 10  (10 / 0 / 0 over 1 hits)
+    Rust Crawler                    10  (10 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T00:28:13  [SupportTest]
+Verdict Engine  vs  Toll Engine
+Result: Toll Engine wins on round 15
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 0 / 245
+  tower 1: DESTROYED (max was 145)
+  tower 2: 48 / 195
+  tower fire dealt: 677
+Toll Engine (Opponent)
+  throne 147 / 245
+  tower 1: 151 / 195
+  tower 2: DESTROYED (max was 155)
+  tower fire dealt: 716
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Bellringer of the Court         10  (10 / 0 / 0 over 1 hits)
+    Censer Bearer                   10  (10 / 0 / 0 over 1 hits)
+  Toll Engine
+    Carrion Crawler                122  (45 / 2 / 75 over 9 hits)
+    Barrow Knight                  105  (55 / 50 / 0 over 5 hits)
+    Hollow Servant                  48  (0 / 24 / 24 over 4 hits)
+    Grave Whelp                     24  (12 / 12 / 0 over 2 hits)
+    Bonepicker                      10  (0 / 10 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T00:28:49  [RulesTest]
+Widening Rift  vs  Toll Engine
+Result: Toll Engine wins on round 8
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 0 / 175
+  tower 1: DESTROYED (max was 115)
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 287
+Toll Engine (Opponent)
+  throne 175 / 175
+  tower 1: 124 / 125
+  tower 2: 121 / 125
+  tower fire dealt: 193
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Rust Crawler                    30  (30 / 0 / 0 over 2 hits)
+    Null Adept                      12  (12 / 0 / 0 over 1 hits)
+  Toll Engine
+    Hollow Servant                 122  (15 / 71 / 36 over 11 hits)
+    Gravebound Reaper               75  (0 / 0 / 75 over 1 hits)
+    Barrow Knight                   45  (20 / 25 / 0 over 2 hits)
+    Bonepicker                      30  (0 / 30 / 0 over 3 hits)
+    Grave Whelp                     12  (0 / 12 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T00:29:01  [Combat]
+Toll Engine  vs  Lamp Wall
+Result: Lamp Wall wins on round 11
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 200
+  tower 1: DESTROYED (max was 85)
+  tower 2: 20 / 150
+  tower fire dealt: 209
+Lamp Wall (Opponent)
+  throne 200 / 200
+  tower 1: 190 / 190
+  tower 2: 7 / 150
+  tower fire dealt: 278
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    (no card damage dealt)
+  Lamp Wall
+    Warden of the Lamp              75  (25 / 50 / 0 over 3 hits)
+    Hand of the Verdict             64  (0 / 0 / 64 over 4 hits)
+    Lantern Acolyte                 38  (0 / 22 / 16 over 5 hits)
+
+========================================================================
+2026-08-09T10:34:10  [Combat]
+Toll Engine  vs  Lamp Wall
+Result: Lamp Wall wins on round 10
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 195
+  tower 1: DESTROYED (max was 95)
+  tower 2: 27 / 145
+  tower fire dealt: 194
+Lamp Wall (Opponent)
+  throne 195 / 195
+  tower 1: 124 / 145  +5 dmg
+  tower 2: 27 / 145
+  tower fire dealt: 276
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Carrion Crawler                 15  (0 / 15 / 0 over 1 hits)
+  Lamp Wall
+    Lantern Acolyte                 75  (8 / 32 / 35 over 10 hits)
+    Radiant Bastion                 65  (0 / 0 / 65 over 1 hits)
+    Cherub of the Open Gate         32  (8 / 24 / 0 over 4 hits)
+
+========================================================================
+2026-08-09T10:34:49  [RulesTest]
+Widening Rift  vs  Toll Engine
+Result: Toll Engine wins on round 9
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 0 / 185
+  tower 1: DESTROYED (max was 135)
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 452
+Toll Engine (Opponent)
+  throne 185 / 185
+  tower 1: 134 / 135
+  tower 2: 87 / 135
+  tower fire dealt: 390
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Rust Crawler                    72  (48 / 24 / 0 over 3 hits)
+    Null Adept                      19  (7 / 12 / 0 over 2 hits)
+  Toll Engine
+    Barrow Knight                  200  (75 / 50 / 75 over 8 hits)
+    Carrion Crawler                 75  (0 / 30 / 45 over 5 hits)
+    Hollow Servant                  70  (34 / 36 / 0 over 6 hits)
+    Bonepicker                      60  (20 / 40 / 0 over 6 hits)
+    Gravebound Reaper               10  (10 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T10:34:52  [SupportTest]
+Toll Engine  vs  Toll Engine
+Result: Toll Engine wins on round 18
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 65 / 270
+  tower 1: 135 / 220
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 737
+Toll Engine (Opponent)
+  throne 0 / 270
+  tower 1: DESTROYED (max was 170)
+  tower 2: 96 / 220
+  tower fire dealt: 996
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Barrow Knight                  204  (57 / 72 / 75 over 9 hits)
+    Hollow Servant                 154  (60 / 48 / 46 over 13 hits)
+    Carrion Crawler                 88  (73 / 15 / 0 over 6 hits)
+    Grave Whelp                     36  (12 / 24 / 0 over 3 hits)
+    Bonepicker                      25  (5 / 20 / 0 over 3 hits)
+  Toll Engine
+    Hollow Servant                 128  (116 / 12 / 0 over 12 hits)
+    Barrow Knight                   50  (50 / 0 / 0 over 2 hits)
+    Carrion Crawler                 45  (15 / 30 / 0 over 3 hits)
+    Grave Whelp                     32  (8 / 24 / 0 over 3 hits)
+
+========================================================================
+2026-08-09T10:35:05  [Combat]
+Toll Engine  vs  Widening Rift
+Result: Widening Rift wins on round 11
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 205
+  tower 1: DESTROYED (max was 120)
+  tower 2: 12 / 155
+  tower fire dealt: 327
+Widening Rift (Opponent)
+  throne 205 / 205
+  tower 1: 109 / 155
+  tower 2: 12 / 155
+  tower fire dealt: 302
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Grave Whelp                     12  (0 / 12 / 0 over 1 hits)
+  Widening Rift
+    Hungering Maw                   80  (0 / 0 / 80 over 2 hits)
+    Famine of Forms                 56  (0 / 0 / 56 over 2 hits)
+    Severance Priest                55  (5 / 50 / 0 over 3 hits)
+    Hollow Acolyte                  15  (15 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T10:37:13  [RulesTest]
+Cacophony Ramp  vs  Starve
+Result: Starve wins on round 8
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 0 / 175
+  tower 1: DESTROYED (max was 75)
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 215
+Starve (Opponent)
+  throne 175 / 175
+  tower 1: 124 / 125
+  tower 2: 106 / 125
+  tower fire dealt: 167
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Thornshade                      15  (15 / 0 / 0 over 1 hits)
+  Starve
+    Severance Priest               160  (20 / 50 / 90 over 7 hits)
+    Famine of Forms                 56  (0 / 56 / 0 over 2 hits)
+    Hollow Acolyte                  15  (0 / 15 / 0 over 1 hits)
+    Ashen Pilgrim                   12  (0 / 0 / 12 over 1 hits)
+
+========================================================================
+2026-08-09T10:37:16  [SupportTest]
+Verdict Engine  vs  Cacophony Ramp
+Result: Verdict Engine wins on round 10
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 190 / 190
+  tower 1: 140 / 140
+  tower 2: 54 / 140
+  tower fire dealt: 293
+Cacophony Ramp (Opponent)
+  throne 0 / 190
+  tower 1: DESTROYED (max was 110)
+  tower 2: 22 / 140
+  tower fire dealt: 381
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Seraph of the Final Ledger     205  (35 / 44 / 126 over 6 hits)
+    Bellringer of the Court         10  (0 / 10 / 0 over 1 hits)
+    Censer Bearer                   10  (10 / 0 / 0 over 1 hits)
+  Cacophony Ramp
+    Thornshade                      22  (22 / 0 / 0 over 1 hits)
+    Bonepicker                      10  (10 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T10:37:26  [Combat]
+Toll Engine  vs  Barrow Wall
+Result: Barrow Wall wins on round 9
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 95)
+  tower 2: 8 / 130
+  tower fire dealt: 297
+Barrow Wall (Opponent)
+  throne 180 / 180
+  tower 1: 109 / 130  +5 dmg
+  tower 2: 74 / 130
+  tower fire dealt: 209
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Carrion Crawler                 15  (0 / 15 / 0 over 1 hits)
+  Barrow Wall
+    Hollow Servant                  92  (20 / 36 / 36 over 8 hits)
+    Mourning Bell                   76  (0 / 0 / 76 over 2 hits)
+    Charnel Colossus                38  (0 / 38 / 0 over 1 hits)
+    Thornshade                      22  (0 / 22 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T10:49:02  [Combat]
+Lamp Wall  vs  Barrow Wall
+Result: Lamp Wall wins on round 13
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 93 / 220
+  tower 1: DESTROYED (max was 155)
+  tower 2: 114 / 170  +10 dmg
+  tower fire dealt: 522
+Barrow Wall (Opponent)
+  throne 0 / 220
+  tower 1: 141 / 170
+  tower 2: DESTROYED (max was 125)
+  tower fire dealt: 365
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Hand of the Verdict             80  (48 / 32 / 0 over 5 hits)
+    Warden of the Lamp              75  (0 / 0 / 75 over 3 hits)
+    Cherub of the Open Gate         16  (0 / 0 / 16 over 2 hits)
+    Lantern Acolyte                  8  (0 / 8 / 0 over 1 hits)
+  Barrow Wall
+    Hollow Servant                  85  (7 / 42 / 36 over 8 hits)
+    Charnel Colossus                55  (55 / 0 / 0 over 2 hits)
+    Barrow Knight                   25  (0 / 25 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T11:18:52  [RulesTest]
+Rise & Recur  vs  Lamp Wall
+Result: Lamp Wall wins on round 7
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 0 / 130
+  tower 1: DESTROYED (max was 65)
+  tower 2: 18 / 80
+  tower fire dealt: 99
+Lamp Wall (Opponent)
+  throne 130 / 130
+  tower 1: 80 / 80
+  tower 2: 18 / 80
+  tower fire dealt: 141
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Grave Whelp                     48  (48 / 0 / 0 over 4 hits)
+  Lamp Wall
+    Warden of the Lamp             236  (88 / 56 / 92 over 13 hits)
+
+========================================================================
+2026-08-09T11:19:08  [RulesTest]
+Rise & Recur  vs  Rise & Recur
+Result: Rise & Recur wins on round 8
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 135 / 135
+  tower 1: 38 / 85
+  tower 2: 23 / 85
+  tower fire dealt: 224
+Rise & Recur (Opponent)
+  throne 0 / 135
+  tower 1: DESTROYED (max was 75)
+  tower 2: 10 / 85
+  tower fire dealt: 150
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Grave Tide                     113  (73 / 0 / 40 over 4 hits)
+    Gravebound Reaper               38  (38 / 0 / 0 over 1 hits)
+    Bonepicker                      30  (0 / 30 / 0 over 3 hits)
+    Grave Whelp                     24  (24 / 0 / 0 over 2 hits)
+    Hollow Servant                  12  (12 / 0 / 0 over 1 hits)
+  Rise & Recur
+    Gravebound Reaper               55  (55 / 0 / 0 over 1 hits)
+    Grave Tide                      40  (40 / 0 / 0 over 1 hits)
+    Hollow Servant                  36  (24 / 12 / 0 over 3 hits)
+    Bonepicker                      20  (20 / 0 / 0 over 2 hits)
+    Grave Whelp                     12  (12 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T11:19:25  [RulesTest]
+Cacophony Ramp  vs  Barrow Wall
+Result: Cacophony Ramp wins on round 7
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 7 / 130
+  tower 1: DESTROYED (max was 65)
+  tower 2: 80 / 80
+  tower fire dealt: 109
+Barrow Wall (Opponent)
+  throne 0 / 130
+  tower 1: 100 / 100
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 108
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Charnel Colossus               206  (74 / 56 / 76 over 6 hits)
+    Thornshade                      22  (22 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Charnel Colossus               204  (76 / 52 / 76 over 6 hits)
+    Hollow Servant                  24  (12 / 0 / 12 over 2 hits)
+    Thornshade                      22  (22 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T11:19:33  [SupportTest]
+Barrow Wall  vs  Toll Engine
+Result: Toll Engine wins on round 13
+------------------------------------------------------------------------
+Barrow Wall (You)
+  throne 0 / 160
+  tower 1: DESTROYED (max was 110)
+  tower 2: 50 / 110  +5 dmg
+  tower fire dealt: 432
+Toll Engine (Opponent)
+  throne 25 / 160
+  tower 1: 65 / 110
+  tower 2: DESTROYED (max was 80)
+  tower fire dealt: 338
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Barrow Wall
+    Charnel Colossus                86  (86 / 0 / 0 over 3 hits)
+    Barrow Knight                   50  (25 / 25 / 0 over 2 hits)
+    Thornshade                      44  (22 / 22 / 0 over 2 hits)
+  Toll Engine
+    Barrow Knight                  100  (75 / 25 / 0 over 4 hits)
+    Hollow Servant                  90  (5 / 48 / 37 over 9 hits)
+    Grave Whelp                     12  (12 / 0 / 0 over 1 hits)
+    Bonepicker                      10  (0 / 0 / 10 over 1 hits)
+
+========================================================================
+2026-08-09T11:19:47  [Combat]
+Toll Engine  vs  Starve
+Result: Starve wins on round 7
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 130
+  tower 1: DESTROYED (max was 75)
+  tower 2: DESTROYED (max was 65)
+  tower fire dealt: 122
+Starve (Opponent)
+  throne 130 / 130
+  tower 1: 80 / 80
+  tower 2: 80 / 80
+  tower fire dealt: 144
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    (no card damage dealt)
+  Starve
+    Hollow Acolyte                  90  (0 / 48 / 42 over 7 hits)
+    Severance Priest                76  (3 / 48 / 25 over 4 hits)
+
+========================================================================
+2026-08-09T11:20:32  [Combat]
+Toll Engine  vs  Lamp Wall
+Result: Lamp Wall wins on round 6
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 125
+  tower 1: DESTROYED (max was 65)
+  tower 2: 31 / 75
+  tower fire dealt: 110
+Lamp Wall (Opponent)
+  throne 125 / 125
+  tower 1: 95 / 95  +5 dmg
+  tower 2: 58 / 75
+  tower fire dealt: 121
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    (no card damage dealt)
+  Lamp Wall
+    Warden of the Lamp             116  (19 / 25 / 72 over 5 hits)
+    Cherub of the Open Gate         47  (16 / 15 / 16 over 6 hits)
+
+========================================================================
+2026-08-09T11:20:43  [Combat]
+Toll Engine  vs  Starve
+Result: Starve wins on round 5
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 120
+  tower 1: DESTROYED (max was 60)
+  tower 2: DESTROYED (max was 65)
+  tower fire dealt: 52
+Starve (Opponent)
+  throne 120 / 120
+  tower 1: 70 / 70
+  tower 2: 68 / 70
+  tower fire dealt: 57
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Carrion Crawler                 15  (15 / 0 / 0 over 1 hits)
+  Starve
+    Severance Priest               117  (25 / 42 / 50 over 5 hits)
+    Ashen Pilgrim                   60  (12 / 12 / 36 over 5 hits)
+    Hollow Acolyte                  51  (0 / 45 / 6 over 4 hits)
+
+========================================================================
+2026-08-09T11:20:53  [Combat]
+Toll Engine  vs  Cacophony Ramp
+Result: Cacophony Ramp wins on round 5
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 120
+  tower 1: DESTROYED (max was 65)
+  tower 2: DESTROYED (max was 65)
+  tower fire dealt: 74
+Cacophony Ramp (Opponent)
+  throne 120 / 120
+  tower 1: 70 / 70
+  tower 2: 70 / 70
+  tower fire dealt: 62
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Hollow Servant                  12  (12 / 0 / 0 over 1 hits)
+  Cacophony Ramp
+    Thornshade                     103  (59 / 22 / 22 over 5 hits)
+    Bonepicker                      50  (0 / 30 / 20 over 5 hits)
+    Nithogg, Root-Gnawer            47  (0 / 3 / 44 over 2 hits)
+
+========================================================================
+2026-08-09T11:21:01  [RulesTest]
+Cacophony Ramp  vs  Verdict Engine
+Result: Cacophony Ramp wins on round 7
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 120 / 130
+  tower 1: 80 / 80
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 89
+Verdict Engine (Opponent)
+  throne 0 / 130
+  tower 1: DESTROYED (max was 75)
+  tower 2: 80 / 80
+  tower fire dealt: 160
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Nithogg, Root-Gnawer           250  (141 / 49 / 60 over 6 hits)
+    Thornshade                      84  (60 / 0 / 24 over 5 hits)
+    Bonepicker                      10  (10 / 0 / 0 over 1 hits)
+  Verdict Engine
+    Censer Bearer                   48  (0 / 48 / 0 over 3 hits)
+
+========================================================================
+2026-08-09T11:21:04  [RulesTest]
+Widening Rift  vs  Verdict Engine
+Result: Widening Rift wins on round 8
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 135 / 135
+  tower 1: 60 / 85
+  tower 2: 33 / 85
+  tower fire dealt: 184
+Verdict Engine (Opponent)
+  throne 0 / 135
+  tower 1: DESTROYED (max was 75)
+  tower 2: 35 / 85
+  tower fire dealt: 186
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    The Absence                    221  (141 / 33 / 47 over 6 hits)
+    Entropy Warden                 131  (44 / 35 / 52 over 5 hits)
+    Hollow Acolyte                  15  (15 / 0 / 0 over 1 hits)
+  Verdict Engine
+    Lantern Acolyte                 16  (0 / 16 / 0 over 2 hits)
+
+========================================================================
+2026-08-09T11:21:06  [RulesTest]
+Lamp Wall  vs  Starve
+Result: Starve wins on round 8
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 0 / 135
+  tower 1: 85 / 85  +5 dmg
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 199
+Starve (Opponent)
+  throne 121 / 135
+  tower 1: DESTROYED (max was 85)
+  tower 2: 83 / 85
+  tower fire dealt: 186
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Radiant Bastion                161  (100 / 61 / 0 over 3 hits)
+    Warden of the Lamp              25  (25 / 0 / 0 over 1 hits)
+  Starve
+    Rust Crawler                    91  (91 / 0 / 0 over 5 hits)
+    Gnawing Absence                 60  (12 / 12 / 36 over 5 hits)
+    Severance Priest                50  (0 / 0 / 50 over 2 hits)
+    Ashen Pilgrim                   36  (12 / 24 / 0 over 3 hits)
+    Hollow Acolyte                  28  (15 / 13 / 0 over 2 hits)
+
+========================================================================
+2026-08-09T11:21:09  [RulesTest]
+Verdict Engine  vs  Cacophony Ramp
+Result: Verdict Engine wins on round 9
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 140 / 140
+  tower 1: 90 / 90
+  tower 2: 68 / 90
+  tower fire dealt: 204
+Cacophony Ramp (Opponent)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 75)
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 198
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Lantern Acolyte                 70  (22 / 24 / 24 over 9 hits)
+    Seraph of the Final Ledger      55  (0 / 13 / 42 over 2 hits)
+    Censer Bearer                   48  (32 / 16 / 0 over 3 hits)
+    Bellringer of the Court         20  (10 / 0 / 10 over 2 hits)
+  Cacophony Ramp
+    Carrion Crawler                 30  (30 / 0 / 0 over 2 hits)
+    Thornshade                      27  (27 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T11:21:12  [RulesTest]
+Cacophony Ramp  vs  Lamp Wall
+Result: Lamp Wall wins on round 9
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 70)
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 138
+Lamp Wall (Opponent)
+  throne 140 / 140
+  tower 1: 110 / 110
+  tower 2: 40 / 90
+  tower fire dealt: 213
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Carrion Crawler                 30  (30 / 0 / 0 over 2 hits)
+  Lamp Wall
+    Warden of the Lamp             222  (97 / 50 / 75 over 10 hits)
+
+========================================================================
+2026-08-09T11:21:14  [RulesTest]
+Toll Engine  vs  Barrow Wall
+Result: Toll Engine wins on round 9
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 140 / 140
+  tower 1: 61 / 90
+  tower 2: 90 / 90
+  tower fire dealt: 254
+Barrow Wall (Opponent)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 75)
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 118
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Barrow Knight                  147  (50 / 36 / 61 over 7 hits)
+    Carrion Crawler                 90  (45 / 45 / 0 over 6 hits)
+    Hollow Servant                  36  (36 / 0 / 0 over 3 hits)
+    Grave Whelp                     24  (24 / 0 / 0 over 3 hits)
+    Gravebound Reaper                1  (0 / 1 / 0 over 1 hits)
+  Barrow Wall
+    Barrow Knight                   62  (37 / 25 / 0 over 3 hits)
+    Thornshade                      44  (44 / 0 / 0 over 2 hits)
+    Charnel Colossus                40  (40 / 0 / 0 over 2 hits)
+    Hollow Servant                  12  (12 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T11:21:17  [RulesTest]
+Lamp Wall  vs  Cacophony Ramp
+Result: Cacophony Ramp wins on round 4
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 0 / 115
+  tower 1: 85 / 85
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 45
+Cacophony Ramp (Opponent)
+  throne 110 / 115
+  tower 1: DESTROYED (max was 65)
+  tower 2: 65 / 65
+  tower fire dealt: 39
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Warden of the Lamp             100  (75 / 25 / 0 over 4 hits)
+    Throne of the Risen Court       66  (33 / 33 / 0 over 2 hits)
+  Cacophony Ramp
+    Nithogg, Root-Gnawer            72  (0 / 12 / 60 over 2 hits)
+    Bonepicker                      30  (0 / 30 / 0 over 3 hits)
+    Thornshade                      22  (22 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T11:21:19  [RulesTest]
+Verdict Engine  vs  Widening Rift
+Result: Verdict Engine wins on round 10
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 145 / 145
+  tower 1: 69 / 95
+  tower 2: 95 / 95
+  tower fire dealt: 298
+Widening Rift (Opponent)
+  throne 0 / 145
+  tower 1: DESTROYED (max was 90)
+  tower 2: DESTROYED (max was 80)
+  tower fire dealt: 293
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Bellringer of the Court         80  (0 / 40 / 40 over 8 hits)
+    Censer Bearer                   80  (80 / 0 / 0 over 5 hits)
+    Arbiter of the Third Seal       75  (75 / 0 / 0 over 3 hits)
+    Court of Bells                  64  (48 / 0 / 16 over 4 hits)
+  Widening Rift
+    The Absence                     40  (40 / 0 / 0 over 1 hits)
+    Sundered Wretch                 25  (25 / 0 / 0 over 1 hits)
+    Hollow Acolyte                  15  (15 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T11:22:24  [RulesTest]
+Widening Rift  vs  Starve
+Result: Widening Rift wins on round 5
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 120 / 120
+  tower 1: 70 / 70
+  tower 2: 70 / 70
+  tower fire dealt: 56
+Starve (Opponent)
+  throne 0 / 120
+  tower 1: DESTROYED (max was 65)
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 36
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Sundered Wretch                167  (35 / 88 / 44 over 6 hits)
+    Severance Priest                50  (0 / 25 / 25 over 2 hits)
+    Famine of Forms                 28  (0 / 0 / 28 over 1 hits)
+  Starve
+    Hollow Acolyte                  39  (39 / 0 / 0 over 3 hits)
+    Ashen Pilgrim                   12  (12 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T11:22:27  [SupportTest]
+Cacophony Ramp  vs  Barrow Wall
+Result: Cacophony Ramp wins on round 9
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 140 / 140
+  tower 1: 52 / 90
+  tower 2: 72 / 90
+  tower fire dealt: 301
+Barrow Wall (Opponent)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 65)
+  tower 2: DESTROYED (max was 65)
+  tower fire dealt: 54
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Charnel Colossus               163  (90 / 35 / 38 over 5 hits)
+    Thornshade                      66  (0 / 66 / 0 over 3 hits)
+    Nithogg, Root-Gnawer            62  (62 / 0 / 0 over 2 hits)
+    Carrion Crawler                 15  (15 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Charnel Colossus               130  (92 / 38 / 0 over 4 hits)
+    Mourning Bell                   38  (38 / 0 / 0 over 1 hits)
+    Barrow Knight                   25  (25 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T11:22:37  [Combat]
+Toll Engine  vs  Barrow Wall
+Result: Barrow Wall wins on round 7
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 130
+  tower 1: DESTROYED (max was 65)
+  tower 2: 28 / 80
+  tower fire dealt: 99
+Barrow Wall (Opponent)
+  throne 130 / 130
+  tower 1: 120 / 120  +5 dmg
+  tower 2: 35 / 80
+  tower fire dealt: 146
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Bonepicker                      10  (10 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Charnel Colossus                76  (0 / 0 / 76 over 2 hits)
+    Thornshade                      65  (25 / 40 / 0 over 4 hits)
+
+========================================================================
+2026-08-09T14:25:08  [RulesTest]
+Toll Engine  vs  Verdict Engine
+Result: Toll Engine wins on round 6
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 125 / 125
+  tower 1: 50 / 75
+  tower 2: 75 / 75
+  tower fire dealt: 106
+Verdict Engine (Opponent)
+  throne 0 / 125
+  tower 1: 19 / 75
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 103
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Carrion Crawler                 81  (0 / 36 / 45 over 6 hits)
+    Hollow Servant                  66  (42 / 24 / 0 over 6 hits)
+    Grave Whelp                     36  (24 / 12 / 0 over 3 hits)
+    Gravebound Reaper               22  (22 / 0 / 0 over 1 hits)
+    Bonepicker                      20  (0 / 10 / 10 over 2 hits)
+  Verdict Engine
+    Court of Bells                  27  (27 / 0 / 0 over 2 hits)
+    Censer Bearer                   16  (16 / 0 / 0 over 1 hits)
+    Bellringer of the Court         10  (10 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T14:25:11  [SupportTest]
+Starve  vs  Starve
+Result: Starve wins on round 11
+------------------------------------------------------------------------
+Starve (You)
+  throne 150 / 150
+  tower 1: DESTROYED (max was 95)
+  tower 2: 92 / 100
+  tower fire dealt: 379
+Starve (Opponent)
+  throne 0 / 150
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 80)
+  tower fire dealt: 269
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Starve
+    Ashen Pilgrim                  106  (82 / 24 / 0 over 9 hits)
+    Hollow Acolyte                  52  (7 / 15 / 30 over 4 hits)
+    Gnawing Absence                 48  (12 / 36 / 0 over 4 hits)
+    Rust Crawler                    44  (0 / 20 / 24 over 2 hits)
+  Starve
+    Rust Crawler                    88  (88 / 0 / 0 over 4 hits)
+    Ashen Pilgrim                   66  (54 / 12 / 0 over 6 hits)
+    Hollow Acolyte                  15  (0 / 15 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T14:25:19  [Combat]
+Toll Engine  vs  Toll Engine
+Result: Toll Engine wins on round 5
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 120
+  tower 1: DESTROYED (max was 65)
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 55
+Toll Engine (Opponent)
+  throne 120 / 120
+  tower 1: 70 / 70
+  tower 2: 70 / 70
+  tower fire dealt: 63
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    (no card damage dealt)
+  Toll Engine
+    Hollow Servant                 100  (24 / 40 / 36 over 9 hits)
+    Grave Whelp                     60  (0 / 36 / 24 over 5 hits)
+    Carrion Crawler                 37  (6 / 16 / 15 over 4 hits)
+
+========================================================================
+2026-08-09T14:25:37  [Combat]
+Toll Engine  vs  Lamp Wall
+Result: Lamp Wall wins on round 9
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 70)
+  tower 2: DESTROYED (max was 80)
+  tower fire dealt: 131
+Lamp Wall (Opponent)
+  throne 140 / 140
+  tower 1: 90 / 90  +5 dmg
+  tower 2: 49 / 90
+  tower fire dealt: 235
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Carrion Crawler                 15  (15 / 0 / 0 over 1 hits)
+  Lamp Wall
+    Lantern Acolyte                 92  (32 / 36 / 24 over 12 hits)
+
+========================================================================
+2026-08-09T14:52:45  [RulesTest]
+Lamp Wall  vs  Widening Rift
+Result: Lamp Wall wins on round 5
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 120 / 120
+  tower 1: 90 / 90  +5 dmg
+  tower 2: 48 / 70
+  tower fire dealt: 77
+Widening Rift (Opponent)
+  throne 0 / 120
+  tower 1: DESTROYED (max was 60)
+  tower 2: 48 / 70
+  tower fire dealt: 32
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Warden of the Lamp             115  (40 / 25 / 50 over 5 hits)
+    Radiant Bastion                105  (32 / 25 / 48 over 3 hits)
+  Widening Rift
+    (no card damage dealt)
+
+========================================================================
+2026-08-09T14:52:46  [SupportTest]
+Verdict Engine  vs  Toll Engine
+Result: Toll Engine wins on round 9
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 85)
+  tower 2: DESTROYED (max was 80)
+  tower fire dealt: 284
+Toll Engine (Opponent)
+  throne 140 / 140
+  tower 1: 65 / 90
+  tower 2: 83 / 90
+  tower fire dealt: 274
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Verdict of the Throne           60  (60 / 0 / 0 over 3 hits)
+    Lantern Acolyte                 32  (32 / 0 / 0 over 4 hits)
+    Bellringer of the Court         20  (20 / 0 / 0 over 2 hits)
+  Toll Engine
+    Carrion Crawler                 90  (45 / 15 / 30 over 6 hits)
+    Grave Whelp                     89  (53 / 36 / 0 over 8 hits)
+    Barrow Knight                   78  (27 / 25 / 26 over 5 hits)
+    Hollow Servant                  36  (36 / 0 / 0 over 3 hits)
+    Bonepicker                       8  (8 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T15:15:53  [RulesTest]
+Verdict Engine  vs  Lamp Wall
+Result: Verdict Engine wins on round 7
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 120 / 130
+  tower 1: DESTROYED (max was 80)
+  tower 2: 80 / 80
+  tower fire dealt: 146
+Lamp Wall (Opponent)
+  throne 0 / 130
+  tower 1: 55 / 80
+  tower 2: DESTROYED (max was 65)
+  tower fire dealt: 134
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Bellringer of the Court         80  (20 / 30 / 30 over 8 hits)
+    Censer Bearer                   71  (0 / 23 / 48 over 5 hits)
+  Lamp Wall
+    Radiant Bastion                119  (54 / 65 / 0 over 4 hits)
+    Cherub of the Open Gate         53  (48 / 5 / 0 over 7 hits)
+
+========================================================================
+2026-08-09T15:15:55  [SupportTest]
+Rise & Recur  vs  Cacophony Ramp
+Result: Rise & Recur wins on round 9
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 140 / 140
+  tower 1: 90 / 90
+  tower 2: 65 / 90
+  tower fire dealt: 310
+Cacophony Ramp (Opponent)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 65)
+  tower 2: 72 / 90
+  tower fire dealt: 196
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Grave Tide                     131  (91 / 0 / 40 over 4 hits)
+    Hollow Servant                  36  (36 / 0 / 0 over 3 hits)
+    Bonepicker                      30  (20 / 10 / 0 over 3 hits)
+    Grave Whelp                     12  (12 / 0 / 0 over 1 hits)
+  Cacophony Ramp
+    Bonepicker                     180  (155 / 25 / 0 over 17 hits)
+    Thornshade                      88  (88 / 0 / 0 over 4 hits)
+
+========================================================================
+2026-08-09T15:18:46  [RulesTest]
+Starve  vs  Barrow Wall
+Result: Starve wins on round 6
+------------------------------------------------------------------------
+Starve (You)
+  throne 125 / 125
+  tower 1: 75 / 75
+  tower 2: 75 / 75
+  tower fire dealt: 112
+Barrow Wall (Opponent)
+  throne 0 / 125
+  tower 1: 75 / 75  +5 dmg
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 123
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Starve
+    Severance Priest                89  (0 / 32 / 57 over 5 hits)
+    Ashen Pilgrim                   72  (12 / 24 / 36 over 6 hits)
+    Famine of Forms                 28  (28 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Charnel Colossus               125  (125 / 0 / 0 over 4 hits)
+    Thornshade                      22  (22 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T15:18:47  [SupportTest]
+Verdict Engine  vs  Cacophony Ramp
+Result: Verdict Engine wins on round 9
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 140 / 140
+  tower 1: 90 / 90
+  tower 2: 20 / 90
+  tower fire dealt: 258
+Cacophony Ramp (Opponent)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 80)
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 233
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Arbiter of the Third Seal      110  (41 / 19 / 50 over 5 hits)
+    Censer Bearer                   62  (46 / 16 / 0 over 4 hits)
+    Court of Bells                  32  (0 / 16 / 16 over 2 hits)
+    Lantern Acolyte                 16  (0 / 16 / 0 over 2 hits)
+    Bellringer of the Court         10  (10 / 0 / 0 over 1 hits)
+  Cacophony Ramp
+    Carrion Crawler                 72  (57 / 15 / 0 over 5 hits)
+    Charnel Colossus                44  (44 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-09T15:21:03  [RulesTest]
+Rise & Recur  vs  Barrow Wall
+Result: Barrow Wall wins on round 10
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 0 / 145
+  tower 1: DESTROYED (max was 85)
+  tower 2: DESTROYED (max was 80)
+  tower fire dealt: 192
+Barrow Wall (Opponent)
+  throne 145 / 145
+  tower 1: 64 / 115
+  tower 2: 39 / 95
+  tower fire dealt: 284
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Hollow Servant                 124  (100 / 24 / 0 over 11 hits)
+  Barrow Wall
+    Charnel Colossus               106  (68 / 0 / 38 over 3 hits)
+    Hollow Servant                  36  (12 / 24 / 0 over 3 hits)
+    Barrow Knight                   25  (25 / 0 / 0 over 1 hits)
+    Thornshade                      22  (0 / 22 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T15:21:04  [SupportTest]
+Lamp Wall  vs  Starve
+Result: Lamp Wall wins on round 12
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 155 / 155
+  tower 1: 29 / 125  +5 dmg
+  tower 2: 98 / 105
+  tower fire dealt: 477
+Starve (Opponent)
+  throne 0 / 155
+  tower 1: DESTROYED (max was 90)
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 168
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Lantern Acolyte                 64  (24 / 40 / 0 over 8 hits)
+    Cherub of the Open Gate         32  (32 / 0 / 0 over 4 hits)
+  Starve
+    Rust Crawler                    98  (50 / 48 / 0 over 5 hits)
+    Hollow Acolyte                  30  (30 / 0 / 0 over 2 hits)
+    Gnawing Absence                 12  (0 / 12 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T15:22:32  [RulesTest]
+Barrow Wall  vs  Rise & Recur
+Result: Rise & Recur wins on round 6
+------------------------------------------------------------------------
+Barrow Wall (You)
+  throne 0 / 125
+  tower 1: DESTROYED (max was 105)
+  tower 2: DESTROYED (max was 75)
+  tower fire dealt: 117
+Rise & Recur (Opponent)
+  throne 125 / 125
+  tower 1: 75 / 75
+  tower 2: 67 / 75
+  tower fire dealt: 103
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Barrow Wall
+    Barrow Knight                   25  (25 / 0 / 0 over 1 hits)
+  Rise & Recur
+    Grave Tide                     121  (75 / 0 / 46 over 4 hits)
+    Grave Whelp                     57  (24 / 21 / 12 over 5 hits)
+    Hollow Servant                  48  (12 / 36 / 0 over 4 hits)
+
+========================================================================
+2026-08-09T15:22:33  [SupportTest]
+Lamp Wall  vs  Verdict Engine
+Result: Verdict Engine wins on round 11
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 0 / 150
+  tower 1: 17 / 140
+  tower 2: DESTROYED (max was 80)
+  tower fire dealt: 315
+Verdict Engine (Opponent)
+  throne 136 / 150
+  tower 1: DESTROYED (max was 90)
+  tower 2: 100 / 100
+  tower fire dealt: 301
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Lantern Acolyte                 32  (32 / 0 / 0 over 4 hits)
+    Cherub of the Open Gate         24  (24 / 0 / 0 over 3 hits)
+  Verdict Engine
+    Hand of the Verdict             74  (0 / 16 / 58 over 5 hits)
+    Censer Bearer                   64  (32 / 32 / 0 over 4 hits)
+    Lantern Acolyte                 32  (16 / 16 / 0 over 4 hits)
+    Bellringer of the Court         30  (30 / 0 / 0 over 3 hits)
+    Court of Bells                  14  (14 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T15:22:41  [Combat]
+Toll Engine  vs  Rise & Recur
+Result: Rise & Recur wins on round 7
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 130
+  tower 1: DESTROYED (max was 80)
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 165
+Rise & Recur (Opponent)
+  throne 130 / 130
+  tower 1: 80 / 80
+  tower 2: 80 / 80
+  tower fire dealt: 157
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    (no card damage dealt)
+  Rise & Recur
+    Bonepicker                     120  (40 / 60 / 20 over 12 hits)
+    Hollow Servant                  25  (0 / 1 / 24 over 3 hits)
+    Grave Tide                      20  (0 / 20 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T15:24:19  [RulesTest]
+Rise & Recur  vs  Starve
+Result: Starve wins on round 11
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 0 / 150
+  tower 1: 29 / 100
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 292
+Starve (Opponent)
+  throne 150 / 150
+  tower 1: 30 / 100
+  tower 2: 68 / 100
+  tower fire dealt: 473
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Bonepicker                      95  (65 / 30 / 0 over 11 hits)
+    Grave Whelp                     64  (64 / 0 / 0 over 6 hits)
+  Starve
+    Rust Crawler                   298  (160 / 66 / 72 over 13 hits)
+    Ashen Pilgrim                   36  (36 / 0 / 0 over 3 hits)
+    The Unwritten                   34  (18 / 16 / 0 over 3 hits)
+
+========================================================================
+2026-08-09T15:24:19  [SupportTest]
+Cacophony Ramp  vs  Lamp Wall
+Result: Lamp Wall wins on round 8
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 0 / 135
+  tower 1: DESTROYED (max was 75)
+  tower 2: 14 / 85
+  tower fire dealt: 158
+Lamp Wall (Opponent)
+  throne 135 / 135
+  tower 1: 105 / 105
+  tower 2: 19 / 85
+  tower fire dealt: 203
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Thornshade                      62  (62 / 0 / 0 over 3 hits)
+    Carrion Crawler                 30  (15 / 15 / 0 over 2 hits)
+    Bonepicker                      10  (10 / 0 / 0 over 1 hits)
+  Lamp Wall
+    Radiant Bastion                104  (0 / 0 / 104 over 2 hits)
+    Cherub of the Open Gate         64  (56 / 8 / 0 over 8 hits)
+    Warden of the Lamp              50  (0 / 50 / 0 over 2 hits)
+
+========================================================================
+2026-08-09T15:24:29  [Combat]
+Toll Engine  vs  Rise & Recur
+Result: Rise & Recur wins on round 5
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 120
+  tower 1: DESTROYED (max was 65)
+  tower 2: 41 / 70
+  tower fire dealt: 66
+Rise & Recur (Opponent)
+  throne 120 / 120
+  tower 1: 70 / 70
+  tower 2: 41 / 70
+  tower fire dealt: 68
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Carrion Crawler                 15  (15 / 0 / 0 over 1 hits)
+  Rise & Recur
+    Grave Tide                      48  (2 / 6 / 40 over 3 hits)
+    Bonepicker                      40  (20 / 10 / 10 over 4 hits)
+
+========================================================================
+2026-08-09T15:38:02  [RulesTest]
+Cacophony Ramp  vs  Verdict Engine
+Result: Cacophony Ramp wins on round 14
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 7 / 165
+  tower 1: 49 / 115
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 446
+Verdict Engine (Opponent)
+  throne 0 / 165
+  tower 1: DESTROYED (max was 80)
+  tower 2: 32 / 115
+  tower fire dealt: 298
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Charnel Colossus               237  (79 / 73 / 85 over 9 hits)
+    Thornshade                      35  (35 / 0 / 0 over 2 hits)
+  Verdict Engine
+    Censer Bearer                   32  (32 / 0 / 0 over 2 hits)
+    Lantern Acolyte                 24  (8 / 16 / 0 over 3 hits)
+    Bellringer of the Court         10  (10 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T15:38:02  [SupportTest]
+Verdict Engine  vs  Verdict Engine
+Result: Verdict Engine wins on round 13
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 0 / 160
+  tower 1: DESTROYED (max was 105)
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 433
+Verdict Engine (Opponent)
+  throne 160 / 160
+  tower 1: 22 / 110
+  tower 2: 32 / 110
+  tower fire dealt: 589
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Censer Bearer                  106  (90 / 16 / 0 over 7 hits)
+    Hand of the Verdict             83  (83 / 0 / 0 over 6 hits)
+    Bellringer of the Court         24  (24 / 0 / 0 over 3 hits)
+    Lantern Acolyte                  8  (8 / 0 / 0 over 1 hits)
+  Verdict Engine
+    Verdict of the Throne           80  (80 / 0 / 0 over 3 hits)
+    Censer Bearer                   48  (32 / 16 / 0 over 3 hits)
+    Bellringer of the Court         10  (10 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T15:41:31  [RulesTest]
+Widening Rift  vs  Rise & Recur
+Result: Widening Rift wins on round 8
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 135 / 135
+  tower 1: 85 / 85
+  tower 2: 49 / 85
+  tower fire dealt: 154
+Rise & Recur (Opponent)
+  throne 0 / 135
+  tower 1: DESTROYED (max was 75)
+  tower 2: 13 / 85
+  tower fire dealt: 186
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Famine of Forms                153  (56 / 41 / 56 over 6 hits)
+    Hollow Acolyte                 103  (45 / 15 / 43 over 7 hits)
+    Rust Crawler                    48  (48 / 0 / 0 over 2 hits)
+  Rise & Recur
+    Bonepicker                      10  (10 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T15:41:32  [SupportTest]
+Rise & Recur  vs  Barrow Wall
+Result: Barrow Wall wins on round 13
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 0 / 160
+  tower 1: DESTROYED (max was 105)
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 345
+Barrow Wall (Opponent)
+  throne 160 / 160
+  tower 1: DESTROYED (max was 120)
+  tower 2: 47 / 130
+  tower fire dealt: 462
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Gravebound Reaper               70  (70 / 0 / 0 over 2 hits)
+    Hollow Servant                  57  (57 / 0 / 0 over 5 hits)
+    Grave Whelp                     12  (12 / 0 / 0 over 1 hits)
+    Bonepicker                      10  (0 / 10 / 0 over 1 hits)
+  Barrow Wall
+    Charnel Colossus                70  (0 / 49 / 21 over 3 hits)
+    Barrow Knight                   50  (50 / 0 / 0 over 2 hits)
+    Hollow Servant                  24  (24 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-09T15:41:38  [Combat]
+Toll Engine  vs  Toll Engine
+Result: Toll Engine wins on round 5
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 120
+  tower 1: DESTROYED (max was 70)
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 73
+Toll Engine (Opponent)
+  throne 120 / 120
+  tower 1: 70 / 70
+  tower 2: 70 / 70
+  tower fire dealt: 60
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Carrion Crawler                 15  (15 / 0 / 0 over 1 hits)
+  Toll Engine
+    Barrow Knight                   90  (0 / 25 / 65 over 4 hits)
+    Grave Whelp                     51  (0 / 27 / 24 over 5 hits)
+    Hollow Servant                  49  (24 / 25 / 0 over 5 hits)
+    Bonepicker                      40  (10 / 20 / 10 over 4 hits)
+
+========================================================================
+2026-08-09T15:42:55  [RulesTest]
+Verdict Engine  vs  Widening Rift
+Result: Widening Rift wins on round 9
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 70)
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 187
+Widening Rift (Opponent)
+  throne 140 / 140
+  tower 1: 65 / 90
+  tower 2: 11 / 90
+  tower fire dealt: 256
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Lantern Acolyte                 48  (40 / 8 / 0 over 6 hits)
+    Bellringer of the Court         40  (40 / 0 / 0 over 4 hits)
+  Widening Rift
+    Sundered Wretch                169  (53 / 28 / 88 over 5 hits)
+    Entropy Warden                  83  (53 / 30 / 0 over 4 hits)
+    Hollow Acolyte                  22  (22 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-09T15:42:55  [SupportTest]
+Starve  vs  Barrow Wall
+Result: Starve wins on round 8
+------------------------------------------------------------------------
+Starve (You)
+  throne 135 / 135
+  tower 1: 44 / 85
+  tower 2: 85 / 85
+  tower fire dealt: 182
+Barrow Wall (Opponent)
+  throne 0 / 135
+  tower 1: DESTROYED (max was 105)
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 167
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Starve
+    Gnawing Absence                120  (0 / 48 / 72 over 10 hits)
+    Famine of Forms                 55  (0 / 55 / 0 over 2 hits)
+    Hollow Acolyte                  30  (30 / 0 / 0 over 2 hits)
+  Barrow Wall
+    Thornshade                      66  (44 / 22 / 0 over 3 hits)
+
+========================================================================
+2026-08-09T15:43:05  [Combat]
+Toll Engine  vs  Deep Grove
+Result: Deep Grove wins on round 5
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 120
+  tower 1: DESTROYED (max was 65)
+  tower 2: DESTROYED (max was 65)
+  tower fire dealt: 71
+Deep Grove (Opponent)
+  throne 120 / 120
+  tower 1: 83 / 83
+  tower 2: 81 / 83
+  tower fire dealt: 131
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Carrion Crawler                 15  (15 / 0 / 0 over 1 hits)
+  Deep Grove
+    Seedbearer                      69  (13 / 35 / 21 over 4 hits)
+    Elder of the Grove              51  (0 / 0 / 51 over 2 hits)
+    Living Conduit                  26  (0 / 26 / 0 over 1 hits)
+    Sapling Warden                  13  (13 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T15:43:13  [RulesTest]
+Rise & Recur  vs  Toll Engine
+Result: Toll Engine wins on round 5
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 0 / 120
+  tower 1: DESTROYED (max was 65)
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 54
+Toll Engine (Opponent)
+  throne 120 / 120
+  tower 1: 70 / 70
+  tower 2: 70 / 70
+  tower fire dealt: 66
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Bonepicker                      30  (30 / 0 / 0 over 3 hits)
+  Toll Engine
+    Carrion Crawler                 81  (0 / 45 / 36 over 7 hits)
+    Hollow Servant                  60  (24 / 24 / 12 over 5 hits)
+    Grave Whelp                     48  (0 / 24 / 24 over 4 hits)
+
+========================================================================
+2026-08-09T16:03:54  [RulesTest]
+Cacophony Ramp  vs  Verdict Engine
+Result: Verdict Engine wins on round 9
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 85)
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 194
+Verdict Engine (Opponent)
+  throne 140 / 140
+  tower 1: 90 / 90
+  tower 2: 82 / 90
+  tower fire dealt: 249
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Thornshade                      44  (44 / 0 / 0 over 2 hits)
+    Charnel Colossus                40  (40 / 0 / 0 over 2 hits)
+    Bonepicker                      10  (10 / 0 / 0 over 1 hits)
+    Carrion Crawler                  4  (4 / 0 / 0 over 1 hits)
+  Verdict Engine
+    Seraph of the Final Ledger     103  (0 / 41 / 62 over 3 hits)
+    Hand of the Verdict             80  (80 / 0 / 0 over 5 hits)
+    Bellringer of the Court         50  (40 / 10 / 0 over 5 hits)
+
+========================================================================
+2026-08-09T16:03:55  [SupportTest]
+Lamp Wall  vs  Rise & Recur
+Result: Lamp Wall wins on round 8
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 135 / 135
+  tower 1: 105 / 105
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 174
+Rise & Recur (Opponent)
+  throne 0 / 135
+  tower 1: DESTROYED (max was 70)
+  tower 2: 2 / 85
+  tower fire dealt: 132
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Warden of the Lamp             100  (75 / 25 / 0 over 4 hits)
+    Hand of the Verdict             67  (0 / 19 / 48 over 5 hits)
+    Cherub of the Open Gate         32  (0 / 8 / 24 over 4 hits)
+    Lantern Acolyte                  5  (5 / 0 / 0 over 1 hits)
+  Rise & Recur
+    Grave Whelp                     24  (24 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-09T16:04:03  [RulesTest]
+Cacophony Ramp  vs  Rise & Recur
+Result: Cacophony Ramp wins on round 12
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 30 / 155
+  tower 1: 47 / 105
+  tower 2: DESTROYED (max was 65)
+  tower fire dealt: 264
+Rise & Recur (Opponent)
+  throne 0 / 155
+  tower 1: DESTROYED (max was 90)
+  tower 2: 105 / 105
+  tower fire dealt: 344
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Thornshade                      94  (94 / 0 / 0 over 5 hits)
+    Nithogg Ascendant               61  (61 / 0 / 0 over 2 hits)
+    Charnel Colossus                53  (53 / 0 / 0 over 2 hits)
+    Bonepicker                      30  (30 / 0 / 0 over 3 hits)
+  Rise & Recur
+    Hollow Servant                  48  (48 / 0 / 0 over 4 hits)
+    Grave Whelp                     36  (12 / 24 / 0 over 3 hits)
+    Bonepicker                      10  (0 / 10 / 0 over 1 hits)
+    Gravebound Reaper                4  (0 / 4 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T16:04:04  [SupportTest]
+Barrow Wall  vs  Barrow Wall
+Result: Barrow Wall wins on round 6
+------------------------------------------------------------------------
+Barrow Wall (You)
+  throne 125 / 125
+  tower 1: 75 / 75
+  tower 2: 67 / 75
+  tower fire dealt: 117
+Barrow Wall (Opponent)
+  throne 0 / 125
+  tower 1: DESTROYED (max was 90)
+  tower 2: 20 / 75
+  tower fire dealt: 176
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Barrow Wall
+    Mourning Bell                  164  (88 / 38 / 38 over 5 hits)
+    Thornshade                     104  (60 / 44 / 0 over 5 hits)
+    Grave Tide                      67  (27 / 0 / 40 over 2 hits)
+  Barrow Wall
+    Charnel Colossus                76  (76 / 0 / 0 over 2 hits)

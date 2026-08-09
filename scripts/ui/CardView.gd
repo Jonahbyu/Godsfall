@@ -1,0 +1,985 @@
+class_name CardView
+extends PanelContainer
+
+## A card frame, used by both the hand and the board so a card reads as the same
+## object in either place.
+##
+## Layout, top to bottom:
+##   name
+##   HP + typing (stage / faction)
+##   art box (placeholder: initials on a tinted, bordered frame)
+##   abilities (keyword line)
+##   attacks (name + damage)
+##   energy pips (attack costs; filled by attached energy when in play)
+
+enum Mode { HAND, BOARD }
+
+const HAND_SIZE := Vector2(168, 262)
+## Board cards are deliberately smaller than hand cards: two board rows stack in
+## the same column as the hand, so every pixel here costs two below. Kept large
+## enough that the name, HP and keyword lines stay readable at a glance.
+const BOARD_SIZE := Vector2(132, 196)
+
+## Every font size and box height on the card, keyed by metric name, for each
+## mode. One layout is built at both sizes (CLAUDE.md decision log), so the only
+## thing that varies between hand and board is what comes out of this table.
+##
+## The board numbers are deliberately small — the full Pokémon-style structure
+## does not get to drop rows just because the frame is 132px wide, because a card
+## that reads differently in two places is the drift this renderer exists to
+## prevent. Board legibility is answered by hover-to-enlarge (Combat.gd), not by
+## a second layout.
+const METRICS := {
+	"title_size":         { "hand": 12, "board": 9 },
+	"stage_size":         { "hand": 8,  "board": 7 },
+	"hp_size":            { "hand": 15, "board": 11 },
+	"evolve_size":        { "hand": 8,  "board": 7 },
+	"art_h":              { "hand": 74, "board": 40 },
+	"chip_size":          { "hand": 8,  "board": 7 },
+	"chip_h":             { "hand": 15, "board": 13 },
+	"ability_title_size": { "hand": 9,  "board": 7 },
+	"ability_text_size":  { "hand": 8,  "board": 7 },
+	"attack_name_size":   { "hand": 10, "board": 8 },
+	"attack_dmg_size":    { "hand": 11, "board": 9 },
+	"icon_size":          { "hand": 10, "board": 7 },
+	"footer_size":        { "hand": 8,  "board": 7 },
+}
+
+var card: CardData
+var unit: Unit                       ## null when the card is in hand
+var mode: int = Mode.HAND
+
+var selected: bool = false
+var dimmed: bool = false             ## unplayable / not actionable
+var enemy: bool = false              ## opposing side — tinted cooler and slightly muted
+var highlight: Color = Color(0, 0, 0, 0)   ## override border (evolve target, queued, etc.)
+
+## Drag source. When set, the card can be picked up and dropped on a slot or
+## unit; Combat fills this in with what the payload should say.
+## Shape: { "kind": "hand_card", "hand_index": int, "card_id": String }
+var drag_payload: Dictionary = {}
+
+## Drop target, same contract as DropZone: func(data) -> bool / func(data) -> void.
+var can_drop: Callable = Callable()
+var on_drop: Callable = Callable()
+var _drop_hover: bool = false
+
+signal pressed()
+signal drag_started()
+## Emitted as the pointer enters/leaves the frame. Combat uses this to lift the
+## hovered hand card and drop the previously hovered one.
+signal hover_changed(hovering: bool)
+
+var _button: Button
+
+## Extra rules text shown only while the card is hovered in hand. Empty hides the
+## panel entirely, so a card with nothing more to say doesn't grow a blank box.
+var hover_text: String = ""
+var _hover_panel: PanelContainer
+
+
+func _init(c: CardData, u: Unit = null, m: int = Mode.HAND) -> void:
+	card = c
+	unit = u
+	mode = m
+
+
+func _ready() -> void:
+	## A board card is exactly its slot's size — the frame is a fixed slot, not a
+	## box that grows to fit. clip_contents makes that a hard cap: a long name or
+	## an extra attack line is trimmed rather than stretching the card, which
+	## would push the board row, the throne and the hand down the screen.
+	##
+	## Hand cards are deliberately *not* clipped: the hover panel is anchored
+	## below the frame on purpose and clipping would cut it off.
+	custom_minimum_size = HAND_SIZE if mode == Mode.HAND else BOARD_SIZE
+	if mode == Mode.BOARD:
+		size = BOARD_SIZE
+		clip_contents = true
+	mouse_filter = Control.MOUSE_FILTER_PASS
+	_build()
+
+
+# ------------------------------------------------------------------ building
+
+func _build() -> void:
+	for c in get_children():
+		c.queue_free()
+
+	add_theme_stylebox_override("panel", _frame_style())
+
+	## An invisible button covering the whole frame gives us hover + click
+	## without fighting the layout. It forwards drags to this CardView so a
+	## press-and-move picks the card up instead of being eaten as a click.
+	_button = Button.new()
+	_button.flat = true
+	_button.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_button.mouse_filter = Control.MOUSE_FILTER_PASS
+	_button.pressed.connect(func(): pressed.emit())
+	_button.set_drag_forwarding(_get_drag_data, Callable(), Callable())
+	## The button covers the whole frame, so its hover is the card's hover.
+	_button.mouse_entered.connect(func(): hover_changed.emit(true))
+	_button.mouse_exited.connect(func(): hover_changed.emit(false))
+	add_child(_button)
+
+	var root := VBoxContainer.new()
+	root.add_theme_constant_override("separation", 3)
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(root)
+
+	_add_header(root)
+	_add_evolve_strip(root)
+	_add_art(root)
+	_add_keyword_chips(root)
+	_add_ability_banner(root)
+	_add_attack_rows(root)
+	_add_footer(root)
+	_add_play_cost(root)
+	_add_hover_text()
+
+	## Dimming is a soft cue, not a "disabled" look — a card you can't play right
+	## now must still be readable.
+	if dimmed:
+		modulate = Color(1, 1, 1, 0.72)
+	elif enemy:
+		modulate = Color(0.86, 0.89, 1.0, 0.94)   ## cooler cast for the enemy side
+	else:
+		modulate = Color.WHITE
+
+
+## Look up a metric for this card's mode. Unknown keys return 0 rather than
+## erroring, so a typo shows as a collapsed row instead of crashing the board.
+func _m(key: String) -> int:
+	var entry: Dictionary = METRICS.get(key, {})
+	return int(entry.get("hand" if mode == Mode.HAND else "board", 0))
+
+
+func _frame_style() -> StyleBoxFlat:
+	var border := Palette.BORDER
+	var bg := Palette.PANEL_LIGHT
+
+	if enemy:
+		bg = Color("141a24")     ## cool slate, so sides read apart instantly
+
+	if card.is_energy():
+		border = Palette.GOLD
+		bg = Color("2a2210")
+	elif card.is_support_like():
+		## Supports read as their own class at a glance: teal rather than the
+		## energy gold or the unit's HP-tinted border.
+		border = Palette.TOWER
+		bg = Color("11242a")
+
+	if unit != null:
+		border = Palette.hp_color(unit.hp, unit.max_hp())
+		if unit.queued_attack != null:
+			border = Palette.GOLD
+
+	if highlight.a > 0.0:
+		border = highlight
+	if selected:
+		border = Palette.ACCENT
+		bg = Palette.ACCENT_DIM.darkened(0.4)
+
+	var s := StyleBoxFlat.new()
+	s.bg_color = bg
+	s.border_color = border
+	s.set_border_width_all(3 if selected else 2)
+	s.set_corner_radius_all(8)
+	s.content_margin_left = 7
+	s.content_margin_right = 7
+	s.content_margin_top = 6
+	s.content_margin_bottom = 6
+	s.shadow_color = Color(0, 0, 0, 0.35)
+	s.shadow_size = 3
+	return s
+
+
+## The header, in Pokémon's reading order:
+##
+##   STAGE 2                             330 HP ⬢
+##   Hel, Queen of the Unclaimed
+##
+## HP is top-right because that is the number a player checks most often and the
+## one they check *fastest* — it is the read that decides whether an attack kills.
+## Putting it in a fixed corner means it is found without scanning, on both sides
+## of the board, at either size.
+##
+## **Two rows, not one.** The first attempt put stage, name and HP on a single
+## row, which is what a real Pokémon card does — but a real card is 63mm wide and
+## this frame is 168px in hand, 132px on the board. With a fixed stage cell on the
+## left and HP on the right, the name got whatever was left over, and that was not
+## enough: "Thornshade" rendered as "Thorns…" and "Hel, Queen of the Unclaimed" as
+## "Hel, Qu…". A layout whose first casualty is the card's own *name* has its
+## priorities backwards. Giving the name its own full-width row costs one line of
+## vertical space and buys back the identity of every card in the game.
+func _add_header(root: VBoxContainer) -> void:
+	## Row 1 — stage on the left, HP and the faction dot on the right.
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(row)
+
+	var stage := Label.new()
+	stage.name = "StageLabel"
+	stage.text = card.stage_name().to_upper() if card.is_unit() else card.type_label().to_upper()
+	stage.add_theme_font_size_override("font_size", _m("stage_size"))
+	stage.add_theme_color_override("font_color", _stage_color() if card.is_unit() else _type_color())
+	stage.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage.clip_text = true
+	stage.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	row.add_child(stage)
+
+	if card.is_unit():
+		var hp := Label.new()
+		hp.name = "HPLabel"
+		var hp_col: Color = Palette.HP_GREEN
+		if unit != null:
+			## In play, HP is current/max and colored by how hurt the unit is.
+			hp.text = "%d/%d" % [max(0, unit.hp), unit.max_hp()]
+			hp_col = Palette.hp_color(unit.hp, unit.max_hp())
+		else:
+			hp.text = "%d HP" % card.max_hp
+		hp.add_theme_font_size_override("font_size", _m("hp_size"))
+		hp.add_theme_color_override("font_color", hp_col)
+		hp.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		hp.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(hp)
+
+	## The faction dot. A card's color is its energy color (CLAUDE.md: a faction
+	## *is* an energy color), so one dot in a fixed corner identifies the color
+	## without spending a row on the word.
+	var dot := EnergyIcon.new(Palette.faction_color(card.faction), true, false, _m("hp_size") * 0.72)
+	row.add_child(dot)
+
+	## Row 2 — the name, at the frame's full width.
+	var nm := Label.new()
+	nm.name = "NameLabel"
+	nm.text = card.name
+	nm.add_theme_color_override("font_color", Palette.TEXT)
+	nm.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	nm.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	nm.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	## Trim from the right with an ellipsis rather than clip_text, which is centred
+	## and eats the *start* of the name too — "Hel, Queen of the Unclaimed" came
+	## out as "el, Queen of the Unclaime". The opening words identify the card.
+	nm.autowrap_mode = TextServer.AUTOWRAP_OFF
+	nm.max_lines_visible = 1
+	nm.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	## Long names step down a size before resorting to trimming. Even at full width
+	## a few ("Hel, Queen of the Unclaimed") do not fit outright.
+	var title_px: int = _m("title_size")
+	if card.name.length() > 22:
+		title_px = max(6, title_px - 3)
+	elif card.name.length() > 17:
+		title_px = max(6, title_px - 1)
+	nm.add_theme_font_size_override("font_size", title_px)
+	root.add_child(nm)
+
+
+## "↑ Evolves from Charmeleon" — its own strip under the header.
+##
+## This used to be tacked onto the end of the stage badge's text, where it was
+## the least prominent thing on the card despite being the one piece of
+## information that decides whether a card in hand is playable *at all*: a Stage 1
+## with no base form on the board is a dead card. It gets its own row for the same
+## reason Pokémon gives it one.
+##
+## Only drawn when the card actually evolves from something. A Basic gets no
+## empty strip — vertical space is the scarcest thing on a 196px board card, and
+## reserving a row to say "nothing" is the worst possible use of it.
+func _add_evolve_strip(root: VBoxContainer) -> void:
+	if not card.is_unit() or card.evolves_from == "":
+		return
+	var base: CardData = CardDB.get_card(card.evolves_from)
+	if base == null:
+		return
+
+	var panel := PanelContainer.new()
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var col: Color = _stage_color()
+	var s := StyleBoxFlat.new()
+	s.bg_color = col.darkened(0.72)
+	s.border_color = col.darkened(0.35)
+	s.set_border_width_all(1)
+	s.set_corner_radius_all(3)
+	s.content_margin_top = 0
+	s.content_margin_bottom = 0
+	s.content_margin_left = 4
+	s.content_margin_right = 4
+	panel.add_theme_stylebox_override("panel", s)
+	root.add_child(panel)
+
+	var l := Label.new()
+	l.name = "EvolveStrip"
+	l.text = "↑ Evolves from %s" % base.name
+	l.add_theme_font_size_override("font_size", _m("evolve_size"))
+	l.add_theme_color_override("font_color", col.lightened(0.5))
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.clip_text = true
+	l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(l)
+
+
+## The accent color for a non-unit card's type label, matching the frame border
+## each type already gets in _frame_style().
+func _type_color() -> Color:
+	if card.is_energy():
+		return Palette.GOLD
+	return Palette.TOWER
+
+
+## Faction only — the stage has its own badge row above.
+func _typing_text() -> String:
+	return card.faction.capitalize()
+
+
+func _stage_color() -> Color:
+	match card.stage:
+		CardData.Stage.STAGE2: return Palette.ACCENT
+		CardData.Stage.STAGE1: return Palette.TOWER
+		_: return Palette.TEXT_DIM
+
+
+## Card art: the emblem from assets/art/<id>.png, falling back to the card's
+## initials on a tinted box when a card has no art yet.
+##
+## The emblem is square but the art box is wide, so it is centred at the box's
+## height rather than stretched — a squashed emblem reads worse than a small
+## one, and the tinted panel behind it fills the rest of the row.
+func _add_art(root: VBoxContainer) -> void:
+	var art := PanelContainer.new()
+	var box_h: int = 48 if mode == Mode.BOARD else 74
+	art.custom_minimum_size = Vector2(0, box_h)
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var s := StyleBoxFlat.new()
+	s.bg_color = _art_tint()
+	s.border_color = Palette.BORDER
+	s.set_border_width_all(1)
+	s.set_corner_radius_all(4)
+	art.add_theme_stylebox_override("panel", s)
+	root.add_child(art)
+
+	var center := CenterContainer.new()
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	art.add_child(center)
+
+	var tex: Texture2D = CardArt.get_art(card.id)
+	if tex != null:
+		var img := TextureRect.new()
+		img.texture = tex
+		## expand_mode is what actually holds the art to box_h. custom_minimum_size
+		## is a floor, not a cap, so without this the 128px source texture reports
+		## its own size as the minimum and wins — which made every board card ~80px
+		## taller than its slot and pushed the hand off the bottom of the screen.
+		img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		img.custom_minimum_size = Vector2(box_h, box_h)
+		img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		img.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		img.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		center.add_child(img)
+		return
+
+	var initials := Label.new()
+	initials.text = _initials()
+	initials.add_theme_font_size_override("font_size", 26 if mode == Mode.BOARD else 30)
+	initials.add_theme_color_override("font_color", Palette.TEXT_DIM.darkened(0.15))
+	initials.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	center.add_child(initials)
+
+
+func _art_tint() -> Color:
+	if card.is_support_like():
+		return Palette.TOWER.darkened(0.72)
+	if not card.is_unit():
+		return Color("3a2f14")
+	match card.stage:
+		CardData.Stage.STAGE2: return Palette.ACCENT_DIM.darkened(0.45)
+		CardData.Stage.STAGE1: return Palette.ACCENT_DIM.darkened(0.62)
+		_: return Palette.PANEL.lightened(0.05)
+
+
+func _initials() -> String:
+	var out := ""
+	for word in card.name.replace(",", " ").split(" ", false):
+		var w := str(word)
+		if w.length() == 0:
+			continue
+		var first := w.substr(0, 1)
+		if first == first.to_upper() and first != "'":
+			out += first
+		if out.length() >= 3:
+			break
+	return out.to_upper() if out != "" else "?"
+
+
+## Keywords as a row of tinted chips, under the art.
+##
+## The values come from _live_keyword_line(), NOT from CardData.keyword_line() —
+## a spent Judgment or Rise must vanish from the board, and Sanctuary must show
+## its remaining pool rather than its printed one. See that function's comment;
+## HeavenTest.gd asserts the behaviour.
+##
+## Chips rather than one comma-joined line because a keyword is a discrete thing
+## a player checks for ("does that body still hold its charge?"), and a row of
+## separated pills answers that with a glance where a sentence has to be read.
+## Each chip is colored by keyword via Palette.keyword_color(), so Toll and
+## Judgment are told apart before either word is read.
+##
+## The row is omitted entirely when the card has no live keywords — the old
+## renderer printed a placeholder em-dash, which spent a row saying nothing.
+func _add_keyword_chips(root: VBoxContainer) -> void:
+	if not card.is_unit():
+		return
+
+	var text := _live_keyword_line()
+	if text.strip_edges() == "":
+		return
+
+	var row := HBoxContainer.new()
+	row.name = "KeywordChips"
+	row.add_theme_constant_override("separation", 3)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.custom_minimum_size = Vector2(0, _m("chip_h"))
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(row)
+
+	for part in text.split(",", false):
+		var p := str(part).strip_edges()
+		if p == "":
+			continue
+		row.add_child(_keyword_chip(p))
+
+
+## One chip. `text` is a live keyword phrase like "Toll 3" or "Sanctuary 40";
+## the first word is what selects the color.
+func _keyword_chip(text: String) -> Control:
+	var kw_name := text.split(" ")[0].to_lower()
+	var col: Color = Palette.keyword_color(kw_name)
+
+	var chip := PanelContainer.new()
+	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var s := StyleBoxFlat.new()
+	s.bg_color = col.darkened(0.68)
+	s.border_color = col
+	s.set_border_width_all(1)
+	s.set_corner_radius_all(7)
+	s.content_margin_left = 4
+	s.content_margin_right = 4
+	s.content_margin_top = 0
+	s.content_margin_bottom = 0
+	chip.add_theme_stylebox_override("panel", s)
+
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", _m("chip_size"))
+	l.add_theme_color_override("font_color", col.lightened(0.55))
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	chip.add_child(l)
+	return chip
+
+
+## The keyword line as it is *right now*, not as printed.
+##
+## `CardData.keyword_line()` reads the printed card, which never changes — correct
+## for the deck builder and the inspector, wrong on the board. Spent one-shot
+## keywords have to visibly disappear, because each is a resource the player is
+## deciding when to cash: a board where you cannot see which units still hold a
+## charge makes the decision impossible to make.
+##
+## Three keywords are spendable, and each drops out when used:
+##   Rise       — spent on death, `lost_rise`
+##   Judgment   — spent by either half, `judgment_spent`
+##   Sanctuary  — spent when it absorbs, `sanctuary_active`
+##
+## Sanctuary N additionally shows its *remaining* pool rather than the printed one,
+## since a depleted pool is the whole state that matters when deciding what to
+## attack into.
+func _live_keyword_line() -> String:
+	var text := card.keyword_line()
+	if unit == null:
+		return text
+
+	var kept: Array[String] = []
+	for part in text.split(",", false):
+		var p := str(part).strip_edges()
+		var lower := p.to_lower()
+
+		if lower.begins_with("rise"):
+			if unit.lost_rise:
+				continue
+		elif lower.begins_with("judgment"):
+			if unit.judgment_spent:
+				continue
+		elif lower.begins_with("sanctuary"):
+			if not unit.sanctuary_active:
+				continue
+			## Show what is left in the pool, not what was printed.
+			p = "Sanctuary" if unit.sanctuary_pool <= 0 else "Sanctuary %d" % unit.sanctuary_pool
+
+		kept.append(p)
+	return ", ".join(kept)
+
+
+## Abilities in a colored banner, above the attack rows.
+##
+## Abilities and attacks are genuinely different mechanics in this game, not two
+## flavours of the same one (CLAUDE.md, *Abilities vs. Attacks*): an ability
+## resolves immediately, is limited to once per turn, and is free — its only
+## possible cost is `Consume N`, which destroys attached energy. An attack is
+## queued, resolves at end of turn, and pays a cost that stays attached and is
+## free every turn after. The old renderer marked that difference with a small
+## "◆" prefix, which is easy to miss on a 132px card. A banner is not decoration
+## here; it is the visual form of a rules distinction.
+##
+## `Consume N` is printed in the banner header rather than in a cost-icon row,
+## because it is not a requirement that sits on the unit — it is energy destroyed
+## on each use, which is why a Consume ability never becomes a free permanent
+## engine. Rendering it as cost icons would read as "attach this much", which is
+## the opposite of what it does.
+func _add_ability_banner(root: VBoxContainer) -> void:
+	if not card.is_unit():
+		return
+	var abilities: Array = card.ability_lines()
+	if abilities.is_empty():
+		return
+
+	for atk in abilities:
+		var used: bool = unit != null and unit.has_used_ability(atk)
+		var col: Color = Palette.ACCENT if not used else Palette.TEXT_DIM
+
+		var panel := PanelContainer.new()
+		panel.name = "AbilityBanner"
+		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+		var s := StyleBoxFlat.new()
+		s.bg_color = col.darkened(0.72)
+		s.border_color = col
+		s.set_border_width_all(1)
+		s.set_corner_radius_all(4)
+		s.content_margin_left = 4
+		s.content_margin_right = 4
+		s.content_margin_top = 1
+		s.content_margin_bottom = 1
+		panel.add_theme_stylebox_override("panel", s)
+		root.add_child(panel)
+
+		var col_box := VBoxContainer.new()
+		col_box.add_theme_constant_override("separation", 0)
+		col_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		panel.add_child(col_box)
+
+		## Header: the ABILITY tag, the line's name, and what it burns.
+		var head := HBoxContainer.new()
+		head.add_theme_constant_override("separation", 4)
+		head.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		col_box.add_child(head)
+
+		var tag := Label.new()
+		tag.text = "ABILITY"
+		tag.add_theme_font_size_override("font_size", max(6, _m("ability_title_size") - 1))
+		tag.add_theme_color_override("font_color", col.lightened(0.4))
+		tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		head.add_child(tag)
+
+		var nm := Label.new()
+		nm.text = atk.name
+		nm.add_theme_font_size_override("font_size", _m("ability_title_size"))
+		nm.add_theme_color_override("font_color",
+			Palette.TEXT if not used else Palette.TEXT_DIM.darkened(0.25))
+		nm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		nm.clip_text = true
+		nm.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		nm.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		head.add_child(nm)
+
+		var cost := Label.new()
+		cost.text = "⊘%d" % atk.consume if atk.consume > 0 else "free"
+		cost.add_theme_font_size_override("font_size", max(6, _m("ability_title_size") - 1))
+		cost.add_theme_color_override("font_color",
+			Palette.ACCENT.lightened(0.2) if atk.consume > 0 else Palette.TEXT_DIM)
+		cost.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		head.add_child(cost)
+
+		## Body: the rules text. Hand cards wrap it; board cards get one trimmed
+		## line, because the board frame has no room to grow and clip_contents
+		## would otherwise cut a wrapped block mid-sentence.
+		if atk.text != "":
+			var body := Label.new()
+			body.text = atk.text
+			body.add_theme_font_size_override("font_size", _m("ability_text_size"))
+			body.add_theme_color_override("font_color", Palette.TEXT_DIM)
+			body.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			if mode == Mode.HAND:
+				body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			else:
+				body.autowrap_mode = TextServer.AUTOWRAP_OFF
+				body.max_lines_visible = 1
+				body.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			col_box.add_child(body)
+
+
+## One row per attack: cost icons, name, damage.
+##
+## Costs sit beside the attack they pay for. They used to live in a separate pip
+## block at the bottom of the card, which meant a player reading a two-attack unit
+## had to match rows to pip-rows by position — a step that is pure overhead and
+## gets worse on the board card, where both blocks are small. Pokemon puts the
+## cost inline for the same reason.
+##
+## Only attacks get a row. Abilities are drawn in the banner above, because they
+## resolve on a different clock and pay a different kind of cost (see
+## _add_ability_banner).
+func _add_attack_rows(root: VBoxContainer) -> void:
+	## Non-units carry rules text instead of attack lines.
+	if not card.is_unit():
+		var note := Label.new()
+		note.name = "RulesText"
+		note.text = card.text if card.is_support_like() else "Adds energy to your pool.
+One per turn."
+		note.add_theme_font_size_override("font_size", _m("ability_text_size"))
+		note.add_theme_color_override("font_color", Palette.TEXT_DIM)
+		note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		note.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		note.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		root.add_child(note)
+		return
+
+	var box := VBoxContainer.new()
+	box.name = "AttackRows"
+	box.add_theme_constant_override("separation", 2)
+	box.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(box)
+
+	var attached: int = unit.attached if unit != null else 0
+
+	for atk in card.attack_lines():
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 3)
+		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		box.add_child(row)
+
+		var queued: bool = unit != null and unit.queued_attack == atk
+
+		row.add_child(_cost_icons(atk, attached))
+
+		var nm := Label.new()
+		nm.text = ("▶ " if queued else "") + atk.name
+		nm.add_theme_font_size_override("font_size", _m("attack_name_size"))
+		nm.add_theme_color_override("font_color", Palette.GOLD if queued else Palette.TEXT)
+		nm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		nm.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		nm.clip_text = true
+		nm.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		nm.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(nm)
+
+		var dmg := Label.new()
+		dmg.text = str(atk.damage) if atk.damage > 0 else "—"
+		dmg.add_theme_font_size_override("font_size", _m("attack_dmg_size"))
+		dmg.add_theme_color_override("font_color",
+			Palette.DANGER if atk.damage > 0 else Palette.TEXT_DIM)
+		dmg.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		dmg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(dmg)
+
+
+## The cost icons for one attack.
+##
+## Filled left-to-right by `attached`, so the row doubles as a progress bar
+## toward affording the attack — the read that makes accumulating energy on a
+## unit legible, and the reason big attacks feel reachable rather than abstract.
+##
+## Costs above 8 collapse to a numeric chip. Nine or more icons overflow a 132px
+## frame, and the cards that cost that much (Cacophony Ramp reaches 14) are
+## precisely the ones a player is counting toward, so the number is more useful
+## than the row would be anyway.
+func _cost_icons(atk: AttackData, attached: int) -> Control:
+	var box := HBoxContainer.new()
+	box.add_theme_constant_override("separation", 1)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var cost: int = atk.total_cost()
+
+	if cost == 0:
+		var free := Label.new()
+		free.text = "free"
+		free.add_theme_font_size_override("font_size", max(6, _m("icon_size") - 1))
+		free.add_theme_color_override("font_color", Palette.TEXT_DIM)
+		free.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		box.add_child(free)
+		return box
+
+	if cost > 8:
+		var chip := Label.new()
+		chip.text = "⬢%d%s" % [cost, ("/%d" % attached) if unit != null else ""]
+		chip.add_theme_font_size_override("font_size", _m("icon_size"))
+		chip.add_theme_color_override("font_color",
+			Palette.GOLD if attached >= cost else Palette.TEXT_DIM)
+		chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		box.add_child(chip)
+		return box
+
+	## The attack's printed color, falling back to the card's own faction when the
+	## cost block named none (a purely colorless cost).
+	var col: Color = Palette.faction_color(
+		atk.cost_color if atk.cost_color != "" else card.faction)
+
+	for i in cost:
+		var is_colorless: bool = i >= atk.cost_faction
+		var is_filled: bool = unit != null and i < attached
+		box.add_child(EnergyIcon.new(col, is_filled, is_colorless, _m("icon_size")))
+	return box
+
+
+## The bottom strip: weakness, resistance, and retreat cost.
+##
+## Retreat goes bottom-right because it is where Pokémon prints it and because it
+## belongs with the other printed constants rather than with the attacks — retreat
+## is a *design-time* number (HP / 40, printed on the card) that never changes in
+## play. Buffs, damage and debuffs never move it; only evolving does, because the
+## evolved card prints its own.
+##
+## Weakness and resistance print "—". The system is not designed (CLAUDE.md, Open
+## Questions), and the slots are reserved so that adding it later is a data change
+## rather than a re-layout. This follows the project's established pattern: retreat
+## costs themselves shipped on the card for a while before the retreat action
+## existed, and the UI said plainly that they did nothing.
+func _add_footer(root: VBoxContainer) -> void:
+	if not card.is_unit():
+		return
+
+	var row := HBoxContainer.new()
+	row.name = "CardFooter"
+	row.add_theme_constant_override("separation", 5)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(row)
+
+	## Weakness / resistance — reserved, not implemented.
+	var wk := Label.new()
+	wk.text = "wk —"
+	wk.add_theme_font_size_override("font_size", _m("footer_size"))
+	wk.add_theme_color_override("font_color", Palette.TEXT_DIM.darkened(0.2))
+	wk.tooltip_text = "Weakness — not yet implemented."
+	wk.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(wk)
+
+	var res := Label.new()
+	res.text = "res —"
+	res.add_theme_font_size_override("font_size", _m("footer_size"))
+	res.add_theme_color_override("font_color", Palette.TEXT_DIM.darkened(0.2))
+	res.tooltip_text = "Resistance — not yet implemented."
+	res.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(res)
+
+	var sp := Control.new()
+	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sp.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(sp)
+
+	## Retreat cost, as icons. A unit with retreat 0 shows the label with no icons
+	## rather than nothing, so the corner reads consistently across every card.
+	var tag := Label.new()
+	tag.text = "↩"
+	tag.add_theme_font_size_override("font_size", _m("footer_size"))
+	tag.add_theme_color_override("font_color", Palette.TEXT_DIM)
+	tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(tag)
+
+	var icons := HBoxContainer.new()
+	icons.add_theme_constant_override("separation", 1)
+	icons.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(icons)
+
+	for _i in card.retreat:
+		## Retreat is paid from the unit's own attached energy and is colorless in
+		## effect — any attached energy pays it — so it draws as a grey icon rather
+		## than in the faction color, which would read as a colored requirement.
+		icons.add_child(EnergyIcon.new(Palette.TEXT_DIM, true, true, _m("footer_size")))
+
+
+## The play-cost line for non-unit cards.
+##
+## Most supports are free, which is the point — energy only buys attacks. The
+## handful that charge 1-3 pool energy are the one sanctioned exception (CLAUDE.md,
+## *Priced supports*), so the line has to distinguish them: a free card and a
+## 2-cost card must not read the same.
+##
+## Priced supports are NOT YET ENFORCED by the engine — CardData.cost is parsed
+## and printed but play_support does not spend it. The cost is shown anyway,
+## because the card should read correctly now and the data is already right; the
+## inspector is where the "not yet implemented" note lives, since that is the
+## screen with room to say it.
+func _add_play_cost(root: VBoxContainer) -> void:
+	if card.is_unit():
+		return
+
+	var sep := HSeparator.new()
+	sep.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(sep)
+
+	var row := HBoxContainer.new()
+	row.name = "PlayCost"
+	row.add_theme_constant_override("separation", 3)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(row)
+
+	if card.is_energy():
+		var l := Label.new()
+		l.text = "⬢ scales with turn"
+		l.add_theme_font_size_override("font_size", _m("footer_size"))
+		l.add_theme_color_override("font_color", Palette.GOLD)
+		l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(l)
+		return
+
+	if card.cost <= 0:
+		var free := Label.new()
+		free.text = "Free to play"
+		free.add_theme_font_size_override("font_size", _m("footer_size"))
+		free.add_theme_color_override("font_color", Palette.TOWER)
+		free.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(free)
+		return
+
+	## Priced: icons, so the cost reads the same way an attack's does.
+	for _i in card.cost:
+		row.add_child(EnergyIcon.new(Palette.faction_color(card.faction), true, false, _m("icon_size")))
+
+	var lbl := Label.new()
+	lbl.text = "to play"
+	lbl.add_theme_font_size_override("font_size", _m("footer_size"))
+	lbl.add_theme_color_override("font_color", Palette.GOLD)
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(lbl)
+
+
+## The expanded rules text, revealed while the card is hovered in hand.
+##
+## It is added as a free-floating child anchored under the frame rather than
+## inside the layout VBox: a panel in the flow would stretch the card past
+## HAND_SIZE and shove the whole hand row around every time one was hovered.
+## Hidden by default and toggled by set_hover_open(), so raising a card costs no
+## layout work beyond showing a node that already exists.
+func _add_hover_text() -> void:
+	if hover_text == "":
+		return
+
+	_hover_panel = PanelContainer.new()
+	_hover_panel.visible = false
+	_hover_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	## Pinned to the frame's bottom edge, spanning its width, growing downward.
+	_hover_panel.anchor_left = 0.0
+	_hover_panel.anchor_right = 1.0
+	_hover_panel.anchor_top = 1.0
+	_hover_panel.anchor_bottom = 1.0
+	_hover_panel.offset_top = 2
+
+	## Opaque: this panel floats outside the card frame over the hand row, so a
+	## translucent background would leave the neighbouring card showing through.
+	var s := StyleBoxFlat.new()
+	s.bg_color = Palette.PANEL.darkened(0.25)
+	s.border_color = Palette.ACCENT
+	s.set_border_width_all(1)
+	s.set_corner_radius_all(4)
+	s.content_margin_left = 5
+	s.content_margin_right = 5
+	s.content_margin_top = 3
+	s.content_margin_bottom = 3
+	s.shadow_color = Color(0, 0, 0, 0.5)
+	s.shadow_size = 4
+	_hover_panel.add_theme_stylebox_override("panel", s)
+	add_child(_hover_panel)
+
+	var l := Label.new()
+	l.text = hover_text
+	l.add_theme_font_size_override("font_size", 9)
+	l.add_theme_color_override("font_color", Palette.TEXT)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_hover_panel.add_child(l)
+
+
+## Show or hide the hover text. Safe to call on a card that has none.
+func set_hover_open(open: bool) -> void:
+	if _hover_panel != null:
+		_hover_panel.visible = open
+
+
+# ------------------------------------------------------------------ dragging
+
+## Picking a card up is the same intent as clicking it, so a drag starts only
+## when the card is actually actionable. Returning null leaves the click
+## behaviour untouched, which keeps click-then-click working alongside drag.
+func _get_drag_data(_at: Vector2) -> Variant:
+	if drag_payload.is_empty():
+		return null
+	set_drag_preview(_make_drag_preview())
+	drag_started.emit()
+	return drag_payload
+
+
+## A translucent copy of the card that follows the cursor. Centred on the
+## pointer so the card sits under the hand, not off to one corner.
+func _make_drag_preview() -> Control:
+	var ghost := CardView.new(card, unit, mode)
+	ghost.enemy = enemy
+	ghost.modulate = Color(1, 1, 1, 0.82)
+
+	## The preview is positioned by its top-left, so wrap it to centre it.
+	var wrap := Control.new()
+	wrap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var size: Vector2 = HAND_SIZE if mode == Mode.HAND else BOARD_SIZE
+	ghost.position = -size * 0.5
+	wrap.add_child(ghost)
+	return wrap
+
+
+func _can_drop_data(_at: Vector2, data: Variant) -> bool:
+	var ok: bool = can_drop.is_valid() and bool(can_drop.call(data))
+	if ok != _drop_hover:
+		_drop_hover = ok
+		queue_redraw()
+	return ok
+
+
+func _drop_data(_at: Vector2, data: Variant) -> void:
+	_drop_hover = false
+	if on_drop.is_valid():
+		on_drop.call(data)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_MOUSE_EXIT or what == NOTIFICATION_DRAG_END:
+		if _drop_hover:
+			_drop_hover = false
+			queue_redraw()
+
+
+func _draw() -> void:
+	if _drop_hover:
+		draw_rect(Rect2(Vector2.ONE * 2, size - Vector2.ONE * 4), Palette.ACCENT, false, 3.0)
+
+
+# ------------------------------------------------------------------ helpers
+
+## Extra badges drawn under the frame — attached total, "dies EOT", etc.
+func status_line() -> String:
+	if unit == null:
+		return ""
+	var bits: Array[String] = []
+	if unit.attached > 0:
+		bits.append("⬢ %d attached" % unit.attached)
+	if unit.dies_at_eot:
+		bits.append("☠ dies EOT")
+	return "   ".join(bits)

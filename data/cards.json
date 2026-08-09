@@ -1,0 +1,2867 @@
+{
+  "_comment": "Godsfall card data. Faction: Hel (Toll subfaction) plus the 38 neutral support/tool/tower-support cards. See hel.md and support.md for design rationale.",
+  "_schema": {
+    "id": "unique string key",
+    "name": "display name",
+    "type": "unit | energy | support | tool | tower_support",
+    "faction": "hel | void | gaia | heaven | fire | neutral",
+    "stage": "basic | stage1 | stage2 (unit only)",
+    "hp": "max HP (unit only)",
+    "retreat": "attached energy spent to return this unit to hand (unit only). HP / 25 rounded down, same formula as toll, adjusted per card. See hel.md table.",
+    "evolves_from": "card id this evolves from, or null",
+    "keywords": "array of {kw, n} - toll/rise/decay/retribution",
+    "attacks": "array of line objects (unit only). A line is an ATTACK by default: it is queued in the main phase, resolves at end of turn, and its 'cost' is pulled from the pool onto the unit, where it stays. Set \"ability\": true to make it an ABILITY instead: it resolves immediately when activated, is limited to once per turn per unit, and is FREE - 'cost' is ignored entirely. The only cost an ability may carry is \"consume\": N, which DESTROYS N attached energy on use. 'consume' is also legal on an attack.",
+    "effects": "array of effect objects (support, tool, tower_support). Tools attach to a unit, one per unit, discarded when it dies or retreats. tower_support targets a tower you control; permanent ones are limited to one per tower and are lost when it dies.",
+    "permanent": "tower_support only: true if it occupies the tower's one modification slot, false for one-shots",
+    "flavor": "designer note"
+  },
+  "cards": [
+    {
+      "id": "hel_energy",
+      "name": "Hel Energy",
+      "type": "energy",
+      "faction": "hel",
+      "flavor": "Adds (turn + 1) Hel energy to your pool. One energy card per turn."
+    },
+    {
+      "id": "grave_whelp",
+      "name": "Grave Whelp",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "gnaw",
+          "name": "Gnaw",
+          "cost": {
+            "hel": 1,
+            "colorless": 0
+          },
+          "damage": 12,
+          "text": "12 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Deliberately fragile chaff that pays you when the tower eats it."
+    },
+    {
+      "id": "barrow_knight",
+      "name": "Barrow Knight",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "cleave",
+          "name": "Cleave",
+          "cost": {
+            "hel": 2,
+            "colorless": 0
+          },
+          "damage": 25,
+          "text": "25 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Flexible early body."
+    },
+    {
+      "id": "carrion_crawler",
+      "name": "Carrion Crawler",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 1
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "rend",
+          "name": "Rend",
+          "cost": {
+            "hel": 1,
+            "colorless": 1
+          },
+          "damage": 15,
+          "text": "15 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Free chip damage from turn one. A Decay engine, not a body."
+    },
+    {
+      "id": "bonepicker",
+      "name": "Bonepicker",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "scavenge",
+          "name": "Scavenge",
+          "cost": {
+            "hel": 1,
+            "colorless": 0
+          },
+          "damage": 10,
+          "text": "10 damage; return a Hel unit from your discard to your hand",
+          "effects": [
+            {
+              "op": "return_from_discard",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "Card advantage on a 1-cost attack."
+    },
+    {
+      "id": "thornshade",
+      "name": "Thornshade",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 2,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 2
+        },
+        {
+          "kw": "retribution",
+          "n": 10
+        }
+      ],
+      "attacks": [
+        {
+          "id": "lash",
+          "name": "Lash",
+          "cost": {
+            "hel": 2,
+            "colorless": 0
+          },
+          "damage": 22,
+          "text": "22 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A wall that taxes attackers."
+    },
+    {
+      "id": "hollow_servant",
+      "name": "Hollow Servant",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 2
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "grasp",
+          "name": "Grasp",
+          "cost": {
+            "hel": 1,
+            "colorless": 0
+          },
+          "damage": 12,
+          "text": "12 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "One card, 4 energy, two bodies. Never charge it."
+    },
+    {
+      "id": "charnel_colossus",
+      "name": "Charnel Colossus",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        }
+      ],
+      "attacks": [
+        {
+          "id": "consume_the_fallen",
+          "name": "Consume the Fallen",
+          "ability": true,
+          "cost": {
+            "hel": 0,
+            "colorless": 0
+          },
+          "damage": 0,
+          "text": "Destroy a friendly unit; move all its attached energy to this unit",
+          "effects": [
+            {
+              "op": "devour_friendly"
+            }
+          ],
+          "targeting": "friendly_unit"
+        },
+        {
+          "id": "crush",
+          "name": "Crush",
+          "cost": {
+            "hel": 3,
+            "colorless": 0
+          },
+          "damage": 38,
+          "text": "38 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The energy-transfer engine. A 90 HP Basic you charge all game."
+    },
+    {
+      "id": "gravebound_reaper",
+      "name": "Gravebound Reaper",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "grave_whelp",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "final_verdict",
+          "name": "Final Verdict",
+          "cost": {
+            "hel": 6,
+            "colorless": 0
+          },
+          "damage": 75,
+          "text": "75 damage; this unit dies at end of turn",
+          "effects": [
+            {
+              "op": "self_destruct"
+            }
+          ]
+        }
+      ],
+      "flavor": "A card you evolve into a plan."
+    },
+    {
+      "id": "hels_chorus",
+      "name": "Hel's Chorus",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "bonepicker",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        }
+      ],
+      "attacks": [
+        {
+          "id": "dirge",
+          "name": "Dirge",
+          "ability": true,
+          "consume": 1,
+          "cost": {
+            "hel": 0,
+            "colorless": 0
+          },
+          "damage": 0,
+          "text": "Consume 1: end-of-turn effects trigger twice this turn",
+          "effects": [
+            {
+              "op": "eot_multiplier",
+              "n": 2
+            }
+          ]
+        }
+      ],
+      "flavor": "The engine card. Doubles every Decay on the board."
+    },
+    {
+      "id": "mourning_bell",
+      "name": "Mourning Bell",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 3,
+      "evolves_from": "thornshade",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "retribution",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "toll_the_bell",
+          "name": "Toll the Bell",
+          "cost": {
+            "hel": 3,
+            "colorless": 0
+          },
+          "damage": 38,
+          "text": "38 damage; gain 2 energy if a friendly unit died this turn",
+          "effects": [
+            {
+              "op": "gain_if_death",
+              "n": 2
+            }
+          ]
+        }
+      ],
+      "flavor": "The subfaction's income payoff."
+    },
+    {
+      "id": "nithogg_root_gnawer",
+      "name": "Nithogg, Root-Gnawer",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 115,
+      "retreat": 2,
+      "evolves_from": "carrion_crawler",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 4
+        },
+        {
+          "kw": "decay",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "gnaw_the_world",
+          "name": "Gnaw the World",
+          "cost": {
+            "hel": 5,
+            "colorless": 0
+          },
+          "damage": 60,
+          "text": "60 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The Decay is what you're paying for."
+    },
+    {
+      "id": "grave_tide",
+      "name": "Grave Tide",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "hollow_servant",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "surge_of_the_drowned",
+          "name": "Surge of the Drowned",
+          "cost": {
+            "hel": 7,
+            "colorless": 0
+          },
+          "damage": 40,
+          "text": "40 to the opposing unit and 40 to the enemy tower",
+          "effects": [
+            {
+              "op": "also_hit_tower",
+              "n": 40
+            }
+          ]
+        }
+      ],
+      "flavor": "Hel's tower-breaker. 6 energy and two bodies from one card."
+    },
+    {
+      "id": "hel_queen",
+      "name": "Hel, Queen of the Unclaimed",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage2",
+      "hp": 175,
+      "retreat": 4,
+      "evolves_from": "gravebound_reaper",
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "claim_the_fallen",
+          "name": "Claim the Fallen",
+          "ability": true,
+          "consume": 2,
+          "cost": {
+            "hel": 0,
+            "colorless": 0
+          },
+          "damage": 0,
+          "text": "Consume 2: return up to 2 Hel units from your discard directly to empty slots",
+          "effects": [
+            {
+              "op": "reanimate",
+              "n": 2
+            }
+          ]
+        },
+        {
+          "id": "the_last_toll",
+          "name": "THE LAST TOLL",
+          "cost": {
+            "hel": 20,
+            "colorless": 0
+          },
+          "damage": 0,
+          "text": "Destroy every unit on both boards. Deal 15 to the enemy throne per unit destroyed. Your Tolls trigger as normal.",
+          "effects": [
+            {
+              "op": "last_toll",
+              "n": 15
+            }
+          ]
+        }
+      ],
+      "flavor": "The faction's win condition. She has no Toll of her own."
+    },
+    {
+      "id": "nithogg_ascendant",
+      "name": "Nithogg Ascendant",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage2",
+      "hp": 150,
+      "retreat": 3,
+      "evolves_from": "nithogg_root_gnawer",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 6
+        },
+        {
+          "kw": "decay",
+          "n": 25
+        }
+      ],
+      "attacks": [
+        {
+          "id": "endless_hunger",
+          "name": "Endless Hunger",
+          "cost": {
+            "hel": 14,
+            "colorless": 0
+          },
+          "damage": 40,
+          "text": "40 to the opposing unit, 40 to the enemy tower; gain 5 energy",
+          "effects": [
+            {
+              "op": "also_hit_tower",
+              "n": 40
+            },
+            {
+              "op": "gain_energy",
+              "n": 5
+            }
+          ]
+        }
+      ],
+      "flavor": "25 free damage per turn is a lane that cannot be held."
+    },
+    {
+      "id": "grand_cacophony",
+      "name": "Grand Cacophony",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage2",
+      "hp": 120,
+      "retreat": 3,
+      "evolves_from": "hels_chorus",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 4
+        }
+      ],
+      "attacks": [
+        {
+          "id": "requiem",
+          "name": "Requiem",
+          "cost": {
+            "hel": 9,
+            "colorless": 0
+          },
+          "damage": 45,
+          "text": "45 damage; end-of-turn effects trigger three times this turn",
+          "effects": [
+            {
+              "op": "eot_multiplier",
+              "n": 3
+            }
+          ]
+        }
+      ],
+      "flavor": "The build-around payoff."
+    },
+    {
+      "id": "gravekeepers_ledger",
+      "name": "Gravekeeper's Ledger",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Draw 3 cards.",
+      "effects": [
+        {
+          "op": "draw",
+          "n": 3
+        }
+      ],
+      "flavor": "The band-defining card. Everything else is priced against it."
+    },
+    {
+      "id": "scavengers_instinct",
+      "name": "Scavenger's Instinct",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Look at the top 5 cards of your deck. Take 2 into your hand. Discard the rest.",
+      "effects": [
+        {
+          "op": "dig_look",
+          "n": 5
+        },
+        {
+          "op": "dig_take",
+          "n": 2
+        }
+      ],
+      "flavor": "Fewer cards than Ledger, but you choose them - and the 3 discarded are live for Hel."
+    },
+    {
+      "id": "second_thoughts",
+      "name": "Second Thoughts",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Shuffle your hand into your deck, then draw that many cards plus 1.",
+      "effects": [
+        {
+          "op": "shuffle_hand_draw_plus",
+          "n": 1
+        }
+      ],
+      "flavor": "The reset. The only answer to a hand flooded with locked retreat cards."
+    },
+    {
+      "id": "last_rites",
+      "name": "Last Rites",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Discard 2 cards. Draw 4.",
+      "effects": [
+        {
+          "op": "discard_then_draw",
+          "n": 2
+        },
+        {
+          "op": "draw_after_discard",
+          "n": 4
+        }
+      ],
+      "flavor": "Same net +1 as Second Thoughts, but you pick what goes."
+    },
+    {
+      "id": "muster",
+      "name": "Muster",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Search your deck for a Basic unit and put it into your hand. Shuffle your deck.",
+      "effects": [
+        {
+          "op": "search_basic",
+          "n": 1
+        }
+      ],
+      "flavor": "The card that fixes the worst opening hands. Pure consistency."
+    },
+    {
+      "id": "roll_call",
+      "name": "Roll Call",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Search your deck for up to 2 Basic units, reveal them, and put them into your hand. Shuffle your deck.",
+      "effects": [
+        {
+          "op": "search_basic",
+          "n": 2
+        }
+      ],
+      "flavor": "Rebuilds a board in one play - the answer to THE LAST TOLL."
+    },
+    {
+      "id": "line_of_succession",
+      "name": "Line of Succession",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Reveal a random Stage 1 or Stage 2 unit from your deck and put it into your hand. Shuffle your deck.",
+      "effects": [
+        {
+          "op": "search_random_evolved",
+          "n": 1
+        }
+      ],
+      "flavor": "Random on purpose: a deckbuilding card rather than a tutor."
+    },
+    {
+      "id": "read_the_bones",
+      "name": "Read the Bones",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Search your deck for any one card and put it on top of your deck. Shuffle your deck first.",
+      "effects": [
+        {
+          "op": "search_any_to_top",
+          "n": 1
+        }
+      ],
+      "flavor": "The one true tutor. A full turn of delay is what keeps it in band."
+    },
+    {
+      "id": "grave_market",
+      "name": "Grave Market",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Put a random card from your discard pile into your hand.",
+      "effects": [
+        {
+          "op": "random_from_discard",
+          "n": 1
+        }
+      ],
+      "flavor": "Gets worse as it gets more powerful - a shape the file needed."
+    },
+    {
+      "id": "offering",
+      "name": "Offering",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Gain 3 energy of any single color to your pool.",
+      "effects": [
+        {
+          "op": "gain_energy",
+          "n": 3
+        }
+      ],
+      "flavor": "Goes to the pool, so it is exposed to decay. Not an energy card."
+    },
+    {
+      "id": "tithe",
+      "name": "Tithe",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Move all attached energy from one of your units to another of your units.",
+      "effects": [
+        {
+          "op": "move_energy",
+          "n": 0
+        }
+      ],
+      "flavor": "Makes charging the wrong unit recoverable."
+    },
+    {
+      "id": "sift_the_ashes",
+      "name": "Sift the Ashes",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Gain 1 energy for each of your units that died this turn, to a maximum of 4.",
+      "effects": [
+        {
+          "op": "gain_per_death",
+          "n": 4
+        }
+      ],
+      "flavor": "A catch-up card by construction: dead when you are ahead."
+    },
+    {
+      "id": "escape_route",
+      "name": "Escape Route",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Retreat one of your units at no cost. Its leftover attached energy still returns to your pool.",
+      "effects": [
+        {
+          "op": "retreat_free",
+          "n": 0
+        }
+      ],
+      "flavor": "The clean answer to a Stage 2 you cannot afford to extract."
+    },
+    {
+      "id": "withdraw",
+      "name": "Withdraw",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Retreat one of your units. Its retreat cost is paid from your pool instead of its attached energy.",
+      "effects": [
+        {
+          "op": "retreat_from_pool",
+          "n": 0
+        }
+      ],
+      "flavor": "The only way to move a unit with no attached energy."
+    },
+    {
+      "id": "rally_the_line",
+      "name": "Rally the Line",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Units that returned to your hand this turn are no longer locked. You may play them this turn.",
+      "effects": [
+        {
+          "op": "clear_locks",
+          "n": 0
+        }
+      ],
+      "flavor": "Explicitly a rule-breaker. Turns retreat into a real reposition."
+    },
+    {
+      "id": "ground_give",
+      "name": "Ground Give",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Return one of your units to your hand. It is locked as normal, and its attached energy is lost.",
+      "effects": [
+        {
+          "op": "return_to_hand",
+          "n": 0
+        }
+      ],
+      "flavor": "Retreat for units that cannot pay. The energy loss is the price."
+    },
+    {
+      "id": "reposition",
+      "name": "Reposition",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Swap the slots of two of your units. They keep all attached energy.",
+      "effects": [
+        {
+          "op": "swap_slots",
+          "n": 0
+        }
+      ],
+      "flavor": "Retargeting without retreating. Placement is targeting, so this is a combat trick."
+    },
+    {
+      "id": "shore_up",
+      "name": "Shore Up",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Heal one of your units 20 HP.",
+      "effects": [
+        {
+          "op": "heal",
+          "n": 20
+        }
+      ],
+      "flavor": "The baseline every other heal is priced against."
+    },
+    {
+      "id": "field_rites",
+      "name": "Field Rites",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Heal each of your units 10 HP.",
+      "effects": [
+        {
+          "op": "heal_all",
+          "n": 10
+        }
+      ],
+      "flavor": "Its real use is against Decay, which hits everything for small amounts."
+    },
+    {
+      "id": "last_breath",
+      "name": "Last Breath",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Heal one of your units 50 HP. It must be at or below half its printed HP.",
+      "effects": [
+        {
+          "op": "heal_conditional",
+          "n": 50
+        }
+      ],
+      "flavor": "Dead in hand when you are not under pressure. A flat number, not a reset."
+    },
+    {
+      "id": "reconsecrate",
+      "name": "Reconsecrate",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Heal one of your units 20 HP and remove all Decay damage dealt to it this turn.",
+      "effects": [
+        {
+          "op": "heal_undo_decay",
+          "n": 20
+        }
+      ],
+      "flavor": "The narrow answer to Hel's identity keyword, printed as neutral on purpose."
+    },
+    {
+      "id": "hold_the_slot",
+      "name": "Hold the Slot",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Until the end of the turn, one of your units cannot be reduced below 1 HP.",
+      "effects": [
+        {
+          "op": "protect",
+          "n": 0
+        }
+      ],
+      "flavor": "A unit saved this way does not Toll - it did not die."
+    },
+    {
+      "id": "mend",
+      "name": "Mend",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Heal one of your units 10 HP.",
+      "effects": [
+        {
+          "op": "heal",
+          "n": 10
+        }
+      ],
+      "flavor": "One round of early tower fire. The bottom rung of the ladder."
+    },
+    {
+      "id": "field_surgery",
+      "name": "Field Surgery",
+      "type": "support",
+      "faction": "neutral",
+      "cost": 1,
+      "text": "Heal one of your units 50 HP.",
+      "effects": [
+        {
+          "op": "heal",
+          "n": 50
+        }
+      ],
+      "flavor": "One energy buys thirty more healing. The rate everything priced is checked against."
+    },
+    {
+      "id": "closing_ranks",
+      "name": "Closing Ranks",
+      "type": "support",
+      "faction": "neutral",
+      "cost": 2,
+      "text": "Heal each of your units 20 HP.",
+      "effects": [
+        {
+          "op": "heal_all",
+          "n": 20
+        }
+      ],
+      "flavor": "Wants a wide board, not a dead one. Worthless on a single unit."
+    },
+    {
+      "id": "vigil",
+      "name": "Vigil",
+      "type": "support",
+      "faction": "neutral",
+      "cost": 2,
+      "text": "Heal one of your units 15 HP for each round that has passed, counting the current one.",
+      "effects": [
+        {
+          "op": "heal_per_round",
+          "n": 15
+        }
+      ],
+      "flavor": "Three times the tower's scaling. The only heal that grows."
+    },
+    {
+      "id": "grave_wardens_oath",
+      "name": "Grave Warden's Oath",
+      "type": "support",
+      "faction": "neutral",
+      "cost": 3,
+      "text": "Heal one of your units 100 HP.",
+      "effects": [
+        {
+          "op": "heal",
+          "n": 100
+        }
+      ],
+      "flavor": "More than most bodies can hold. The overflow is the price of certainty."
+    },
+    {
+      "id": "collapse",
+      "name": "Collapse",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Deal 20 damage to an enemy unit that has no attached energy.",
+      "effects": [
+        {
+          "op": "damage_uncharged",
+          "n": 20
+        }
+      ],
+      "flavor": "Only ever kills chaff, never the unit someone invested in."
+    },
+    {
+      "id": "sever",
+      "name": "Sever",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Destroy 2 attached energy on an enemy unit.",
+      "effects": [
+        {
+          "op": "destroy_energy",
+          "n": 2
+        }
+      ],
+      "flavor": "The first anti-hoarding card. Void's version should be more interesting, not stronger."
+    },
+    {
+      "id": "toppling_blow",
+      "name": "Toppling Blow",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Deal 25 damage to an enemy tower.",
+      "effects": [
+        {
+          "op": "damage_tower",
+          "n": 25
+        }
+      ],
+      "flavor": "Restricted to towers so it can never be a throne-burn plan."
+    },
+    {
+      "id": "watchfires",
+      "name": "Watchfires",
+      "type": "support",
+      "faction": "neutral",
+      "text": "Reveal cards from the top of your deck until you reveal a tower support card. Put it into your hand and shuffle the rest back.",
+      "effects": [
+        {
+          "op": "dig_for_tower_support",
+          "n": 1
+        }
+      ],
+      "flavor": "A plain support, not a tower support - it works with both towers dead."
+    },
+    {
+      "id": "bone_splint",
+      "name": "Bone Splint",
+      "type": "tool",
+      "faction": "neutral",
+      "text": "Attached unit heals 5 HP at end of turn.",
+      "effects": [
+        {
+          "op": "heal_eot",
+          "n": 5
+        }
+      ],
+      "flavor": "Five turns to match Shore Up. Excellent on a wall nobody attacks."
+    },
+    {
+      "id": "weighted_chain",
+      "name": "Weighted Chain",
+      "type": "tool",
+      "faction": "neutral",
+      "text": "Attached unit's attacks deal 5 more damage.",
+      "effects": [
+        {
+          "op": "attack_damage",
+          "n": 5
+        }
+      ],
+      "flavor": "Small on purpose - it must never compete with paying for an attack."
+    },
+    {
+      "id": "grave_anchor",
+      "name": "Grave Anchor",
+      "type": "tool",
+      "faction": "neutral",
+      "text": "Attached unit's retreat cost is reduced by 2, to a minimum of 0.",
+      "effects": [
+        {
+          "op": "retreat_reduction",
+          "n": 2
+        }
+      ],
+      "flavor": "Paid in advance for an escape you may never use, and discarded on the retreat it enables."
+    },
+    {
+      "id": "ration_pack",
+      "name": "Ration Pack",
+      "type": "tool",
+      "faction": "neutral",
+      "text": "At end of turn, move 1 energy from your pool to the attached unit.",
+      "effects": [
+        {
+          "op": "pool_to_unit_eot",
+          "n": 1
+        }
+      ],
+      "flavor": "The only card that structurally answers pool decay. Flagged as possibly too strong."
+    },
+    {
+      "id": "iron_standard",
+      "name": "Iron Standard",
+      "type": "tool",
+      "faction": "neutral",
+      "text": "Attached unit has Retribution 5. This stacks with its printed Retribution.",
+      "effects": [
+        {
+          "op": "grant_retribution",
+          "n": 5
+        }
+      ],
+      "flavor": "Grants the keyword that best punishes this game's economy."
+    },
+    {
+      "id": "deadweight",
+      "name": "Deadweight",
+      "type": "tool",
+      "faction": "neutral",
+      "text": "Attach to an enemy unit. That unit's attacks cost 1 more energy.",
+      "effects": [
+        {
+          "op": "attach_enemy",
+          "n": 1
+        },
+        {
+          "op": "attack_cost_increase",
+          "n": 1
+        }
+      ],
+      "flavor": "Also blocks their own Tools - a real second mode nobody notices until it matters."
+    },
+    {
+      "id": "reinforced_base",
+      "name": "Reinforced Base",
+      "type": "tower_support",
+      "faction": "neutral",
+      "permanent": true,
+      "text": "Target tower gains +20 max HP.",
+      "effects": [
+        {
+          "op": "tower_max_hp",
+          "n": 20
+        }
+      ],
+      "flavor": "Max HP rather than a heal, so it stacks with the tower's own growth."
+    },
+    {
+      "id": "murder_holes",
+      "name": "Murder Holes",
+      "type": "tower_support",
+      "faction": "neutral",
+      "permanent": true,
+      "text": "Target tower deals +5 damage.",
+      "effects": [
+        {
+          "op": "tower_damage",
+          "n": 5
+        }
+      ],
+      "flavor": "Doubles a turn-1 tower and fades to noise by turn 10 - the right curve for a free card."
+    },
+    {
+      "id": "crossfire",
+      "name": "Crossfire",
+      "type": "tower_support",
+      "faction": "neutral",
+      "permanent": true,
+      "text": "Target tower also fires for 5 damage at the other enemy board.",
+      "effects": [
+        {
+          "op": "tower_crossfire",
+          "n": 5
+        }
+      ],
+      "flavor": "The only thing in the game that lets a structure hit across boards."
+    },
+    {
+      "id": "rebuild",
+      "name": "Rebuild",
+      "type": "tower_support",
+      "faction": "neutral",
+      "permanent": false,
+      "text": "Heal target tower 25 HP. It cannot be healed above its max HP.",
+      "effects": [
+        {
+          "op": "tower_heal",
+          "n": 25
+        }
+      ],
+      "flavor": "The cap is the important clause - uncapped tower healing is the stall engine."
+    },
+    {
+      "id": "spite_engine",
+      "name": "Spite Engine",
+      "type": "tower_support",
+      "faction": "neutral",
+      "permanent": true,
+      "text": "When target tower dies, deal 20 damage to the enemy unit in the slot facing it.",
+      "effects": [
+        {
+          "op": "tower_death_damage",
+          "n": 20
+        }
+      ],
+      "flavor": "Toll applied to structures - the investment pays out on the way down."
+    },
+    {
+      "id": "open_the_gate",
+      "name": "Open the Gate",
+      "type": "tower_support",
+      "faction": "neutral",
+      "permanent": false,
+      "text": "Destroy your own target tower. Draw 2 cards.",
+      "effects": [
+        {
+          "op": "destroy_own_tower",
+          "n": 1
+        },
+        {
+          "op": "draw",
+          "n": 2
+        }
+      ],
+      "flavor": "The anti-stall card. Opens the third slot on your schedule, not the opponent's."
+    },
+    {
+      "id": "heaven_energy",
+      "name": "Heaven Energy",
+      "type": "energy",
+      "faction": "heaven",
+      "text": "Adds (turn + 1) Heaven energy to your pool.",
+      "flavor": "The light does not ration itself."
+    },
+    {
+      "id": "lantern_acolyte",
+      "name": "Lantern Acolyte",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 10
+        }
+      ],
+      "attacks": [
+        {
+          "id": "rebuke",
+          "name": "Rebuke",
+          "cost": {
+            "heaven": 1,
+            "colorless": 0
+          },
+          "damage": 8,
+          "text": "8 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The smallest lamp still casts a verdict."
+    },
+    {
+      "id": "censer_bearer",
+      "name": "Censer Bearer",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 20
+        }
+      ],
+      "attacks": [
+        {
+          "id": "cleanse",
+          "name": "Cleanse",
+          "cost": {
+            "heaven": 2,
+            "colorless": 0
+          },
+          "damage": 16,
+          "text": "16 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A great second attack and a poor first one."
+    },
+    {
+      "id": "warden_of_the_lamp",
+      "name": "Warden of the Lamp",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "hold_the_line",
+          "name": "Hold the Line",
+          "cost": {
+            "heaven": 2,
+            "colorless": 0
+          },
+          "damage": 25,
+          "text": "25 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "No judgment to pay for, so it pays full price and hits full weight."
+    },
+    {
+      "id": "bellringer_of_the_court",
+      "name": "Bellringer of the Court",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 20
+        }
+      ],
+      "attacks": [
+        {
+          "id": "recall_the_verdict",
+          "name": "Recall the Verdict",
+          "cost": {
+            "heaven": 2,
+            "colorless": 0
+          },
+          "damage": 10,
+          "text": "10 damage; restore this unit's Judgment",
+          "effects": [
+            {
+              "op": "restore_own_judgment",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "One line, two jobs - it can never execute and recharge in the same turn."
+    },
+    {
+      "id": "cherub_of_the_open_gate",
+      "name": "Cherub of the Open Gate",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "ward_the_way",
+          "name": "Ward the Way",
+          "cost": {
+            "heaven": 1,
+            "colorless": 0
+          },
+          "damage": 8,
+          "text": "8 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A shield for the board behind it, not an attacker."
+    },
+    {
+      "id": "arbiter_of_the_third_seal",
+      "name": "Arbiter of the Third Seal",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "censer_bearer",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 30
+        }
+      ],
+      "attacks": [
+        {
+          "id": "weigh_the_soul",
+          "name": "Weigh the Soul",
+          "cost": {
+            "heaven": 3,
+            "colorless": 0
+          },
+          "damage": 25,
+          "text": "25 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Turns every damaged unit on the board into a kill."
+    },
+    {
+      "id": "hand_of_the_verdict",
+      "name": "Hand of the Verdict",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "lantern_acolyte",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 20
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "sentence",
+          "name": "Sentence",
+          "cost": {
+            "heaven": 2,
+            "colorless": 0
+          },
+          "damage": 16,
+          "text": "16 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Kill it twice and it returns with its charge restored. The body is the payload."
+    },
+    {
+      "id": "court_of_bells",
+      "name": "Court of Bells",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 80,
+      "retreat": 2,
+      "evolves_from": "bellringer_of_the_court",
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "ring_the_court_bell",
+          "name": "Ring the Court Bell",
+          "ability": true,
+          "consume": 2,
+          "damage": 0,
+          "text": "Restore Judgment to every friendly unit whose printed card has Judgment.",
+          "effects": [
+            {
+              "op": "restore_board_judgment",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "id": "summons",
+          "name": "Summons",
+          "cost": {
+            "heaven": 2,
+            "colorless": 0
+          },
+          "damage": 16,
+          "text": "16 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It carries no Judgment itself, so it cannot reset its own. That is the counterplay."
+    },
+    {
+      "id": "radiant_bastion",
+      "name": "Radiant Bastion",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 110,
+      "retreat": 2,
+      "evolves_from": "warden_of_the_lamp",
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 60
+        }
+      ],
+      "attacks": [
+        {
+          "id": "pillar_of_light",
+          "name": "Pillar of Light",
+          "cost": {
+            "heaven": 5,
+            "colorless": 0
+          },
+          "damage": 65,
+          "text": "65 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The hardest single hit in the faction, on the body hardest to kill."
+    },
+    {
+      "id": "seraph_of_the_final_ledger",
+      "name": "Seraph of the Final Ledger",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage2",
+      "hp": 140,
+      "retreat": 3,
+      "evolves_from": "arbiter_of_the_third_seal",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 50
+        }
+      ],
+      "attacks": [
+        {
+          "id": "the_ledger_closes",
+          "name": "The Ledger Closes",
+          "ability": true,
+          "consume": 2,
+          "damage": 0,
+          "text": "Deal 15 damage to every enemy unit on one board.",
+          "effects": [
+            {
+              "op": "damage_enemy_board",
+              "n": 15
+            }
+          ]
+        },
+        {
+          "id": "final_accounting",
+          "name": "Final Accounting",
+          "cost": {
+            "heaven": 5,
+            "colorless": 0
+          },
+          "damage": 42,
+          "text": "42 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It does not kill a board. It pushes a board into range."
+    },
+    {
+      "id": "empyrean_sentinel",
+      "name": "Empyrean Sentinel",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage2",
+      "hp": 150,
+      "retreat": 3,
+      "evolves_from": "radiant_bastion",
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "rekindle",
+          "name": "Rekindle",
+          "ability": true,
+          "consume": 0,
+          "damage": 0,
+          "text": "At end of turn, restore this unit's Sanctuary.",
+          "effects": [
+            {
+              "op": "eot_restore_sanctuary",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "id": "judgment_of_light",
+          "name": "Judgment of Light",
+          "cost": {
+            "heaven": 6,
+            "colorless": 0
+          },
+          "damage": 75,
+          "text": "75 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Two hits in one turn, or it does not die at all."
+    },
+    {
+      "id": "throne_of_the_risen_court",
+      "name": "Throne of the Risen Court",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage2",
+      "hp": 130,
+      "retreat": 3,
+      "evolves_from": "hand_of_the_verdict",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 40
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "second_sentence",
+          "name": "Second Sentence",
+          "cost": {
+            "heaven": 4,
+            "colorless": 0
+          },
+          "damage": 33,
+          "text": "33 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It holds a lane forever. It does not win."
+    },
+    {
+      "id": "verdict_of_the_throne",
+      "name": "Verdict of the Throne",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage2",
+      "hp": 145,
+      "retreat": 3,
+      "evolves_from": "arbiter_of_the_third_seal",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 50
+        }
+      ],
+      "attacks": [
+        {
+          "id": "the_gate_opens",
+          "name": "The Gate Opens",
+          "ability": true,
+          "consume": 3,
+          "damage": 0,
+          "text": "Deal damage to the enemy throne equal to enemy units destroyed this turn x 15.",
+          "effects": [
+            {
+              "op": "throne_per_kill",
+              "n": 15
+            }
+          ]
+        },
+        {
+          "id": "final_reckoning",
+          "name": "Final Reckoning",
+          "cost": {
+            "heaven": 5,
+            "colorless": 0
+          },
+          "damage": 42,
+          "text": "42 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The gate opens only as wide as the dead have made it."
+    },
+    {
+      "id": "aegis_of_the_choir",
+      "name": "Aegis of the Choir",
+      "type": "tool",
+      "faction": "heaven",
+      "cost": 0,
+      "text": "Attach to a unit. That unit gains Sanctuary. If it already has Sanctuary, restore it instead.",
+      "effects": [
+        {
+          "op": "grant_sanctuary",
+          "n": 1
+        }
+      ],
+      "flavor": "A one-shot investment on a body the opponent can kill."
+    },
+    {
+      "id": "hollow_acolyte",
+      "name": "Hollow Acolyte",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "draw_thin",
+          "name": "Draw Thin",
+          "cost": {
+            "void": 2,
+            "colorless": 0
+          },
+          "damage": 15,
+          "text": "15 damage; Siphon 1",
+          "effects": [
+            {
+              "op": "siphon",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "The cheapest theft in the game. Two energy for a body that pays itself back."
+    },
+    {
+      "id": "rust_crawler",
+      "name": "Rust Crawler",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "corrode",
+          "name": "Corrode",
+          "cost": {
+            "void": 2,
+            "colorless": 0
+          },
+          "damage": 24,
+          "text": "24 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "No text, standard curve. The control card that proves Void's rate cut is about its riders, not its color."
+    },
+    {
+      "id": "ashen_pilgrim",
+      "name": "Ashen Pilgrim",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "beg_the_void",
+          "name": "Beg the Void",
+          "ability": true,
+          "targeting": "enemy_unit",
+          "cost": {
+            "void": 0,
+            "colorless": 0
+          },
+          "damage": 0,
+          "text": "Siphon 1",
+          "effects": [
+            {
+              "op": "siphon",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "id": "thin_blade",
+          "name": "Thin Blade",
+          "cost": {
+            "void": 1,
+            "colorless": 0
+          },
+          "damage": 12,
+          "text": "12 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Pure ramp. A free Siphon every turn is the engine the aggressive build is designed around."
+    },
+    {
+      "id": "gnawing_absence",
+      "name": "Gnawing Absence",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "unmake",
+          "name": "Unmake",
+          "cost": {
+            "void": 3,
+            "colorless": 0
+          },
+          "damage": 12,
+          "text": "12 damage; Void 1. Deal 15 more for each energy destroyed this way.",
+          "effects": [
+            {
+              "op": "void_energy",
+              "n": 1
+            },
+            {
+              "op": "damage_per_voided",
+              "n": 15
+            }
+          ]
+        }
+      ],
+      "flavor": "Zero against an empty body, 25 against a charged one. Void's whole thesis on one card."
+    },
+    {
+      "id": "null_adept",
+      "name": "Null Adept",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "widen",
+          "name": "Widen",
+          "cost": {
+            "void": 2,
+            "colorless": 0
+          },
+          "damage": 12,
+          "text": "12 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Rift 1 on a Basic. Does nothing at Gap 0 and quietly becomes a real attack by turn 6."
+    },
+    {
+      "id": "sundered_wretch",
+      "name": "Sundered Wretch",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 85,
+      "retreat": 2,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "collapse_inward",
+          "name": "Collapse Inward",
+          "cost": {
+            "void": 3,
+            "colorless": 0
+          },
+          "damage": 36,
+          "text": "36 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "An 85 HP Basic on the standard curve. Void's wall, and the body Siphon energy is safest on."
+    },
+    {
+      "id": "severance_priest",
+      "name": "Severance Priest",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "hollow_acolyte",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "sever",
+          "name": "Sever",
+          "cost": {
+            "void": 3,
+            "colorless": 0
+          },
+          "damage": 25,
+          "text": "25 damage; Siphon 1",
+          "effects": [
+            {
+              "op": "siphon",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "The workhorse. Siphon 1 every turn, forever, on a body that survives a volley."
+    },
+    {
+      "id": "entropy_warden",
+      "name": "Entropy Warden",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "null_adept",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "erode",
+          "name": "Erode",
+          "cost": {
+            "void": 3,
+            "colorless": 0
+          },
+          "damage": 22,
+          "text": "22 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Rift 1 at Stage 1. At Gap 12 this is a 34-damage attack that cost 3."
+    },
+    {
+      "id": "the_unwritten",
+      "name": "The Unwritten",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 80,
+      "retreat": 2,
+      "evolves_from": "gnawing_absence",
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "blank_the_page",
+          "name": "Blank the Page",
+          "ability": true,
+          "consume": 1,
+          "targeting": "enemy_unit",
+          "cost": {
+            "void": 0,
+            "colorless": 0
+          },
+          "damage": 0,
+          "text": "Consume 1: Void 2 on a target enemy unit.",
+          "effects": [
+            {
+              "op": "void_energy",
+              "n": 2
+            }
+          ]
+        },
+        {
+          "id": "erasure",
+          "name": "Erasure",
+          "cost": {
+            "void": 2,
+            "colorless": 0
+          },
+          "damage": 16,
+          "text": "16 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Destruction, not theft — it takes nothing back. Consume 1 is what stops a free repeating strip."
+    },
+    {
+      "id": "famine_of_forms",
+      "name": "Famine of Forms",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 100,
+      "retreat": 2,
+      "evolves_from": "rust_crawler",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "starve",
+          "name": "Starve",
+          "cost": {
+            "void": 4,
+            "colorless": 0
+          },
+          "damage": 28,
+          "text": "28 damage; Siphon 2",
+          "effects": [
+            {
+              "op": "siphon",
+              "n": 2
+            }
+          ]
+        }
+      ],
+      "flavor": "Siphon 2 is the ceiling. Four energy of swing per turn on a body that has to survive to do it."
+    },
+    {
+      "id": "hungering_maw",
+      "name": "Hungering Maw",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 115,
+      "retreat": 2,
+      "evolves_from": "sundered_wretch",
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "devour_light",
+          "name": "Devour the Light",
+          "cost": {
+            "void": 5,
+            "colorless": 0
+          },
+          "damage": 60,
+          "text": "60 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "No rider at all — the standard curve on Void's biggest Stage 1. The honest beater."
+    },
+    {
+      "id": "the_absence",
+      "name": "The Absence",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage2",
+      "hp": 130,
+      "retreat": 3,
+      "evolves_from": "severance_priest",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        },
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "widening",
+          "name": "The Widening",
+          "cost": {
+            "void": 5,
+            "colorless": 0
+          },
+          "damage": 34,
+          "text": "34 damage; Siphon 2",
+          "effects": [
+            {
+              "op": "siphon",
+              "n": 2
+            }
+          ]
+        }
+      ],
+      "flavor": "The only card holding both signatures. Siphon feeds its own Rift: every point stolen is two more damage next turn."
+    },
+    {
+      "id": "throat_of_the_void",
+      "name": "Throat of the Void",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage2",
+      "hp": 145,
+      "retreat": 3,
+      "evolves_from": "entropy_warden",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "swallow",
+          "name": "Swallow",
+          "cost": {
+            "void": 6,
+            "colorless": 0
+          },
+          "damage": 44,
+          "text": "44 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The single Rift 2 in the faction, deliberately. At Gap 20 it hits for 84 and that is the intended ceiling."
+    },
+    {
+      "id": "unmaker_of_thrones",
+      "name": "Unmaker of Thrones",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage2",
+      "hp": 120,
+      "retreat": 3,
+      "evolves_from": "the_unwritten",
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "null_the_pool",
+          "name": "Null the Pool",
+          "ability": true,
+          "consume": 2,
+          "cost": {
+            "void": 0,
+            "colorless": 0
+          },
+          "damage": 0,
+          "text": "Consume 2: destroy 20% of the enemy POOL, minimum 2.",
+          "effects": [
+            {
+              "op": "void_pool_pct",
+              "n": 20
+            }
+          ]
+        },
+        {
+          "id": "last_absence",
+          "name": "The Last Absence",
+          "cost": {
+            "void": 6,
+            "colorless": 0
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The rule-breaker: the only card that reaches the pool. Worthless early, devastating against a hoarder."
+    },
+    {
+      "id": "silence_eternal",
+      "name": "Silence Eternal",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage2",
+      "hp": 175,
+      "retreat": 4,
+      "evolves_from": "famine_of_forms",
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "the_long_quiet",
+          "name": "The Long Quiet",
+          "cost": {
+            "void": 8,
+            "colorless": 0
+          },
+          "damage": 0,
+          "text": "10 damage to the enemy throne for each point of Gap, to a maximum of 100.",
+          "effects": [
+            {
+              "op": "gap_throne_damage",
+              "n": 10
+            },
+            {
+              "op": "gap_throne_max",
+              "n": 100
+            }
+          ]
+        }
+      ],
+      "flavor": "The win condition. It converts the Gap you built into throne damage, which is the only thing Rift cannot do."
+    },
+    {
+      "id": "void_energy",
+      "name": "Void Energy",
+      "type": "energy",
+      "faction": "void",
+      "text": "Adds (turn + 1) Void energy to your pool.",
+      "flavor": "What is taken has to come from somewhere."
+    },
+    {
+      "id": "draw_down",
+      "name": "Draw Down",
+      "type": "support",
+      "faction": "void",
+      "cost": 0,
+      "targeting": "enemy_unit",
+      "text": "Siphon 1 from a target enemy unit.",
+      "effects": [
+        {
+          "op": "siphon_support",
+          "n": 1
+        }
+      ],
+      "flavor": "The free floor. Every Void deck runs four."
+    },
+    {
+      "id": "exsanguinate",
+      "name": "Exsanguinate",
+      "type": "support",
+      "faction": "void",
+      "cost": 2,
+      "targeting": "enemy_unit",
+      "text": "Siphon 3 from a target enemy unit.",
+      "effects": [
+        {
+          "op": "siphon_support",
+          "n": 3
+        }
+      ],
+      "flavor": "The priced variant: same effect, restriction removed. Two energy buys two more points."
+    },
+    {
+      "id": "unwrite",
+      "name": "Unwrite",
+      "type": "support",
+      "faction": "void",
+      "cost": 1,
+      "targeting": "enemy_unit",
+      "text": "Destroy all attached energy on a target enemy unit.",
+      "effects": [
+        {
+          "op": "void_all",
+          "n": 0
+        }
+      ],
+      "flavor": "Takes nothing back, so it is priced below theft. The answer to one over-charged body."
+    },
+    {
+      "id": "widening_rift",
+      "name": "Widening Rift",
+      "type": "support",
+      "faction": "void",
+      "cost": 0,
+      "targeting": "enemy_unit",
+      "text": "Deal damage to a target enemy unit equal to twice the Gap, to a maximum of 30.",
+      "effects": [
+        {
+          "op": "gap_damage",
+          "n": 2
+        },
+        {
+          "op": "gap_damage_max",
+          "n": 30
+        }
+      ],
+      "flavor": "Reach on a card, capped so it can never be the whole plan."
+    },
+    {
+      "id": "event_horizon",
+      "name": "Event Horizon",
+      "type": "tool",
+      "faction": "void",
+      "cost": 0,
+      "text": "Attach to a unit. That unit gains Rift 1.",
+      "effects": [
+        {
+          "op": "grant_rift",
+          "n": 1
+        }
+      ],
+      "flavor": "A Tool is a bet the body survives, which is exactly what a Rift unit needs to be."
+    },
+    {
+      "id": "gaia_energy",
+      "name": "Gaia Energy",
+      "type": "energy",
+      "faction": "gaia",
+      "text": "Adds (turn + 1) Gaia energy to your pool.",
+      "flavor": "Everything green is a slow argument with stone."
+    },
+    {
+      "id": "gaia_makeshift_tower",
+      "name": "Makeshift Tower",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        }
+      ],
+      "effects": [
+        {
+          "op": "auto_fire",
+          "n": 10
+        },
+        {
+          "op": "tower_growth",
+          "n": 5
+        }
+      ],
+      "text": "Fires at the unit across from it at end of turn, free. Gains +5 max HP each round.",
+      "flavor": "Stones remember the shape they were stacked in.",
+      "attacks": []
+    },
+    {
+      "id": "gaia_living_conduit",
+      "name": "Living Conduit",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 70,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "essence",
+          "n": 1
+        }
+      ],
+      "effects": [
+        {
+          "op": "earth_from_attached",
+          "n": 1
+        }
+      ],
+      "text": "Earth equal to its attached energy.",
+      "flavor": "What it drinks, the grove feels.",
+      "attacks": [
+        {
+          "id": "conduit_swell",
+          "name": "Swell",
+          "cost": {
+            "gaia": 2,
+            "colorless": 0
+          },
+          "damage": 18,
+          "text": "18 damage"
+        }
+      ]
+    },
+    {
+      "id": "gaia_deep_roots",
+      "name": "Deep Roots",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 110,
+      "retreat": 2,
+      "evolves_from": "gaia_living_conduit",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "essence",
+          "n": 2
+        }
+      ],
+      "effects": [
+        {
+          "op": "earth_rate",
+          "n": 1
+        }
+      ],
+      "text": "Earth grants +2 instead of +1.",
+      "flavor": "Down far enough, every stone is one stone.",
+      "attacks": [
+        {
+          "id": "roots_upheaval",
+          "name": "Upheaval",
+          "cost": {
+            "gaia": 3,
+            "colorless": 0
+          },
+          "damage": 26,
+          "text": "26 damage"
+        }
+      ]
+    },
+    {
+      "id": "gaia_bulwark_of_stone",
+      "name": "Bulwark of Stone",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 100,
+      "retreat": 2,
+      "evolves_from": "gaia_makeshift_tower",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "effects": [
+        {
+          "op": "auto_fire",
+          "n": 14
+        },
+        {
+          "op": "tower_growth",
+          "n": 5
+        }
+      ],
+      "text": "Fires at the unit across from it at end of turn, free. Gains +5 max HP each round.",
+      "flavor": "They stopped hauling stone and started asking it to stay.",
+      "attacks": []
+    },
+    {
+      "id": "gaia_the_standing_stone",
+      "name": "The Standing Stone",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage2",
+      "hp": 150,
+      "retreat": 3,
+      "evolves_from": "gaia_bulwark_of_stone",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 3
+        },
+        {
+          "kw": "resist",
+          "n": 10
+        }
+      ],
+      "effects": [
+        {
+          "op": "auto_fire",
+          "n": 20
+        },
+        {
+          "op": "tower_growth",
+          "n": 5
+        }
+      ],
+      "text": "Fires at the unit across from it at end of turn, free. Gains +5 max HP each round.",
+      "flavor": "Older than the throne it outlasts.",
+      "attacks": []
+    },
+    {
+      "id": "gaia_heartwood_ancient",
+      "name": "Heartwood Ancient",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage2",
+      "hp": 160,
+      "retreat": 4,
+      "evolves_from": "gaia_deep_roots",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 3
+        },
+        {
+          "kw": "essence",
+          "n": 3
+        }
+      ],
+      "effects": [
+        {
+          "op": "earth_from_attached",
+          "n": 1
+        }
+      ],
+      "text": "Earth equal to its attached energy, in addition to its printed Earth.",
+      "flavor": "Every ring is a year the world did not end.",
+      "attacks": [
+        {
+          "id": "heartwood_world_root",
+          "name": "World-Root",
+          "cost": {
+            "gaia": 5,
+            "colorless": 0
+          },
+          "damage": 45,
+          "text": "45 damage"
+        }
+      ]
+    },
+    {
+      "id": "gaia_sapling_warden",
+      "name": "Sapling Warden",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 60,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        }
+      ],
+      "text": "",
+      "flavor": "Small, and in no hurry.",
+      "attacks": [
+        {
+          "id": "sapling_root_strike",
+          "name": "Root Strike",
+          "cost": {
+            "gaia": 1,
+            "colorless": 0
+          },
+          "damage": 9,
+          "text": "9 damage"
+        }
+      ]
+    },
+    {
+      "id": "gaia_grovekeeper",
+      "name": "Grovekeeper",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "gaia_sapling_warden",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        }
+      ],
+      "text": "Once per turn: this unit gains +1 Earth permanently.",
+      "flavor": "Tending is just patience with a direction.",
+      "attacks": [
+        {
+          "id": "grovekeeper_tend",
+          "name": "Tend",
+          "cost": {
+            "gaia": 0,
+            "colorless": 0
+          },
+          "damage": 0,
+          "text": "This unit gains +1 Earth permanently.",
+          "ability": true,
+          "effects": [
+            {
+              "op": "grow_earth",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "id": "grovekeeper_bramble",
+          "name": "Bramble",
+          "cost": {
+            "gaia": 2,
+            "colorless": 0
+          },
+          "damage": 18,
+          "text": "18 damage"
+        }
+      ]
+    },
+    {
+      "id": "gaia_elder_of_the_grove",
+      "name": "Elder of the Grove",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage2",
+      "hp": 130,
+      "retreat": 3,
+      "evolves_from": "gaia_grovekeeper",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 3
+        }
+      ],
+      "text": "Once per turn: this unit gains +1 Earth permanently.",
+      "flavor": "It remembers being the sapling. It is in no hurry still.",
+      "attacks": [
+        {
+          "id": "elder_deepen",
+          "name": "Deepen",
+          "cost": {
+            "gaia": 0,
+            "colorless": 0
+          },
+          "damage": 0,
+          "text": "This unit gains +1 Earth permanently.",
+          "ability": true,
+          "effects": [
+            {
+              "op": "grow_earth",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "id": "elder_overgrowth",
+          "name": "Overgrowth",
+          "cost": {
+            "gaia": 4,
+            "colorless": 0
+          },
+          "damage": 36,
+          "text": "36 damage"
+        }
+      ]
+    },
+    {
+      "id": "gaia_mossback_tortoise",
+      "name": "Mossback Tortoise",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        },
+        {
+          "kw": "retribution",
+          "n": 10
+        }
+      ],
+      "text": "",
+      "flavor": "Nothing it has ever met was worth hurrying for.",
+      "attacks": [
+        {
+          "id": "mossback_shell_slam",
+          "name": "Shell Slam",
+          "cost": {
+            "gaia": 2,
+            "colorless": 0
+          },
+          "damage": 14,
+          "text": "14 damage"
+        }
+      ]
+    },
+    {
+      "id": "gaia_granite_colossus",
+      "name": "Granite Colossus",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 120,
+      "retreat": 3,
+      "evolves_from": "gaia_mossback_tortoise",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "retribution",
+          "n": 15
+        }
+      ],
+      "text": "",
+      "flavor": "The lane does not move. Neither does it.",
+      "attacks": [
+        {
+          "id": "granite_tremor",
+          "name": "Tremor",
+          "cost": {
+            "gaia": 3,
+            "colorless": 0
+          },
+          "damage": 24,
+          "text": "24 damage"
+        }
+      ]
+    },
+    {
+      "id": "gaia_seedbearer",
+      "name": "Seedbearer",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        },
+        {
+          "kw": "essence",
+          "n": 1
+        }
+      ],
+      "text": "",
+      "flavor": "It was always going to be compost. That was the plan.",
+      "attacks": [
+        {
+          "id": "seedbearer_scatter",
+          "name": "Scatter",
+          "cost": {
+            "gaia": 1,
+            "colorless": 0
+          },
+          "damage": 9,
+          "text": "9 damage"
+        }
+      ]
+    },
+    {
+      "id": "gaia_vernal_rite",
+      "name": "Vernal Rite",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "gaia_seedbearer",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "essence",
+          "n": 2
+        }
+      ],
+      "text": "Once per turn: move all grown Earth from a friendly unit to this one.",
+      "flavor": "Nothing is lost. It is only moved somewhere it can still be spent.",
+      "attacks": [
+        {
+          "id": "vernal_gather",
+          "name": "Gather",
+          "cost": {
+            "gaia": 0,
+            "colorless": 0
+          },
+          "damage": 0,
+          "text": "Move all grown Earth from a friendly unit to this one.",
+          "ability": true,
+          "effects": [
+            {
+              "op": "move_earth",
+              "n": 1
+            }
+          ]
+        },
+        {
+          "id": "vernal_flourish",
+          "name": "Flourish",
+          "cost": {
+            "gaia": 3,
+            "colorless": 0
+          },
+          "damage": 25,
+          "text": "25 damage"
+        }
+      ]
+    },
+    {
+      "id": "gaia_bedrock",
+      "name": "Bedrock",
+      "type": "support",
+      "faction": "gaia",
+      "cost": 0,
+      "text": "A friendly unit gains +2 Earth permanently.",
+      "effects": [
+        {
+          "op": "grow_earth_target",
+          "n": 2
+        }
+      ],
+      "flavor": "Down there it is all one piece."
+    },
+    {
+      "id": "gaia_deep_communion",
+      "name": "Deep Communion",
+      "type": "support",
+      "faction": "gaia",
+      "cost": 1,
+      "text": "Draw 2 cards. A friendly unit gains +1 Earth permanently.",
+      "effects": [
+        {
+          "op": "draw",
+          "n": 2
+        },
+        {
+          "op": "grow_earth_target",
+          "n": 1
+        }
+      ],
+      "flavor": "Listening is the cheapest way to grow."
+    },
+    {
+      "id": "gaia_terraform",
+      "name": "Terraform",
+      "type": "support",
+      "faction": "gaia",
+      "cost": 2,
+      "text": "Heal 20 to all your units. A friendly unit gains +1 Earth permanently.",
+      "effects": [
+        {
+          "op": "heal_all",
+          "n": 20
+        },
+        {
+          "op": "grow_earth_target",
+          "n": 1
+        }
+      ],
+      "flavor": "The ground comes back first. It always does."
+    },
+    {
+      "id": "gaia_cairn",
+      "name": "Cairn",
+      "type": "tower_support",
+      "faction": "gaia",
+      "cost": 0,
+      "permanent": true,
+      "text": "Permanent: this tower gains +15 max HP.",
+      "effects": [
+        {
+          "op": "tower_max_hp",
+          "n": 15
+        }
+      ],
+      "flavor": "One stone, then another, until it means something."
+    },
+    {
+      "id": "gaia_verdant_anchor",
+      "name": "Verdant Anchor",
+      "type": "tool",
+      "faction": "gaia",
+      "cost": 0,
+      "text": "Attach to a unit. That unit has Earth +2.",
+      "effects": [
+        {
+          "op": "grant_earth",
+          "n": 2
+        }
+      ],
+      "flavor": "Hold still long enough and the roots decide for you."
+    }
+  ]
+}

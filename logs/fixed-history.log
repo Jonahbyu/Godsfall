@@ -1,0 +1,81 @@
+﻿########################################################
+# RESOLVED 2026-08-07 23:03:50
+# fix: self-test of the logging pipeline (injected error, not a real bug)
+########################################################
+
+=== 2026-08-07_230303 (exit -1) ===
+session log: logs/history/session_2026-08-07_230303.log
+ERROR: TEMP LOGGING SELFTEST - remove me
+   at: push_error (core/variant/variant_utility.cpp:1023)
+       [0] _ready (res://scripts/ui/MainMenu.gd:14)
+SCRIPT ERROR: Invalid call. Nonexistent function 'nonexistent_method' in base 'Nil'.
+   at: _ready (res://scripts/ui/MainMenu.gd:16)
+       [0] _ready (res://scripts/ui/MainMenu.gd:16)
+
+########################################################
+# RESOLVED 2026-08-07 23:09:25
+# fix: WindowIcon: used load() on a non-imported PNG; switched to Image.load_from_file
+########################################################
+
+=== 2026-08-07_230826 (exit -1) ===
+session log: logs/history/session_2026-08-07_230826.log
+ERROR: No loader found for resource: res://icon_window.png (expected type: unknown)
+   at: _load (core/io/resource_loader.cpp:332)
+       [0] _apply (res://scripts/core/WindowIcon.gd:27)
+       [1] _ready (res://scripts/core/WindowIcon.gd:19)
+
+########################################################
+# RESOLVED 2026-08-07 23:42:08
+# fix: WindowIcon: Image.load_from_file warned on every launch; switched to load() now that icon_window.png.import exists
+########################################################
+
+=== 2026-08-07_234010 (exit -1) ===
+session log: logs/history/session_2026-08-07_234010.log
+WARNING: Loaded resource as image file, this will not work on export: 'res://icon_window.png'. Instead, import the image file as an Image resource and load it normally as a resource.
+   at: load_from_file (core/io/image.cpp:2780)
+       [0] _apply (res://scripts/core/WindowIcon.gd:26)
+       [1] _ready (res://scripts/core/WindowIcon.gd:19)
+=== 2026-08-07_234104 (exit -1) ===
+session log: logs/history/session_2026-08-07_234104.log
+WARNING: Loaded resource as image file, this will not work on export: 'res://icon_window.png'. Instead, import the image file as an Image resource and load it normally as a resource.
+   at: load_from_file (core/io/image.cpp:2780)
+       [0] _apply (res://scripts/core/WindowIcon.gd:26)
+       [1] _ready (res://scripts/core/WindowIcon.gd:19)
+
+########################################################
+# RESOLVED 2026-08-08 11:52:46
+# fix: Stale parse errors captured mid-edit while adding the priced heal cards to GameState.gd (new heal_full / heal_per_round ops). Transient inconsistent save; the finished file compiles - Combat.tscn loads and all seven harnesses pass.
+########################################################
+
+=== 2026-08-08_114312 (exit -1) ===
+session log: logs/history/session_2026-08-08_114312.log
+SCRIPT ERROR: Parse Error: Cannot infer the type of "n" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://scripts/core/GameState.gd:501)
+       [0] _on_fight (res://scripts/ui/DeckSelect.gd:323)
+SCRIPT ERROR: Parse Error: Invalid argument for "_fire_spite_engine()" function: argument 3 should be "Array" but is "CardData".
+   at: GDScript::reload (res://scripts/core/GameState.gd:991)
+       [0] _on_fight (res://scripts/ui/DeckSelect.gd:323)
+SCRIPT ERROR: Parse Error: Invalid argument for "_fire_spite_engine()" function: argument 3 should be "Array" but is "CardData".
+   at: GDScript::reload (res://scripts/core/GameState.gd:1036)
+       [0] _on_fight (res://scripts/ui/DeckSelect.gd:323)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "n" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://scripts/core/GameState.gd:1132)
+       [0] _on_fight (res://scripts/ui/DeckSelect.gd:323)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://scripts/ui/Combat.gd:0)
+       [0] _on_fight (res://scripts/ui/DeckSelect.gd:323)
+ERROR: Failed to load script "res://scripts/ui/Combat.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+       [0] _on_fight (res://scripts/ui/DeckSelect.gd:323)
+SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.
+   at: _start_game (res://scripts/ui/Combat.gd:83)
+       [0] _start_game (res://scripts/ui/Combat.gd:83)
+       [1] _ready (res://scripts/ui/Combat.gd:76)
+SCRIPT ERROR: Invalid access to property or key 'finished' on a base object of type 'Nil'.
+   at: _on_end_turn (res://scripts/ui/Combat.gd:1273)
+       [0] _on_end_turn (res://scripts/ui/Combat.gd:1273)
+SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.
+   at: _start_game (res://scripts/ui/Combat.gd:83)
+       [0] _start_game (res://scripts/ui/Combat.gd:83)
+       [1] _ready (res://scripts/ui/Combat.gd:76)
+

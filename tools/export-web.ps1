@@ -1,0 +1,93 @@
+# Export the Web build and publish it to the `gh-pages` branch.
+#
+#   powershell -ExecutionPolicy Bypass -File tools\export-web.ps1
+#   powershell -ExecutionPolicy Bypass -File tools\export-web.ps1 -NoPush
+#
+# The build is written to `build/web/`, which is gitignored on master: a 39MB
+# wasm regenerated on every export has no business in the history of a source
+# branch. Publishing copies it onto `gh-pages`, which holds nothing else, so the
+# two branches never share a file and the game build can never clobber the
+# design docs in `docs/`.
+#
+# `-NoPush` builds without touching git — use it to check an export locally
+# before deciding to publish.
+
+param(
+    [switch]$NoPush
+)
+
+$ErrorActionPreference = 'Stop'
+
+$ProjectDir = Split-Path -Parent $PSScriptRoot
+$BuildDir   = Join-Path $ProjectDir 'build\web'
+$GodotPath  = Join-Path $PSScriptRoot 'godot-path.txt'
+
+# Reuse the pinned Godot the launcher already found, so this script and the game
+# always run the same build.
+if (-not (Test-Path $GodotPath)) {
+    Write-Error "No tools/godot-path.txt. Launch the game once so it is written."
+}
+$Godot = (Get-Content $GodotPath -Raw).Trim()
+if (-not (Test-Path $Godot)) {
+    Write-Error "Godot not found at '$Godot' (from tools/godot-path.txt)."
+}
+
+Write-Host "Exporting Web build..." -ForegroundColor Cyan
+New-Item -ItemType Directory -Force $BuildDir | Out-Null
+
+# --import first: a fresh checkout has no .godot/, and exporting without it
+# silently ships a build with no imported textures.
+& $Godot --headless --path $ProjectDir --import | Out-Null
+& $Godot --headless --path $ProjectDir --export-release 'Web' | Out-Null
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Godot export failed with exit code $LASTEXITCODE."
+}
+if (-not (Test-Path (Join-Path $BuildDir 'index.wasm'))) {
+    Write-Error "Export reported success but produced no index.wasm."
+}
+
+$size = [math]::Round((Get-ChildItem $BuildDir -File | Measure-Object Length -Sum).Sum / 1MB, 1)
+Write-Host "Build OK - $size MB in build/web" -ForegroundColor Green
+
+if ($NoPush) {
+    Write-Host "-NoPush set; stopping before git." -ForegroundColor Yellow
+    exit 0
+}
+
+# Publish to gh-pages via a temporary worktree. A worktree is what keeps this
+# safe to run with uncommitted work in progress: the orphan branch is checked
+# out in its own directory, so the working tree on master is never touched.
+$Work = Join-Path $env:TEMP "godsfall-ghpages-$(Get-Random)"
+
+git -C $ProjectDir rev-parse --verify gh-pages 2>$null | Out-Null
+if ($LASTEXITCODE -eq 0) {
+    git -C $ProjectDir worktree add $Work gh-pages | Out-Null
+} else {
+    git -C $ProjectDir worktree add --detach $Work | Out-Null
+    git -C $Work checkout --orphan gh-pages | Out-Null
+    git -C $Work rm -rf . 2>$null | Out-Null
+}
+
+try {
+    Get-ChildItem $Work -Exclude '.git' | Remove-Item -Recurse -Force
+    Copy-Item "$BuildDir\*" $Work -Recurse -Force
+
+    # .nojekyll stops GitHub Pages running the files through Jekyll, which
+    # ignores paths beginning with an underscore and would drop parts of a
+    # Godot build without reporting anything.
+    New-Item -ItemType File -Path (Join-Path $Work '.nojekyll') -Force | Out-Null
+
+    git -C $Work add -A | Out-Null
+    $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm'
+    git -C $Work commit -m "Web build $stamp" | Out-Null
+
+    if ($LASTEXITCODE -eq 0) {
+        git -C $Work push origin gh-pages
+        Write-Host "Published to gh-pages." -ForegroundColor Green
+    } else {
+        Write-Host "No change since the last published build." -ForegroundColor Yellow
+    }
+} finally {
+    git -C $ProjectDir worktree remove $Work --force 2>$null | Out-Null
+}
