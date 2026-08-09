@@ -1614,6 +1614,48 @@ Both icons are generated from one script, so they can't drift apart. To change t
 edit and rerun `tools/make_icon.py`, then refresh the shortcut icon (Windows caches it —
 easiest is to re-run the `WScript.Shell` snippet that created the `.lnk`).
 
+### The web build
+
+**The game is public at <https://jonahbyu.github.io/Godsfall/>**, served by GitHub Pages
+from the `gh-pages` branch of `github.com/Jonahbyu/Godsfall`.
+
+Rebuild and publish with:
+
+```
+powershell -ExecutionPolicy Bypass -File tools\export-web.ps1
+```
+
+That exports to `build/web/` and pushes it to `gh-pages`. Add `-NoPush` to build without
+publishing.
+
+The layout is three-way separated on purpose, and each split was forced by something:
+
+| Where | Holds | Why not together |
+|---|---|---|
+| `master` | Source, design docs, `docs/plans` + `docs/specs` | — |
+| `gh-pages` | Only the exported build | A 39MB wasm regenerated on every export has no place in a source branch's history |
+| `build/` | Local export output, gitignored | — |
+
+**Pages cannot serve an arbitrary folder** — only a branch root or `/docs`. Since `docs/`
+was already the designated home for plans and specs, serving from there would have
+published them and let a stray `--export` overwrite them. A separate branch is what keeps
+the two from ever sharing a file.
+
+Four things the export depends on, each of which silently breaks it if changed:
+
+- **`variant/thread_support=false`.** A threaded build needs COOP/COEP headers, and Pages
+  cannot set headers. A threaded build deploys fine and then refuses to start.
+- **`.nojekyll` on `gh-pages`.** Without it Pages runs the files through Jekyll, which drops
+  paths beginning with an underscore and reports nothing.
+- **`BattleLog` writes to `user://` outside the editor.** `res://` is inside the packed
+  `.pck` and read-only once exported, so the balance log would silently never write. It
+  still uses `res://logs/` under the editor, which is what the workflow below reads.
+- **The export folder must exist before `--export-release` runs.** Godot errors with
+  "Target folder does not exist" rather than creating it; the script does it first.
+
+`user://` on the web is browser storage, so saved decks are per-browser and are lost if the
+user clears site data. That is a real limitation of the web build, not a bug.
+
 ### What the launcher produces
 
 | Path | Contents |
@@ -1655,6 +1697,13 @@ assertions in game code surface here.
 ## Status
 
 **First prototype playable.** Godot 4.7 project, rooted in this folder.
+
+**Public, and playable in a browser at <https://jonahbyu.github.io/Godsfall/>.** Source is
+at `github.com/Jonahbyu/Godsfall`; the Web build is published to the `gh-pages` branch by
+`tools/export-web.ps1`. See *The web build* above for the four settings the export depends
+on. Verified in a real browser on 2026-08-09 — the engine boots, `CardDB` loads all 114
+cards, deck select lists all ten samples, and combat reaches the setup phase against the AI
+with no console errors.
 
 Implemented: main menu, deck select, deck builder, combat vs. a heuristic AI, **both
 factions in full** — 15 Hel units and 13 Heaven units, each with its own energy card — the
@@ -2594,3 +2643,23 @@ even if the rule text later changes. Keep entries to one or two lines.
   one it was. The general lesson: **a data format that hard-codes one valid value silently
   zeroes every other one**, and the tests could not catch it because no assertion compared a
   card's printed cost against what the engine charged.
+- **The game ships to the web from a `gh-pages` branch, never from `docs/`.** GitHub Pages
+  can only serve a branch root or `/docs`, and `docs/` was already the designated home for
+  plans and specs — serving from there would have published them and left the design
+  documents one stray `--export` away from being overwritten by build output. A branch that
+  holds nothing but the build means the two can never share a file, and it keeps a 39MB
+  wasm regenerated on every export out of the source history. The repo is **public**
+  because Pages cannot serve a private repo without a paid plan, which is the same reason
+  Battlemage is public.
+- **The web export must stay single-threaded.** `variant/thread_support=false` is not a
+  performance choice: a threaded Godot build requires COOP/COEP response headers, and Pages
+  serves static files with no way to set them. The failure mode is the trap — the build
+  exports cleanly, deploys cleanly, and then refuses to start in the browser, so nothing
+  upstream of the user ever reports a problem.
+- **`res://` is read-only in an exported build, so `BattleLog` writes to `user://` outside
+  the editor.** The balance log wrote to `res://logs/battles.log` via `globalize_path`,
+  which is a real folder under the editor and a path inside the packed `.pck` once
+  exported. Because the writer deliberately never raises — correct, and documented above —
+  every web game would have silently logged nothing. **A failure path designed to stay
+  quiet needs its assumptions checked whenever the platform changes**, precisely because it
+  will not tell you when they stop holding.

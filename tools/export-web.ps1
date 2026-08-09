@@ -60,13 +60,19 @@ if ($NoPush) {
 # out in its own directory, so the working tree on master is never touched.
 $Work = Join-Path $env:TEMP "godsfall-ghpages-$(Get-Random)"
 
-git -C $ProjectDir rev-parse --verify gh-pages 2>$null | Out-Null
-if ($LASTEXITCODE -eq 0) {
+# Does gh-pages exist yet? `git rev-parse --verify` writes to stderr when it
+# does not, and under $ErrorActionPreference='Stop' PowerShell turns a native
+# command's stderr into a terminating error — so ask a command that answers with
+# output instead of a failure.
+$branches = @(git -C $ProjectDir branch --list gh-pages)
+$hasBranch = $branches.Count -gt 0
+
+if ($hasBranch) {
     git -C $ProjectDir worktree add $Work gh-pages | Out-Null
 } else {
     git -C $ProjectDir worktree add --detach $Work | Out-Null
     git -C $Work checkout --orphan gh-pages | Out-Null
-    git -C $Work rm -rf . 2>$null | Out-Null
+    git -C $Work reset | Out-Null
 }
 
 try {
@@ -79,10 +85,15 @@ try {
     New-Item -ItemType File -Path (Join-Path $Work '.nojekyll') -Force | Out-Null
 
     git -C $Work add -A | Out-Null
-    $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm'
-    git -C $Work commit -m "Web build $stamp" | Out-Null
 
-    if ($LASTEXITCODE -eq 0) {
+    # `git commit` exits non-zero when there is nothing staged, which is the
+    # normal "rebuilt, nothing changed" case rather than a failure — so check
+    # for staged changes first and only commit when there are some.
+    $staged = @(git -C $Work diff --cached --name-only)
+
+    if ($staged.Count -gt 0) {
+        $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm'
+        git -C $Work commit -m "Web build $stamp" | Out-Null
         git -C $Work push origin gh-pages
         Write-Host "Published to gh-pages." -ForegroundColor Green
     } else {
