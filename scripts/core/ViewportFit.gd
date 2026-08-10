@@ -2,104 +2,180 @@ extends Node
 
 ## Autoload: ViewportFit
 ##
-## Keeps the game legible on a screen narrower or shorter than the layout needs
-## — phones in particular, where the browser window can be 390 CSS pixels wide
-## against a combat screen that needs ~1180.
+## Owns two related things: how large the UI is drawn, and whether screens use
+## their single-column ("mobile") layout.
 ##
-## The problem this solves is specific to `stretch/aspect = "expand"`. Expand
-## gives the viewport the window's *real* aspect ratio at a fixed scale, which is
-## the right behaviour on a desktop monitor: a wider window means more room, not
-## bigger cards. On a phone it means the viewport is genuinely 390 units wide,
-## so the board rows (2 boards x 3 slots x 132px) and the 320px log panel are
-## simply off-screen with no way to reach them. Nothing is scaled down, because
-## expand's whole contract is that it does not scale.
+## ## Why this exists
+##
+## The project designs at 1440x900 with `stretch/aspect = "expand"`. Expand gives
+## the viewport the window's *real* aspect at a fixed scale, which is right on a
+## desktop — a wider window should mean more room, not bigger cards — and fatal
+## on a phone, where it means the viewport is genuinely 390 units wide against a
+## combat screen needing ~1180. Nothing gets scaled; the board and the side panel
+## are simply off-screen with no way to reach them.
 ##
 ## Switching the project to `aspect = "keep"` would fix mobile and regress the
-## desktop, which is the case that actually gets played: keep letterboxes to
-## 1440x900 and throws away the extra width a real monitor has.
+## case that actually gets played, letterboxing a real monitor back to 1440x900.
+## So `expand` stays and this node controls `content_scale_size`, which is the
+## reference resolution expand measures against.
 ##
-## So the fix is to keep `expand` and clamp it. `content_scale_size` is the
-## reference resolution expand measures against, and Godot recomputes the scale
-## factor whenever it changes. Setting it to a size that is never smaller than
-## MIN_DESIGN means a narrow window gets a *scaled down* viewport that still
-## holds the whole layout, while a window at or above the minimum keeps the
-## native 1:1 expand behaviour it has today.
+## ## The two jobs, and why they are one node
 ##
-## Desktop is untouched by construction: at 1440x900 the clamp is inactive and
-## `content_scale_size` is set to exactly the window size, which is what expand
-## computes for itself anyway.
+## **Scale.** A smaller `content_scale_size` means the same window holds fewer
+## design units, so everything is drawn *bigger*. That is the whole of "zoom in".
+##
+## **Layout.** Drawing bigger costs width, and the desktop layouts are built from
+## fixed-width columns that cannot survive losing it. So the zoom is useless on
+## its own: raising the scale without restacking just pushes content off the
+## other edge. `mobile` is what tells each screen to go single-column and give
+## the width back.
+##
+## They live together because they are one decision made from one measurement,
+## and a screen that rebuilt for one without the other would be wrong either way.
 
-## The smallest viewport the UI actually fits in, in design units.
+## The smallest viewport the desktop UI fits in, in design units.
 ##
-## Width is set by the combat screen, which is the tightest of the four: two
-## board rows of three 132px slots (792) + inter-board separation + the 320px
-## action/log column + margins. 1180 is that sum with the slack the hand row and
-## the pool bar need at their minimum sizes.
-##
-## Height is set by the same screen stacking two board rows (196 each), two
-## throne labels, the pool bar, and a 262px hand card plus its 26px hover lift.
+## Width is set by the combat screen, the tightest of the four: two board rows of
+## three 132px slots (792) + inter-board separation + the 320px action/log column
+## + margins. Height is set by that same screen stacking two board rows (196
+## each), two throne labels, the pool bar, and a 262px hand card plus its 26px
+## hover lift.
 const MIN_DESIGN := Vector2i(1180, 780)
 
-## Below this window width the device is treated as a phone and the UI is told
-## to compact itself. Matches the common tablet breakpoint rather than anything
-## in the layout — it is a question about the *device*, not about the design.
+## The reference *width* mobile mode targets. Everything is drawn as though the
+## screen were this many design units across, so a 390px phone renders the UI at
+## roughly 0.72x instead of the 0.33x a 1180-wide layout would force — which is
+## the difference between "small" and "unreadable".
+##
+## 540 rather than something smaller because the hand card is 168 design units
+## wide and three of them plus separation is the narrowest useful hand row.
+const MOBILE_DESIGN_WIDTH := 540
+
+## Below this window width the device is treated as a phone. A question about the
+## *device*, not the design, so it matches the common tablet breakpoint rather
+## than anything in the layout.
 const NARROW_WIDTH := 820
 
-## True while the window is narrow enough that screens should use their compact
-## layout. Read by Combat and DeckBuilder; see `compactness_changed`.
-var compact: bool = false
+## Manual override of the automatic detection.
+##   AUTO  - follow the window width (the default)
+##   ON    - force mobile mode, for testing the layout on a desktop
+##   OFF   - force the desktop layout, e.g. on a tablet that is wide enough
+enum Override { AUTO, ON, OFF }
 
-## Emitted when `compact` flips, so a screen already on-screen can rebuild rather
-## than waiting to be re-entered. Rotating a phone is exactly this case.
-signal compactness_changed(is_compact: bool)
+const SAVE_PATH := "user://display.cfg"
+
+## True while screens should use their single-column layout. Read by every
+## screen at build time; see `layout_changed`.
+var mobile: bool = false
+
+var _override: int = Override.AUTO
+
+## Emitted when `mobile` flips, so a screen already on-screen can rebuild rather
+## than waiting to be re-entered. Rotating a phone is exactly this case, and so
+## is flipping the override from the menu.
+signal layout_changed(is_mobile: bool)
 
 
 func _ready() -> void:
-	## Nothing here should run in a headless harness: there is no real window, and
-	## the harnesses drive the rules engine rather than the viewport.
+	_load()
+	## Nothing below should run in a headless harness: there is no real window,
+	## and the harnesses drive the rules engine rather than the viewport.
 	if DisplayServer.get_name() == "headless":
 		return
-
 	get_tree().root.size_changed.connect(_apply)
 	_apply()
 
 
-## Recompute the reference resolution from the window's current size.
+## The current override setting, for the menu control that edits it.
+func override_mode() -> int:
+	return _override
+
+
+## Change the override and re-apply immediately. Persisted, because a player who
+## forced a layout meant it for more than one session.
+func set_override(mode: int) -> void:
+	if mode == _override:
+		return
+	_override = mode
+	_save()
+	if DisplayServer.get_name() != "headless":
+		_apply()
+
+
+## Whether the window is narrow enough that AUTO would pick mobile. Exposed so
+## the settings UI can label the AUTO option with what it currently resolves to.
+func auto_would_be_mobile() -> bool:
+	if DisplayServer.get_name() == "headless":
+		return false
+	return get_tree().root.get_visible_rect().size.x < NARROW_WIDTH
+
+
+## Recompute the reference resolution and the layout flag from the window size.
 ##
 ## Called on every resize, which on the web includes rotating a phone and the
-## browser's URL bar sliding away — both of which change the canvas size without
-## any other notification.
+## browser's URL bar sliding away — both of which change the canvas size with no
+## other notification.
 func _apply() -> void:
 	var root := get_tree().root
 	var win := root.get_visible_rect().size
 
-	## A zero-sized window happens for a frame during startup on some platforms;
-	## dividing by it below would produce an infinite scale.
+	## A zero-sized window happens for a frame during startup on some platforms,
+	## and dividing by it below would produce an infinite scale.
 	if win.x <= 0.0 or win.y <= 0.0:
 		return
 
-	## How much the window falls short of the minimum on each axis, as a factor
-	## >= 1. Taking the larger of the two means the axis that is *most* cramped
-	## decides the scale, so neither ends up clipped.
-	var shortfall := maxf(
-		float(MIN_DESIGN.x) / win.x,
-		float(MIN_DESIGN.y) / win.y,
-	)
+	var want_mobile := win.x < NARROW_WIDTH
+	if _override == Override.ON:
+		want_mobile = true
+	elif _override == Override.OFF:
+		want_mobile = false
 
-	## At or above the minimum on both axes there is no shortfall, and the
-	## reference size is just the window — which is what expand does natively.
-	var scale := maxf(shortfall, 1.0)
+	if want_mobile:
+		## Target a fixed design width and let height follow the real aspect, so
+		## the UI is drawn at a consistent size on every phone and only the
+		## amount of vertical content differs. Height is not clamped upward here
+		## because the mobile screens scroll.
+		var s := float(MOBILE_DESIGN_WIDTH) / win.x
+		root.content_scale_size = Vector2i(
+			MOBILE_DESIGN_WIDTH, int(round(win.y * s)))
+	else:
+		## Desktop: clamp to the layout's minimum so a small window scales down
+		## rather than clipping, and otherwise pass the window straight through —
+		## which is exactly what expand computes on its own.
+		var shortfall := maxf(
+			float(MIN_DESIGN.x) / win.x,
+			float(MIN_DESIGN.y) / win.y,
+		)
+		var scale := maxf(shortfall, 1.0)
+		root.content_scale_size = Vector2i(
+			int(round(win.x * scale)), int(round(win.y * scale)))
 
-	root.content_scale_size = Vector2i(
-		int(round(win.x * scale)),
-		int(round(win.y * scale)),
-	)
-
-	_set_compact(win.x < NARROW_WIDTH)
+	_set_mobile(want_mobile)
 
 
-func _set_compact(value: bool) -> void:
-	if value == compact:
+func _set_mobile(value: bool) -> void:
+	if value == mobile:
 		return
-	compact = value
-	compactness_changed.emit(compact)
+	mobile = value
+	layout_changed.emit(mobile)
+
+
+func _load() -> void:
+	var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	if f == null:
+		return
+	var data: Variant = JSON.parse_string(f.get_as_text())
+	f.close()
+	if typeof(data) != TYPE_DICTIONARY:
+		return
+	var m: int = int(data.get("layout_override", Override.AUTO))
+	if m >= 0 and m <= Override.OFF:
+		_override = m
+
+
+func _save() -> void:
+	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	if f == null:
+		return
+	f.store_string(JSON.stringify({"layout_override": _override}))
+	f.close()

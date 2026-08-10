@@ -185,7 +185,7 @@ static func _l_energy() -> Dictionary:
 			},
 			{
 				"title": "It is worth more later",
-				"text": "An energy card played on turn [i]t[/i] gives you [b]t + 1[/b] energy.\n\nTurn 1 → 2 energy. Turn 5 → 6. Turn 9 → 10.\n\nSo [b]holding an energy card makes it worth more[/b] — but one-per-turn means a skipped play can never be made up. That is the first spend-or-save decision.\n\nPlay an energy card now.",
+				"text": "An energy card played on turn [i]t[/i] gives you [b]t + 1[/b] energy.\n\nTurn 1 -> 2 energy. Turn 5 -> 6. Turn 9 -> 10.\n\nSo [b]holding an energy card makes it worth more[/b] — but one-per-turn means a skipped play can never be made up. That is the first spend-or-save decision.\n\nPlay an energy card now.",
 				"advance": "played_energy",
 				"allow": ["play_energy", "select"],
 				"highlight": {"kind": "hand_type", "value": "energy"},
@@ -430,7 +430,7 @@ static func _l_towers() -> Dictionary:
 			},
 			{
 				"title": "The curve",
-				"text": "Towers are [b]silent in round 1[/b]. Then:\n\nRound 2 → [b]5[/b] damage · Round 3 → [b]8[/b] · Round 4 → [b]11[/b]\n\n…climbing [b]+3 every round[/b], forever. By round 12 that is 35 a turn.\n\nThe early game is forced tempo: break through, or face both the tower and their board later.",
+				"text": "Towers are [b]silent in round 1[/b]. Then:\n\nRound 2 -> [b]5[/b] damage · Round 3 -> [b]8[/b] · Round 4 -> [b]11[/b]\n\n…climbing [b]+3 every round[/b], forever. By round 12 that is 35 a turn.\n\nThe early game is forced tempo: break through, or face both the tower and their board later.",
 				"allow": [],
 				"read_more": "towers",
 			},
@@ -1121,7 +1121,7 @@ static func _p_economy() -> Dictionary:
 "[b]Income[/b]
 Energy cards are [b]built into your deck[/b] and you choose how many. You may play [b]one per turn[/b].
 
-An energy card played on turn [i]t[/i] gives [b]t + 1[/b] energy. Turn 1 → 2. Turn 5 → 6. Turn 9 → 10.
+An energy card played on turn [i]t[/i] gives [b]t + 1[/b] energy. Turn 1 -> 2. Turn 5 -> 6. Turn 9 -> 10.
 
 So holding an energy card makes it worth more — but one-per-turn means a skipped play can never be made up.
 
@@ -1161,7 +1161,7 @@ These are [b]bands, not targets[/b], and they overlap deliberately. Stage is not
 [table=3]
 [cell][/cell][cell][b]Attack[/b][/cell][cell][b]Ability[/b][/cell]
 [cell]Resolves[/cell][cell]End of turn[/cell][cell]Immediately[/cell]
-[cell]Cost from[/cell][cell]Pool → attached[/cell][cell]Nothing, or Consume[/cell]
+[cell]Cost from[/cell][cell]Pool -> attached[/cell][cell]Nothing, or Consume[/cell]
 [cell]After first use[/cell][cell]Free — energy stays[/cell][cell]Free, unless it Consumes[/cell]
 [cell]Limit[/cell][cell]One queued per unit[/cell][cell]Once per turn[/cell]
 [/table]
@@ -1189,7 +1189,7 @@ static func _p_retreat() -> Dictionary:
 [b]If attached energy is less than the retreat cost, the unit cannot retreat.[/b] An uncharged unit is stuck on the board.
 
 [b]Cost = HP ÷ 40[/b], rounded down.
-40–79 → 1 · 80–119 → 2 · 120–159 → 3 · 160+ → 4
+40–79 -> 1 · 80–119 -> 2 · 120–159 -> 3 · 160+ -> 4
 
 Printed on the card at design time. It never recalculates: buffs, debuffs and damage never move it.
 
@@ -1208,7 +1208,7 @@ static func _p_combat() -> Dictionary:
 
 Within a single attack:
 
-[b]1. Select target[/b] — named → slot across → leftmost living → tower → throne. Dead units are skipped.
+[b]1. Select target[/b] — named -> slot across -> leftmost living -> tower -> throne. Dead units are skipped.
 [b]2. Apply Sanctuary[/b] — prevention absorbs first.
 [b]3. Deal remaining damage[/b] — HP drops.
 [b]4. Defensive Judgment[/b] — if HP ≤ 0 and the defender has Judgment: survive at N, spend it.
@@ -1311,8 +1311,8 @@ Draw ~3 cards · Search 1–2 Basics · Heal 20 baseline · +2 to +3 pool energy
 A minority cost [b]1–3 pool energy[/b] — the sanctioned exception to \"energy only buys attacks\", paid from the pool so it competes directly with attacking that turn.
 
 It exists because cost is the cleanest way to print [b]two versions of one card[/b]:
-• [b]Shore Up[/b] heals 20, free → [b]Field Surgery[/b] heals 50, for 1
-• [b]Collapse[/b] deals 20 to an [i]uncharged[/i] unit → the priced version drops the restriction
+• [b]Shore Up[/b] heals 20, free -> [b]Field Surgery[/b] heals 50, for 1
+• [b]Collapse[/b] deals 20 to an [i]uncharged[/i] unit -> the priced version drops the restriction
 
 The free one is a floor every deck can run; the priced one drops the restriction. They should [b]trade off, not rank[/b].
 
@@ -1506,9 +1506,9 @@ static func _p_kw_sanctuary() -> Dictionary:
 [table=2]
 [cell][b]Incoming[/b][/cell][cell][b]Result[/b][/cell]
 [cell]30 into Sanctuary 100[/cell][cell]Absorbed. Now Sanctuary 70.[/cell]
-[cell]110 into Sanctuary 100[/cell][cell]Pool cannot cover it → [b]full absorb[/b]. All 110 blocked.[/cell]
-[cell]30 into Sanctuary 20[/cell][cell]Pool cannot cover it → [b]full absorb[/b].[/cell]
-[cell]30 × 4 into Sanctuary 100[/cell][cell]100 → 70 → 40 → 10, then the fourth is fully absorbed. Four attacks blocked.[/cell]
+[cell]110 into Sanctuary 100[/cell][cell]Pool cannot cover it -> [b]full absorb[/b]. All 110 blocked.[/cell]
+[cell]30 into Sanctuary 20[/cell][cell]Pool cannot cover it -> [b]full absorb[/b].[/cell]
+[cell]30 × 4 into Sanctuary 100[/cell][cell]100 -> 70 -> 40 -> 10, then the fourth is fully absorbed. Four attacks blocked.[/cell]
 [/table]
 
 [b]Blocks all damage sources[/b] — attacks, tower fire, Decay, support damage, Retribution.

@@ -107,6 +107,71 @@ func style_button(b: Button, bg: Color = PANEL_LIGHT, border: Color = BORDER) ->
 	b.add_theme_color_override("font_disabled_color", TEXT_DIM.darkened(0.3))
 
 
+## ------------------------------------------------------------------ glyphs
+
+## Every non-alphanumeric symbol the UI prints, in one table.
+##
+## The project bundles no font, so everything renders in Godot's built-in
+## **Open Sans SemiBold** — which covers Latin-1 and essentially nothing else.
+## Arrows, geometric shapes and emoji are all absent from it and render as
+## empty boxes. That is not a web-only problem, but it is worst there, because
+## a desktop Godot window can sometimes fall back to a system font and a
+## browser canvas cannot fall back to anything.
+##
+## Verified against `Font.has_char()` rather than by eye: the whole class of bug
+## here is a glyph that looks fine in an editor and is a box in the game.
+##
+## The safe set is narrow — Latin-1 punctuation plus ASCII:
+##   OK:      · — × • − < > " " and all of ASCII
+##   MISSING: ← → ◆ ⚠ ⬢ ☠ ⚒ ✓ ✕ ▸ ▾ ▶ ★ ● ■ ▲ ▼ 🔒 🔓 🎲
+##
+## Adding a symbol means checking it first. `Font.has_char()` on the theme font
+## is the check; if it fails, pick an ASCII stand-in rather than shipping a box.
+## Bundling a symbol font was the alternative and was rejected: it is megabytes
+## onto an already 39MB wasm download, to draw about twenty characters.
+const GLYPH := {
+	## Navigation. ASCII angle brackets rather than real arrows.
+	"back":      "<",
+	"forward":   ">",
+
+	## Energy — the game's most-printed symbol, on every attack cost, every
+	## card's cost row and the pool meter. U+2B22 HEXAGON was a box everywhere.
+	## `#` reads as a countable token next to a number and is unambiguous at the
+	## 7px the board card renders it at, which a letter would not be.
+	"energy":    "#",
+
+	## Status markers.
+	"active":    "*",     ## the selected deck in a list
+	"warn":      "!",     ## illegal deck, unaffordable action
+	"check":     "v",     ## completed tutorial step
+	"close":     "x",     ## modal dismiss
+	"dead":      "+",     ## dies at end of turn
+	"locked":    "[L]",   ## attack lock on
+	"unlocked":  "[ ]",   ## attack lock off
+	"random":    "?",     ## the Random opponent entry
+	"tool":      "=",     ## an attached Tool
+	"ability":   "-",     ## an ability line, vs. an attack line
+	"queued":    ">",     ## an attack queued this turn
+
+	## Disclosure triangles for the compact battle-log drawer.
+	"collapsed": "+",
+	"expanded":  "-",
+
+	## These four ARE in Open Sans and are used as-is; they are listed so the
+	## table is the single place to look, not so they need translating.
+	"dot":       "·",
+	"dash":      "—",
+	"times":     "×",
+	"minus":     "−",
+}
+
+
+## The glyph for a UI symbol. Unknown keys return "" rather than a box or a
+## crash, so a typo degrades to a missing decoration instead of a broken label.
+func glyph(name: String) -> String:
+	return GLYPH.get(name, "")
+
+
 func make_panel(bg: Color = PANEL, border: Color = BORDER) -> PanelContainer:
 	var p := PanelContainer.new()
 	p.add_theme_stylebox_override("panel", panel_style(bg, border))

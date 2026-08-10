@@ -315,7 +315,7 @@ func _add_evolve_strip(root: VBoxContainer) -> void:
 
 	var l := Label.new()
 	l.name = "EvolveStrip"
-	l.text = "↑ Evolves from %s" % base.name
+	l.text = "^ Evolves from %s" % base.name
 	l.add_theme_font_size_override("font_size", _m("evolve_size"))
 	l.add_theme_color_override("font_color", col.lightened(0.5))
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -601,7 +601,7 @@ func _add_ability_banner(root: VBoxContainer) -> void:
 		head.add_child(nm)
 
 		var cost := Label.new()
-		cost.text = "⊘%d" % atk.consume if atk.consume > 0 else "free"
+		cost.text = "-%d" % atk.consume if atk.consume > 0 else "free"
 		cost.add_theme_font_size_override("font_size", max(6, _m("ability_title_size") - 1))
 		cost.add_theme_color_override("font_color",
 			Palette.ACCENT.lightened(0.2) if atk.consume > 0 else Palette.TEXT_DIM)
@@ -673,7 +673,7 @@ One per turn."
 		row.add_child(_cost_icons(atk, attached))
 
 		var nm := Label.new()
-		nm.text = ("▶ " if queued else "") + atk.name
+		nm.text = ("> " if queued else "") + atk.name
 		nm.add_theme_font_size_override("font_size", _m("attack_name_size"))
 		nm.add_theme_color_override("font_color", Palette.GOLD if queued else Palette.TEXT)
 		nm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -721,7 +721,7 @@ func _cost_icons(atk: AttackData, attached: int) -> Control:
 
 	if cost > 8:
 		var chip := Label.new()
-		chip.text = "⬢%d%s" % [cost, ("/%d" % attached) if unit != null else ""]
+		chip.text = "#%d%s" % [cost, ("/%d" % attached) if unit != null else ""]
 		chip.add_theme_font_size_override("font_size", _m("icon_size"))
 		chip.add_theme_color_override("font_color",
 			Palette.GOLD if attached >= cost else Palette.TEXT_DIM)
@@ -789,7 +789,7 @@ func _add_footer(root: VBoxContainer) -> void:
 	## Retreat cost, as icons. A unit with retreat 0 shows the label with no icons
 	## rather than nothing, so the corner reads consistently across every card.
 	var tag := Label.new()
-	tag.text = "↩"
+	tag.text = "R"
 	tag.add_theme_font_size_override("font_size", _m("footer_size"))
 	tag.add_theme_color_override("font_color", Palette.TEXT_DIM)
 	tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -836,7 +836,7 @@ func _add_play_cost(root: VBoxContainer) -> void:
 
 	if card.is_energy():
 		var l := Label.new()
-		l.text = "⬢ scales with turn"
+		l.text = "# scales with turn"
 		l.add_theme_font_size_override("font_size", _m("footer_size"))
 		l.add_theme_color_override("font_color", Palette.GOLD)
 		l.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -979,7 +979,7 @@ func status_line() -> String:
 		return ""
 	var bits: Array[String] = []
 	if unit.attached > 0:
-		bits.append("⬢ %d attached" % unit.attached)
+		bits.append("# %d attached" % unit.attached)
 	if unit.dies_at_eot:
-		bits.append("☠ dies EOT")
+		bits.append("+ dies EOT")
 	return "   ".join(bits)

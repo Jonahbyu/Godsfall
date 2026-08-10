@@ -79,7 +79,7 @@ func _build() -> void:
 	root.add_child(top)
 
 	var back := Button.new()
-	back.text = "← Lessons"
+	back.text = "< Lessons"
 	Palette.style_button(back)
 	back.pressed.connect(func(): get_tree().change_scene_to_file(TUTORIAL_SCENE))
 	top.add_child(back)

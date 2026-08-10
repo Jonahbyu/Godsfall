@@ -48,6 +48,7 @@ func _build() -> void:
 	col.add_child(_menu_button("Play vs. AI", _on_play))
 	col.add_child(_menu_button("Learn to Play", _on_tutorial))
 	col.add_child(_menu_button("My Decks", _on_decks))
+	col.add_child(_layout_row())
 	col.add_child(_menu_button("Quit", _on_quit))
 
 	_warning = Palette.label("", 13, Palette.DANGER)
@@ -60,6 +61,38 @@ func _build() -> void:
 	col.add_child(version)
 
 	_refresh()
+
+
+## The layout override, as a three-way control.
+##
+## Auto is correct almost always, so the row is deliberately small and sits
+## below the real entry points rather than looking like a fourth one. It exists
+## for the two cases detection cannot get right on its own: testing the phone
+## layout on a desktop, and a tablet wide enough to trip the desktop threshold
+## while still being a touch device.
+func _layout_row() -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 6)
+
+	row.add_child(Palette.label("Layout", 12, Palette.TEXT_DIM))
+
+	var pick := OptionButton.new()
+	pick.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	pick.add_theme_font_size_override("font_size", 12)
+	Palette.style_button(pick)
+	## Labelled with what Auto currently resolves to, so the setting reports the
+	## state it is in rather than only the rule it follows.
+	var auto_now := "Phone" if ViewportFit.auto_would_be_mobile() else "Desktop"
+	pick.add_item("Auto (%s)" % auto_now, ViewportFit.Override.AUTO)
+	pick.add_item("Phone", ViewportFit.Override.ON)
+	pick.add_item("Desktop", ViewportFit.Override.OFF)
+	pick.selected = ViewportFit.override_mode()
+	pick.item_selected.connect(func(idx: int):
+		ViewportFit.set_override(pick.get_item_id(idx))
+	)
+	row.add_child(pick)
+
+	return row
 
 
 func _menu_button(text: String, cb: Callable) -> Button:
@@ -81,7 +114,7 @@ func _refresh() -> void:
 		]
 		_warning.add_theme_color_override("font_color", Palette.TEXT_DIM)
 	else:
-		_warning.text = "⚠ %s: %s" % [DeckStore.active_name(), errs[0]]
+		_warning.text = "! %s: %s" % [DeckStore.active_name(), errs[0]]
 		_warning.add_theme_color_override("font_color", Palette.DANGER)
 
 

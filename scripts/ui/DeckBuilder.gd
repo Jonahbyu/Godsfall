@@ -40,6 +40,10 @@ var _inspector_layer: Control = null
 ## Deckbuilding-lesson coaching. Null in an ordinary visit to the builder.
 var _coach_box: VBoxContainer = null
 
+## Which layout this screen was built for. Latched at build time so every part
+## of one build agrees about its shape; see _on_layout_changed.
+var _mobile: bool = false
+
 ## --- collection filters
 ##
 ## The collection lists every card in the game, which was fine with one faction and
@@ -62,6 +66,20 @@ func _ready() -> void:
 	_build()
 	DeckStore.deck_changed.connect(_refresh)
 	DeckStore.decks_changed.connect(_refresh)
+	ViewportFit.layout_changed.connect(_on_layout_changed)
+	_refresh()
+
+
+## Rebuild when the window crosses the mobile threshold. The two layouts differ
+## in structure (tabs vs. a split), and the deck itself lives in DeckStore rather
+## than in these nodes, so nothing is lost by discarding them.
+func _on_layout_changed(is_mobile: bool) -> void:
+	if is_mobile == _mobile:
+		return
+	for child in get_children():
+		remove_child(child)
+		child.queue_free()
+	_build()
 	_refresh()
 
 
@@ -157,6 +175,7 @@ func _open_compendium(page_id: String) -> void:
 
 
 func _build() -> void:
+	_mobile = ViewportFit.mobile
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 
 	var bg := ColorRect.new()
@@ -185,12 +204,15 @@ func _build() -> void:
 	root.add_child(top)
 
 	var back := Button.new()
-	back.text = "← Decks"
+	back.text = "< Decks"
 	Palette.style_button(back)
 	back.pressed.connect(func(): get_tree().change_scene_to_file(SELECT_SCENE))
 	top.add_child(back)
 
+	## The title goes first on a phone — the screen is named by the button that
+	## opened it, and the card count is the number actually worth the width.
 	_title = Palette.label("Deck Builder", 24)
+	_title.visible = not _mobile
 	top.add_child(_title)
 
 	var spacer := Control.new()
@@ -201,7 +223,7 @@ func _build() -> void:
 	top.add_child(_header)
 
 	var reset := Button.new()
-	reset.text = "Reset to default"
+	reset.text = "Reset" if _mobile else "Reset to default"
 	Palette.style_button(reset)
 	reset.pressed.connect(func(): DeckStore.reset_to_default())
 	top.add_child(reset)
@@ -216,18 +238,40 @@ func _build() -> void:
 	root.add_child(_errors)
 
 	## --- middle: collection | deck
-	var middle := HSplitContainer.new()
-	middle.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	## The deck grid needs the wider half — five card frames plus the scrollbar.
-	## The collection is text and reads fine narrower.
-	middle.split_offset = 470
-	root.add_child(middle)
-	middle.add_child(_make_column("Collection", true))
-	middle.add_child(_make_column("Your Deck", false))
+	##
+	## Side by side on a desktop. On a phone they become tabs rather than a
+	## vertical stack, which is the one place this screen differs from the other
+	## two: both halves are tall scrolling lists, so stacking them would mean
+	## scrolling past the whole collection to reach the deck. Tabs also match how
+	## the screen is actually used — you browse, then you review, and rarely need
+	## to see both at once.
+	if _mobile:
+		var tabs := TabContainer.new()
+		tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		root.add_child(tabs)
+		var coll := _make_column("Collection", true)
+		coll.name = "Collection"
+		tabs.add_child(coll)
+		var deck := _make_column("Your Deck", false)
+		deck.name = "Your Deck"
+		tabs.add_child(deck)
+	else:
+		var middle := HSplitContainer.new()
+		middle.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		## The deck grid needs the wider half — five card frames plus the
+		## scrollbar. The collection is text and reads fine narrower.
+		middle.split_offset = 470
+		root.add_child(middle)
+		middle.add_child(_make_column("Collection", true))
+		middle.add_child(_make_column("Your Deck", false))
 
 	## --- bottom: card detail
+	##
+	## Shorter on a phone: 120 units of always-reserved detail is a large share
+	## of the vertical budget, and the tapped card's full text is one tap away in
+	## the inspector anyway.
 	var detail_panel := Palette.make_panel(Palette.PANEL)
-	detail_panel.custom_minimum_size = Vector2(0, 120)
+	detail_panel.custom_minimum_size = Vector2(0, 72 if _mobile else 120)
 	root.add_child(detail_panel)
 
 	_detail = RichTextLabel.new()
@@ -389,7 +433,7 @@ func _refresh() -> void:
 	_header.add_theme_color_override("font_color",
 		Palette.TEXT if total == DeckStore.DECK_SIZE else Palette.DANGER)
 	var errs := DeckStore.validation_errors()
-	_errors.text = ("⚠ " + "  ".join(errs)) if not errs.is_empty() else ""
+	_errors.text = ("! " + "  ".join(errs)) if not errs.is_empty() else ""
 
 	_rebuild_collection()
 	_rebuild_deck()
@@ -672,7 +716,7 @@ func _show_detail(card: CardData) -> void:
 		s += "[color=#7c4dff]%s[/color]\n" % kws
 
 	for atk in card.attacks:
-		s += "\n▸ [b]%s[/b]  [color=#d9b45b]%s[/color] — %s" % [atk.name, atk.cost_string(), atk.text]
+		s += "\n+ [b]%s[/b]  [color=#d9b45b]%s[/color] — %s" % [atk.name, atk.cost_string(), atk.text]
 
 	if card.flavor != "":
 		s += "\n\n[i][color=#8f88a3]%s[/color][/i]" % card.flavor

@@ -241,7 +241,7 @@ func _test_read_more_targets() -> void:
 			if page == "":
 				continue
 			if TutorialData.page_by_id(page).is_empty():
-				bad.append("%s → %s" % [l.get("id", ""), page])
+				bad.append("%s -> %s" % [l.get("id", ""), page])
 	if not bad.is_empty():
 		print("     dangling read_more: %s" % str(bad))
 	_check("every read_more points at a real compendium page", bad.size(), 0)

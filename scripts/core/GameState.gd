@@ -2246,10 +2246,10 @@ func _fire_locked_attacks(p: Player) -> void:
 			continue
 
 		if queue_attack(p, u, u.last_attack):
-			fired.append("%s → %s" % [u.card.name, u.last_attack.name])
+			fired.append("%s > %s" % [u.card.name, u.last_attack.name])
 
 	if not fired.is_empty():
-		_log("🔒 Locked attacks re-queued: %s" % ", ".join(fired))
+		_log("[L] Locked attacks re-queued: %s" % ", ".join(fired))
 
 
 ## Called once by the combat screen. Opens the setup phase rather than round 1 —

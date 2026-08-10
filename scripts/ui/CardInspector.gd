@@ -107,7 +107,7 @@ func _header_row() -> Control:
 	row.add_child(sp)
 
 	var close := Button.new()
-	close.text = "✕"
+	close.text = "x"
 	Palette.style_button(close, Palette.PANEL_LIGHT, Palette.BORDER)
 	close.pressed.connect(func(): closed.emit())
 	row.add_child(close)
@@ -366,7 +366,7 @@ func _evolution_section() -> Control:
 
 	for i in stages.size():
 		if i > 0:
-			var arrow := Palette.label("→", 20, Palette.ACCENT)
+			var arrow := Palette.label(">", 20, Palette.ACCENT)
 			arrow.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			row.add_child(arrow)
 

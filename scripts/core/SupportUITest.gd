@@ -90,6 +90,26 @@ func _reset(hand: Array, board: Array = []) -> void:
 	for bi in you.boards.size():
 		for si in Board.SLOT_COUNT:
 			you.boards[bi].slots[si] = null
+
+	## Restore every tower on both sides to its printed state.
+	##
+	## Without this the tower assertions depend on no round having elapsed
+	## earlier in the file, which was a real ~1-in-8 flake: a preceding section
+	## occasionally let a turn resolve, structures took their +2 max HP growth,
+	## and `enemy tower damaged` read 27/52 instead of the expected 25/50. The
+	## support was resolving correctly the whole time — the fixture was dirty.
+	##
+	## Both sides, because the enemy board was never reset at all and Toppling
+	## Blow targets it.
+	## 50 is Board's printed starting value for both fields; there is no named
+	## constant for it.
+	for p in gs.players:
+		for b in p.boards:
+			b.tower_hp = 50
+			b.tower_max_hp = 50
+			b.tower_mods.clear()
+			b.tower_damage_bonus = 0
+			b.earth_max_hp_bonus = 0
 	you.hand = hand.duplicate()
 	you.pool = 10
 	you.clear_locks()

@@ -42,7 +42,7 @@ func _build() -> void:
 	root.add_child(top)
 
 	var back := Button.new()
-	back.text = "← Menu"
+	back.text = "< Menu"
 	Palette.style_button(back)
 	back.pressed.connect(func(): get_tree().change_scene_to_file(MENU_SCENE))
 	top.add_child(back)
@@ -122,7 +122,7 @@ func _lesson_row(i: int, l: Dictionary) -> Control:
 
 	## number / tick
 	var num := Palette.label(
-		"✓" if done else str(i + 1),
+		"v" if done else str(i + 1),
 		20, Palette.ACCENT if done else Palette.TEXT_DIM)
 	num.custom_minimum_size = Vector2(34, 0)
 	num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

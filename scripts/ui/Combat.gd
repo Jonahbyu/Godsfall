@@ -92,7 +92,7 @@ var _global_lock_btn: Button
 
 ## Whether this screen was built with the narrow-screen layout. Latched at build
 ## time rather than read from ViewportFit on the fly, so every part of one build
-## agrees about which shape it is — and so `_on_compactness_changed` can tell
+## agrees about which shape it is — and so `_on_layout_changed` can tell
 ## that the shape it was built for is no longer the right one.
 var _compact: bool = false
 var _log_toggle: Button
@@ -109,7 +109,7 @@ var _coach_advancing: bool = false
 func _ready() -> void:
 	_build_ui()
 	_start_game()
-	ViewportFit.compactness_changed.connect(_on_compactness_changed)
+	ViewportFit.layout_changed.connect(_on_layout_changed)
 
 
 ## Rebuild the whole screen when the window crosses the narrow threshold, which
@@ -120,7 +120,7 @@ func _ready() -> void:
 ## game state lives in `gs`, not in the nodes — so throwing the UI away and
 ## building it again costs nothing but a frame and cannot leave a stale mix of
 ## the two shapes.
-func _on_compactness_changed(is_compact: bool) -> void:
+func _on_layout_changed(is_compact: bool) -> void:
 	if is_compact == _compact:
 		return
 
@@ -486,7 +486,7 @@ func _build_ui() -> void:
 	## hard minimum width (six 132px board slots), so on a narrow screen the only
 	## place the action panel and log can go is *under* it — side by side, they
 	## would squeeze the board into unreadability. See ViewportFit.
-	_compact = ViewportFit.compact
+	_compact = ViewportFit.mobile
 
 	var root: BoxContainer
 	if _compact:
@@ -515,7 +515,7 @@ func _build_ui() -> void:
 	left.add_child(top)
 
 	var back := Button.new()
-	back.text = "← Menu"
+	back.text = "< Menu"
 	Palette.style_button(back)
 	back.pressed.connect(func(): get_tree().change_scene_to_file(MENU_SCENE))
 	top.add_child(back)
@@ -648,12 +648,12 @@ func _build_ui() -> void:
 	if _compact:
 		_log_toggle = Button.new()
 		_log_toggle.toggle_mode = true
-		_log_toggle.text = "Battle Log  ▸"
+		_log_toggle.text = "Battle Log  +"
 		_log_toggle.add_theme_font_size_override("font_size", 13)
 		Palette.style_button(_log_toggle)
 		_log_toggle.toggled.connect(func(on: bool) -> void:
 			log_panel.visible = on
-			_log_toggle.text = "Battle Log  ▾" if on else "Battle Log  ▸"
+			_log_toggle.text = "Battle Log  -" if on else "Battle Log  +"
 		)
 		right.add_child(_log_toggle)
 		log_panel.visible = false
@@ -707,7 +707,7 @@ func _build_pool_meter() -> Control:
 	## The pip echoes the energy symbol used on card costs, so the bar and the
 	## card frames read as the same currency.
 	var pip := Label.new()
-	pip.text = "⬢"
+	pip.text = "#"
 	pip.add_theme_font_size_override("font_size", 20)
 	pip.add_theme_color_override("font_color", col)
 	pip.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -1108,7 +1108,7 @@ func _tower_widget(b: Board, bi: int, is_enemy: bool) -> Control:
 		counts[m.name] = int(counts.get(m.name, 0)) + 1
 	for nm in seen:
 		var n: int = counts[nm]
-		var mod := Palette.label("⚒ %s%s" % [nm, ("" if n == 1 else " ×%d" % n)], 9, Palette.ACCENT)
+		var mod := Palette.label("= %s%s" % [nm, ("" if n == 1 else " ×%d" % n)], 9, Palette.ACCENT)
 		mod.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		mod.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		col.add_child(mod)
@@ -1144,14 +1144,14 @@ func _tower_is_target(b: Board, bi: int, is_enemy: bool) -> bool:
 func _unit_status(u: Unit, is_enemy: bool = false) -> String:
 	var bits: Array[String] = []
 	if u.attached > 0:
-		bits.append("⬢ %d" % u.attached)
+		bits.append("# %d" % u.attached)
 	if u.dies_at_eot:
-		bits.append("☠ EOT")
+		bits.append("+ EOT")
 	## A padlock on the frame is how you see at a glance which units will fire
 	## again next turn without opening each one's action panel.
 	if not is_enemy and u.last_attack != null \
 			and u.is_attack_locked(gs.players[GameState.P1].auto_lock_attacks):
-		bits.append("🔒")
+		bits.append("[L]")
 	return "   ".join(bits)
 
 
@@ -1350,7 +1350,7 @@ func _refresh_global_lock(p: Player) -> void:
 
 	var on := p.auto_lock_attacks
 	_global_lock_btn.button_pressed = on
-	_global_lock_btn.text = "🔒 Autolock: ON" if on else "🔓 Autolock: OFF"
+	_global_lock_btn.text = "[L] Autolock: ON" if on else "[ ] Autolock: OFF"
 	Palette.style_button(_global_lock_btn, Palette.PANEL_LIGHT,
 		Palette.GOLD if on else Palette.BORDER)
 
@@ -1386,7 +1386,7 @@ func _lock_toggle_row(u: Unit, atk: AttackData) -> Control:
 	b.toggle_mode = true
 	b.button_pressed = locked
 	b.add_theme_font_size_override("font_size", 11)
-	b.text = "🔒 Locked" if locked else "🔓 Unlocked"
+	b.text = "[L] Locked" if locked else "[ ] Unlocked"
 	Palette.style_button(b, Palette.PANEL_LIGHT,
 		Palette.GOLD if locked else Palette.BORDER)
 
@@ -1456,7 +1456,7 @@ func _ability_button(p: Player, u: Unit, ab: AttackData) -> Button:
 	else:
 		state = "free — resolves immediately"
 
-	b.text = "◆ %s — %s\n%s\n%s" % [ab.name, ab.cost_string(), ab.text, state]
+	b.text = "* %s — %s\n%s\n%s" % [ab.name, ab.cost_string(), ab.text, state]
 	Palette.style_button(b, Palette.PANEL_LIGHT,
 		Palette.ACCENT if can else Palette.BORDER)
 	b.disabled = not can
@@ -1483,7 +1483,7 @@ func _rebuild_action_panel(p: Player) -> void:
 
 	var u: Unit = _selected_unit
 	_action_box.add_child(Palette.label(u.card.name, 16, Palette.TEXT))
-	_action_box.add_child(Palette.label("%d / %d HP   ·   ⬢ %d attached" % [u.hp, u.max_hp(), u.attached], 13, Palette.GOLD))
+	_action_box.add_child(Palette.label("%d / %d HP   ·   # %d attached" % [u.hp, u.max_hp(), u.attached], 13, Palette.GOLD))
 
 	var kws := u.card.keyword_line()
 	if kws != "":
@@ -1561,7 +1561,7 @@ func _rebuild_action_panel(p: Player) -> void:
 	_action_box.add_child(rb)
 
 	if u.tool != null:
-		_action_box.add_child(Palette.label("⚒ %s — %s" % [u.tool.name, u.tool.text], 10, Palette.TOWER))
+		_action_box.add_child(Palette.label("= %s — %s" % [u.tool.name, u.tool.text], 10, Palette.TOWER))
 
 	if u.queued_attack != null:
 		var cancel := Button.new()

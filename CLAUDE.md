@@ -1662,6 +1662,71 @@ Five things the export depends on, each of which silently breaks it if changed:
 `user://` on the web is browser storage, so saved decks are per-browser and are lost if the
 user clears site data. That is a real limitation of the web build, not a bug.
 
+### Fonts and glyphs
+
+**The project bundles no font, so every character renders in Godot's built-in Open Sans
+SemiBold — which covers Latin-1 and essentially nothing else.** Arrows, geometric shapes
+and emoji are all absent and render as empty boxes.
+
+This shipped broken for a long time and was only noticed on the live web build: `←`, `→`,
+`◆`, `⚠`, `⬢`, `☠`, `⚒`, `✓`, `✕`, `▸`, `▾`, `▶`, `↑`, `↩`, `⊘`, `🔒`, `🔓` and `🎲` were all
+in use. The `⬢` was the worst of them — it is the **energy symbol**, printed on every attack
+cost, every card frame and the pool meter, so the game's central currency was a box.
+
+**Every symbol now lives in `Palette.GLYPH`**, and the safe set is narrow:
+
+| | |
+|---|---|
+| **Renders** | ASCII, plus `·` `—` `×` `•` `−` `"` `"` |
+| **Does not** | every arrow, every geometric shape, every emoji |
+
+Two rules, both enforced by `LayoutTest.gd` rather than by discipline:
+
+- **Add a symbol to `Palette.GLYPH`, never inline.** One table means one place to check and
+  one place to fix when a glyph turns out to be unavailable.
+- **Check it with `Font.has_char()` before using it.** The whole failure mode is that a
+  glyph looks correct in an editor, correct in a diff, correct in review, and is a box on
+  screen — so the only trustworthy check is asking the actual theme font.
+
+Bundling a symbol font was the alternative and was rejected: megabytes onto an already 39MB
+wasm download to draw about twenty characters. ASCII stand-ins cost nothing and cannot
+regress.
+
+### Mobile mode
+
+**`ViewportFit` owns both how large the UI is drawn and whether screens use their
+single-column layout**, because the two are one decision made from one measurement.
+
+Drawing bigger costs width, and the desktop layouts are built from fixed-width columns that
+cannot survive losing it — so zoom alone is useless. Raising the scale without restacking
+just pushes content off the other edge. `mobile` is what tells each screen to go
+single-column and give the width back.
+
+| | Desktop | Phone |
+|---|---|---|
+| Reference width | the window, clamped to ≥1180 | a fixed **540** design units |
+| Effective scale on a 390px phone | 0.33× (unreadable) | **0.72×** |
+| Combat | board \| action+log side by side | stacked, log becomes a drawer |
+| Deck select | list \| contents in an `HSplitContainer` | stacked, actions on their own row |
+| Deck builder | collection \| deck in an `HSplitContainer` | **tabs** |
+| Main menu | — | unchanged; it is already one column |
+
+**The builder uses tabs where the others stack**, and that is the one deliberate
+inconsistency: both its halves are tall scrolling lists, so stacking would mean scrolling
+past the entire collection to reach the deck. Tabs also match how the screen is used — you
+browse, then you review, and rarely need both at once.
+
+**Activation is automatic with a manual override.** Below 820px the layout switches on its
+own; a three-way `Auto / Phone / Desktop` control in the main menu forces it either way and
+persists to `user://display.cfg`. The override is not a nicety — it is the only way to test
+the phone layout without a phone, and it is the recourse when detection misjudges a tablet.
+
+**Crossing the threshold rebuilds the screen wholesale rather than re-parenting.** The two
+shapes differ in which nodes exist at all, not merely in parentage, and every screen's real
+state lives in `GameState` or `DeckStore` rather than in its nodes — so a rebuild costs a
+frame and cannot leave a stale mix of the two. Each screen latches `_mobile` at build time
+for the same reason: one build has to agree with itself about which shape it is.
+
 ### The page shell
 
 **The page's mobile CSS and its fullscreen button live in `tools/web-head.html`**, which
@@ -2047,9 +2112,10 @@ Two guards worth keeping: the writer never raises (a balance log that can fail a
 or break a game is worse than no log), and a stall is recorded as `NO WINNER — stalled at
 round N`, since that is the single most important thing the file can capture.
 
-Verified by twelve headless harnesses (all passing — run 2026-08-09 after the tutorial
-landed, **867 counted assertions**; `SceneSmokeTest`, `PlaythroughTest` and
-`TutorialWalkTest` report pass/fail without a count and are not in that total):
+Verified by fourteen headless harnesses (all passing — run 2026-08-10 after the mobile
+layout and glyph work landed, **887 counted assertions**, with the long-standing
+`SupportUITest` flake fixed rather than merely absent; `SceneSmokeTest`, `PlaythroughTest`
+and `TutorialWalkTest` report pass/fail without a count and are not in that total):
 
 | Harness | Covers |
 |---|---|
@@ -2066,6 +2132,7 @@ landed, **867 counted assertions**; `SceneSmokeTest`, `PlaythroughTest` and
 | `GaiaTest.gd` | 146 assertions: Gaia card data including per-colour attack costs, the Earth aura summed across both boards and excluding the dead, aura-adjusted max HP, healing that reaches the aura's ceiling, downward clamping that never kills, the aura on attack damage and on tower damage, `Resist` in both damage paths and on Retribution recoil with its minimum-1 floor, Sanctuary preceding Resist, `Essence` **through the real `_cleanup_dead`** (payment, the nearest-living heir, ties-go-left, never crossing boards, skipping a corpse in a batched death, and fizzling when unaffordable), grown Earth resetting on Rise and evolution, Earth derived live from attached energy, the additive rate-breaker, and Makeshift Tower's free auto-fire, per-round growth, and obedience to the shielding chain |
 | `TutorialTest.gd` | 119 assertions: lesson content integrity (unique ids, every step carrying text, every `advance` predicate one the evaluator handles), every card id a lesson names existing, every `read_more` resolving to a real page, every lesson deck building a `GameState`, the unshuffled deal being reproducible **and the default path still shuffling**, every scripted placement landing on a real non-tower slot, the gating hooks answering permissively when inactive, all eight step predicates **driven against a real `GameState`**, progress round-tripping through a sandboxed file, and compendium coverage of every keyword in `Palette.KEYWORD_COLORS`. **Also that every lesson declares an opening hand, that the hand is fully present in its deck, and that it holds the Basics/Stage 1/support/energy its steps actually demand** |
 | `TutorialWalkTest.gd` | Drives all 13 battle lessons through the **real Combat screen**, performing what each step asks via the entry points a player clicks, and fails if any step cannot be satisfied. Reports per-lesson rather than a counted total. This is the harness that checks a lesson can be **finished**, not merely that it is well formed |
+| `LayoutTest.gd` | 20 assertions on what the UI *draws*: every entry in `Palette.GLYPH` being renderable by the actual theme font, every double-quoted literal across the nine UI source files containing no character the font lacks (comments exempt — their ASCII diagrams are never rendered), and all four screens building in **both** the desktop and phone layouts. The glyph half reads the source rather than the running scene on purpose: a label built only in a rare branch — an error state, a disabled button's tooltip — is never instantiated by a smoke test, and those are exactly the strings that ship broken |
 
 The Heaven pipeline tests deliberately call `GameState._deal_lane_damage` rather than
 simulating the ordering inline — a test that reimplements the rule it is checking proves
@@ -2073,16 +2140,19 @@ nothing about the engine. `TutorialTest` follows the same rule: its step predica
 checked by mutating a real `GameState` and asking the predicate, never by simulating what
 the predicate would see.
 
-**`SupportUITest.gd` is intermittently flaky at roughly 1 run in 8, and the failing
-assertion is now known: `enemy tower damaged` in the tower-targeting section.** Measured
-2026-08-09 over 5 runs on the working tree and 8 on a clean checkout of `HEAD` — it fires at
-the same rate on both, so it is **not** caused by any tutorial change. On the failing run
-the support resolves correctly (the hand empties and 25 damage lands) but the enemy tower
-reads 27/52 rather than 25/50, i.e. it has taken a **+2 max HP structure growth** the
-assertion does not expect. `_reset()` does not restore tower HP between sections, so the
-test depends on no round having elapsed by that point — the suspect is a preceding section
-occasionally letting a turn resolve. The fix is to have `_reset()` restore tower state
-rather than to relax the assertion, but that is a test change and has not been made.
+**`SupportUITest.gd`'s ~1-in-8 flake is fixed.** The failing assertion was
+`enemy tower damaged`: the support always resolved correctly, but the enemy tower sometimes
+read 27/52 instead of 25/50 because it had taken a **+2 max HP structure growth** from a
+round that elapsed in an earlier section. `_reset()` cleared *your* board and never touched
+tower state or the enemy's board at all, so the fixture was dirty rather than the rules
+wrong. `_reset()` now restores `tower_hp`, `tower_max_hp`, `tower_mods`,
+`tower_damage_bonus` and `earth_max_hp_bonus` on **both** players' boards. Verified over 20
+consecutive runs, 0 failures, against a documented ~1-in-8 rate.
+
+The general shape is worth keeping: **a shared fixture that resets only the half a test
+happens to look at will fail at whatever rate the other half changes.** The assertion was
+correct and the diagnosis wasted time twice because an intermittent failure reads as
+non-determinism in the engine rather than as leftover state in the harness.
 
 **`SupportTest.gd` is separately flaky — one failure in ~15 runs on 2026-08-08, not
 reproducible afterward and never captured.** The prime suspect is the support-heavy
@@ -2919,3 +2989,37 @@ even if the rule text later changes. Keep entries to one or two lines.
   `_reset()`), which is the thing the docs previously asked for and could not supply — an
   intermittent failure is information, and the way to collect it is to measure the baseline
   rather than to re-run until green.
+- **`SupportUITest`'s flake is fixed, and it was a dirty fixture rather than a rules bug.**
+  `_reset()` cleared *your* board and never touched tower state or the enemy's board at
+  all, so `enemy tower damaged` depended on no round having elapsed earlier in the file —
+  when one had, the tower read 27/52 instead of 25/50 and the assertion failed. It now
+  restores tower HP, max HP, mods, damage bonus and Earth bonus on **both** players'
+  boards; 20 consecutive runs, 0 failures, against a documented ~1-in-8 rate. The general
+  shape: **a shared fixture that resets only the half a given test looks at will fail at
+  whatever rate the other half changes**, and it will read as engine non-determinism rather
+  than as leftover state, which is why this one survived two separate investigations.
+- **Every UI symbol lives in `Palette.GLYPH`, and the safe set is ASCII plus Latin-1
+  punctuation.** The project bundles no font, so everything renders in Godot's built-in Open
+  Sans SemiBold, which has no arrows, no geometric shapes and no emoji — eighteen distinct
+  symbols were rendering as empty boxes, including `⬢`, the energy symbol printed on every
+  card cost and the pool meter. The failure mode is what makes it dangerous: a glyph looks
+  right in the editor, right in a diff, right in review, and is a box only on screen, so it
+  survived every code path a human read. Bundling a symbol font was rejected as megabytes of
+  wasm to draw twenty characters. `LayoutTest.gd` now asks the actual theme font
+  `has_char()` for every literal in the UI sources, and it caught three more (`↑`, `↩`, `⊘`)
+  the manual sweep missed — **the check has to be mechanical, because reading is exactly
+  what does not work here.**
+- **Mobile mode is a UI scale and a layout switch together, never one without the other.**
+  Drawing bigger costs width, and the desktop screens are fixed-width columns that cannot
+  survive losing it — so zooming without restacking just moves the clipping to the other
+  edge. `ViewportFit` therefore owns both: on a phone it targets a fixed 540-unit design
+  width (≈0.72× on a 390px screen, against the 0.33× a 1180-wide layout forces) and sets
+  `mobile`, which each screen reads at build time to go single-column. The deck builder uses
+  **tabs** where the others stack, deliberately: both its halves are tall scrolling lists,
+  so stacking would mean scrolling past the whole collection to reach the deck.
+- **Layout detection is automatic with a persisted manual override.** Auto is right almost
+  always, but the override is not a nicety — it is the only way to test the phone layout
+  without a phone, and the only recourse when a tablet trips the desktop threshold while
+  still being a touch device. Crossing the threshold **rebuilds the screen wholesale**
+  rather than re-parenting, because the two shapes differ in which nodes exist at all and
+  every screen's real state lives in `GameState` or `DeckStore` rather than in its nodes.
