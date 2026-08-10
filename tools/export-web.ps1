@@ -32,6 +32,48 @@ if (-not (Test-Path $Godot)) {
     Write-Error "Godot not found at '$Godot' (from tools/godot-path.txt)."
 }
 
+# The page's mobile CSS and the fullscreen button live in tools/web-head.html
+# and are written into the preset's html/head_include here. Keeping them in a
+# real .html file means they can be edited as HTML with a real editor, instead
+# of as one backslash-escaped line inside a .cfg - and it keeps the export
+# reproducible: whatever that file says is what ships.
+$HeadFile = Join-Path $PSScriptRoot 'web-head.html'
+if (-not (Test-Path $HeadFile)) {
+    Write-Error "Missing tools/web-head.html - it holds the page's mobile styles and fullscreen button."
+}
+
+$PresetFile = Join-Path $ProjectDir 'export_presets.cfg'
+$head = Get-Content $HeadFile -Raw
+
+# The .cfg holds the value as one double-quoted string, so backslashes, quotes
+# and newlines all have to be escaped the way Godot writes them. Order matters:
+# backslashes first, or the backslashes introduced by the later two get escaped
+# a second time. Done with .Replace() (literal) rather than -replace (regex), so
+# nothing in the HTML is interpreted as a pattern.
+$escaped = $head.Replace('\', '\\').Replace('"', '\"')
+$escaped = $escaped.Replace("`r`n", '\n').Replace("`n", '\n')
+
+$line = 'html/head_include="' + $escaped + '"'
+
+# Rebuilt line by line rather than with a regex replace: the replacement text is
+# arbitrary HTML, and a dollar sign in a regex replacement is a capture-group
+# reference, so one anywhere in the CSS or script would corrupt the output.
+$out = foreach ($l in (Get-Content $PresetFile)) {
+    if ($l -like 'html/head_include=*') { $line } else { $l }
+}
+
+$updated = ($out -join "`n") + "`n"
+if ($updated -ne (Get-Content $PresetFile -Raw)) {
+    # Written through .NET rather than Set-Content because PowerShell 5.1's
+    # `-Encoding utf8` always emits a BOM, and Godot does not skip one: the BOM
+    # lands in front of `[preset.0]`, the section header stops matching, and the
+    # export fails with "Invalid export preset name: Web" - which says nothing
+    # about encoding and sends you looking in the wrong place entirely.
+    [System.IO.File]::WriteAllText(
+        $PresetFile, $updated, (New-Object System.Text.UTF8Encoding $false))
+    Write-Host "Updated html/head_include from tools/web-head.html" -ForegroundColor Cyan
+}
+
 Write-Host "Exporting Web build..." -ForegroundColor Cyan
 New-Item -ItemType Directory -Force $BuildDir | Out-Null
 

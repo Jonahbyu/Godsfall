@@ -1641,7 +1641,7 @@ was already the designated home for plans and specs, serving from there would ha
 published them and let a stray `--export` overwrite them. A separate branch is what keeps
 the two from ever sharing a file.
 
-Four things the export depends on, each of which silently breaks it if changed:
+Five things the export depends on, each of which silently breaks it if changed:
 
 - **`variant/thread_support=false`.** A threaded build needs COOP/COEP headers, and Pages
   cannot set headers. A threaded build deploys fine and then refuses to start.
@@ -1652,9 +1652,51 @@ Four things the export depends on, each of which silently breaks it if changed:
   still uses `res://logs/` under the editor, which is what the workflow below reads.
 - **The export folder must exist before `--export-release` runs.** Godot errors with
   "Target folder does not exist" rather than creating it; the script does it first.
+- **`export_presets.cfg` must be written without a BOM.** The export script rewrites
+  `html/head_include` on every run (see below). PowerShell 5.1's `-Encoding utf8` always
+  emits a BOM, Godot does not skip one, and the BOM lands in front of `[preset.0]` — so
+  the section header stops matching and the export dies with *"Invalid export preset name:
+  Web"*, an error that says nothing about encoding. The script writes through
+  `System.IO.File::WriteAllText` with a BOM-less encoder for exactly this reason.
 
 `user://` on the web is browser storage, so saved decks are per-browser and are lost if the
 user clears site data. That is a real limitation of the web build, not a bug.
+
+### The page shell
+
+**The page's mobile CSS and its fullscreen button live in `tools/web-head.html`**, which
+`export-web.ps1` escapes and writes into the preset's `html/head_include` before every
+export. Editing that file is how the page changes; the `.cfg` value is generated and
+should never be hand-edited.
+
+It is deliberately **not** a `custom_html_shell`. A full shell means forking Godot's boot
+script — the progress bar, the missing-feature detection, the service-worker retry — and
+re-merging it by hand on every engine upgrade. Everything in `web-head.html` is additive
+and touches nothing Godot generates, so an upgrade cannot silently break it.
+
+What it does, and why each part is load-bearing on a phone:
+
+- **`height: 100dvh`, with `100vh` as the fallback.** On mobile Safari and Chrome `vh` is
+  locked to the viewport with the URL bar *hidden*, so a `100vh` body is taller than the
+  visible page whenever the bar is showing. That overflow is the actual cause of the game
+  sitting half off-screen and scrolling under the browser chrome. `dvh` tracks the bar.
+- **`touch-action: none` and `overscroll-behavior: none`.** The canvas handles its own
+  input; without these the browser also pans, pinch-zooms and rubber-bands the page under
+  the game.
+- **A fullscreen button**, because requesting fullscreen is the only reliable way to hide
+  the URL bar — the old scroll-to-hide trick needs a scrollable page, and this one
+  deliberately cannot scroll. It must be triggered by a user gesture, which is why it is a
+  button rather than something done on load. It is **feature-detected, not UA-sniffed**,
+  and simply never appears where the Fullscreen API is unavailable (iPhone Safari): a
+  button that does nothing when tapped is worse than no button. Entering fullscreen also
+  requests a landscape orientation lock, which is a hint — it rejects on desktop and
+  wherever the browser disallows it, and that is fine.
+
+**Two characters to keep out of `export-web.ps1`**: an em-dash or a curly apostrophe inside
+the block that writes the preset. PowerShell 5.1 reads the script as ANSI when there is no
+BOM, mis-decodes the multi-byte sequence, and the parser desyncs — the symptom is a
+baffling `The term 'finally' is not recognized` pointing at a `try`/`finally` a hundred
+lines further down, with no output from anything above it. Plain ASCII in that file.
 
 ### What the launcher produces
 
@@ -1697,6 +1739,28 @@ assertions in game code surface here.
 ## Status
 
 **First prototype playable.** Godot 4.7 project, rooted in this folder.
+
+**There is an in-game tutorial, reached from `Learn to Play` on the main menu.** It is two
+halves: **fourteen scripted lesson battles** and a **browsable rules reference**. See
+`docs/plans/tutorial.md` for the design and `The tutorial` below for how a lesson is built.
+
+The lessons cover the whole rule set — board geometry, the energy economy, attacking,
+shielding, chosen targets and volley ordering, towers, evolution and abilities, retreat,
+supports/Tools/tower support, all four factions' keywords, and deckbuilding. Each is
+**independently selectable and independently completable**; no lesson depends on state from
+another, so a player who only wants the Void lesson can take it. Progress is saved to
+`user://tutorial.json` — deliberately its own file, so corrupt tutorial state can never take
+the deck collection with it.
+
+Two things are deliberately *not* done:
+
+- **No lesson teaches the attack lock or the mulligan by doing.** Both are described in the
+  reference but neither has a step, because the lock is a convenience over a rule the player
+  already knows by then and the mulligan only exists during setup, which only lesson 1 uses.
+- **Not yet played by a human.** The harness verifies that every lesson builds, every step
+  predicate fires against a real `GameState`, and every card id and cross-reference resolves.
+  It cannot tell you whether the *pacing* is right — whether a step's text lands before the
+  board changes under it, and whether the coach panel is where the eye already is.
 
 **Public, and playable in a browser at <https://jonahbyu.github.io/Godsfall/>.** Source is
 at `github.com/Jonahbyu/Godsfall`; the Web build is published to the `gh-pages` branch by
@@ -1890,6 +1954,74 @@ measures the AI against itself with the same list. `SupportTest.gd` gave up a ha
 support-heavy deck to do this — safe because all eight samples run 15–21 supports, and its
 "cards were spent" assertion keeps that honest.
 
+### The tutorial
+
+Two halves, and the split is the point:
+
+| Half | Teaches | Form |
+|---|---|---|
+| **Lessons** | The ~30 mechanics you *do* | Scripted interactive battles, gated step by step |
+| **Reference** | The exhaustive rules text | Browsable pages, no game running |
+
+A scripted battle is the only thing that can teach *pool vs. attached*, because that
+decision only exists when energy is actually scarce. But a battle cannot cover fifteen
+keywords without becoming an hour long, and a player looking up `Sanctuary N` six weeks
+later wants a page, not a replay. Each half does what the other does badly.
+
+| File | Role |
+|---|---|
+| `scripts/core/TutorialData.gd` | All lesson and reference content. **Data only** — no UI, no live `GameState`. |
+| `scripts/core/TutorialState.gd` | Autoload `Tutorial`. Active lesson, current step, progress. |
+| `scripts/ui/Tutorial.gd` | Lesson select |
+| `scripts/ui/Compendium.gd` | The reference |
+| `scripts/ui/Combat.gd` | Gating, highlighting, the coach panel |
+
+**A step is data, not code** — its text, what completes it, what is legal while it is open,
+and what to highlight. The three mechanisms are *gating* (a step names which actions are
+legal; everything else is inert and says so), *highlighting* (a step names a widget and it
+is ringed in gold), and *scripting* (a step may force board state, so a lesson about
+Sanctuary need not wait for the player to draw a Sanctuary body).
+
+**Advance conditions are checked against the real `GameState`.** A step completes because
+the rules engine agrees the thing happened, never because a click was counted — which is
+what keeps a lesson honest when the engine changes underneath it. The two exceptions are a
+unit *selection* and a *heal*, which leave no standing record in `GameState`; the UI reports
+those two directly, and that list is deliberately kept as short as it is.
+
+Four constraints worth keeping:
+
+- **The tutorial never touches `DeckStore`.** Lesson decks are fixed lists passed straight
+  to `GameState`. That is the data-loss shape the decision log already carries twice, and
+  the tutorial is the last place that should be able to write the player's collection.
+- **Lesson decks are dealt unshuffled**, via `GameState.new(p1, p2, false)`. A step that
+  says "play the energy card" cannot survive a hand that differs per run. The unshuffled
+  path also **skips the guaranteed-Basic re-deal**, since re-dealing would reshuffle the
+  very order the caller asked to preserve — so each lesson deck is *authored* to open on a
+  Basic, and `TutorialTest` asserts exactly that for all thirteen.
+- **`_stack()` interleaves rather than expanding in place.** A naive expansion puts all four
+  copies of the first card into the opening hand, which for most of these decks means six
+  identical cards and — for every lesson whose first entry is energy — an opening hand with
+  **no Basic and therefore no legal first action at all**. Round robin gives each lesson a
+  hand holding one of each thing it means to talk about.
+- **Every hook is inert when no lesson is running.** `Tutorial.active` is false in an
+  ordinary game and every hook answers permissively, so the normal path is unchanged *by
+  construction* rather than by care.
+
+The coach panel takes the top of the right-hand column and **demotes the battle log rather
+than overlaying the board** — a tutorial that hides the thing it is teaching about is
+self-defeating. Every step is skippable and every lesson replayable, because a tutorial that
+can trap you is worse than no tutorial.
+
+The reference reuses **`CardView`** for its keyword examples, the same renderer the hand,
+board and inspector use — the same reasoning that made `CardInspector` scale a real
+`CardView` rather than draw its own.
+
+**The known drift risk:** the reference restates rules that live in this file, and nothing
+syncs them automatically. The guard is narrow but real — `TutorialTest` asserts that every
+keyword in `Palette.KEYWORD_COLORS` has a page and that no page documents a keyword the game
+does not have, so **a new keyword fails the suite until someone documents it**. Nothing
+catches a *changed number*, so a tuning change still has to be propagated by hand.
+
 ### The battle log
 
 **Every finished game appends a record to `logs/battles.log`** — real games from `Combat`
@@ -1910,9 +2042,10 @@ Two guards worth keeping: the writer never raises (a balance log that can fail a
 or break a game is worse than no log), and a stall is recorded as `NO WINNER — stalled at
 round N`, since that is the single most important thing the file can capture.
 
-Verified by eleven headless harnesses (all passing — run 2026-08-09 after the Gaia card set
-landed, **748 counted assertions**, neither known flake fired; `SceneSmokeTest` and
-`PlaythroughTest` report pass/fail without a count and are not in that total):
+Verified by twelve headless harnesses (all passing — run 2026-08-09 after the tutorial
+landed, **861 counted assertions**; `SceneSmokeTest` and `PlaythroughTest` report pass/fail
+without a count and are not in that total). `SupportUITest` fired its known flake on that
+run — see the note below the table, which now has a measured rate:
 
 | Harness | Covers |
 |---|---|
@@ -1926,18 +2059,32 @@ landed, **748 counted assertions**, neither known flake fired; `SceneSmokeTest` 
 | `HeavenTest.gd` | 61 assertions: Heaven card data, Sanctuary pool depletion and terminal overflow, both halves of Judgment **driven through the real damage pipeline**, the Heaven mirror ordering, the save-is-not-re-executed guard, Sanctuary preceding Judgment, both reset cards, and keyword restoration on Rise and evolution |
 | `CardViewTest.gd` | 62 assertions on the card frame's *structure*: the header's HP and stage cells, the evolves-from strip (present on evolutions, absent on Basics), keyword chips including a spent `Judgment` dropping its chip, the ability banner (present with an ability, absent without), attack rows with the right icon count and attached-energy fill, the retreat footer and its reserved weakness/resistance slots, and a complete frame for all four non-unit card types. Checks which nodes exist and what they say, never pixel positions — those would break on every metric tweak |
 | `VoidTest.gd` | 61 assertions: Void card data and the printed damage budget, Gap direction/floor/living-units-only, Siphon moving energy on a unit vs. into the pool on a support, Void N destruction, the damage-per-voided rider, Rift scaling **through the real damage pipeline**, Rift granted by a Tool, pool destruction, Gap-to-throne damage, and Siphon obeying the shielding chain |
-| `GaiaTest.gd` | 124 assertions: Gaia card data including per-colour attack costs, the Earth aura summed across both boards and excluding the dead, aura-adjusted max HP, healing that reaches the aura's ceiling, downward clamping that never kills, the aura on attack damage and on tower damage, `Resist` in both damage paths and on Retribution recoil with its minimum-1 floor, Sanctuary preceding Resist, `Essence` **through the real `_cleanup_dead`** (payment, the nearest-living heir, ties-go-left, never crossing boards, skipping a corpse in a batched death, and fizzling when unaffordable), grown Earth resetting on Rise and evolution, Earth derived live from attached energy, the additive rate-breaker, and Makeshift Tower's free auto-fire, per-round growth, and obedience to the shielding chain |
+| `GaiaTest.gd` | 146 assertions: Gaia card data including per-colour attack costs, the Earth aura summed across both boards and excluding the dead, aura-adjusted max HP, healing that reaches the aura's ceiling, downward clamping that never kills, the aura on attack damage and on tower damage, `Resist` in both damage paths and on Retribution recoil with its minimum-1 floor, Sanctuary preceding Resist, `Essence` **through the real `_cleanup_dead`** (payment, the nearest-living heir, ties-go-left, never crossing boards, skipping a corpse in a batched death, and fizzling when unaffordable), grown Earth resetting on Rise and evolution, Earth derived live from attached energy, the additive rate-breaker, and Makeshift Tower's free auto-fire, per-round growth, and obedience to the shielding chain |
+| `TutorialTest.gd` | 113 assertions: lesson content integrity (unique ids, every step carrying text, every `advance` predicate one the evaluator handles), every card id a lesson names existing, every `read_more` resolving to a real page, every lesson deck building a `GameState` and being authored to open on a Basic, the unshuffled deal being reproducible **and the default path still shuffling**, every scripted placement landing on a real non-tower slot, the gating hooks answering permissively when inactive, all eight step predicates **driven against a real `GameState`**, progress round-tripping through a sandboxed file, and compendium coverage of every keyword in `Palette.KEYWORD_COLORS` |
 
 The Heaven pipeline tests deliberately call `GameState._deal_lane_damage` rather than
 simulating the ordering inline — a test that reimplements the rule it is checking proves
-nothing about the engine.
+nothing about the engine. `TutorialTest` follows the same rule: its step predicates are
+checked by mutating a real `GameState` and asking the predicate, never by simulating what
+the predicate would see.
 
-**`SupportTest.gd` is intermittently flaky — one failure seen in ~15 runs on 2026-08-08,
-not reproducible afterward.** It was not captured, so the failing assertion is unknown. The
-prime suspect is the support-heavy AI-vs-AI game at the end of the file: it is the only
-non-deterministic assertion there (shuffled decks, heuristic AI), and a game that happens to
-stall or end unusually would trip it. Worth capturing the output next time it happens rather
-than re-running until green — an intermittent test failure is information, not noise.
+**`SupportUITest.gd` is intermittently flaky at roughly 1 run in 8, and the failing
+assertion is now known: `enemy tower damaged` in the tower-targeting section.** Measured
+2026-08-09 over 5 runs on the working tree and 8 on a clean checkout of `HEAD` — it fires at
+the same rate on both, so it is **not** caused by any tutorial change. On the failing run
+the support resolves correctly (the hand empties and 25 damage lands) but the enemy tower
+reads 27/52 rather than 25/50, i.e. it has taken a **+2 max HP structure growth** the
+assertion does not expect. `_reset()` does not restore tower HP between sections, so the
+test depends on no round having elapsed by that point — the suspect is a preceding section
+occasionally letting a turn resolve. The fix is to have `_reset()` restore tower state
+rather than to relax the assertion, but that is a test change and has not been made.
+
+**`SupportTest.gd` is separately flaky — one failure in ~15 runs on 2026-08-08, not
+reproducible afterward and never captured.** The prime suspect is the support-heavy
+AI-vs-AI game at the end of the file: it is the only non-deterministic assertion there
+(shuffled decks, heuristic AI), and a game that happens to stall or end unusually would trip
+it. Worth capturing the output next time rather than re-running until green — an
+intermittent test failure is information, not noise.
 
 Run them with:
 `godot --headless --path <project> --script res://scripts/core/RulesTest.gd`
@@ -2022,10 +2169,16 @@ Next steps, in order:
    Widening Rift, 5-4 vs Verdict Engine over 9-run samples. It predates Void and is now the
    clearest balance outlier in the game. See `hel.md`.
 3. ~~**Card art for Heaven and Void.**~~ **Done** — all 114 cards have emblems, Gaia included.
-4. **Human playtesting.** Three factions and eight sample decks now exist; every balance
+4. **Walk the tutorial end to end as a player.** All fourteen lessons build and every step
+   predicate fires against a real `GameState`, but the harness cannot read *pacing* — whether
+   a step's text lands before the board changes under it, whether the coach panel is where
+   the eye already is, and whether the gating ever refuses something a reasonable player
+   would try at that moment. The nudge on a blocked action is the thing to watch: it is the
+   one place the tutorial can feel broken rather than instructive.
+5. **Human playtesting.** All four factions and ten sample decks now exist; every balance
    number in these docs is still an AI reading, and the AI does not retreat, does not model
    clearing a board across a volley, and has no Judgment or Sanctuary heuristics.
-5. Then **Gaia**, the last of the original four.
+6. ~~Then **Gaia**, the last of the original four.~~ **Done** — 19 cards in five chains.
 
 ---
 
@@ -2663,3 +2816,93 @@ even if the rule text later changes. Keep entries to one or two lines.
   every web game would have silently logged nothing. **A failure path designed to stay
   quiet needs its assumptions checked whenever the platform changes**, precisely because it
   will not tell you when they stop holding.
+- **The viewport is clamped to a minimum design size rather than switching stretch mode.**
+  `stretch/aspect = "expand"` gives the viewport the window's real aspect at 1:1 and
+  deliberately does not scale — right on a desktop, where a wider window should mean more
+  room rather than bigger cards, and fatal on a phone, where it means the viewport is
+  genuinely 390 units wide against a combat screen needing ~1180. Nothing was scaled down;
+  the board and the log panel were simply off-screen with no way to reach them. Switching
+  the project to `aspect = "keep"` would have fixed mobile and regressed the case that
+  actually gets played, letterboxing a real monitor back to 1440×900. `ViewportFit`
+  instead keeps `expand` and raises `content_scale_size` to whatever is needed for the
+  layout to fit, so a narrow window gets a scaled-down viewport that still holds the whole
+  UI while a large one keeps today's native behaviour untouched — at 1440×900 the clamp is
+  inactive and the reference size is the window, which is what expand computes anyway.
+- **Combat stacks its columns below 820px wide instead of shrinking them.** The battlefield
+  has a hard minimum width — six 132px board slots — so side by side with the 320px
+  action/log column there is nothing left to give on a phone. Stacked, the log becomes a
+  drawer behind a header button: it is the one thing on that screen that is *reference*
+  rather than interaction, so it is what yields the vertical budget. The action panel
+  stays, because charging and queueing attacks are how the turn is played. Crossing the
+  threshold (rotating a phone) rebuilds the screen wholesale rather than re-parenting —
+  the two shapes differ in more than parentage, and the game lives in `gs` rather than in
+  the nodes, so a rebuild costs a frame and cannot leave a stale mix of the two.
+- **The web page's shell is a `head_include` file, never a `custom_html_shell`.** A full
+  shell means forking Godot's boot script and re-merging it by hand on every engine
+  upgrade; `tools/web-head.html` is purely additive, so an upgrade cannot break it. The
+  fullscreen button earns its place because requesting fullscreen is the only reliable way
+  to hide a mobile URL bar — scroll-to-hide needs a scrollable page and this one must not
+  scroll — and it has to come from a user gesture, hence a button rather than an on-load
+  call. Feature-detected rather than UA-sniffed, so it never appears where the API is
+  missing: a button that does nothing when tapped is worse than no button.
+- **Two encoding traps, both of which fail by pointing somewhere else entirely.** Writing
+  `export_presets.cfg` with PowerShell 5.1's `-Encoding utf8` prepends a BOM, Godot does
+  not skip it, and the export dies with *"Invalid export preset name: Web"* — an error
+  about the preset name, caused by three bytes in front of `[preset.0]`. And an em-dash or
+  curly apostrophe anywhere in `export-web.ps1` is mis-decoded when PS 5.1 reads the
+  BOM-less script as ANSI, desyncing the parser into `The term 'finally' is not recognized`
+  against a `try`/`finally` a hundred lines below, with no output from anything above it.
+  Both cost real time this session; the general shape is the one this log already carries
+  for `CardDB` and per-round growth — **the error's location is not the defect's
+  location**, and an encoding fault in particular surfaces as a syntax or lookup failure
+  far from the byte that caused it.
+- **There is an in-game tutorial, and it is two halves rather than one.** Fourteen scripted
+  lesson battles teach the mechanics you *do*; a browsable reference carries the exhaustive
+  rules text. Neither half could do the other's job: a scripted battle is the only thing
+  that can teach *pool vs. attached*, because that decision only exists when energy is
+  actually scarce — but a battle cannot cover fifteen keywords without becoming an hour
+  long, and a player looking up `Sanctuary N` six weeks later wants a page, not a replay.
+  Lessons are independently selectable and independently completable, so nothing forces a
+  player who wants the Void lesson to sit through thirteen others first.
+- **A tutorial step advances because the rules engine agrees, not because a click was
+  counted.** Each step's completion condition is evaluated against the real `GameState`,
+  which is what keeps a lesson honest when the engine changes underneath it — the same
+  reasoning that makes the Heaven and Gaia harnesses drive `_deal_lane_damage` rather than
+  simulate it. The two exceptions are a unit *selection* and a *heal*, which leave no
+  standing record in `GameState`; the UI reports those directly, and keeping that list to
+  two is deliberate, because every entry on it is a place the tutorial could drift from the
+  game.
+- **Every tutorial hook is inert when no lesson is running.** `Tutorial.active` is false in
+  an ordinary game and every gate answers permissively, so the ordinary path is unchanged
+  *by construction* rather than by care. That mattered more than usual here: the tutorial
+  touches `Combat.gd`'s input paths, and `Combat.gd` is the largest file in the project.
+- **The tutorial never touches `DeckStore`, and its progress lives in its own file.** Lesson
+  decks are fixed lists handed straight to `GameState`, and progress saves to
+  `user://tutorial.json`. This log already carries two data-loss bugs caused by a read or
+  test path sharing a write path with the player's collection; a fourteen-lesson feature
+  that constructs decks is exactly where the third would come from.
+- **Lesson decks are dealt unshuffled, which forced two smaller decisions.** A step that
+  says "play the energy card" cannot survive a hand that differs per run, so
+  `GameState.new(p1, p2, false)` skips the shuffle. That path must also **skip the
+  guaranteed-Basic re-deal**, because re-dealing reshuffles the very order the caller asked
+  to preserve — so a lesson deck is *authored* to open on a Basic instead, and the harness
+  asserts it for all thirteen. And `_stack()` had to **interleave** rather than expand in
+  place: the naive expansion puts four copies of the first card in the opening hand, which
+  for every lesson whose first entry is energy means **an opening hand with no Basic and no
+  legal first action at all**. Both were caught by the harness, not by reading the code.
+- **The tutorial's own harness caught two real bugs on its first run, and the
+  assertion-count guard caught a third.** `Player.load_deck()` shuffled unconditionally, so
+  the reproducible-deal premise the whole lesson system rests on was quietly false; and a
+  keyword-example assertion checked `keywords` for `Consume`, which lives on an attack line
+  because *an ability may carry no other cost* — the data was right and the test was wrong.
+  Separately, `EXPECTED_ASSERTIONS` was written as an estimate of 118 against a real 113,
+  which is the guard working as intended: **a green suite is only evidence if you know how
+  many assertions it was supposed to run.**
+- **`SupportUITest`'s flake was measured against a clean checkout before being attributed.**
+  It failed on the working tree during this session at the `enemy tower damaged` assertion,
+  which is exactly the kind of coincidence that gets blamed on whatever landed last. Running
+  a `HEAD` worktree eight times reproduced it at the same ~1-in-8 rate, so it is
+  pre-existing. The mechanism is now known and recorded above (a stale tower HP across
+  `_reset()`), which is the thing the docs previously asked for and could not supply — an
+  intermittent failure is information, and the way to collect it is to measure the baseline
+  rather than to re-run until green.

@@ -5,6 +5,7 @@ extends Control
 const DECK_SCENE := "res://scenes/DeckBuilder.tscn"
 const SELECT_SCENE := "res://scenes/DeckSelect.tscn"
 const COMBAT_SCENE := "res://scenes/Combat.tscn"
+const TUTORIAL_SCENE := "res://scenes/Tutorial.tscn"
 
 var _warning: Label
 
@@ -45,6 +46,7 @@ func _build() -> void:
 	col.add_child(spacer)
 
 	col.add_child(_menu_button("Play vs. AI", _on_play))
+	col.add_child(_menu_button("Learn to Play", _on_tutorial))
 	col.add_child(_menu_button("My Decks", _on_decks))
 	col.add_child(_menu_button("Quit", _on_quit))
 
@@ -87,6 +89,17 @@ func _refresh() -> void:
 ## to start a fight or just manage the collection.
 func _on_play() -> void:
 	_go_to_select(true)
+
+
+## The tutorial is its own entry point rather than a prompt on first run: a
+## player who wants it should always be able to find it, and one who does not
+## should never be made to sit through it.
+##
+## `Tutorial.end()` first, so a lesson abandoned by walking back to the menu can
+## never leak into the next ordinary game.
+func _on_tutorial() -> void:
+	Tutorial.end()
+	get_tree().change_scene_to_file(TUTORIAL_SCENE)
 
 
 func _on_decks() -> void:

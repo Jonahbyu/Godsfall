@@ -50,9 +50,40 @@ func _init(name: String = "Player", ai: bool = false) -> void:
 		boards.append(Board.new())
 
 
-func load_deck(card_ids: Array) -> void:
+## Load a deck, shuffled.
+##
+## `shuffled = false` is for the TUTORIAL only, which needs a lesson to deal the
+## same hand on every run — a scripted step that says "play the energy card"
+## cannot survive a hand that differs per run. Nothing else should pass false:
+## a real game with a stacked deck is not a game.
+func load_deck(card_ids: Array, shuffled: bool = true) -> void:
 	deck = card_ids.duplicate()
-	deck.shuffle()
+	if shuffled:
+		deck.shuffle()
+
+
+## Deal an exact opening hand, for the TUTORIAL only.
+##
+## A lesson's steps name specific cards ("deploy a second Basic", "play the energy
+## card"), so the hand those steps need is a property of the LESSON and has to be
+## stated by it — not inferred from a deck ordering and hoped for. Getting this
+## wrong soft-locks a lesson at the step that asks for a card the player was never
+## dealt, which is exactly what happened with an ordering-based approach: `draw()`
+## pops from the BACK of the deck, so a carefully ordered deck front is the last
+## thing the player sees rather than the first.
+##
+## Cards named here are pulled OUT of the deck, so a copy cannot be both in the
+## opening hand and still waiting in the deck. Anything not found is skipped
+## rather than conjured — the deck stays the authority on what exists.
+func deal_exact_hand(card_ids: Array) -> void:
+	hand.clear()
+	for id in card_ids:
+		var want := String(id)
+		var at := deck.find(want)
+		if at == -1:
+			continue
+		deck.remove_at(at)
+		hand.append(want)
 
 
 ## ------------------------------------------------------------- the opening hand

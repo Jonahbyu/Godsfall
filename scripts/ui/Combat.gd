@@ -16,6 +16,8 @@ extends Control
 ## repositioning is the printed effect of the Reposition support card.
 
 const MENU_SCENE := "res://scenes/MainMenu.tscn"
+const TUTORIAL_SCENE := "res://scenes/Tutorial.tscn"
+const COMPENDIUM_SCENE := "res://scenes/Compendium.tscn"
 
 ## Preloaded rather than relying on the `class_name` global, which isn't
 ## registered when a headless harness runs before a filesystem scan.
@@ -88,13 +90,85 @@ var _mulligan_btn: Button
 var _overlay: Control
 var _global_lock_btn: Button
 
+## Whether this screen was built with the narrow-screen layout. Latched at build
+## time rather than read from ViewportFit on the fly, so every part of one build
+## agrees about which shape it is — and so `_on_compactness_changed` can tell
+## that the shape it was built for is no longer the right one.
+var _compact: bool = false
+var _log_toggle: Button
+var _overlay_text: String = ""
+
+## Tutorial coaching. All null / false in an ordinary game.
+var _coach_panel: PanelContainer
+var _coach_box: VBoxContainer
+## Guards the advance timer so a burst of state_changed signals during one
+## resolution cannot queue several advances for a single completed step.
+var _coach_advancing: bool = false
+
 
 func _ready() -> void:
 	_build_ui()
 	_start_game()
+	ViewportFit.compactness_changed.connect(_on_compactness_changed)
+
+
+## Rebuild the whole screen when the window crosses the narrow threshold, which
+## on a phone means rotating it.
+##
+## A full rebuild rather than re-parenting the two columns: the layout differs in
+## more than parentage (the log becomes a drawer, minimum widths change), and the
+## game state lives in `gs`, not in the nodes — so throwing the UI away and
+## building it again costs nothing but a frame and cannot leave a stale mix of
+## the two shapes.
+func _on_compactness_changed(is_compact: bool) -> void:
+	if is_compact == _compact:
+		return
+
+	## A rotation mid-game must not lose the game-over screen, which is a state
+	## the board no longer shows on its own once `gs` has stopped.
+	var was_over := _overlay != null
+	var over_text := ""
+	if was_over:
+		over_text = _overlay_text
+
+	## Hover state points at CardViews that are about to be freed, and the
+	## in-flight tweens would animate nodes out from under the rebuild.
+	for tw in _hover_tweens.values():
+		if tw != null and is_instance_valid(tw):
+			tw.kill()
+	_hover_tweens.clear()
+	_hovered_card = null
+	_zoom_card = null
+	_zoom_layer = null
+	_overlay = null
+
+	## Clearing a pick mode rather than preserving it: the highlight lives on
+	## slot nodes that are being freed, and a half-committed two-unit support
+	## with no visible targets is worse than making the player click again.
+	_pending_support = null
+	_pending_two = null
+	_selected_hand = -1
+	_selected_unit = null
+
+	for child in get_children():
+		child.queue_free()
+		remove_child(child)
+
+	_build_ui()
+	_refresh()
+	if was_over:
+		_show_overlay(over_text)
 
 
 func _start_game() -> void:
+	## A tutorial lesson brings its own fixed decks and its own board, so it never
+	## touches DeckStore. That is deliberate: the tutorial must not be able to write
+	## the player's collection, which is the data-loss shape the decision log
+	## already carries twice.
+	if Tutorial.active and not Tutorial.is_builder_lesson():
+		_start_lesson()
+		return
+
 	var my_deck := DeckStore.to_card_list()
 
 	## The AI brings whichever deck was chosen on the deck select screen, or a
@@ -122,6 +196,280 @@ func _start_game() -> void:
 	_refresh()
 
 
+# ------------------------------------------------------------------ tutorial
+#
+# Everything below is inert unless a lesson is running. `Tutorial.active` is false
+# in an ordinary game and every hook answers permissively, so the normal path is
+# unchanged by construction rather than by care.
+
+## Build the scripted game a lesson runs on.
+##
+## Lesson decks are fixed lists in `TutorialData`, dealt in order and NOT shuffled
+## — a step that says "play the energy card" cannot survive a hand that differs per
+## run. Board state is then forced directly, because a lesson about Sanctuary
+## should not have to wait for the player to draw a Sanctuary body.
+func _start_lesson() -> void:
+	var l: Dictionary = Tutorial.lesson
+
+	## Unshuffled: a lesson deals the same hand every run, which is the entire
+	## requirement for a scripted step to be able to name a card.
+	gs = GameState.new(l.get("deck", []), l.get("enemy_deck", []), false)
+	gs.deck_names = ["You", "Training Partner"]
+	ai = AIPlayer.new(gs)
+	gs.log_line.connect(_on_log)
+	gs.state_changed.connect(_on_tutorial_state_changed)
+	gs.game_over.connect(_on_game_over)
+	gs.choice_required.connect(_on_choice_required)
+
+	## A lesson never blocks on a picker. Search and discard prompts auto-resolve,
+	## the same way the headless harnesses handle them, so a step can never hang
+	## behind a modal the script did not ask for.
+	auto_resolve_choices = true
+
+	gs.start()
+
+	var skipping := bool(l.get("skip_setup", false))
+	if skipping:
+		gs.skip_setup()
+
+	_place_scripted(gs.players[GameState.P1], l.get("start_board", []))
+	_place_scripted(gs.players[GameState.P2], l.get("enemy_board", []))
+	_apply_scripted_state(l)
+
+	if not skipping:
+		## The training partner commits its board immediately, exactly as the AI
+		## does in a real game.
+		ai.take_setup(gs.players[GameState.P2])
+
+	Tutorial.gs = gs
+	Tutorial.step_changed.connect(_refresh)
+	Tutorial.lesson_finished.connect(_on_lesson_finished)
+
+	_refresh()
+
+
+## Put units on the board directly from `[[card_id, board, slot], ...]`.
+func _place_scripted(p: Player, spec: Array) -> void:
+	for entry in spec:
+		if typeof(entry) != TYPE_ARRAY or entry.size() < 3:
+			continue
+		var card: CardData = CardDB.get_card(String(entry[0]))
+		if card == null:
+			continue
+		var bi := int(entry[1])
+		var si := int(entry[2])
+		if bi < 0 or bi >= p.boards.size():
+			continue
+		p.boards[bi].place(Unit.new(card), si)
+
+
+## Pool, attached energy and pre-applied damage, so a lesson can open on the exact
+## position it wants to talk about.
+func _apply_scripted_state(l: Dictionary) -> void:
+	var you: Player = gs.players[GameState.P1]
+	var them: Player = gs.players[GameState.P2]
+
+	if l.has("pool"):
+		you.pool = int(l["pool"])
+
+	for e in l.get("attach", []):
+		var u := _scripted_unit(you, e)
+		if u != null:
+			u.attached += int(e[2])
+
+	for e in l.get("enemy_attach", []):
+		var u := _scripted_unit(them, e)
+		if u != null:
+			u.attached += int(e[2])
+
+	## Pre-damage, so the heal lesson has something to heal.
+	for e in l.get("damage", []):
+		var u := _scripted_unit(you, e)
+		if u != null:
+			u.take_damage(int(e[2]))
+
+
+func _scripted_unit(p: Player, entry) -> Unit:
+	if typeof(entry) != TYPE_ARRAY or entry.size() < 3:
+		return null
+	var bi := int(entry[0])
+	var si := int(entry[1])
+	if bi < 0 or bi >= p.boards.size():
+		return null
+	return p.boards[bi].unit_at(si)
+
+
+## Every state change re-renders AND re-checks the current step, so a step
+## advances the moment the rules engine agrees the thing happened — never because
+## a click was counted.
+func _on_tutorial_state_changed() -> void:
+	_refresh()
+	_tut_check()
+
+
+## Gate an action behind the current step. True when it may proceed; shows a nudge
+## and returns false when it may not.
+##
+## Never silent on refusal — a click that does nothing reads as a bug, which is the
+## worst thing a tutorial can teach.
+func _tut_allows(action: String) -> bool:
+	if not Tutorial.active:
+		return true
+	if Tutorial.allows(action):
+		return true
+	if _hint_lbl != null:
+		_hint_lbl.text = Tutorial.blocked_hint()
+	return false
+
+
+## Re-check the current step's completion condition.
+func _tut_check() -> void:
+	if not Tutorial.active or _coach_advancing:
+		return
+	if not Tutorial.step_satisfied():
+		return
+	## A beat before advancing, so the player sees the result of what they did
+	## rather than the panel changing out from under the click.
+	_coach_advancing = true
+	await get_tree().create_timer(0.5).timeout
+	_coach_advancing = false
+	if Tutorial.active and Tutorial.step_satisfied():
+		Tutorial.advance()
+
+
+func _on_lesson_finished() -> void:
+	_show_overlay("Lesson complete\n%s" % Tutorial.lesson_title())
+
+
+## True when the current step points at cards of this card's type.
+##
+## By TYPE rather than hand index, because the hand shifts as cards are played
+## and an index recorded when the lesson was written would drift onto whatever
+## happened to slide into that position.
+func _tut_hand_highlight(card: CardData) -> bool:
+	if not Tutorial.active or card == null:
+		return false
+	var h := Tutorial.highlight()
+	if String(h.get("kind", "")) != "hand_type":
+		return false
+	match String(h.get("value", "")):
+		"energy":
+			return card.is_energy()
+		"support":
+			return card.is_support_like()
+		"unit":
+			return card.is_unit()
+		_:
+			return false
+
+
+## True when the current step points at this widget. Purely visual.
+func _tut_highlights(kind: String, board: int = -1, slot: int = -1) -> bool:
+	if not Tutorial.active:
+		return false
+	var h := Tutorial.highlight()
+	if h.is_empty() or String(h.get("kind", "")) != kind:
+		return false
+	if h.has("board") and int(h["board"]) != board:
+		return false
+	if h.has("slot") and int(h["slot"]) != slot:
+		return false
+	return true
+
+
+## The coach panel: the step text, where it is in the lesson, and the controls.
+##
+## It takes the top of the right-hand column and DEMOTES the battle log rather
+## than overlaying the board. A tutorial that hides the thing it is teaching about
+## is self-defeating.
+func _rebuild_coach() -> void:
+	if _coach_box == null:
+		return
+	for c in _coach_box.get_children():
+		c.queue_free()
+
+	if not Tutorial.active:
+		_coach_panel.visible = false
+		return
+	_coach_panel.visible = true
+
+	var s := Tutorial.step()
+	if s.is_empty():
+		return
+
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", 6)
+	_coach_box.add_child(head)
+
+	var title := String(s.get("title", Tutorial.lesson_title()))
+	var t := Palette.label(title, 15, Palette.ACCENT)
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	head.add_child(t)
+
+	head.add_child(Palette.label(
+		"%d/%d" % [Tutorial.step_index + 1, Tutorial.step_count()],
+		12, Palette.TEXT_DIM))
+
+	var body := RichTextLabel.new()
+	body.bbcode_enabled = true
+	body.fit_content = true
+	body.custom_minimum_size = Vector2(0, 150)
+	body.add_theme_font_size_override("normal_font_size", 13)
+	body.add_theme_font_size_override("bold_font_size", 13)
+	body.add_theme_color_override("default_color", Palette.TEXT)
+	body.text = String(s.get("text", ""))
+	_coach_box.add_child(body)
+
+	## An action step says what it is waiting for; an exposition step offers Next.
+	var waiting := String(s.get("advance", "")) != ""
+	if waiting:
+		var w := Palette.label("Waiting for you…", 11, Palette.GOLD)
+		_coach_box.add_child(w)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+	_coach_box.add_child(row)
+
+	if Tutorial.step_index > 0:
+		row.add_child(_coach_btn("Back", func(): Tutorial.go_back()))
+
+	## Every step is skippable and every lesson is replayable. A tutorial that can
+	## trap you is worse than no tutorial.
+	row.add_child(_coach_btn("Skip step" if waiting else "Next", func(): Tutorial.advance()))
+
+	var more := String(s.get("read_more", ""))
+	if more != "":
+		row.add_child(_coach_btn("Read more", func(): _open_compendium(more)))
+
+	row.add_child(_coach_btn("Quit", func():
+		Tutorial.end()
+		get_tree().change_scene_to_file(TUTORIAL_SCENE)))
+
+
+func _coach_btn(text: String, cb: Callable) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.add_theme_font_size_override("font_size", 11)
+	Palette.style_button(b, Palette.PANEL_LIGHT, Palette.BORDER)
+	b.pressed.connect(cb)
+	return b
+
+
+## Open a compendium page from a lesson's "Read more" link. The lesson stays
+## active, so returning lands back on the same step.
+func _open_compendium(page_id: String) -> void:
+	var scene: PackedScene = load(COMPENDIUM_SCENE)
+	if scene == null:
+		return
+	var screen := scene.instantiate()
+	screen.open_page = page_id
+	var tree := get_tree()
+	tree.root.add_child(screen)
+	tree.current_scene.queue_free()
+	tree.current_scene = screen
+
+
 # ------------------------------------------------------------------ UI build
 
 func _build_ui() -> void:
@@ -132,7 +480,17 @@ func _build_ui() -> void:
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
-	var root := HBoxContainer.new()
+	## Side by side on a desktop, stacked on a phone. The battlefield column has a
+	## hard minimum width (six 132px board slots), so on a narrow screen the only
+	## place the action panel and log can go is *under* it — side by side, they
+	## would squeeze the board into unreadability. See ViewportFit.
+	_compact = ViewportFit.compact
+
+	var root: BoxContainer
+	if _compact:
+		root = VBoxContainer.new()
+	else:
+		root = HBoxContainer.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.offset_left = 10
 	root.offset_right = -10
@@ -252,9 +610,25 @@ func _build_ui() -> void:
 
 	## ---------------- right: action panel + log
 	var right := VBoxContainer.new()
-	right.custom_minimum_size = Vector2(320, 0)
+	## The fixed 320 is what reserves the column on a desktop. Stacked under the
+	## board it would instead be a 320px *floor* on an already-narrow screen, so
+	## the compact layout lets it take the full width it has been given.
+	if not _compact:
+		right.custom_minimum_size = Vector2(320, 0)
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right.add_theme_constant_override("separation", 6)
 	root.add_child(right)
+
+	## The coach takes the TOP of this column during a lesson and demotes the log,
+	## rather than overlaying the board — a tutorial that hides the thing it is
+	## teaching about is self-defeating.
+	_coach_panel = Palette.make_panel(Palette.PANEL_LIGHT, Palette.ACCENT)
+	_coach_panel.visible = false
+	right.add_child(_coach_panel)
+
+	_coach_box = VBoxContainer.new()
+	_coach_box.add_theme_constant_override("separation", 6)
+	_coach_panel.add_child(_coach_box)
 
 	_action_panel = Palette.make_panel(Palette.PANEL, Palette.ACCENT)
 	_action_panel.visible = false
@@ -264,9 +638,27 @@ func _build_ui() -> void:
 	_action_box.add_theme_constant_override("separation", 4)
 	_action_panel.add_child(_action_box)
 
-	right.add_child(Palette.label("Battle Log", 13, Palette.TEXT_DIM))
+	## On a desktop the log is always open and fills the leftover column height.
+	## Compact, it is a drawer behind a header button: the vertical budget under
+	## the board is small, and the log is the one thing on this screen that is
+	## reference rather than interaction — so it is what gives way.
 	var log_panel := Palette.make_panel(Palette.PANEL)
-	log_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	if _compact:
+		_log_toggle = Button.new()
+		_log_toggle.toggle_mode = true
+		_log_toggle.text = "Battle Log  ▸"
+		_log_toggle.add_theme_font_size_override("font_size", 13)
+		Palette.style_button(_log_toggle)
+		_log_toggle.toggled.connect(func(on: bool) -> void:
+			log_panel.visible = on
+			_log_toggle.text = "Battle Log  ▾" if on else "Battle Log  ▸"
+		)
+		right.add_child(_log_toggle)
+		log_panel.visible = false
+		log_panel.custom_minimum_size = Vector2(0, 150)
+	else:
+		right.add_child(Palette.label("Battle Log", 13, Palette.TEXT_DIM))
+		log_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	right.add_child(log_panel)
 
 	var log_scroll := ScrollContainer.new()
@@ -275,7 +667,11 @@ func _build_ui() -> void:
 	_log = RichTextLabel.new()
 	_log.bbcode_enabled = true
 	_log.fit_content = true
-	_log.custom_minimum_size = Vector2(290, 0)
+	## The 290 floor exists to stop the log wrapping to a sliver inside the fixed
+	## desktop column. Compact, the column is as wide as the screen and a floor
+	## wider than the screen would force a horizontal scrollbar instead.
+	if not _compact:
+		_log.custom_minimum_size = Vector2(290, 0)
 	_log.add_theme_color_override("default_color", Palette.TEXT_DIM)
 	log_scroll.add_child(_log)
 
@@ -395,6 +791,7 @@ func _refresh() -> void:
 	## for. Drop it here rather than waiting for a mouse-exit that will never come
 	## from a node that no longer exists.
 	_hide_zoom()
+	_rebuild_coach()
 	var you: Player = gs.players[GameState.P1]
 	var foe: Player = gs.players[GameState.P2]
 
@@ -454,6 +851,12 @@ func _refresh() -> void:
 		_end_turn_btn.text = "End Turn"
 		_end_turn_btn.disabled = gs.finished or gs.active != GameState.P1
 
+	## Ring the turn button when a lesson step is waiting on it.
+	if _tut_highlights("end_turn"):
+		Palette.style_button(_end_turn_btn, Palette.ACCENT_DIM, Palette.GOLD)
+	else:
+		Palette.style_button(_end_turn_btn, Palette.ACCENT_DIM, Palette.ACCENT)
+
 
 func _rebuild_boards(row: HBoxContainer, p: Player, is_enemy: bool) -> void:
 	for c in row.get_children():
@@ -504,8 +907,12 @@ func _slot_widget(p: Player, b: Board, bi: int, si: int, is_enemy: bool) -> Cont
 		e.custom_minimum_size = CardView.BOARD_SIZE
 		e.text = "+ deploy" if playable else ("drop here" if _dragging_basic else "empty")
 		e.add_theme_font_size_override("font_size", 12)
+		## A lesson step pointing at this slot rings it in gold, so "deploy here"
+		## has somewhere obvious to land.
+		var tut_ring := (not is_enemy) and _tut_highlights("my_slot", bi, si)
 		Palette.style_button(e, Palette.PANEL_LIGHT.darkened(0.45),
-			Palette.ACCENT if (playable or (droppable and _dragging_basic)) else Palette.BORDER)
+			Palette.GOLD if tut_ring else (
+				Palette.ACCENT if (playable or (droppable and _dragging_basic)) else Palette.BORDER))
 		e.disabled = not playable
 		e.mouse_filter = Control.MOUSE_FILTER_PASS
 		if playable:
@@ -535,6 +942,10 @@ func _slot_widget(p: Player, b: Board, bi: int, si: int, is_enemy: bool) -> Cont
 		else:
 			view.dimmed = true
 		return _wrap_with_status(view, u)
+
+	## A lesson step may point at a body — yours to act with, or theirs to aim at.
+	if _tut_highlights("my_unit" if not is_enemy else "enemy_unit", bi, si):
+		view.highlight = Palette.GOLD
 
 	if is_enemy:
 		pass                                     ## enemy units are display-only
@@ -768,6 +1179,11 @@ func _rebuild_hand(p: Player) -> void:
 		var view := CardView.new(card, null, CardView.Mode.HAND)
 		view.selected = (i == _selected_hand)
 		view.dimmed = not playable
+
+		## A lesson step can point at a card TYPE rather than a hand position,
+		## since the position shifts as cards are played.
+		if _tut_hand_highlight(card):
+			view.highlight = Palette.GOLD
 
 		if my_turn and not playable:
 			view.tooltip_text = "Only Basic units may be placed during setup." \
@@ -1010,8 +1426,11 @@ func _lock_toggle_row(u: Unit, atk: AttackData) -> Control:
 ## queue_attack records the choice as the unit's `last_attack`, and whether it
 ## re-fires is decided by the toggles, not by how it was queued.
 func _queue_and_maybe_lock(p: Player, u: Unit, atk: AttackData) -> void:
+	if not _tut_allows("queue"):
+		return
 	gs.queue_attack(p, u, atk)
 	_refresh()
+	_tut_check()
 
 
 ## One activated ability. Abilities are free and resolve on the spot, so the
@@ -1078,13 +1497,13 @@ func _rebuild_action_panel(p: Player) -> void:
 		cb.text = "+%d" % n
 		Palette.style_button(cb)
 		cb.disabled = p.pool < n
-		cb.pressed.connect(func(): gs.charge(p, u, n))
+		cb.pressed.connect(func(): _do_charge(p, u, n))
 		charge_row.add_child(cb)
 	var call_btn := Button.new()
 	call_btn.text = "All (%d)" % p.pool
 	Palette.style_button(call_btn)
 	call_btn.disabled = p.pool <= 0
-	call_btn.pressed.connect(func(): gs.charge(p, u, p.pool))
+	call_btn.pressed.connect(func(): _do_charge(p, u, p.pool))
 	charge_row.add_child(call_btn)
 
 	## Abilities — resolve immediately, once per turn, and never cost pool energy.
@@ -1130,9 +1549,12 @@ func _rebuild_action_panel(p: Player) -> void:
 	else:
 		rb.tooltip_text = "Needs %d attached energy to retreat — this unit has %d. Retreat cannot be paid from the pool." % [cost, u.attached]
 	rb.pressed.connect(func():
+		if not _tut_allows("retreat"):
+			return
 		_selected_unit = null
 		gs.retreat(p, u)
 		_refresh()
+		_tut_check()
 	)
 	_action_box.add_child(rb)
 
@@ -1166,14 +1588,22 @@ func _on_hand_pressed(i: int, card: CardData) -> void:
 	## Energy resolves immediately — no target needed. Clear the selection
 	## before playing, since the hand shifts underneath us.
 	if card.is_energy():
+		if not _tut_allows("play_energy"):
+			return
 		_selected_hand = -1
 		_pending_support = null
 		gs.play_energy(gs.players[GameState.P1], i)
 		_refresh()
+		_tut_check()
 		return
 
 	if card.is_support_like():
+		if not _tut_allows("play_support"):
+			return
 		_on_support_pressed(i, card)
+		return
+
+	if not _tut_allows("select"):
 		return
 
 	_pending_support = null
@@ -1258,8 +1688,15 @@ func _pick_support_target(u: Unit) -> void:
 
 	var i := _selected_hand
 	_clear_support_pick()
+	## Sampled either side of the call: `unit_healed` is one of the few predicates
+	## the GameState holds no standing record of, since a heal leaves no flag —
+	## only a changed HP.
+	var hp_before := u.hp
 	gs.play_support(p, i, u)
+	if u.hp > hp_before:
+		Tutorial.note("healed")
 	_refresh()
+	_tut_check()
 
 
 ## Tower support names one of your towers, so the tower widget is the target.
@@ -1431,26 +1868,49 @@ func _deploy_to(bi: int, si: int) -> void:
 ## the phase gate lives in the engine rather than being re-derived per call site — both
 ## end in the same `play_unit`, so the legality rules cannot differ between phases.
 func _deploy_card(hand_index: int, bi: int, si: int) -> void:
+	if not _tut_allows("deploy"):
+		return
 	var you: Player = gs.players[GameState.P1]
 	if gs.in_setup():
 		gs.setup_deploy(you, hand_index, bi, si)
 	else:
 		gs.play_unit(you, hand_index, bi, si)
+	_tut_check()
 
 
 func _evolve_into(target: Unit) -> void:
 	if _selected_hand < 0:
 		return
+	if not _tut_allows("evolve"):
+		return
 	var idx := _selected_hand
 	_selected_hand = -1
 	gs.evolve(gs.players[GameState.P1], idx, target)
 	_refresh()
+	_tut_check()
+
+
+## Charging, behind the tutorial gate. Charging is free and unlimited, so in an
+## ordinary game this is exactly `gs.charge`.
+func _do_charge(p: Player, u: Unit, n: int) -> void:
+	if not _tut_allows("charge"):
+		return
+	gs.charge(p, u, n)
+	_tut_check()
 
 
 func _select_unit(u: Unit) -> void:
+	if not _tut_allows("select"):
+		return
 	_selected_hand = -1
 	_selected_unit = null if _selected_unit == u else u
+	## The rules engine holds no record of a selection, so the step predicate is
+	## told about it directly. Kept to the few cases where GameState genuinely has
+	## no evidence the action happened.
+	if _selected_unit != null:
+		Tutorial.note("selected")
 	_refresh()
+	_tut_check()
 
 
 ## Setup only: shuffle the opening hand back and take a fresh one. The engine enforces
@@ -1465,6 +1925,9 @@ func _on_mulligan() -> void:
 
 
 func _on_end_turn() -> void:
+	if not _tut_allows("end_turn"):
+		return
+
 	## During setup the same button reads "Ready" and commits the board instead. The
 	## AI has already placed, so this is what starts round 1.
 	if gs.in_setup():
@@ -1606,6 +2069,9 @@ func _on_game_over(winner_index: int) -> void:
 func _show_overlay(text: String) -> void:
 	if _overlay != null:
 		return
+	## Remembered so a rebuild (rotating the phone) can put the same result back
+	## up — the board alone no longer says who won once the game has stopped.
+	_overlay_text = text
 	_overlay = Control.new()
 	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP

@@ -13,6 +13,8 @@ extends Control
 ## deciding about shouldn't be the same gesture as committing to it.
 
 const SELECT_SCENE := "res://scenes/DeckSelect.tscn"
+const TUTORIAL_SCENE := "res://scenes/Tutorial.tscn"
+const COMPENDIUM_SCENE := "res://scenes/Compendium.tscn"
 
 ## The deck grid draws real card frames, shrunk to thumbnails. Four across fits
 ## the right-hand pane without forcing a horizontal scrollbar.
@@ -34,6 +36,9 @@ var _selected: CardData = null
 
 var _inspector: CardInspector = null
 var _inspector_layer: Control = null
+
+## Deckbuilding-lesson coaching. Null in an ordinary visit to the builder.
+var _coach_box: VBoxContainer = null
 
 ## --- collection filters
 ##
@@ -60,6 +65,97 @@ func _ready() -> void:
 	_refresh()
 
 
+## The coaching strip for the deckbuilding lesson. Sits above the builder rather
+## than beside it: this lesson has no board to obscure, and the advice is meant to
+## be read while you look at the real collection underneath it.
+func _build_coach() -> PanelContainer:
+	var panel := Palette.make_panel(Palette.PANEL_LIGHT, Palette.ACCENT)
+	_coach_box = VBoxContainer.new()
+	_coach_box.add_theme_constant_override("separation", 4)
+	panel.add_child(_coach_box)
+	_refresh_coach()
+	return panel
+
+
+func _refresh_coach() -> void:
+	if _coach_box == null:
+		return
+	for c in _coach_box.get_children():
+		c.queue_free()
+	if not Tutorial.active:
+		return
+
+	var s := Tutorial.step()
+	if s.is_empty():
+		return
+
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", 8)
+	_coach_box.add_child(head)
+
+	var t := Palette.label(String(s.get("title", "")), 15, Palette.ACCENT)
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(t)
+	head.add_child(Palette.label(
+		"%d/%d" % [Tutorial.step_index + 1, Tutorial.step_count()], 12, Palette.TEXT_DIM))
+
+	var body := RichTextLabel.new()
+	body.bbcode_enabled = true
+	body.fit_content = true
+	body.custom_minimum_size = Vector2(0, 54)
+	body.add_theme_font_size_override("normal_font_size", 13)
+	body.add_theme_font_size_override("bold_font_size", 13)
+	body.add_theme_color_override("default_color", Palette.TEXT)
+	body.text = String(s.get("text", ""))
+	_coach_box.add_child(body)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+	_coach_box.add_child(row)
+
+	if Tutorial.step_index > 0:
+		row.add_child(_coach_btn("Back", func():
+			Tutorial.go_back()
+			_refresh_coach()))
+
+	row.add_child(_coach_btn("Next", func():
+		var was_last := Tutorial.is_last_step()
+		Tutorial.advance()
+		if was_last:
+			get_tree().change_scene_to_file(TUTORIAL_SCENE)
+		else:
+			_refresh_coach()))
+
+	var more := String(s.get("read_more", ""))
+	if more != "":
+		row.add_child(_coach_btn("Read more", func(): _open_compendium(more)))
+
+	row.add_child(_coach_btn("Quit lesson", func():
+		Tutorial.end()
+		get_tree().change_scene_to_file(TUTORIAL_SCENE)))
+
+
+func _coach_btn(text: String, cb: Callable) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.add_theme_font_size_override("font_size", 11)
+	Palette.style_button(b, Palette.PANEL, Palette.BORDER)
+	b.pressed.connect(cb)
+	return b
+
+
+func _open_compendium(page_id: String) -> void:
+	var scene: PackedScene = load(COMPENDIUM_SCENE)
+	if scene == null:
+		return
+	var screen := scene.instantiate()
+	screen.open_page = page_id
+	var tree := get_tree()
+	tree.root.add_child(screen)
+	tree.current_scene.queue_free()
+	tree.current_scene = screen
+
+
 func _build() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 
@@ -76,6 +172,12 @@ func _build() -> void:
 	root.offset_top = 12
 	root.offset_bottom = -12
 	add_child(root)
+
+	## The deckbuilding lesson is the one chapter that is not a battle — it is read
+	## alongside this screen, because deckbuilding is not something you can do on a
+	## board. Inert in an ordinary visit.
+	if Tutorial.active and Tutorial.is_builder_lesson():
+		root.add_child(_build_coach())
 
 	## --- top bar
 	var top := HBoxContainer.new()

@@ -53,10 +53,21 @@ var damage_by_card: Array = [{}, {}]
 var tower_damage_dealt: Array = [0, 0]
 
 
-func _init(deck_p1: Array, deck_p2: Array) -> void:
+## `shuffled = false` is the TUTORIAL's entry point for a reproducible deal — a
+## lesson must present the same hand every run or its scripted steps cannot name a
+## card. It also skips the guaranteed-Basic re-deal below, since re-dealing would
+## reshuffle the very order the caller asked to preserve; a lesson deck is
+## hand-authored to open on a Basic instead.
+func _init(deck_p1: Array, deck_p2: Array, shuffled: bool = true) -> void:
 	players = [Player.new("You", false), Player.new("Opponent", true)]
-	players[P1].load_deck(deck_p1)
-	players[P2].load_deck(deck_p2)
+	players[P1].load_deck(deck_p1, shuffled)
+	players[P2].load_deck(deck_p2, shuffled)
+
+	if not shuffled:
+		players[P1].draw(Player.HAND_SIZE_START)
+		players[P2].draw(Player.HAND_SIZE_START)
+		return
+
 	## Both sides get the guaranteed-Basic deal. Symmetric on purpose: an asymmetric
 	## opening would mean the AI-vs-AI harnesses are no longer measuring the same game
 	## on both seats, which is most of what they are for.

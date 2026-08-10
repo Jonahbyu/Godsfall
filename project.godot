@@ -22,6 +22,8 @@ CardDB="*res://scripts/core/CardDB.gd"
 DeckStore="*res://scripts/core/DeckStore.gd"
 Palette="*res://scripts/ui/Theme.gd"
 CardArt="*res://scripts/ui/CardArt.gd"
+ViewportFit="*res://scripts/core/ViewportFit.gd"
+Tutorial="*res://scripts/core/TutorialState.gd"
 
 [display]
 
