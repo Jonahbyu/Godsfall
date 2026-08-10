@@ -92,7 +92,229 @@ body {
 		</style>
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
-<style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#14121a;}#canvas{width:100%!important;height:100%!important;display:block;}</style>
+<!--
+  Injected into the exported page's <head> via `html/head_include` in
+  export_presets.cfg. `tools/export-web.ps1` reads this file and writes it into
+  the preset before exporting, so this stays editable as real HTML instead of
+  living as one escaped line inside a .cfg.
+
+  Deliberately NOT a custom_html_shell. A full shell means forking Godot's boot
+  script â€” the progress bar, the missing-feature detection, the service worker
+  retry â€” and re-merging it by hand on every engine upgrade. Everything here is
+  additive and touches nothing Godot generates, so an upgrade cannot silently
+  break it.
+-->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#14121a">
+
+<style>
+html, body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	background: #14121a;
+	overflow: hidden;
+	/* Stop iOS bumping font sizes when the phone is rotated to landscape,
+	   which would desync the canvas from the CSS pixel size Godot measured. */
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	/* 100dvh, not 100vh. On mobile Safari and Chrome `vh` is locked to the
+	   viewport with the URL bar *hidden*, so a 100vh body is taller than the
+	   visible page while the bar is showing â€” which is exactly the overflow
+	   that makes the game sit half off-screen and scroll under the chrome.
+	   `dvh` tracks the bar sliding away. The vh line before it is the fallback
+	   for browsers without dvh, where the old behaviour is no worse than today. */
+	height: 100vh;
+	height: 100dvh;
+	/* The canvas handles its own input; without this the browser also pans and
+	   pinch-zooms the page under it. */
+	touch-action: none;
+	overscroll-behavior: none;
+}
+
+#canvas {
+	width: 100% !important;
+	height: 100% !important;
+	display: block;
+	/* Godot focuses the canvas on start; the focus ring is noise on a game. */
+	outline: none;
+	/* Long-press on a canvas otherwise raises the iOS callout menu mid-drag. */
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+/* The fullscreen toggle.
+   Placed over the canvas rather than beside it: the canvas is sized to the
+   whole viewport, so any element in normal flow would shrink it. */
+#gf-fullscreen {
+	position: fixed;
+	/* Clear of the notch / status bar on a phone, and of nothing on a desktop. */
+	top: calc(env(safe-area-inset-top, 0px) + 8px);
+	right: calc(env(safe-area-inset-right, 0px) + 8px);
+	z-index: 100;
+
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	display: none;               /* shown by the script once it knows it can work */
+	align-items: center;
+	justify-content: center;
+
+	background: rgba(23, 20, 31, 0.82);
+	color: #e6e1f0;
+	border: 1px solid #3a3348;   /* Palette.BORDER, so it reads as part of the game */
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 18px;
+	line-height: 1;
+
+	/* The button is a browser control sitting on top of a game that wants every
+	   other touch. Its own taps must not be swallowed by the canvas rules above. */
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
+}
+
+#gf-fullscreen:hover {
+	border-color: #7c4dff;       /* Palette.ACCENT */
+	background: rgba(34, 29, 46, 0.92);
+}
+
+/* Fade to nearly-invisible once the game has been played with for a moment, so
+   a permanent button is not parked over the enemy board. Any pointer movement
+   or touch brings it back â€” see the script. */
+#gf-fullscreen.gf-idle {
+	opacity: 0.18;
+}
+
+#gf-fullscreen {
+	transition: opacity 0.25s ease, border-color 0.15s ease, background 0.15s ease;
+}
+</style>
+
+<script>
+(function () {
+	'use strict';
+
+	// Requesting fullscreen is what hides the browser's URL bar. There is no
+	// other reliable way: the old scroll-to-hide trick needs a scrollable page,
+	// and this one deliberately cannot scroll.
+	//
+	// It must be called from a user gesture, so it is a button rather than
+	// something done automatically on load.
+
+	var btn = document.createElement('button');
+	btn.id = 'gf-fullscreen';
+	btn.type = 'button';
+	btn.title = 'Fullscreen';
+	btn.setAttribute('aria-label', 'Toggle fullscreen');
+	btn.textContent = 'â›¶';
+
+	var target = document.documentElement;
+
+	function fsElement() {
+		return document.fullscreenElement || document.webkitFullscreenElement || null;
+	}
+
+	// iOS Safari on iPhone supports none of the Fullscreen API on arbitrary
+	// elements. Feature-detect rather than sniff the UA, and simply never show
+	// the button where it could not work â€” a button that does nothing when
+	// tapped is worse than no button.
+	function supported() {
+		return !!(target.requestFullscreen || target.webkitRequestFullscreen);
+	}
+
+	function enter() {
+		if (target.requestFullscreen) {
+			return target.requestFullscreen({ navigationUI: 'hide' });
+		}
+		if (target.webkitRequestFullscreen) {
+			return target.webkitRequestFullscreen();
+		}
+	}
+
+	function exit() {
+		if (document.exitFullscreen) {
+			return document.exitFullscreen();
+		}
+		if (document.webkitExitFullscreen) {
+			return document.webkitExitFullscreen();
+		}
+	}
+
+	function sync() {
+		var on = !!fsElement();
+		btn.textContent = on ? 'â¤¡' : 'â›¶';
+		btn.title = on ? 'Exit fullscreen' : 'Fullscreen';
+	}
+
+	btn.addEventListener('click', function (e) {
+		// The canvas is underneath and would otherwise also see this.
+		e.preventDefault();
+		e.stopPropagation();
+
+		var p = fsElement() ? exit() : enter();
+
+		// A rejected request is normal â€” some browsers refuse when the gesture
+		// is not trusted. Swallow it rather than logging to a console nobody
+		// on a phone can see.
+		if (p && typeof p.catch === 'function') {
+			p.catch(function () {});
+		}
+
+		// On phones, entering fullscreen is nearly always followed by turning
+		// the device sideways, and the game is far more usable in landscape.
+		// Requesting it is a hint, not a requirement: it rejects on desktop and
+		// wherever the browser disallows it, which is fine.
+		if (!fsElement() && screen.orientation && screen.orientation.lock) {
+			try {
+				var lp = screen.orientation.lock('landscape');
+				if (lp && typeof lp.catch === 'function') {
+					lp.catch(function () {});
+				}
+			} catch (err) { /* not supported here */ }
+		}
+	});
+
+	document.addEventListener('fullscreenchange', sync);
+	document.addEventListener('webkitfullscreenchange', sync);
+
+	// Dim the button while the player is busy, so it stops covering the board.
+	var idleTimer = null;
+	function wake() {
+		btn.classList.remove('gf-idle');
+		if (idleTimer) {
+			clearTimeout(idleTimer);
+		}
+		idleTimer = setTimeout(function () {
+			btn.classList.add('gf-idle');
+		}, 2500);
+	}
+
+	function start() {
+		if (!supported()) {
+			return;
+		}
+		document.body.appendChild(btn);
+		btn.style.display = 'flex';
+		sync();
+		wake();
+		window.addEventListener('pointermove', wake, { passive: true });
+		window.addEventListener('pointerdown', wake, { passive: true });
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', start);
+	} else {
+		start();
+	}
+}());
+</script>
+
 	</head>
 	<body>
 		<canvas id="canvas">
@@ -111,7 +333,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":1472708,"index.wasm":39509339},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":1536524,"index.wasm":39509339},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
