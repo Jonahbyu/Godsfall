@@ -211,9 +211,11 @@ func _start_game() -> void:
 func _start_lesson() -> void:
 	var l: Dictionary = Tutorial.lesson
 
-	## Unshuffled: a lesson deals the same hand every run, which is the entire
-	## requirement for a scripted step to be able to name a card.
-	gs = GameState.new(l.get("deck", []), l.get("enemy_deck", []), false)
+	## Unshuffled, with the hand the lesson declares: a lesson deals the same hand
+	## every run, holding exactly the cards its steps ask for. Both halves matter —
+	## reproducible is not enough if the hand is reproducibly missing the card the
+	## next step demands.
+	gs = GameState.new(l.get("deck", []), l.get("enemy_deck", []), false, l.get("hand", []))
 	gs.deck_names = ["You", "Training Partner"]
 	ai = AIPlayer.new(gs)
 	gs.log_line.connect(_on_log)

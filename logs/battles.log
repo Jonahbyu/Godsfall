@@ -2312,3 +2312,306 @@ Damage by card (unit / tower / throne, total):
   Cacophony Ramp
     Thornshade                      68  (0 / 24 / 44 over 4 hits)
     Bonepicker                      40  (40 / 0 / 0 over 4 hits)
+
+========================================================================
+2026-08-09T21:54:46  [RulesTest]
+Starve  vs  Verdict Engine
+Result: Starve wins on round 8
+------------------------------------------------------------------------
+Starve (You)
+  throne 135 / 135
+  tower 1: 57 / 85
+  tower 2: 85 / 85
+  tower fire dealt: 162
+Verdict Engine (Opponent)
+  throne 0 / 135
+  tower 1: DESTROYED (max was 80)
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 153
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Starve
+    Gnawing Absence                 84  (0 / 48 / 36 over 7 hits)
+    Ashen Pilgrim                   69  (45 / 24 / 0 over 6 hits)
+    Rust Crawler                    48  (0 / 0 / 48 over 2 hits)
+    The Unwritten                   42  (26 / 16 / 0 over 3 hits)
+  Verdict Engine
+    Court of Bells                  32  (32 / 0 / 0 over 2 hits)
+    Bellringer of the Court         10  (10 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T21:54:49  [SupportTest]
+Lamp Wall  vs  Toll Engine
+Result: Toll Engine wins on round 5
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 0 / 120
+  tower 1: 70 / 70
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 80
+Toll Engine (Opponent)
+  throne 120 / 120
+  tower 1: 70 / 70
+  tower 2: 70 / 70
+  tower fire dealt: 91
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Warden of the Lamp              75  (75 / 0 / 0 over 3 hits)
+    Cherub of the Open Gate         29  (29 / 0 / 0 over 4 hits)
+  Toll Engine
+    Barrow Knight                  151  (0 / 52 / 99 over 7 hits)
+    Hollow Servant                  30  (30 / 0 / 0 over 3 hits)
+    Gravebound Reaper                8  (8 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T21:55:09  [Combat]
+Toll Engine  vs  Starve
+Result: Starve wins on round 5
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 120
+  tower 1: DESTROYED (max was 65)
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 52
+Starve (Opponent)
+  throne 120 / 120
+  tower 1: 70 / 70
+  tower 2: 68 / 70
+  tower fire dealt: 61
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Bonepicker                      10  (10 / 0 / 0 over 1 hits)
+  Starve
+    Rust Crawler                   143  (33 / 62 / 48 over 8 hits)
+    Ashen Pilgrim                   59  (12 / 24 / 23 over 5 hits)
+    The Unwritten                   32  (0 / 16 / 16 over 2 hits)
+
+========================================================================
+2026-08-09T21:56:32  [RulesTest]
+Lamp Wall  vs  Toll Engine
+Result: Toll Engine wins on round 6
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 0 / 125
+  tower 1: 1 / 75
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 91
+Toll Engine (Opponent)
+  throne 125 / 125
+  tower 1: 75 / 75
+  tower 2: 75 / 75
+  tower fire dealt: 106
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Warden of the Lamp              97  (97 / 0 / 0 over 4 hits)
+    Cherub of the Open Gate         32  (32 / 0 / 0 over 4 hits)
+    Lantern Acolyte                  8  (8 / 0 / 0 over 1 hits)
+  Toll Engine
+    Barrow Knight                  110  (35 / 25 / 50 over 5 hits)
+    Carrion Crawler                 98  (20 / 45 / 33 over 8 hits)
+    Hollow Servant                  48  (24 / 24 / 0 over 4 hits)
+    Grave Whelp                     12  (12 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T21:56:35  [SupportTest]
+Deep Grove  vs  Rise & Recur
+Result: Deep Grove wins on round 4
+------------------------------------------------------------------------
+Deep Grove (You)
+  throne 115 / 115
+  tower 1: 85 / 85
+  tower 2: 85 / 85
+  tower fire dealt: 91
+Rise & Recur (Opponent)
+  throne 0 / 115
+  tower 1: DESTROYED (max was 60)
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 20
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Deep Grove
+    Grovekeeper                     87  (24 / 36 / 27 over 3 hits)
+    Living Conduit                  60  (0 / 24 / 36 over 2 hits)
+    Seedbearer                      52  (28 / 24 / 0 over 3 hits)
+    Deep Roots                      22  (0 / 22 / 0 over 1 hits)
+    Sapling Warden                  13  (13 / 0 / 0 over 1 hits)
+  Rise & Recur
+    (no card damage dealt)
+
+========================================================================
+2026-08-09T21:56:54  [Combat]
+Toll Engine  vs  Verdict Engine
+Result: Verdict Engine wins on round 8
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 135
+  tower 1: DESTROYED (max was 65)
+  tower 2: DESTROYED (max was 75)
+  tower fire dealt: 124
+Verdict Engine (Opponent)
+  throne 135 / 135
+  tower 1: 85 / 85
+  tower 2: 83 / 85
+  tower fire dealt: 166
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    (no card damage dealt)
+  Verdict Engine
+    Censer Bearer                   80  (32 / 32 / 16 over 5 hits)
+    Lantern Acolyte                 66  (0 / 42 / 24 over 9 hits)
+
+========================================================================
+2026-08-09T21:57:14  [RulesTest]
+Standing Stones  vs  Widening Rift
+Result: Standing Stones wins on round 12
+------------------------------------------------------------------------
+Standing Stones (You)
+  throne 47 / 155
+  tower 1: 154 / 161
+  tower 2: DESTROYED (max was 82)
+  tower fire dealt: 364
+Widening Rift (Opponent)
+  throne 0 / 155
+  tower 1: DESTROYED (max was 80)
+  tower 2: 69 / 105
+  tower fire dealt: 281
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Standing Stones
+    Bulwark of Stone               101  (35 / 16 / 50 over 6 hits)
+    Mossback Tortoise               50  (50 / 0 / 0 over 3 hits)
+    Sapling Warden                  44  (34 / 10 / 0 over 4 hits)
+    Seedbearer                      24  (24 / 0 / 0 over 2 hits)
+    Makeshift Tower                 11  (0 / 11 / 0 over 1 hits)
+  Widening Rift
+    Sundered Wretch                 72  (72 / 0 / 0 over 2 hits)
+    Hollow Acolyte                  60  (30 / 30 / 0 over 4 hits)
+    Null Adept                      33  (33 / 0 / 0 over 3 hits)
+
+========================================================================
+2026-08-09T21:57:17  [SupportTest]
+Starve  vs  Rise & Recur
+Result: Starve wins on round 9
+------------------------------------------------------------------------
+Starve (You)
+  throne 140 / 140
+  tower 1: 90 / 90
+  tower 2: 90 / 90
+  tower fire dealt: 229
+Rise & Recur (Opponent)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 75)
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 99
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Starve
+    Ashen Pilgrim                  126  (48 / 48 / 30 over 11 hits)
+    Hollow Acolyte                 107  (32 / 30 / 45 over 8 hits)
+    The Unwritten                   36  (36 / 0 / 0 over 3 hits)
+    Rust Crawler                    31  (31 / 0 / 0 over 2 hits)
+    Gnawing Absence                 12  (0 / 12 / 0 over 1 hits)
+  Rise & Recur
+    Hollow Servant                  96  (96 / 0 / 0 over 8 hits)
+    Bonepicker                      10  (10 / 0 / 0 over 1 hits)
+    Grave Whelp                      4  (4 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-09T21:57:36  [Combat]
+Toll Engine  vs  Standing Stones
+Result: Standing Stones wins on round 6
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 125
+  tower 1: DESTROYED (max was 60)
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 60
+Standing Stones (Opponent)
+  throne 125 / 125
+  tower 1: 99 / 99
+  tower 2: 62 / 79
+  tower fire dealt: 103
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Grave Whelp                     12  (12 / 0 / 0 over 1 hits)
+  Standing Stones
+    Mossback Tortoise              114  (16 / 63 / 35 over 7 hits)
+    Makeshift Tower                 55  (12 / 16 / 27 over 5 hits)
+    Sapling Warden                  13  (0 / 0 / 13 over 1 hits)
+
+========================================================================
+2026-08-10T15:39:02  [RulesTest]
+Deep Grove  vs  Deep Grove
+Result: Deep Grove wins on round 5
+------------------------------------------------------------------------
+Deep Grove (You)
+  throne 120 / 120
+  tower 1: 84 / 84
+  tower 2: 62 / 84
+  tower fire dealt: 184
+Deep Grove (Opponent)
+  throne 0 / 120
+  tower 1: DESTROYED (max was 66)
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 135
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Deep Grove
+    Living Conduit                 343  (175 / 100 / 68 over 12 hits)
+    Seedbearer                      14  (14 / 0 / 0 over 1 hits)
+  Deep Grove
+    Living Conduit                  95  (73 / 22 / 0 over 4 hits)
+    Seedbearer                      30  (30 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-10T15:39:05  [SupportTest]
+Barrow Wall  vs  Lamp Wall
+Result: Lamp Wall wins on round 14
+------------------------------------------------------------------------
+Barrow Wall (You)
+  throne 0 / 165
+  tower 1: DESTROYED (max was 95)
+  tower 2: 53 / 135
+  tower fire dealt: 395
+Lamp Wall (Opponent)
+  throne 26 / 165
+  tower 1: 74 / 135  +10 dmg
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 618
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Barrow Wall
+    Thornshade                      94  (72 / 22 / 0 over 5 hits)
+    Charnel Colossus                38  (38 / 0 / 0 over 1 hits)
+    Hollow Servant                  36  (36 / 0 / 0 over 3 hits)
+  Lamp Wall
+    Radiant Bastion                215  (145 / 0 / 70 over 8 hits)
+    Warden of the Lamp              25  (0 / 25 / 0 over 1 hits)
+    Lantern Acolyte                 16  (16 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-10T15:39:18  [Combat]
+Toll Engine  vs  Lamp Wall
+Result: Lamp Wall wins on round 11
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 150
+  tower 1: DESTROYED (max was 85)
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 182
+Lamp Wall (Opponent)
+  throne 150 / 150
+  tower 1: 39 / 100
+  tower 2: 19 / 100
+  tower fire dealt: 314
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Grave Whelp                     12  (12 / 0 / 0 over 1 hits)
+  Lamp Wall
+    Lantern Acolyte                 46  (22 / 8 / 16 over 6 hits)

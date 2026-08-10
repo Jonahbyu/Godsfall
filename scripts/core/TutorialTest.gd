@@ -3,7 +3,7 @@ extends SceneTree
 ## Total assertions this harness is expected to run; see the check at the end of
 ## the run. Update deliberately when assertions change — a guard edited
 ## reflexively to match whatever ran is no guard at all.
-const EXPECTED_ASSERTIONS := 113
+const EXPECTED_ASSERTIONS := 119
 
 ## Headless tutorial harness:
 ##   godot --headless --script res://scripts/core/TutorialTest.gd
@@ -270,14 +270,106 @@ func _test_decks_are_playable() -> void:
 			dealt_ok = false
 			continue
 		## An unshuffled deal skips the guaranteed-Basic re-deal, so each lesson
-		## deck must be AUTHORED to open on a Basic. Without a Basic in the opening
+		## must DECLARE a hand that opens on a Basic. Without a Basic in the opening
 		## hand the first turn has no legal action at all.
 		if not gs.players[0].has_basic_in_hand():
 			dealt_ok = false
 			print("     %s dealt no Basic" % l.get("id", ""))
 		built += 1
 	_check("thirteen battle lessons build a GameState", built, 13)
-	_ok("every lesson deck is authored to open on a Basic", dealt_ok)
+	_ok("every lesson opens on a Basic", dealt_ok)
+
+	## Every battle lesson must STATE its opening hand rather than inherit whatever
+	## the deck order happens to produce. This is the assertion that would have
+	## caught the soft-lock: `board` step 4 asks for a second Basic, and an
+	## order-derived hand gave exactly one.
+	var undeclared := []
+	for l in TutorialData.lessons():
+		if bool(l.get("builder", false)):
+			continue
+		if l.get("hand", []).is_empty():
+			undeclared.append(l.get("id", ""))
+	if not undeclared.is_empty():
+		print("     lessons with no declared hand: %s" % str(undeclared))
+	_check("every battle lesson declares its opening hand", undeclared.size(), 0)
+
+	## A declared card that is not in the deck is silently skipped by
+	## `deal_exact_hand`, producing a SHORT hand — the same soft-lock by a
+	## different route, and invisible without this check.
+	var short := []
+	for l in TutorialData.lessons():
+		if bool(l.get("builder", false)):
+			continue
+		var want = l.get("hand", [])
+		var gs2 = load("res://scripts/core/GameState.gd").new(
+			l.get("deck", []), l.get("enemy_deck", []), false, want)
+		if gs2.players[0].hand.size() != want.size():
+			short.append("%s: wanted %d, got %d" % [
+				l.get("id", ""), want.size(), gs2.players[0].hand.size()])
+	if not short.is_empty():
+		print("     hands that could not be dealt in full: %s" % str(short))
+	_check("every declared hand is fully present in its deck", short.size(), 0)
+
+	## And the hand each lesson's STEPS need must actually be there. The counts
+	## come from reading the steps: `board` deploys twice, `growing` evolves so it
+	## needs a Basic and the Stage 1 that follows it.
+	var needs := {
+		"board": 2, "energy": 1, "attacking": 1, "wall": 2, "aim": 2,
+		"towers": 1, "growing": 1, "retreat": 1, "support": 0,
+		"hel": 1, "heaven": 1, "void": 1, "gaia": 1,
+	}
+	var thin := []
+	for lid in needs:
+		var l = TutorialData.lesson_by_id(String(lid))
+		var gs3 = load("res://scripts/core/GameState.gd").new(
+			l.get("deck", []), l.get("enemy_deck", []), false, l.get("hand", []))
+		var basics := 0
+		for cid in gs3.players[0].hand:
+			var c = _db.get_card(cid)
+			if c != null and c.is_unit() and c.stage == CardData.Stage.BASIC:
+				basics += 1
+		if basics < int(needs[lid]):
+			thin.append("%s: needs %d Basics, has %d" % [lid, needs[lid], basics])
+	if not thin.is_empty():
+		print("     hands too thin for their steps: %s" % str(thin))
+	_check("every lesson is dealt the Basics its steps demand", thin.size(), 0)
+
+	## `growing` evolves a board unit, so the Stage 1 has to be IN HAND.
+	var g = TutorialData.lesson_by_id("growing")
+	var g_gs = load("res://scripts/core/GameState.gd").new(
+		g.get("deck", []), g.get("enemy_deck", []), false, g.get("hand", []))
+	var has_stage1 := false
+	for cid in g_gs.players[0].hand:
+		var c = _db.get_card(cid)
+		if c != null and c.is_unit() and c.stage == CardData.Stage.STAGE1:
+			has_stage1 = true
+	_ok("the evolution lesson is dealt a Stage 1 to evolve into", has_stage1)
+
+	## `support` must open holding a support card, since its steps play one.
+	var sup = TutorialData.lesson_by_id("support")
+	var s_gs = load("res://scripts/core/GameState.gd").new(
+		sup.get("deck", []), sup.get("enemy_deck", []), false, sup.get("hand", []))
+	var has_support := false
+	for cid in s_gs.players[0].hand:
+		var c = _db.get_card(cid)
+		if c != null and c.is_support_like():
+			has_support = true
+	_ok("the support lesson is dealt a support card", has_support)
+
+	## Every lesson whose steps play energy must hold an energy card.
+	var no_energy := []
+	for lid in ["energy", "attacking", "towers"]:
+		var el = TutorialData.lesson_by_id(String(lid))
+		var e_gs = load("res://scripts/core/GameState.gd").new(
+			el.get("deck", []), el.get("enemy_deck", []), false, el.get("hand", []))
+		var found := false
+		for cid in e_gs.players[0].hand:
+			var c = _db.get_card(cid)
+			if c != null and c.is_energy():
+				found = true
+		if not found:
+			no_energy.append(lid)
+	_check("lessons that play energy are dealt an energy card", no_energy.size(), 0)
 
 	## Decks are deliberately NOT shuffled, so the same lesson deals the same hand
 	## every run — the entire requirement for a scripted step to name a card.

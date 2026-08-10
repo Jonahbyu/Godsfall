@@ -1757,10 +1757,15 @@ Two things are deliberately *not* done:
 - **No lesson teaches the attack lock or the mulligan by doing.** Both are described in the
   reference but neither has a step, because the lock is a convenience over a rule the player
   already knows by then and the mulligan only exists during setup, which only lesson 1 uses.
-- **Not yet played by a human.** The harness verifies that every lesson builds, every step
-  predicate fires against a real `GameState`, and every card id and cross-reference resolves.
-  It cannot tell you whether the *pacing* is right — whether a step's text lands before the
-  board changes under it, and whether the coach panel is where the eye already is.
+- **Pacing is not verified.** `TutorialWalkTest` proves every lesson can be *finished* and
+  `TutorialTest` proves the content is well formed, but neither can tell you whether a step's
+  text lands before the board changes under it, whether the coach panel is where the eye
+  already is, or whether the gating ever refuses something a reasonable player would try.
+
+**One bug already shipped and was fixed here**, and it is worth keeping because the shape
+recurs: the `board` lesson asked the player to deploy a second Basic while dealing them one
+Basic and five energy cards. See the decision log — the lesson now *declares* its hand, and
+`TutorialWalkTest` exists specifically because the content harness could not have caught it.
 
 **Public, and playable in a browser at <https://jonahbyu.github.io/Godsfall/>.** Source is
 at `github.com/Jonahbyu/Godsfall`; the Web build is published to the `gh-pages` branch by
@@ -1993,16 +1998,16 @@ Four constraints worth keeping:
 - **The tutorial never touches `DeckStore`.** Lesson decks are fixed lists passed straight
   to `GameState`. That is the data-loss shape the decision log already carries twice, and
   the tutorial is the last place that should be able to write the player's collection.
-- **Lesson decks are dealt unshuffled**, via `GameState.new(p1, p2, false)`. A step that
-  says "play the energy card" cannot survive a hand that differs per run. The unshuffled
-  path also **skips the guaranteed-Basic re-deal**, since re-dealing would reshuffle the
-  very order the caller asked to preserve — so each lesson deck is *authored* to open on a
-  Basic, and `TutorialTest` asserts exactly that for all thirteen.
-- **`_stack()` interleaves rather than expanding in place.** A naive expansion puts all four
-  copies of the first card into the opening hand, which for most of these decks means six
-  identical cards and — for every lesson whose first entry is energy — an opening hand with
-  **no Basic and therefore no legal first action at all**. Round robin gives each lesson a
-  hand holding one of each thing it means to talk about.
+- **Every lesson DECLARES its opening hand**, as a `"hand"` list dealt exactly by
+  `Player.deal_exact_hand()`. The hand a lesson's steps need is a property of the *lesson*
+  and has to be stated by it — never inferred from deck order and hoped for. Cards named
+  there are pulled out of the deck, so a copy cannot be both in hand and still in the deck,
+  and a card not in the deck is skipped rather than conjured.
+- **Lesson decks are dealt unshuffled**, via `GameState.new(p1, p2, false, hand)`. A step
+  that says "play the energy card" cannot survive a hand that differs per run. The
+  unshuffled path also **skips the guaranteed-Basic re-deal**, since re-dealing would
+  reshuffle the very order the caller asked to preserve — the declared hand is what
+  guarantees a Basic instead, and `TutorialTest` asserts it for all thirteen.
 - **Every hook is inert when no lesson is running.** `Tutorial.active` is false in an
   ordinary game and every hook answers permissively, so the normal path is unchanged *by
   construction* rather than by care.
@@ -2043,9 +2048,8 @@ or break a game is worse than no log), and a stall is recorded as `NO WINNER —
 round N`, since that is the single most important thing the file can capture.
 
 Verified by twelve headless harnesses (all passing — run 2026-08-09 after the tutorial
-landed, **861 counted assertions**; `SceneSmokeTest` and `PlaythroughTest` report pass/fail
-without a count and are not in that total). `SupportUITest` fired its known flake on that
-run — see the note below the table, which now has a measured rate:
+landed, **867 counted assertions**; `SceneSmokeTest`, `PlaythroughTest` and
+`TutorialWalkTest` report pass/fail without a count and are not in that total):
 
 | Harness | Covers |
 |---|---|
@@ -2060,7 +2064,8 @@ run — see the note below the table, which now has a measured rate:
 | `CardViewTest.gd` | 62 assertions on the card frame's *structure*: the header's HP and stage cells, the evolves-from strip (present on evolutions, absent on Basics), keyword chips including a spent `Judgment` dropping its chip, the ability banner (present with an ability, absent without), attack rows with the right icon count and attached-energy fill, the retreat footer and its reserved weakness/resistance slots, and a complete frame for all four non-unit card types. Checks which nodes exist and what they say, never pixel positions — those would break on every metric tweak |
 | `VoidTest.gd` | 61 assertions: Void card data and the printed damage budget, Gap direction/floor/living-units-only, Siphon moving energy on a unit vs. into the pool on a support, Void N destruction, the damage-per-voided rider, Rift scaling **through the real damage pipeline**, Rift granted by a Tool, pool destruction, Gap-to-throne damage, and Siphon obeying the shielding chain |
 | `GaiaTest.gd` | 146 assertions: Gaia card data including per-colour attack costs, the Earth aura summed across both boards and excluding the dead, aura-adjusted max HP, healing that reaches the aura's ceiling, downward clamping that never kills, the aura on attack damage and on tower damage, `Resist` in both damage paths and on Retribution recoil with its minimum-1 floor, Sanctuary preceding Resist, `Essence` **through the real `_cleanup_dead`** (payment, the nearest-living heir, ties-go-left, never crossing boards, skipping a corpse in a batched death, and fizzling when unaffordable), grown Earth resetting on Rise and evolution, Earth derived live from attached energy, the additive rate-breaker, and Makeshift Tower's free auto-fire, per-round growth, and obedience to the shielding chain |
-| `TutorialTest.gd` | 113 assertions: lesson content integrity (unique ids, every step carrying text, every `advance` predicate one the evaluator handles), every card id a lesson names existing, every `read_more` resolving to a real page, every lesson deck building a `GameState` and being authored to open on a Basic, the unshuffled deal being reproducible **and the default path still shuffling**, every scripted placement landing on a real non-tower slot, the gating hooks answering permissively when inactive, all eight step predicates **driven against a real `GameState`**, progress round-tripping through a sandboxed file, and compendium coverage of every keyword in `Palette.KEYWORD_COLORS` |
+| `TutorialTest.gd` | 119 assertions: lesson content integrity (unique ids, every step carrying text, every `advance` predicate one the evaluator handles), every card id a lesson names existing, every `read_more` resolving to a real page, every lesson deck building a `GameState`, the unshuffled deal being reproducible **and the default path still shuffling**, every scripted placement landing on a real non-tower slot, the gating hooks answering permissively when inactive, all eight step predicates **driven against a real `GameState`**, progress round-tripping through a sandboxed file, and compendium coverage of every keyword in `Palette.KEYWORD_COLORS`. **Also that every lesson declares an opening hand, that the hand is fully present in its deck, and that it holds the Basics/Stage 1/support/energy its steps actually demand** |
+| `TutorialWalkTest.gd` | Drives all 13 battle lessons through the **real Combat screen**, performing what each step asks via the entry points a player clicks, and fails if any step cannot be satisfied. Reports per-lesson rather than a counted total. This is the harness that checks a lesson can be **finished**, not merely that it is well formed |
 
 The Heaven pipeline tests deliberately call `GameState._deal_lane_damage` rather than
 simulating the ordering inline — a test that reimplements the rule it is checking proves
@@ -2881,15 +2886,23 @@ even if the rule text later changes. Keep entries to one or two lines.
   `user://tutorial.json`. This log already carries two data-loss bugs caused by a read or
   test path sharing a write path with the player's collection; a fourteen-lesson feature
   that constructs decks is exactly where the third would come from.
-- **Lesson decks are dealt unshuffled, which forced two smaller decisions.** A step that
-  says "play the energy card" cannot survive a hand that differs per run, so
-  `GameState.new(p1, p2, false)` skips the shuffle. That path must also **skip the
-  guaranteed-Basic re-deal**, because re-dealing reshuffles the very order the caller asked
-  to preserve — so a lesson deck is *authored* to open on a Basic instead, and the harness
-  asserts it for all thirteen. And `_stack()` had to **interleave** rather than expand in
-  place: the naive expansion puts four copies of the first card in the opening hand, which
-  for every lesson whose first entry is energy means **an opening hand with no Basic and no
-  legal first action at all**. Both were caught by the harness, not by reading the code.
+- **A lesson declares its opening hand; it is never inferred from deck order.** This was
+  learned the hard way — the first build ordered the deck and hoped, and shipped a `board`
+  lesson whose step 4 asks for a second Basic while the player held one Basic and five
+  energy cards. Two things made that worse than a normal bug: `draw()` pops from the **back**
+  of the deck, so the carefully ordered front is the *last* thing a player sees, and the
+  guaranteed-Basic re-deal is skipped on the unshuffled path, so the usual safety net was
+  not there either. `Player.deal_exact_hand()` now deals a stated list, and the hand each
+  lesson needs is written next to the steps that need it. **The general shape: if a scripted
+  experience requires specific cards, the requirement belongs in the script, not in an
+  ordering that something downstream is free to reinterpret.**
+- **"Valid" and "completable" are different properties, and only the second one matters.**
+  `TutorialTest` asserted a lesson opened with *at least one* Basic and passed 113/113 while
+  the `board` lesson was unplayable at step 4. The content assertions were not wrong, they
+  were answering a weaker question than the one that mattered. `TutorialWalkTest` now drives
+  all 13 lessons through the real Combat screen doing what each step asks, which is the only
+  thing that can catch a soft-lock. **A test that a thing is well formed is not a test that
+  it can be finished** — and for anything with a required sequence, the walk is the real test.
 - **The tutorial's own harness caught two real bugs on its first run, and the
   assertion-count guard caught a third.** `Player.load_deck()` shuffled unconditionally, so
   the reproducible-deal premise the whole lesson system rests on was quietly false; and a
