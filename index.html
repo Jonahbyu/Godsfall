@@ -99,8 +99,8 @@ body {
   living as one escaped line inside a .cfg.
 
   Deliberately NOT a custom_html_shell. A full shell means forking Godot's boot
-  script â€” the progress bar, the missing-feature detection, the service worker
-  retry â€” and re-merging it by hand on every engine upgrade. Everything here is
+  script — the progress bar, the missing-feature detection, the service worker
+  retry — and re-merging it by hand on every engine upgrade. Everything here is
   additive and touches nothing Godot generates, so an upgrade cannot silently
   break it.
 -->
@@ -124,7 +124,7 @@ html, body {
 body {
 	/* 100dvh, not 100vh. On mobile Safari and Chrome `vh` is locked to the
 	   viewport with the URL bar *hidden*, so a 100vh body is taller than the
-	   visible page while the bar is showing â€” which is exactly the overflow
+	   visible page while the bar is showing — which is exactly the overflow
 	   that makes the game sit half off-screen and scroll under the chrome.
 	   `dvh` tracks the bar sliding away. The vh line before it is the fallback
 	   for browsers without dvh, where the old behaviour is no worse than today. */
@@ -186,7 +186,7 @@ body {
 
 /* Fade to nearly-invisible once the game has been played with for a moment, so
    a permanent button is not parked over the enemy board. Any pointer movement
-   or touch brings it back â€” see the script. */
+   or touch brings it back — see the script. */
 #gf-fullscreen.gf-idle {
 	opacity: 0.18;
 }
@@ -212,7 +212,7 @@ body {
 	btn.type = 'button';
 	btn.title = 'Fullscreen';
 	btn.setAttribute('aria-label', 'Toggle fullscreen');
-	btn.textContent = 'â›¶';
+	btn.textContent = '⛶';
 
 	var target = document.documentElement;
 
@@ -222,7 +222,7 @@ body {
 
 	// iOS Safari on iPhone supports none of the Fullscreen API on arbitrary
 	// elements. Feature-detect rather than sniff the UA, and simply never show
-	// the button where it could not work â€” a button that does nothing when
+	// the button where it could not work — a button that does nothing when
 	// tapped is worse than no button.
 	function supported() {
 		return !!(target.requestFullscreen || target.webkitRequestFullscreen);
@@ -248,7 +248,7 @@ body {
 
 	function sync() {
 		var on = !!fsElement();
-		btn.textContent = on ? 'â¤¡' : 'â›¶';
+		btn.textContent = on ? '⤡' : '⛶';
 		btn.title = on ? 'Exit fullscreen' : 'Fullscreen';
 	}
 
@@ -259,7 +259,7 @@ body {
 
 		var p = fsElement() ? exit() : enter();
 
-		// A rejected request is normal â€” some browsers refuse when the gesture
+		// A rejected request is normal — some browsers refuse when the gesture
 		// is not trusted. Swallow it rather than logging to a console nobody
 		// on a phone can see.
 		if (p && typeof p.catch === 'function') {
