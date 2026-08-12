@@ -164,8 +164,19 @@ func _load() -> void:
 	var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
 	if f == null:
 		return
-	var data: Variant = JSON.parse_string(f.get_as_text())
+	var text := f.get_as_text()
 	f.close()
+
+	## Parsed through a JSON instance rather than `JSON.parse_string`, which
+	## prints a parse error to the console on bad input. A corrupt display.cfg is
+	## a recoverable nothing — we fall back to AUTO — but the launcher scrapes
+	## stderr into `logs/errors.log`, which is meant to hold only problems that
+	## are still outstanding. A settings file the user can clear by any means
+	## must not leave a permanent-looking error there.
+	var json := JSON.new()
+	if json.parse(text) != OK:
+		return
+	var data: Variant = json.data
 	if typeof(data) != TYPE_DICTIONARY:
 		return
 	var m: int = int(data.get("layout_override", Override.AUTO))

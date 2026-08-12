@@ -3138,3 +3138,80 @@ Damage by card (unit / tower / throne, total):
     Thornshade                     150  (30 / 62 / 58 over 8 hits)
     Carrion Crawler                 30  (0 / 0 / 30 over 2 hits)
     Grand Cacophony                  9  (0 / 9 / 0 over 1 hits)
+
+========================================================================
+2026-08-11T18:34:30  [RulesTest]
+Rise & Recur  vs  Starve
+Result: Rise & Recur wins on round 14
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 0 / 165
+  tower 1: 103 / 115
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 428
+Starve (Opponent)
+  throne 0 / 165
+  tower 1: DESTROYED (max was 85)
+  tower 2: 44 / 115
+  tower fire dealt: 416
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Grave Whelp                     90  (78 / 12 / 0 over 8 hits)
+    Hollow Servant                  68  (56 / 12 / 0 over 6 hits)
+    Bonepicker                      30  (30 / 0 / 0 over 3 hits)
+    Gravebound Reaper               20  (0 / 20 / 0 over 1 hits)
+  Starve
+    Rust Crawler                   173  (173 / 0 / 0 over 8 hits)
+    Ashen Pilgrim                   60  (48 / 12 / 0 over 5 hits)
+    Gnawing Absence                 42  (30 / 12 / 0 over 3 hits)
+
+========================================================================
+2026-08-11T18:34:33  [SupportTest]
+Standing Stones  vs  Rise & Recur
+Result: Standing Stones wins on round 7
+------------------------------------------------------------------------
+Standing Stones (You)
+  throne 130 / 130
+  tower 1: 118 / 118
+  tower 2: 83 / 83
+  tower fire dealt: 215
+Rise & Recur (Opponent)
+  throne 0 / 130
+  tower 1: 54 / 80
+  tower 2: DESTROYED (max was 65)
+  tower fire dealt: 137
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Standing Stones
+    Sapling Warden                 202  (72 / 52 / 78 over 16 hits)
+    Seedbearer                      74  (74 / 0 / 0 over 7 hits)
+    Mossback Tortoise               36  (36 / 0 / 0 over 2 hits)
+  Rise & Recur
+    Hollow Servant                  96  (96 / 0 / 0 over 8 hits)
+    Grave Whelp                     36  (36 / 0 / 0 over 3 hits)
+
+========================================================================
+2026-08-11T18:34:42  [Combat]
+Toll Engine  vs  Starve
+Result: Starve wins on round 7
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 130
+  tower 1: DESTROYED (max was 75)
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 111
+Starve (Opponent)
+  throne 130 / 130
+  tower 1: 80 / 80
+  tower 2: 80 / 80
+  tower fire dealt: 120
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Bonepicker                      10  (10 / 0 / 0 over 1 hits)
+  Starve
+    Ashen Pilgrim                   72  (0 / 36 / 36 over 6 hits)
+    Gnawing Absence                 52  (0 / 16 / 36 over 5 hits)
+    Hollow Acolyte                  47  (8 / 39 / 0 over 4 hits)
+    Rust Crawler                    24  (24 / 0 / 0 over 1 hits)
