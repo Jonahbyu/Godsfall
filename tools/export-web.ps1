@@ -43,7 +43,13 @@ if (-not (Test-Path $HeadFile)) {
 }
 
 $PresetFile = Join-Path $ProjectDir 'export_presets.cfg'
-$head = Get-Content $HeadFile -Raw
+# Read through .NET, which decodes UTF-8. PowerShell 5.1's Get-Content defaults
+# to the system ANSI codepage on a file with no BOM, so every non-ASCII character
+# in web-head.html (the em-dashes in its comments) came back as a replacement
+# character - and got written into the preset that way. The published page was
+# never affected, because Godot reads the .cfg rather than the .html, but any
+# real edit to the shell would have shipped mojibake into the page.
+$head = [System.IO.File]::ReadAllText($HeadFile)
 
 # The .cfg holds the value as one double-quoted string, so backslashes, quotes
 # and newlines all have to be escaped the way Godot writes them. Order matters:
@@ -58,12 +64,21 @@ $line = 'html/head_include="' + $escaped + '"'
 # Rebuilt line by line rather than with a regex replace: the replacement text is
 # arbitrary HTML, and a dollar sign in a regex replacement is a capture-group
 # reference, so one anywhere in the CSS or script would corrupt the output.
-$out = foreach ($l in (Get-Content $PresetFile)) {
+# Same reason as the read above: decode as UTF-8, not as the ANSI codepage.
+$out = foreach ($l in ([System.IO.File]::ReadAllLines($PresetFile))) {
     if ($l -like 'html/head_include=*') { $line } else { $l }
 }
 
+# Compared with line endings normalised on both sides. Godot rewrites this file
+# with CRLF whenever it touches the project, so a raw comparison against our
+# LF-joined text always differs — which made the script rewrite the file and
+# report "Updated" on every single run, including runs that changed nothing.
 $updated = ($out -join "`n") + "`n"
-if ($updated -ne (Get-Content $PresetFile -Raw)) {
+$current = ""
+if (Test-Path $PresetFile) {
+    $current = ([System.IO.File]::ReadAllText($PresetFile) -replace "`r`n", "`n")
+}
+if ($updated -ne $current) {
     # Written through .NET rather than Set-Content because PowerShell 5.1's
     # `-Encoding utf8` always emits a BOM, and Godot does not skip one: the BOM
     # lands in front of `[preset.0]`, the section header stops matching, and the

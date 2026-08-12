@@ -1504,6 +1504,25 @@ pool destruction, punishing large pools — most naturally belong in **Void**, w
   harness confirms the nodes are present, not that they can be read. If the glance read
   fails, the dial is enlarging `BOARD_SIZE` and giving back the vertical budget from the
   hand row, not reintroducing a second board-only layout.
+- **Combat's desktop layout is ~26 units taller than the 1440×900 design height, and has
+  been for a long time.** Measured 2026-08-11: the left column's minimum is **926** against
+  a 900-unit viewport — two board rows at 223 each, a 296 hand scroller, and ~180 of
+  labels, top bar and pool bar. It is **not** a regression from the mobile work: a clean
+  checkout of the *first* commit (`d33e700`) measures 918, and the commit immediately
+  before the mobile changes measures the same 926, so the mobile layout moved it by zero.
+
+  It is survivable rather than harmless: most real windows are taller than 900, the hand
+  `ScrollContainer` is the flexible row and absorbs the shortfall by shrinking, and
+  `ViewportFit`'s desktop clamp scales the whole viewport down when a window is smaller
+  than `MIN_DESIGN` (1180×780) — so nothing is *clipped*, the hand row just gets tighter
+  than intended. The case where it actually bites is **phone landscape**: 844×390 is above
+  the 820 mobile threshold, so it takes the desktop layout at a 1688×780 reference and is
+  146 units short.
+
+  Two candidate dials, neither obviously right: raise `NARROW_WIDTH` so a landscape phone
+  gets the phone layout (simple, but a 1688-unit-wide phone layout would be very sparse),
+  or add a short-viewport branch that trims the hand row the way the phone branch trims the
+  board. Wants a decision before it is coded, and it is not urgent — no one has reported it.
 - **What is the weakness/resistance system?** The card frame reserves both slots and prints
   "—". Undesigned deliberately: Pokémon's version is a ×2 / −20 against a fixed type chart,
   and this game's factions are energy *colors* rather than elemental types, so a chart would
@@ -3077,3 +3096,13 @@ even if the rule text later changes. Keep entries to one or two lines.
   by reverting the card size and watching it fail at 812 and 602 before restoring the fix:
   **a regression test written after the fact is only worth what it catches when you put the
   bug back.**
+- **`export-web.ps1` reads through `System.IO.File`, never `Get-Content`.** PowerShell 5.1's
+  `Get-Content` decodes a BOM-less file as the system ANSI codepage, so reading
+  `tools/web-head.html` turned every em-dash in its comments into a replacement character,
+  and the script wrote that into `html/head_include`. It also made the "did anything change"
+  comparison always false, so the preset was rewritten and "Updated head_include" printed on
+  every run including no-op ones — which is the symptom that exposed it. The published page
+  was never wrong, because Godot reads the `.cfg` rather than the `.html`, but the next real
+  edit to the shell would have shipped mojibake. **This is the third distinct PowerShell 5.1
+  encoding trap in this one script** (BOM on write, non-ASCII in the script body, ANSI on
+  read); the rule for this file is now simply *never let PowerShell guess an encoding.*
