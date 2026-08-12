@@ -646,7 +646,7 @@ func _rebuild_deck() -> void:
 ## unreadable and would bury the two-of you were looking for.
 func _deck_tile(card: CardData) -> Control:
 	var id := card.id
-	var card_size: Vector2 = CardView.BOARD_SIZE * DECK_CARD_SCALE
+	var card_size: Vector2 = CardView.size_for(CardView.Mode.BOARD) * DECK_CARD_SCALE
 
 	var tile := VBoxContainer.new()
 	tile.add_theme_constant_override("separation", 2)

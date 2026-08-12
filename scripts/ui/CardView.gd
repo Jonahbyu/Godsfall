@@ -20,29 +20,70 @@ const HAND_SIZE := Vector2(168, 262)
 ## enough that the name, HP and keyword lines stay readable at a glance.
 const BOARD_SIZE := Vector2(132, 196)
 
+## Phone sizes.
+##
+## These are not a style choice, they are arithmetic. A board row is two boards
+## of three slots — six cards — side by side, and the mobile viewport is 540
+## design units wide. At the desktop BOARD_SIZE of 132 that row alone needs
+## `6 x 132 + separations` = ~850 units, which is why the first cut of mobile
+## mode was "zoomed in and cut off": the container was told to be narrower and
+## the cards inside it were not, so everything past the second card fell off the
+## edge. 78 x 116 is what actually fits: `6 x 78 + 5 x 4 + 2 x 10` = 508.
+##
+## The hand keeps a larger card because the hand row *scrolls* horizontally —
+## it is the one row that may exceed the viewport — and the hand is where cards
+## are read before being played, so it is the wrong place to economise.
+const BOARD_SIZE_MOBILE := Vector2(78, 116)
+const HAND_SIZE_MOBILE := Vector2(112, 175)
+
+
+## The card size for a mode, honouring the current layout.
+##
+## Static-ish helper rather than a constant because the answer depends on
+## ViewportFit, and every call site that positions or reserves space for a card
+## has to get the same answer — a mix of the two is what produces a row that is
+## almost right and clips one card.
+static func size_for(m: int) -> Vector2:
+	var phone: bool = Engine.get_main_loop() != null \
+		and Engine.get_main_loop().root.has_node("ViewportFit") \
+		and Engine.get_main_loop().root.get_node("ViewportFit").mobile
+	if m == Mode.HAND:
+		return HAND_SIZE_MOBILE if phone else HAND_SIZE
+	return BOARD_SIZE_MOBILE if phone else BOARD_SIZE
+
 ## Every font size and box height on the card, keyed by metric name, for each
 ## mode. One layout is built at both sizes (CLAUDE.md decision log), so the only
 ## thing that varies between hand and board is what comes out of this table.
 ##
-## The board numbers are deliberately small — the full Pokémon-style structure
-## does not get to drop rows just because the frame is 132px wide, because a card
-## that reads differently in two places is the drift this renderer exists to
-## prevent. Board legibility is answered by hover-to-enlarge (Combat.gd), not by
-## a second layout.
+## The desktop board numbers are deliberately small — the full Pokémon-style
+## structure does not get to drop rows just because the frame is 132px wide,
+## because a card that reads differently in two places is the drift this renderer
+## exists to prevent. Board legibility is answered by hover-to-enlarge
+## (Combat.gd), not by a second layout.
+##
+## The phone board card is the one place that rule bends, and only because 78
+## units admits no font size at which the full frame is readable. See `_is_micro`.
+##
+## `board_m` and `hand_m` are the phone columns. They are *not* the desktop
+## numbers scaled down: a 78-unit card cannot carry the full frame at all, so the
+## phone board card drops to the three things a board read is actually made from
+## — name, HP, and whether a charge is held (see `_is_micro`). The type that
+## survives is therefore printed *larger* relative to the card than on desktop,
+## because there is far less of it competing for the space.
 const METRICS := {
-	"title_size":         { "hand": 12, "board": 9 },
-	"stage_size":         { "hand": 8,  "board": 7 },
-	"hp_size":            { "hand": 15, "board": 11 },
-	"evolve_size":        { "hand": 8,  "board": 7 },
-	"art_h":              { "hand": 74, "board": 40 },
-	"chip_size":          { "hand": 8,  "board": 7 },
-	"chip_h":             { "hand": 15, "board": 13 },
-	"ability_title_size": { "hand": 9,  "board": 7 },
-	"ability_text_size":  { "hand": 8,  "board": 7 },
-	"attack_name_size":   { "hand": 10, "board": 8 },
-	"attack_dmg_size":    { "hand": 11, "board": 9 },
-	"icon_size":          { "hand": 10, "board": 7 },
-	"footer_size":        { "hand": 8,  "board": 7 },
+	"title_size":         { "hand": 12, "board": 9,  "hand_m": 10, "board_m": 8 },
+	"stage_size":         { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
+	"hp_size":            { "hand": 15, "board": 11, "hand_m": 12, "board_m": 11 },
+	"evolve_size":        { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
+	"art_h":              { "hand": 74, "board": 40, "hand_m": 46, "board_m": 34 },
+	"chip_size":          { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 7 },
+	"chip_h":             { "hand": 15, "board": 13, "hand_m": 13, "board_m": 12 },
+	"ability_title_size": { "hand": 9,  "board": 7,  "hand_m": 8,  "board_m": 6 },
+	"ability_text_size":  { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
+	"attack_name_size":   { "hand": 10, "board": 8,  "hand_m": 9,  "board_m": 7 },
+	"attack_dmg_size":    { "hand": 11, "board": 9,  "hand_m": 10, "board_m": 9 },
+	"icon_size":          { "hand": 10, "board": 7,  "hand_m": 9,  "board_m": 7 },
+	"footer_size":        { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
 }
 
 var card: CardData
@@ -72,6 +113,11 @@ signal hover_changed(hovering: bool)
 
 var _button: Button
 
+## Whether this card was built for the phone layout. Latched in `_init` rather
+## than read live, so a card cannot end up sized by one layout and laid out by
+## the other — that mix is exactly what clips a row.
+var _phone: bool = false
+
 ## Extra rules text shown only while the card is hovered in hand. Empty hides the
 ## panel entirely, so a card with nothing more to say doesn't grow a blank box.
 var hover_text: String = ""
@@ -82,6 +128,9 @@ func _init(c: CardData, u: Unit = null, m: int = Mode.HAND) -> void:
 	card = c
 	unit = u
 	mode = m
+	var loop := Engine.get_main_loop()
+	_phone = loop != null and loop.root.has_node("ViewportFit") \
+		and loop.root.get_node("ViewportFit").mobile
 
 
 func _ready() -> void:
@@ -92,9 +141,10 @@ func _ready() -> void:
 	##
 	## Hand cards are deliberately *not* clipped: the hover panel is anchored
 	## below the frame on purpose and clipping would cut it off.
-	custom_minimum_size = HAND_SIZE if mode == Mode.HAND else BOARD_SIZE
+	var sz := size_for(mode)
+	custom_minimum_size = sz
 	if mode == Mode.BOARD:
-		size = BOARD_SIZE
+		size = sz
 		clip_contents = true
 	mouse_filter = Control.MOUSE_FILTER_PASS
 	_build()
@@ -123,19 +173,30 @@ func _build() -> void:
 	add_child(_button)
 
 	var root := VBoxContainer.new()
-	root.add_theme_constant_override("separation", 3)
+	root.add_theme_constant_override("separation", 1 if _is_micro() else 3)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
 
 	_add_header(root)
-	_add_evolve_strip(root)
-	_add_art(root)
-	_add_keyword_chips(root)
-	_add_ability_banner(root)
-	_add_attack_rows(root)
-	_add_footer(root)
-	_add_play_cost(root)
-	_add_hover_text()
+
+	## The phone board card carries only what a *board* read is made of: which
+	## unit this is, how hurt it is, and what it still holds. Everything below is
+	## reference material that belongs on the enlarged card, and at 78 units wide
+	## each of these rows would be a two-pixel smear that reads as damage to the
+	## frame rather than as information.
+	if _is_micro():
+		_add_art(root)
+		_add_keyword_chips(root)
+		_add_micro_status(root)
+	else:
+		_add_evolve_strip(root)
+		_add_art(root)
+		_add_keyword_chips(root)
+		_add_ability_banner(root)
+		_add_attack_rows(root)
+		_add_footer(root)
+		_add_play_cost(root)
+		_add_hover_text()
 
 	## Dimming is a soft cue, not a "disabled" look — a card you can't play right
 	## now must still be readable.
@@ -151,7 +212,27 @@ func _build() -> void:
 ## erroring, so a typo shows as a collapsed row instead of crashing the board.
 func _m(key: String) -> int:
 	var entry: Dictionary = METRICS.get(key, {})
-	return int(entry.get("hand" if mode == Mode.HAND else "board", 0))
+	var col := "hand" if mode == Mode.HAND else "board"
+	if _phone:
+		## Fall back to the desktop column if a phone value was never authored,
+		## so adding a metric cannot silently render at size 0.
+		return int(entry.get(col + "_m", entry.get(col, 0)))
+	return int(entry.get(col, 0))
+
+
+## A phone board card is 78 units wide, which is not enough for the full frame
+## at any font size — the art box, the ability banner and the attack rows would
+## each be a few pixels tall and legible as nothing.
+##
+## So the phone board card is deliberately a *different* card: name, HP, keyword
+## chips and the queued-attack marker, and nothing else. That is a real departure
+## from the "one layout at two sizes" rule this renderer was built on, and it is
+## justified by the same reasoning that rule was: the point was never uniformity
+## for its own sake, it was that a card must not *read* differently in two
+## places. A micro card omits information; it never contradicts the full one, and
+## tapping it opens the full frame (Combat's hover/tap zoom).
+func _is_micro() -> bool:
+	return _phone and mode == Mode.BOARD
 
 
 func _frame_style() -> StyleBoxFlat:
@@ -939,7 +1020,7 @@ func _make_drag_preview() -> Control:
 	## The preview is positioned by its top-left, so wrap it to centre it.
 	var wrap := Control.new()
 	wrap.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var size: Vector2 = HAND_SIZE if mode == Mode.HAND else BOARD_SIZE
+	var size: Vector2 = size_for(mode)
 	ghost.position = -size * 0.5
 	wrap.add_child(ghost)
 	return wrap
@@ -969,6 +1050,34 @@ func _notification(what: int) -> void:
 func _draw() -> void:
 	if _drop_hover:
 		draw_rect(Rect2(Vector2.ONE * 2, size - Vector2.ONE * 4), Palette.ACCENT, false, 3.0)
+
+
+## The phone board card's one status row, replacing the ability banner, the
+## attack rows and the footer all at once.
+##
+## Those three answer "what can this unit do", which is a question you ask about
+## *one* unit while deciding — and deciding is done on the enlarged card. What a
+## board scan needs is the state that changes turn to turn and differs between
+## the six units in front of you: how much energy is committed here, whether an
+## attack is already queued, and whether this body is about to die anyway.
+func _add_micro_status(root: VBoxContainer) -> void:
+	if unit == null:
+		return
+
+	var bits: Array[String] = []
+	if unit.attached > 0:
+		bits.append("%s%d" % [Palette.glyph("energy"), unit.attached])
+	if unit.queued_attack != null:
+		bits.append(Palette.glyph("queued"))
+	if unit.dies_at_eot:
+		bits.append(Palette.glyph("dead"))
+	if bits.is_empty():
+		return
+
+	var l := Palette.label("  ".join(bits), _m("attack_dmg_size"), Palette.GOLD)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(l)
 
 
 # ------------------------------------------------------------------ helpers

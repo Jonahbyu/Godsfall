@@ -510,6 +510,12 @@ func _build_ui() -> void:
 	root.add_child(left)
 
 	## top bar
+	##
+	## The turn line ("Round 3 — your turn · ...") and the hint line are both
+	## full sentences, and on a phone either one alone is wider than the screen.
+	## They are the single largest reason the first cut of mobile mode ran off
+	## the edge, so on a phone they wrap and sit on their own rows under the
+	## button rather than sharing one line with it.
 	var top := HBoxContainer.new()
 	top.add_theme_constant_override("separation", 12)
 	left.add_child(top)
@@ -520,15 +526,28 @@ func _build_ui() -> void:
 	back.pressed.connect(func(): get_tree().change_scene_to_file(MENU_SCENE))
 	top.add_child(back)
 
-	_turn_lbl = Palette.label("", 16, Palette.ACCENT)
-	top.add_child(_turn_lbl)
+	_turn_lbl = Palette.label("", 13 if _compact else 16, Palette.ACCENT)
+	_hint_lbl = Palette.label("", 12 if _compact else 13, Palette.GOLD)
 
-	var sp := Control.new()
-	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	top.add_child(sp)
-
-	_hint_lbl = Palette.label("", 13, Palette.GOLD)
-	top.add_child(_hint_lbl)
+	if _compact:
+		## A label only wraps if something bounds its width, and in an HBox
+		## nothing does — it just grows and drags the row past the viewport.
+		## Given its own full-width row it has a bound and can wrap.
+		for l in [_turn_lbl, _hint_lbl]:
+			l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			l.custom_minimum_size = Vector2(0, 0)
+		var sp_m := Control.new()
+		sp_m.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		top.add_child(sp_m)
+		left.add_child(_turn_lbl)
+		left.add_child(_hint_lbl)
+	else:
+		top.add_child(_turn_lbl)
+		var sp := Control.new()
+		sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		top.add_child(sp)
+		top.add_child(_hint_lbl)
 
 	## enemy throne
 	_enemy_throne_lbl = Palette.label("", 15, Palette.THRONE)
@@ -537,7 +556,9 @@ func _build_ui() -> void:
 
 	## enemy boards
 	_enemy_boards_row = HBoxContainer.new()
-	_enemy_boards_row.add_theme_constant_override("separation", 12)
+	## Six board cards plus two panel frames have to fit the width; on a phone the
+	## gap between the two boards is the cheapest thing to give back.
+	_enemy_boards_row.add_theme_constant_override("separation", 4 if _compact else 12)
 	_enemy_boards_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	left.add_child(_enemy_boards_row)
 
@@ -547,7 +568,7 @@ func _build_ui() -> void:
 
 	## my boards
 	_my_boards_row = HBoxContainer.new()
-	_my_boards_row.add_theme_constant_override("separation", 12)
+	_my_boards_row.add_theme_constant_override("separation", 4 if _compact else 12)
 	_my_boards_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	left.add_child(_my_boards_row)
 
@@ -557,6 +578,11 @@ func _build_ui() -> void:
 	left.add_child(_my_throne_lbl)
 
 	## pool + end turn
+	##
+	## One row on a desktop. On a phone the meter and the three controls do not
+	## fit together, so the meter keeps the first row and the buttons take a
+	## second one — where they also stretch into proper touch targets instead of
+	## being crowded against the right edge.
 	var poolbar := HBoxContainer.new()
 	poolbar.add_theme_constant_override("separation", 12)
 	poolbar.alignment = BoxContainer.ALIGNMENT_BEGIN
@@ -574,27 +600,37 @@ func _build_ui() -> void:
 
 	poolbar.add_child(_build_pool_meter())
 
+	var controls := poolbar
+	if _compact:
+		controls = HBoxContainer.new()
+		controls.add_theme_constant_override("separation", 6)
+		left.add_child(controls)
+
 	_global_lock_btn = Button.new()
 	_global_lock_btn.toggle_mode = true
 	_global_lock_btn.add_theme_font_size_override("font_size", 12)
 	_global_lock_btn.pressed.connect(_on_global_lock_toggled)
-	poolbar.add_child(_global_lock_btn)
+	controls.add_child(_global_lock_btn)
 
 	## Setup only. Hidden the moment round 1 begins — the mulligan is a decision made
 	## on the opening hand alone, so it cannot outlive the phase.
 	_mulligan_btn = Button.new()
 	_mulligan_btn.text = "Mulligan"
-	_mulligan_btn.custom_minimum_size = Vector2(110, 40)
+	_mulligan_btn.custom_minimum_size = Vector2(0 if _compact else 110, 40)
 	Palette.style_button(_mulligan_btn, Palette.PANEL, Palette.GOLD)
 	_mulligan_btn.pressed.connect(_on_mulligan)
-	poolbar.add_child(_mulligan_btn)
+	controls.add_child(_mulligan_btn)
 
 	_end_turn_btn = Button.new()
 	_end_turn_btn.text = "End Turn"
-	_end_turn_btn.custom_minimum_size = Vector2(140, 40)
+	_end_turn_btn.custom_minimum_size = Vector2(0 if _compact else 140, 40)
 	Palette.style_button(_end_turn_btn, Palette.ACCENT_DIM, Palette.ACCENT)
 	_end_turn_btn.pressed.connect(_on_end_turn)
-	poolbar.add_child(_end_turn_btn)
+	controls.add_child(_end_turn_btn)
+
+	if _compact:
+		for b in [_global_lock_btn, _mulligan_btn, _end_turn_btn]:
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	## hand
 	left.add_child(Palette.label("Hand", 13, Palette.TEXT_DIM))
@@ -602,7 +638,7 @@ func _build_ui() -> void:
 	var hand_scroll := ScrollContainer.new()
 	## Exactly the holder height from _wrap_hand_card — the lift needs its 26px,
 	## but nothing needs padding on top of that.
-	hand_scroll.custom_minimum_size = Vector2(0, CardView.HAND_SIZE.y + HOVER_LIFT)
+	hand_scroll.custom_minimum_size = Vector2(0, CardView.size_for(CardView.Mode.HAND).y + HOVER_LIFT)
 	hand_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	left.add_child(hand_scroll)
 
@@ -867,10 +903,20 @@ func _rebuild_boards(row: HBoxContainer, p: Player, is_enemy: bool) -> void:
 	for bi in p.boards.size():
 		var b: Board = p.boards[bi]
 		var panel := Palette.make_panel(Palette.PANEL)
+		## The panel's default 8px side margins are 32 units across two boards,
+		## which is most of a phone card. Trimmed to 2 so the frame still reads
+		## as a boundary between the two lanes without costing a slot.
+		if _compact:
+			var st := Palette.panel_style(Palette.PANEL)
+			st.content_margin_left = 2
+			st.content_margin_right = 2
+			st.content_margin_top = 3
+			st.content_margin_bottom = 3
+			panel.add_theme_stylebox_override("panel", st)
 		row.add_child(panel)
 
 		var lane := HBoxContainer.new()
-		lane.add_theme_constant_override("separation", 4)
+		lane.add_theme_constant_override("separation", 2 if _compact else 4)
 		panel.add_child(lane)
 
 		## Enemy lanes read right-to-left so slot 0 sits across from your slot 0.
@@ -906,7 +952,7 @@ func _slot_widget(p: Player, b: Board, bi: int, si: int, is_enemy: bool) -> Cont
 		## is never a target, so don't offer to deploy into it.
 		var playable := droppable and _selected_hand >= 0 and _pending_support == null
 		var e: Button = DropZoneScript.new()
-		e.custom_minimum_size = CardView.BOARD_SIZE
+		e.custom_minimum_size = CardView.size_for(CardView.Mode.BOARD)
 		e.text = "+ deploy" if playable else ("drop here" if _dragging_basic else "empty")
 		e.add_theme_font_size_override("font_size", 12)
 		## A lesson step pointing at this slot rings it in gold, so "deploy here"
@@ -998,7 +1044,7 @@ func _show_zoom(view: CardView) -> void:
 	## Position beside the hovered slot, then clamp into the viewport so a card at
 	## the screen edge is not half off it.
 	var slot_rect: Rect2 = view.get_global_rect()
-	var big_size: Vector2 = CardView.HAND_SIZE * HOVER_ZOOM
+	var big_size: Vector2 = CardView.size_for(CardView.Mode.HAND) * HOVER_ZOOM
 	var vp: Vector2 = get_viewport_rect().size
 
 	var pos := Vector2(
@@ -1049,7 +1095,7 @@ func _tower_widget(b: Board, bi: int, is_enemy: bool) -> Control:
 	var targetable := _tower_is_target(b, bi, is_enemy)
 
 	var panel := PanelContainer.new()
-	panel.custom_minimum_size = CardView.BOARD_SIZE
+	panel.custom_minimum_size = CardView.size_for(CardView.Mode.BOARD)
 
 	var s := StyleBoxFlat.new()
 	s.bg_color = Palette.TOWER.darkened(0.62)
@@ -1216,12 +1262,12 @@ func _rebuild_hand(p: Player) -> void:
 func _wrap_hand_card(view: CardView) -> Control:
 	var holder := Control.new()
 	## Room above the card for the lift, so raising it can't clip at the top.
-	holder.custom_minimum_size = CardView.HAND_SIZE + Vector2(0, HOVER_LIFT)
+	holder.custom_minimum_size = CardView.size_for(CardView.Mode.HAND) + Vector2(0, HOVER_LIFT)
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	## Anchored to the bottom of the holder: the card sits low and travels up.
 	view.position = Vector2(0, HOVER_LIFT)
-	view.size = CardView.HAND_SIZE
+	view.size = CardView.size_for(CardView.Mode.HAND)
 	holder.add_child(view)
 
 	view.hover_changed.connect(func(on: bool): _on_card_hover(view, on))
@@ -2020,7 +2066,9 @@ func _on_choice_required(p, prompt: String, choices: Array, on_pick: Callable) -
 	col.add_child(Palette.label(prompt, 18, Palette.ACCENT))
 
 	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(760, CardView.HAND_SIZE.y + 24)
+	scroll.custom_minimum_size = Vector2(
+		420 if ViewportFit.mobile else 760,
+		CardView.size_for(CardView.Mode.HAND).y + 24)
 	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	col.add_child(scroll)
 

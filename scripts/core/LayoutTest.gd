@@ -20,8 +20,12 @@ extends SceneTree
 ## fails the whole compile with "Identifier not found". Same reason
 ## CardViewTest.gd does it.
 
-## 3 glyph-table + 9 source files + 4 screens x 2 layouts.
-const EXPECTED_ASSERTIONS := 20
+## 3 glyph-table + 9 source files + 4 screens x 2 layouts + 4 overflow.
+const EXPECTED_ASSERTIONS := 24
+
+## The phone viewport, in design units: ViewportFit.MOBILE_DESIGN_WIDTH by the
+## height a 390x844 phone maps to at that scale.
+const PHONE_VIEW := Vector2i(540, 1170)
 
 var _passed := 0
 var _failed := 0
@@ -33,6 +37,7 @@ func _initialize() -> void:
 	_test_glyph_table()
 	_test_ui_strings()
 	_test_screens_build()
+	await _test_no_phone_overflow()
 
 	print("\n%d passed, %d failed" % [_passed, _failed])
 	if _count != EXPECTED_ASSERTIONS:
@@ -186,3 +191,72 @@ func _test_screens_build() -> void:
 
 			_ok("%s builds (%s)" % [name, shape], built)
 			c.free()
+
+
+## Nothing in a phone layout may be wider than the phone.
+##
+## This is the assertion whose absence let "mobile mode" ship as pure zoom. The
+## containers were told to be narrower and the cards inside them were not, so
+## Combat's layout still demanded 931 units against a 540 viewport and the board
+## simply ran off the right edge. Every screen looked fine in a headless build
+## test, because *building* was never the problem.
+##
+## `get_combined_minimum_size().x` is the honest number: it is the width the
+## layout cannot shrink below. Anything above the viewport is clipped content.
+##
+## The hand row is the one sanctioned exception — it lives in a horizontally
+## scrolling container on purpose, because six hand cards are meant to be swiped
+## through rather than shrunk to illegibility.
+func _test_no_phone_overflow() -> void:
+	print("\nNo phone layout exceeds the phone viewport:")
+	var VF = root.get_node("ViewportFit")
+	VF.mobile = true
+	root.content_scale_size = PHONE_VIEW
+
+	var screens := {
+		"MainMenu": "res://scripts/ui/MainMenu.gd",
+		"DeckSelect": "res://scripts/ui/DeckSelect.gd",
+		"DeckBuilder": "res://scripts/ui/DeckBuilder.gd",
+		"Combat": "res://scripts/ui/Combat.gd",
+	}
+
+	for name in screens:
+		var c := Control.new()
+		c.set_script(load(screens[name]))
+		root.add_child(c)
+		if name == "Combat":
+			c.auto_resolve_choices = true
+			c._build_ui()
+		else:
+			c._build()
+
+		## Let the container tree settle; minimum sizes propagate over frames.
+		for i in 4:
+			await process_frame
+
+		var offenders: Array = []
+		_collect_wide(c, PHONE_VIEW.x, offenders)
+		_ok("%s fits %d units wide" % [name, PHONE_VIEW.x], offenders.is_empty())
+		for o in offenders:
+			print("       %-46s min_w=%.0f" % [o[0], o[1]])
+
+		c.free()
+
+	VF.mobile = false
+
+
+## Controls whose own minimum width exceeds `limit`, ignoring anything inside a
+## ScrollContainer that scrolls horizontally — that content is reachable.
+func _collect_wide(n: Node, limit: int, out: Array, path: String = "",
+		scrollable: bool = false) -> void:
+	var scrolls := scrollable
+	if n is ScrollContainer:
+		scrolls = scrolls or n.horizontal_scroll_mode != ScrollContainer.SCROLL_MODE_DISABLED
+
+	if n is Control and not scrollable:
+		var w: float = n.get_combined_minimum_size().x
+		if w > limit:
+			out.append([path + "/" + n.get_class(), w])
+
+	for ch in n.get_children():
+		_collect_wide(ch, limit, out, path + "/" + n.get_class(), scrolls)

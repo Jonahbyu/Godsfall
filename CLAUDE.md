@@ -1706,15 +1706,46 @@ single-column and give the width back.
 |---|---|---|
 | Reference width | the window, clamped to ≥1180 | a fixed **540** design units |
 | Effective scale on a 390px phone | 0.33× (unreadable) | **0.72×** |
+| Board card | 132×196 | **78×116**, and a reduced frame |
+| Hand card | 168×262 | **112×175** |
 | Combat | board \| action+log side by side | stacked, log becomes a drawer |
 | Deck select | list \| contents in an `HSplitContainer` | stacked, actions on their own row |
 | Deck builder | collection \| deck in an `HSplitContainer` | **tabs** |
 | Main menu | — | unchanged; it is already one column |
 
+**Restacking containers is not enough on its own, and shipping it that way was the first
+attempt's whole failure.** Mobile mode originally set a 540-unit reference width and told the
+screens to go single-column — and left every card at its desktop size. A board row is six
+cards, so it still demanded ~850 units inside a 540 viewport, Combat's layout minimum came
+to 931, and the result was exactly "zoomed in with everything cut off". The containers were
+narrower; the things inside them were not.
+
+So the phone sizes above are arithmetic, not taste: `6 × 78 + 5 × 4 + 2 × 10 = 508` fits
+540, and the board panel's margins and lane separations were trimmed to buy the rest. **Any
+fixed-size UI element needs a phone value, or it silently sets the layout's floor.**
+
+**The phone board card is a reduced frame — the one place "one layout at two sizes" bends.**
+At 78 units there is no font size at which the full Pokémon-style frame is readable, so the
+phone board card carries name, HP, keyword chips and a status row (attached energy, queued
+marker, dies-EOT) and drops the art-adjacent rows, the ability banner, the attack rows and
+the footer. That is consistent with *why* the one-layout rule exists rather than a violation
+of it: the rule guards against a card **contradicting** itself in two places, and a micro
+card only ever omits — tapping it opens the full frame.
+
+**The hand row is the sanctioned exception to fitting the viewport.** It scrolls
+horizontally, because six hand cards are meant to be swiped through rather than shrunk to
+nothing, and the hand is where cards are actually read before being played.
+
 **The builder uses tabs where the others stack**, and that is the one deliberate
 inconsistency: both its halves are tall scrolling lists, so stacking would mean scrolling
 past the entire collection to reach the deck. Tabs also match how the screen is used — you
 browse, then you review, and rarely need both at once.
+
+Combat also moves its turn line and hint onto their own full-width rows on a phone. A
+`Label` in an `HBoxContainer` has nothing bounding its width, so it never wraps — it just
+grows and drags the row past the edge. Its own row gives it a bound, and then
+`AUTOWRAP_WORD_SMART` does the work. That was the specific cause of "Setup — place your
+Basics · Towers hold fire in round 1" running off the screen.
 
 **Activation is automatic with a manual override.** Below 820px the layout switches on its
 own; a three-way `Auto / Phone / Desktop` control in the main menu forces it either way and
@@ -2113,7 +2144,7 @@ or break a game is worse than no log), and a stall is recorded as `NO WINNER —
 round N`, since that is the single most important thing the file can capture.
 
 Verified by fourteen headless harnesses (all passing — run 2026-08-10 after the mobile
-layout and glyph work landed, **887 counted assertions**, with the long-standing
+layout and glyph work landed, **891 counted assertions**, with the long-standing
 `SupportUITest` flake fixed rather than merely absent; `SceneSmokeTest`, `PlaythroughTest`
 and `TutorialWalkTest` report pass/fail without a count and are not in that total):
 
@@ -2132,7 +2163,7 @@ and `TutorialWalkTest` report pass/fail without a count and are not in that tota
 | `GaiaTest.gd` | 146 assertions: Gaia card data including per-colour attack costs, the Earth aura summed across both boards and excluding the dead, aura-adjusted max HP, healing that reaches the aura's ceiling, downward clamping that never kills, the aura on attack damage and on tower damage, `Resist` in both damage paths and on Retribution recoil with its minimum-1 floor, Sanctuary preceding Resist, `Essence` **through the real `_cleanup_dead`** (payment, the nearest-living heir, ties-go-left, never crossing boards, skipping a corpse in a batched death, and fizzling when unaffordable), grown Earth resetting on Rise and evolution, Earth derived live from attached energy, the additive rate-breaker, and Makeshift Tower's free auto-fire, per-round growth, and obedience to the shielding chain |
 | `TutorialTest.gd` | 119 assertions: lesson content integrity (unique ids, every step carrying text, every `advance` predicate one the evaluator handles), every card id a lesson names existing, every `read_more` resolving to a real page, every lesson deck building a `GameState`, the unshuffled deal being reproducible **and the default path still shuffling**, every scripted placement landing on a real non-tower slot, the gating hooks answering permissively when inactive, all eight step predicates **driven against a real `GameState`**, progress round-tripping through a sandboxed file, and compendium coverage of every keyword in `Palette.KEYWORD_COLORS`. **Also that every lesson declares an opening hand, that the hand is fully present in its deck, and that it holds the Basics/Stage 1/support/energy its steps actually demand** |
 | `TutorialWalkTest.gd` | Drives all 13 battle lessons through the **real Combat screen**, performing what each step asks via the entry points a player clicks, and fails if any step cannot be satisfied. Reports per-lesson rather than a counted total. This is the harness that checks a lesson can be **finished**, not merely that it is well formed |
-| `LayoutTest.gd` | 20 assertions on what the UI *draws*: every entry in `Palette.GLYPH` being renderable by the actual theme font, every double-quoted literal across the nine UI source files containing no character the font lacks (comments exempt — their ASCII diagrams are never rendered), and all four screens building in **both** the desktop and phone layouts. The glyph half reads the source rather than the running scene on purpose: a label built only in a rare branch — an error state, a disabled button's tooltip — is never instantiated by a smoke test, and those are exactly the strings that ship broken |
+| `LayoutTest.gd` | 24 assertions on what the UI *draws*: every entry in `Palette.GLYPH` being renderable by the actual theme font, every double-quoted literal across the nine UI source files containing no character the font lacks (comments exempt — their ASCII diagrams are never rendered), all four screens building in **both** the desktop and phone layouts, and — the assertion that matters most — **no phone layout exceeding the 540-unit phone viewport**, measured with `get_combined_minimum_size()` and ignoring content inside a horizontally scrolling container. The glyph half reads the source rather than the running scene on purpose: a label built only in a rare branch — an error state, a disabled button's tooltip — is never instantiated by a smoke test, and those are exactly the strings that ship broken. The overflow half exists because its absence is what let mobile mode ship as pure zoom: every screen *built* fine, which is all the build assertions ever checked |
 
 The Heaven pipeline tests deliberately call `GameState._deal_lane_damage` rather than
 simulating the ordering inline — a test that reimplements the rule it is checking proves
@@ -3023,3 +3054,26 @@ even if the rule text later changes. Keep entries to one or two lines.
   still being a touch device. Crossing the threshold **rebuilds the screen wholesale**
   rather than re-parenting, because the two shapes differ in which nodes exist at all and
   every screen's real state lives in `GameState` or `DeckStore` rather than in its nodes.
+- **A responsive layout has to resize its *contents*, not just restack its containers.** The
+  first cut of mobile mode set a 540-unit reference width and made every screen
+  single-column, and left `CardView` at its desktop 132×196. A board row is six cards, so it
+  still demanded ~850 units inside a 540 viewport and Combat's layout minimum came to 931 —
+  the game was, in Jonah's words, "just zoomed in and cuts off most of the stuff." Cards now
+  have phone sizes (78×116 board, 112×175 hand) chosen by arithmetic against the viewport,
+  and the board panel margins, lane separations and the two full-sentence labels in the top
+  bar were all trimmed or rewrapped to fit. **Every fixed-size element needs a phone value,
+  or it silently becomes the layout's floor.**
+- **The phone board card is a reduced frame, and that is consistent with the one-layout rule
+  rather than an exception to it.** 78 units admits no font size at which the full frame is
+  readable, so the phone board card keeps name, HP, keyword chips and a status row and drops
+  the ability banner, attack rows and footer. The rule those rows were protected by exists to
+  stop a card **contradicting** itself in two places; a micro card only ever *omits*, and
+  tapping it opens the full frame. Uniformity was never the goal — non-contradiction was.
+- **`LayoutTest` asserts no phone layout exceeds the phone viewport, and that assertion is
+  the whole lesson.** Every screen *built* correctly the entire time mobile mode was broken,
+  which is all the existing build assertions ever checked — so the suite was green while the
+  feature was visibly unusable. `get_combined_minimum_size().x` against a 540 viewport is
+  the honest measure, with content inside a horizontally scrolling container exempt. Verified
+  by reverting the card size and watching it fail at 812 and 602 before restoring the fix:
+  **a regression test written after the fact is only worth what it catches when you put the
+  bug back.**
