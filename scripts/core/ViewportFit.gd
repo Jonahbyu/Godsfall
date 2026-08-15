@@ -122,7 +122,22 @@ func set_override(mode: int) -> void:
 func auto_would_be_mobile() -> bool:
 	if DisplayServer.get_name() == "headless":
 		return false
-	return get_tree().root.get_visible_rect().size.x < NARROW_WIDTH
+	return _window_size().x < NARROW_WIDTH
+
+
+## The real window, in physical pixels.
+##
+## NOT `root.get_visible_rect()`, which returns the *viewport* — a value this
+## node sets itself. Measuring it made the detection self-latching: entering
+## phone mode shrank the viewport to 540, the next measurement saw 540 < 820 and
+## concluded "phone" again, so a 1440-wide desktop window could never get back
+## out. The window is the input; the viewport is the output, and reading your own
+## output as your input is how a control loop sticks.
+func _window_size() -> Vector2:
+	var w := DisplayServer.window_get_size()
+	if w.x > 0 and w.y > 0:
+		return Vector2(w)
+	return get_tree().root.get_visible_rect().size
 
 
 ## Recompute the reference resolution and the layout flag from the window size.
@@ -132,7 +147,7 @@ func auto_would_be_mobile() -> bool:
 ## other notification.
 func _apply() -> void:
 	var root := get_tree().root
-	var win := root.get_visible_rect().size
+	var win := _window_size()
 
 	## A zero-sized window happens for a frame during startup on some platforms,
 	## and dividing by it below would produce an infinite scale.

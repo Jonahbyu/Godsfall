@@ -3288,3 +3288,157 @@ Damage by card (unit / tower / throne, total):
     Charnel Colossus               128  (0 / 52 / 76 over 4 hits)
     Hollow Servant                  60  (36 / 24 / 0 over 5 hits)
     Barrow Knight                   25  (0 / 25 / 0 over 1 hits)
+
+========================================================================
+2026-08-14T21:31:03  [RulesTest]
+Widening Rift  vs  Cacophony Ramp
+Result: Widening Rift wins on round 9
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 114 / 140
+  tower 1: 90 / 90
+  tower 2: DESTROYED (max was 50)
+  tower fire dealt: 134
+Cacophony Ramp (Opponent)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 80)
+  tower 2: 18 / 90
+  tower fire dealt: 256
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Hungering Maw                  176  (14 / 64 / 98 over 4 hits)
+    Rust Crawler                    72  (0 / 72 / 0 over 3 hits)
+  Cacophony Ramp
+    Charnel Colossus               153  (153 / 0 / 0 over 5 hits)
+    Nithogg, Root-Gnawer            50  (0 / 50 / 0 over 1 hits)
+    Bonepicker                      10  (10 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-14T21:31:06  [SupportTest]
+Deep Grove  vs  Rise & Recur
+Result: Rise & Recur wins on round 12
+------------------------------------------------------------------------
+Deep Grove (You)
+  throne 0 / 155
+  tower 1: DESTROYED (max was 95)
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 576
+Rise & Recur (Opponent)
+  throne 155 / 155
+  tower 1: 96 / 105
+  tower 2: 105 / 105
+  tower fire dealt: 522
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Deep Grove
+    Seedbearer                      90  (90 / 0 / 0 over 7 hits)
+    Elder of the Grove              84  (84 / 0 / 0 over 2 hits)
+    Sapling Warden                  33  (33 / 0 / 0 over 3 hits)
+  Rise & Recur
+    Hollow Servant                 112  (76 / 36 / 0 over 10 hits)
+    Grave Whelp                     60  (12 / 48 / 0 over 5 hits)
+    Bonepicker                      40  (30 / 10 / 0 over 4 hits)
+    Grave Tide                      40  (40 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-14T21:31:16  [Combat]
+Toll Engine  vs  Lamp Wall
+Result: Lamp Wall wins on round 7
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 130
+  tower 1: DESTROYED (max was 70)
+  tower 2: DESTROYED (max was 75)
+  tower fire dealt: 112
+Lamp Wall (Opponent)
+  throne 130 / 130
+  tower 1: 80 / 80  +5 dmg
+  tower 2: 58 / 80
+  tower fire dealt: 172
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    (no card damage dealt)
+  Lamp Wall
+    Warden of the Lamp             103  (0 / 53 / 50 over 5 hits)
+    Cherub of the Open Gate         32  (0 / 32 / 0 over 4 hits)
+    Lantern Acolyte                  8  (0 / 0 / 8 over 1 hits)
+
+========================================================================
+2026-08-14T21:32:54  [Combat]
+Toll Engine  vs  Toll Engine
+Result: Toll Engine wins on round 6
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 125
+  tower 1: DESTROYED (max was 75)
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 104
+Toll Engine (Opponent)
+  throne 125 / 125
+  tower 1: 75 / 75
+  tower 2: 75 / 75
+  tower fire dealt: 98
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Barrow Knight                   25  (25 / 0 / 0 over 1 hits)
+  Toll Engine
+    Grave Whelp                    117  (32 / 56 / 29 over 11 hits)
+    Carrion Crawler                 60  (0 / 15 / 45 over 4 hits)
+    Barrow Knight                   15  (0 / 15 / 0 over 1 hits)
+
+========================================================================
+2026-08-14T21:33:13  [RulesTest]
+Widening Rift  vs  Cacophony Ramp
+Result: Widening Rift wins on round 7
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 130 / 130
+  tower 1: 66 / 80
+  tower 2: 18 / 80
+  tower fire dealt: 128
+Cacophony Ramp (Opponent)
+  throne 0 / 130
+  tower 1: DESTROYED (max was 75)
+  tower 2: 18 / 80
+  tower fire dealt: 122
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Hungering Maw                   80  (0 / 20 / 60 over 2 hits)
+    Null Adept                      64  (14 / 0 / 50 over 3 hits)
+    Entropy Warden                  49  (49 / 0 / 0 over 2 hits)
+    Sundered Wretch                 36  (0 / 36 / 0 over 1 hits)
+  Cacophony Ramp
+    Charnel Colossus                67  (67 / 0 / 0 over 2 hits)
+    Bonepicker                      10  (10 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-14T21:33:16  [SupportTest]
+Verdict Engine  vs  Widening Rift
+Result: Verdict Engine wins on round 7
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 130 / 130
+  tower 1: 80 / 80
+  tower 2: 80 / 80
+  tower fire dealt: 122
+Widening Rift (Opponent)
+  throne 0 / 130
+  tower 1: DESTROYED (max was 70)
+  tower 2: DESTROYED (max was 70)
+  tower fire dealt: 93
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Arbiter of the Third Seal      104  (54 / 25 / 25 over 5 hits)
+    Censer Bearer                   96  (32 / 32 / 32 over 6 hits)
+    Hand of the Verdict             32  (16 / 0 / 16 over 2 hits)
+    Bellringer of the Court         28  (0 / 16 / 12 over 4 hits)
+    Lantern Acolyte                 16  (8 / 8 / 0 over 2 hits)
+  Widening Rift
+    Null Adept                      26  (26 / 0 / 0 over 2 hits)
+    Rust Crawler                    24  (24 / 0 / 0 over 1 hits)
+    Sundered Wretch                 18  (18 / 0 / 0 over 1 hits)

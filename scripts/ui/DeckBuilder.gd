@@ -308,7 +308,10 @@ func _make_column(title: String, is_collection: bool) -> Control:
 		_collection_box = box
 	else:
 		var grid := GridContainer.new()
-		grid.columns = DECK_GRID_COLUMNS
+		## Four across on a phone: at a 0.62 tile scale that is 4 x 82 + gaps,
+		## which fits 540 while keeping enough tiles per row that a 60-card deck is
+		## still scannable rather than a single long column.
+		grid.columns = 4 if _mobile else DECK_GRID_COLUMNS
 		grid.add_theme_constant_override("h_separation", 6)
 		grid.add_theme_constant_override("v_separation", 6)
 		box = grid
@@ -646,7 +649,15 @@ func _rebuild_deck() -> void:
 ## unreadable and would bury the two-of you were looking for.
 func _deck_tile(card: CardData) -> Control:
 	var id := card.id
-	var card_size: Vector2 = CardView.size_for(CardView.Mode.BOARD) * DECK_CARD_SCALE
+	## The deck grid is thumbnails, not board slots, so it sizes off the DESKTOP
+	## board card and scales that — deliberately not `size_for()`. The phone board
+	## card is 150 units because Combat stacks its two boards and can afford it;
+	## inheriting that here would push the two-column grid to 677 units and
+	## overflow the 540 viewport. What this grid needs is "small enough that a
+	## 60-card deck is scannable", which is a different question from "large enough
+	## to read during a turn".
+	var tile_scale: float = 0.62 if _mobile else DECK_CARD_SCALE
+	var card_size: Vector2 = CardView.BOARD_SIZE * tile_scale
 
 	var tile := VBoxContainer.new()
 	tile.add_theme_constant_override("separation", 2)
@@ -657,7 +668,7 @@ func _deck_tile(card: CardData) -> Control:
 	holder.custom_minimum_size = card_size
 
 	var view := CardView.new(card, null, CardView.Mode.BOARD)
-	view.scale = Vector2(DECK_CARD_SCALE, DECK_CARD_SCALE)
+	view.scale = Vector2(tile_scale, tile_scale)
 	holder.add_child(view)
 
 	var hit := Button.new()

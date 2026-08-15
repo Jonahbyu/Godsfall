@@ -22,19 +22,26 @@ const BOARD_SIZE := Vector2(132, 196)
 
 ## Phone sizes.
 ##
-## These are not a style choice, they are arithmetic. A board row is two boards
-## of three slots — six cards — side by side, and the mobile viewport is 540
-## design units wide. At the desktop BOARD_SIZE of 132 that row alone needs
-## `6 x 132 + separations` = ~850 units, which is why the first cut of mobile
-## mode was "zoomed in and cut off": the container was told to be narrower and
-## the cards inside it were not, so everything past the second card fell off the
-## edge. 78 x 116 is what actually fits: `6 x 78 + 5 x 4 + 2 x 10` = 508.
+## These are not a style choice, they are arithmetic against the 540-unit mobile
+## viewport.
 ##
-## The hand keeps a larger card because the hand row *scrolls* horizontally —
-## it is the one row that may exceed the viewport — and the hand is where cards
-## are read before being played, so it is the wrong place to economise.
-const BOARD_SIZE_MOBILE := Vector2(78, 116)
-const HAND_SIZE_MOBILE := Vector2(112, 175)
+## The first cut put both boards side by side on a phone — six card slots across
+## — which forces a 78-unit card and produced the "it is just the desktop layout,
+## smaller" problem. Combat now STACKS the two boards on a phone, so a row is
+## three slots, not six, and the budget per card roughly doubles:
+##
+##     3 x 150 + 2 x 4 + 2 x 6 = 470, inside 540 with room for the panel frame.
+##
+## 150 units is wide enough to carry the real card frame — name, HP, art,
+## keyword chips and an attack row — rather than the stripped micro card that
+## three slots of 78 units forced. That is the difference between reformatting
+## for a phone and shrinking a desktop.
+##
+## The hand keeps its own size because the hand row *scrolls* horizontally — it
+## is the one row allowed to exceed the viewport — and the hand is where cards
+## are actually read before being played.
+const BOARD_SIZE_MOBILE := Vector2(150, 205)
+const HAND_SIZE_MOBILE := Vector2(118, 184)
 
 
 ## The card size for a mode, honouring the current layout.
@@ -71,19 +78,19 @@ static func size_for(m: int) -> Vector2:
 ## survives is therefore printed *larger* relative to the card than on desktop,
 ## because there is far less of it competing for the space.
 const METRICS := {
-	"title_size":         { "hand": 12, "board": 9,  "hand_m": 10, "board_m": 8 },
-	"stage_size":         { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
-	"hp_size":            { "hand": 15, "board": 11, "hand_m": 12, "board_m": 11 },
-	"evolve_size":        { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
-	"art_h":              { "hand": 74, "board": 40, "hand_m": 46, "board_m": 34 },
-	"chip_size":          { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 7 },
-	"chip_h":             { "hand": 15, "board": 13, "hand_m": 13, "board_m": 12 },
-	"ability_title_size": { "hand": 9,  "board": 7,  "hand_m": 8,  "board_m": 6 },
-	"ability_text_size":  { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
-	"attack_name_size":   { "hand": 10, "board": 8,  "hand_m": 9,  "board_m": 7 },
-	"attack_dmg_size":    { "hand": 11, "board": 9,  "hand_m": 10, "board_m": 9 },
-	"icon_size":          { "hand": 10, "board": 7,  "hand_m": 9,  "board_m": 7 },
-	"footer_size":        { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
+	"title_size":         { "hand": 12, "board": 9,  "hand_m": 11, "board_m": 11 },
+	"stage_size":         { "hand": 8,  "board": 7,  "hand_m": 8,  "board_m": 8 },
+	"hp_size":            { "hand": 15, "board": 11, "hand_m": 14, "board_m": 14 },
+	"evolve_size":        { "hand": 8,  "board": 7,  "hand_m": 8,  "board_m": 8 },
+	"art_h":              { "hand": 74, "board": 40, "hand_m": 58, "board_m": 56 },
+	"chip_size":          { "hand": 8,  "board": 7,  "hand_m": 8,  "board_m": 8 },
+	"chip_h":             { "hand": 15, "board": 13, "hand_m": 14, "board_m": 14 },
+	"ability_title_size": { "hand": 9,  "board": 7,  "hand_m": 9,  "board_m": 9 },
+	"ability_text_size":  { "hand": 8,  "board": 7,  "hand_m": 8,  "board_m": 8 },
+	"attack_name_size":   { "hand": 10, "board": 8,  "hand_m": 10, "board_m": 10 },
+	"attack_dmg_size":    { "hand": 11, "board": 9,  "hand_m": 11, "board_m": 11 },
+	"icon_size":          { "hand": 10, "board": 7,  "hand_m": 9,  "board_m": 9 },
+	"footer_size":        { "hand": 8,  "board": 7,  "hand_m": 8,  "board_m": 8 },
 }
 
 var card: CardData
@@ -220,19 +227,16 @@ func _m(key: String) -> int:
 	return int(entry.get(col, 0))
 
 
-## A phone board card is 78 units wide, which is not enough for the full frame
-## at any font size — the art box, the ability banner and the attack rows would
-## each be a few pixels tall and legible as nothing.
+## Whether this card drops rows because its frame is too small to carry them.
 ##
-## So the phone board card is deliberately a *different* card: name, HP, keyword
-## chips and the queued-attack marker, and nothing else. That is a real departure
-## from the "one layout at two sizes" rule this renderer was built on, and it is
-## justified by the same reasoning that rule was: the point was never uniformity
-## for its own sake, it was that a card must not *read* differently in two
-## places. A micro card omits information; it never contradicts the full one, and
-## tapping it opens the full frame (Combat's hover/tap zoom).
+## Now always false, and kept as a named concept rather than deleted because the
+## reasoning is worth preserving: while phone mode put six slots in a row the
+## board card was 78 units and *had* to be a stripped card. Stacking the two
+## boards made the slot 150 units, which carries the real frame — so the phone
+## board card is once again the same card as the desktop one, and the
+## "one layout at two sizes" rule holds everywhere with no exception.
 func _is_micro() -> bool:
-	return _phone and mode == Mode.BOARD
+	return false
 
 
 func _frame_style() -> StyleBoxFlat:

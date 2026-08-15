@@ -51,8 +51,8 @@ var _my_throne_lbl: Label
 var _turn_lbl: Label
 var _pool_lbl: Label
 var _hint_lbl: Label
-var _enemy_boards_row: HBoxContainer
-var _my_boards_row: HBoxContainer
+var _enemy_boards_row: BoxContainer
+var _my_boards_row: BoxContainer
 var _hand_row: HBoxContainer
 var _pool_bar: ProgressBar
 var _pool_bar_fill: StyleBoxFlat
@@ -507,7 +507,38 @@ func _build_ui() -> void:
 	## Tight: this column stacks two board rows, two throne labels, the pool bar
 	## and the hand, so separation is paid ~9 times over.
 	left.add_theme_constant_override("separation", 3)
-	root.add_child(left)
+
+	## On a phone the battlefield scrolls vertically.
+	##
+	## Stacking the two boards is what made the cards readable, and it costs
+	## height: four board rows instead of two. Even with the hand trimmed, the
+	## column needs more vertical space than a phone screen has, and the honest
+	## answer is to let it scroll rather than to shrink everything back down
+	## until it fits — shrinking to fit is exactly what made the first attempt a
+	## zoomed-out desktop. A phone is a tall thin window and scrolling is its
+	## native gesture.
+	##
+	## Horizontal scrolling stays OFF: nothing may exceed the width, and
+	## LayoutTest enforces that. Only the vertical axis gives.
+	##
+	## The pool bar, the turn controls and the hand do NOT scroll with it — they
+	## are pinned underneath in `dock`. Those are the things you touch every
+	## turn, and burying the hand under four board rows would mean scrolling to
+	## the bottom before every single play.
+	var dock := left
+	if _compact:
+		var battlefield := ScrollContainer.new()
+		battlefield.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		battlefield.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		root.add_child(battlefield)
+		left.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		battlefield.add_child(left)
+
+		dock = VBoxContainer.new()
+		dock.add_theme_constant_override("separation", 3)
+		root.add_child(dock)
+	else:
+		root.add_child(left)
 
 	## top bar
 	##
@@ -555,11 +586,17 @@ func _build_ui() -> void:
 	left.add_child(_enemy_throne_lbl)
 
 	## enemy boards
-	_enemy_boards_row = HBoxContainer.new()
-	## Six board cards plus two panel frames have to fit the width; on a phone the
-	## gap between the two boards is the cheapest thing to give back.
-	_enemy_boards_row.add_theme_constant_override("separation", 4 if _compact else 12)
-	_enemy_boards_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	## The two boards sit side by side on a desktop and STACK on a phone.
+	##
+	## Side by side means six card slots across, which on a 540-unit viewport
+	## forces a 78-unit card — the whole reason phone mode read as "the desktop
+	## layout, smaller". Stacked, each board owns a full-width row of three
+	## slots, so a card gets ~150 units and carries its real frame again.
+	##
+	## Both boards stay on screen either way, because the rules need them: an
+	## attack resolves against the board it faces, shielding is per-board, and
+	## targeting decisions are made by comparing the two.
+	_enemy_boards_row = _make_boards_row()
 	left.add_child(_enemy_boards_row)
 
 	var divider := Palette.label("- - - - - - - - - - - - - - - - - - - - - - - - -", 12, Palette.BORDER)
@@ -567,9 +604,7 @@ func _build_ui() -> void:
 	left.add_child(divider)
 
 	## my boards
-	_my_boards_row = HBoxContainer.new()
-	_my_boards_row.add_theme_constant_override("separation", 4 if _compact else 12)
-	_my_boards_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	_my_boards_row = _make_boards_row()
 	left.add_child(_my_boards_row)
 
 	## my throne
@@ -586,7 +621,7 @@ func _build_ui() -> void:
 	var poolbar := HBoxContainer.new()
 	poolbar.add_theme_constant_override("separation", 12)
 	poolbar.alignment = BoxContainer.ALIGNMENT_BEGIN
-	left.add_child(poolbar)
+	dock.add_child(poolbar)
 
 	## The spacer comes first, so everything after it is pushed to the right edge:
 	## deck/discard counts, then the pool meter, then the turn controls.
@@ -604,7 +639,7 @@ func _build_ui() -> void:
 	if _compact:
 		controls = HBoxContainer.new()
 		controls.add_theme_constant_override("separation", 6)
-		left.add_child(controls)
+		dock.add_child(controls)
 
 	_global_lock_btn = Button.new()
 	_global_lock_btn.toggle_mode = true
@@ -633,14 +668,21 @@ func _build_ui() -> void:
 			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	## hand
-	left.add_child(Palette.label("Hand", 13, Palette.TEXT_DIM))
+	dock.add_child(Palette.label("Hand", 13, Palette.TEXT_DIM))
 
 	var hand_scroll := ScrollContainer.new()
 	## Exactly the holder height from _wrap_hand_card — the lift needs its 26px,
 	## but nothing needs padding on top of that.
-	hand_scroll.custom_minimum_size = Vector2(0, CardView.size_for(CardView.Mode.HAND).y + HOVER_LIFT)
+	##
+	## The lift is a *hover* affordance and there is no hover on a touch screen,
+	## so the phone layout does not reserve it. That is 26 units back, on the
+	## screen where vertical budget is scarcest.
+	var hand_h: float = CardView.size_for(CardView.Mode.HAND).y
+	if not _compact:
+		hand_h += HOVER_LIFT
+	hand_scroll.custom_minimum_size = Vector2(0, hand_h)
 	hand_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	left.add_child(hand_scroll)
+	dock.add_child(hand_scroll)
 
 	_hand_row = HBoxContainer.new()
 	_hand_row.add_theme_constant_override("separation", 8)
@@ -896,7 +938,22 @@ func _refresh() -> void:
 		Palette.style_button(_end_turn_btn, Palette.ACCENT_DIM, Palette.ACCENT)
 
 
-func _rebuild_boards(row: HBoxContainer, p: Player, is_enemy: bool) -> void:
+## The container holding one player's two boards: an HBox on a desktop, a VBox on
+## a phone. Both are BoxContainers, so `_rebuild_boards` fills either identically
+## and the stacking decision lives in exactly one place.
+func _make_boards_row() -> BoxContainer:
+	var row: BoxContainer
+	if _compact:
+		row = VBoxContainer.new()
+		row.add_theme_constant_override("separation", 3)
+	else:
+		row = HBoxContainer.new()
+		row.add_theme_constant_override("separation", 12)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	return row
+
+
+func _rebuild_boards(row: BoxContainer, p: Player, is_enemy: bool) -> void:
 	for c in row.get_children():
 		c.queue_free()
 

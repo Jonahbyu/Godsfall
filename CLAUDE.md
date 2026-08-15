@@ -1725,8 +1725,9 @@ single-column and give the width back.
 |---|---|---|
 | Reference width | the window, clamped to ≥1180 | a fixed **540** design units |
 | Effective scale on a 390px phone | 0.33× (unreadable) | **0.72×** |
-| Board card | 132×196 | **78×116**, and a reduced frame |
-| Hand card | 168×262 | **112×175** |
+| Board layout | two boards side by side (6 slots across) | **two boards stacked** (3 slots per row) |
+| Board card | 132×196 | **150×205**, the full frame |
+| Hand card | 168×262 | **118×184** |
 | Combat | board \| action+log side by side | stacked, log becomes a drawer |
 | Deck select | list \| contents in an `HSplitContainer` | stacked, actions on their own row |
 | Deck builder | collection \| deck in an `HSplitContainer` | **tabs** |
@@ -1743,13 +1744,27 @@ So the phone sizes above are arithmetic, not taste: `6 × 78 + 5 × 4 + 2 × 10 
 540, and the board panel's margins and lane separations were trimmed to buy the rest. **Any
 fixed-size UI element needs a phone value, or it silently sets the layout's floor.**
 
-**The phone board card is a reduced frame — the one place "one layout at two sizes" bends.**
-At 78 units there is no font size at which the full Pokémon-style frame is readable, so the
-phone board card carries name, HP, keyword chips and a status row (attached energy, queued
-marker, dies-EOT) and drops the art-adjacent rows, the ability banner, the attack rows and
-the footer. That is consistent with *why* the one-layout rule exists rather than a violation
-of it: the rule guards against a card **contradicting** itself in two places, and a micro
-card only ever omits — tapping it opens the full frame.
+**Stacking the two boards is what makes the phone layout a reformat rather than a zoom.**
+Side by side, a board row is six card slots, which on a 540-unit viewport forces a 78-unit
+card — too small for the real frame, so the first attempt printed a stripped "micro" card
+and still read as a shrunken desktop. Stacked, a row is three slots and a card gets 150
+units: `3 × 150 + 2 × 4 + 2 × 6 = 470`, inside 540. At that size the full Pokémon-style
+frame fits, so **the phone board card is the same card as the desktop one** and the "one
+layout at two sizes" rule holds with no exception. The micro card is gone.
+
+Both boards stay on screen because the rules need them side by side conceptually — an attack
+resolves against the board it faces, shielding is per-board, and targeting is a comparison.
+
+**The cost is vertical, and it is paid by scrolling.** Four board rows instead of two means
+Combat's phone column needs ~1450 units against a 1169 viewport, so on a phone the
+battlefield sits in a vertical `ScrollContainer`. Shrinking everything until it fit is what
+produced the zoomed-out desktop in the first place; a phone is a tall thin window and
+scrolling is its native gesture. Horizontal scrolling stays off — nothing may exceed the
+width, and `LayoutTest` enforces it.
+
+**The pool bar, turn controls and hand are pinned below the scroller, not inside it.** They
+are what you touch every turn, and burying the hand under four board rows would mean
+scrolling to the bottom before every play.
 
 **The hand row is the sanctioned exception to fitting the viewport.** It scrolls
 horizontally, because six hand cards are meant to be swiped through rather than shrunk to
@@ -3138,3 +3153,23 @@ even if the rule text later changes. Keep entries to one or two lines.
   third time this shape has cost real time** (`DeckStore` twice, now this), and the rule is
   now unconditional: *any* file the player's install writes gets a `save_path` variable and
   a `use_sandbox_path()`, on the day it is created.
+- **Phone Combat stacks the two boards; that is the change that made it a reformat instead
+  of a zoom.** Twice the mobile layout was "fixed" by making things smaller — first the
+  containers, then the cards — and both times the report back was the same: *it still looks
+  like a zoomed in version.* The reason is that the **geometry** never changed. Six card
+  slots across is a desktop shape, and at 540 units it forces a 78-unit card no matter how
+  the type is tuned. Stacking makes a row three slots, which affords a 150-unit card
+  carrying the real frame, and retires the stripped micro card entirely. The lesson is that
+  a responsive layout is a question about *arrangement* first and size second: if the
+  arrangement is unchanged, every size you pick is just a zoom level.
+- **The phone battlefield scrolls vertically, and the hand does not scroll with it.**
+  Stacking costs height — four board rows against a 1169-unit viewport — and the honest
+  answer is to let the board scroll rather than shrink it back until it fits, which is the
+  mistake that started this. The pool bar, turn controls and hand are pinned outside the
+  scroller because they are touched every turn; the board is what you consult.
+- **`ViewportFit` must measure the window, never `root.get_visible_rect()`.** The auto
+  detection read the viewport — a value `_apply()` sets itself — so entering phone mode
+  shrank the viewport to 540, the next read saw `540 < 820`, and a 1440-wide desktop could
+  never get back out. It is a control loop reading its own output as its input, and the
+  symptom was the settings panel cheerfully reporting *"Auto would pick phone for this
+  window"* on a full-size desktop.
