@@ -104,7 +104,7 @@ func _build() -> void:
 	## priorities backwards. The screen is already named by the menu item that
 	## opened it.
 	if not _mobile:
-		top.add_child(Palette.label("Choose Your Deck", 24))
+		top.add_child(Palette.label("Choose Your Deck", Palette.TYPE_TITLE))
 
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -122,7 +122,7 @@ func _build() -> void:
 	_rename_row.visible = false
 	root.add_child(_rename_row)
 
-	_rename_row.add_child(Palette.label("Name:", 14, Palette.ACCENT))
+	_rename_row.add_child(Palette.label("Name:", Palette.TYPE_BODY, Palette.TEXT_DIM))
 
 	_rename_edit = LineEdit.new()
 	_rename_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -173,7 +173,7 @@ func _build() -> void:
 	## nothing and the contents take the whole column.
 	if _mobile:
 		left.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	left.add_child(Palette.label("Saved Decks", 16, Palette.ACCENT))
+	left.add_child(Palette.heading("Saved Decks"))
 
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -217,7 +217,7 @@ func _build() -> void:
 	else:
 		var right := VBoxContainer.new()
 		right.add_theme_constant_override("separation", 6)
-		right.add_child(Palette.label("Contents", 16, Palette.ACCENT))
+		right.add_child(Palette.heading("Contents"))
 
 		var detail_scroll := ScrollContainer.new()
 		detail_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -237,7 +237,7 @@ func _build() -> void:
 	_opponent_row.add_theme_constant_override("separation", 8)
 	root.add_child(_opponent_row)
 
-	_opponent_row.add_child(Palette.label("Opponent:", 14, Palette.ACCENT))
+	_opponent_row.add_child(Palette.label("Opponent:", Palette.TYPE_BODY, Palette.TEXT_DIM))
 
 	_opponent_pick = OptionButton.new()
 	_opponent_pick.custom_minimum_size = Vector2(0 if _mobile else 260, 34)
@@ -255,7 +255,7 @@ func _build() -> void:
 	## path needs no branch there — an off-tree Label accepts text harmlessly.
 	## Parented to the row either way so it is freed with the screen rather than
 	## leaking; on mobile it is simply hidden.
-	_opponent_note = Palette.label("", 13, Palette.TEXT_DIM)
+	_opponent_note = Palette.label("", Palette.TYPE_BODY, Palette.TEXT_DIM)
 	_opponent_note.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_opponent_note.visible = not _mobile
 	_opponent_row.add_child(_opponent_note)
@@ -265,7 +265,7 @@ func _build() -> void:
 	## On a phone the status line moves onto its own row above the buttons: it
 	## wraps to two or three lines at this width, and sharing a row with two
 	## 140px buttons would squeeze it to a column of single words.
-	_status = Palette.label("", 13, Palette.TEXT_DIM)
+	_status = Palette.label("", Palette.TYPE_BODY, Palette.TEXT_DIM)
 	_status.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
@@ -288,8 +288,11 @@ func _build() -> void:
 	_fight_btn = Button.new()
 	_fight_btn.text = "Fight >"
 	_fight_btn.custom_minimum_size = Vector2(160, 42)
-	_fight_btn.add_theme_font_size_override("font_size", 18)
-	Palette.style_button(_fight_btn, Palette.ACCENT_DIM.darkened(0.3), Palette.ACCENT)
+	_fight_btn.add_theme_font_size_override("font_size", Palette.TYPE_SUBHEAD)
+	## The one thing you came to this screen to press, so it is the one control
+	## carrying saturated colour. Exactly one primary per screen is what makes
+	## "primary" mean anything.
+	Palette.style_primary_button(_fight_btn)
 	_fight_btn.pressed.connect(_on_fight)
 	## Both buttons share the row evenly on a phone, so each is a comfortably
 	## large touch target instead of two small ones crowded to the right.

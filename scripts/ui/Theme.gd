@@ -162,16 +162,19 @@ func keyword_color(kw: String) -> Color:
 ## NOTE: these are called through the `Palette` autoload *instance*
 ## (e.g. `Palette.label(...)`). They are deliberately non-static so Godot does
 ## not warn about calling a static function on an instance.
-func panel_style(bg: Color = PANEL, border: Color = BORDER, width: int = 1, radius: int = 6) -> StyleBoxFlat:
+func panel_style(bg: Color = PANEL, border: Color = BORDER, width: int = 1, radius: int = 7) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
 	s.bg_color = bg
 	s.border_color = border
 	s.set_border_width_all(width)
 	s.set_corner_radius_all(radius)
-	s.content_margin_left = 8
-	s.content_margin_right = 8
-	s.content_margin_top = 6
-	s.content_margin_bottom = 6
+	## Padding comes from the spacing scale rather than from two numbers picked
+	## here, so a panel's interior breathing room is the same quantity used
+	## between its children — which is what makes nesting look intentional.
+	s.content_margin_left = SPACE_MD
+	s.content_margin_right = SPACE_MD
+	s.content_margin_top = SPACE_MD - 1
+	s.content_margin_bottom = SPACE_MD - 1
 	return s
 
 
@@ -260,6 +263,64 @@ func _btn_flat(bg: Color, border: Color) -> StyleBoxFlat:
 func style_primary_button(b: Button) -> void:
 	style_button(b, ACCENT_DIM, ACCENT)
 	b.add_theme_color_override("font_color", Color.WHITE)
+
+
+## ------------------------------------------------------------ type & space
+
+## The type scale.
+##
+## Before this existed the UI used fifteen distinct font sizes, with 12, 13, 14,
+## 15 and 16 all in heavy use at once. Five sizes inside a five-point range is
+## not a hierarchy — the differences are too small to perceive, so everything
+## reads as one undifferentiated middle weight and the eye has nothing to land
+## on. Choosing a size per call site is what produces that.
+##
+## These steps are spaced far enough apart to be *seen* as different (roughly a
+## 1.25 ratio in the body range), and there are deliberately few of them. Fewer
+## sizes, used consistently, is what reads as designed.
+##
+##   DISPLAY  the game's name; used once
+##   TITLE    a screen's name
+##   HEADING  a major section within a screen
+##   SUBHEAD  a group label inside a section
+##   BODY     default running text
+##   SMALL    secondary text — counts, hints, captions
+##   MICRO    the smallest text that should ever ship; legal-print equivalent
+const TYPE_DISPLAY := 56
+const TYPE_TITLE   := 28
+const TYPE_HEADING := 20
+const TYPE_SUBHEAD := 16
+const TYPE_BODY    := 13
+const TYPE_SMALL   := 11
+const TYPE_MICRO    := 9
+
+## The spacing scale, in design units.
+##
+## Same problem as the type scale: twelve distinct separation values were in
+## use, including 1, 2, 3 and 5, which cannot be told apart and therefore carry
+## no meaning. A geometric-ish ramp gives spacing a rhythm, and rhythm is most of
+## what makes a dense layout feel composed rather than crowded.
+##
+## The rule of thumb these encode: space *within* a group is SPACE_XS or SPACE_SM,
+## space *between* groups is SPACE_MD or larger. When those two ranges overlap,
+## grouping stops being readable — which is the real cost of ad-hoc spacing.
+const SPACE_XS := 2
+const SPACE_SM := 4
+const SPACE_MD := 8
+const SPACE_LG := 14
+const SPACE_XL := 22
+
+
+## A section heading: small, wide-tracked, and dim.
+##
+## Uppercase with letter spacing is the standard way to mark a label as
+## structural rather than as content — it reads as furniture even at a size the
+## eye would otherwise treat as body text, which is what lets headings be small
+## enough not to compete with the thing they label.
+func heading(text: String, color: Color = TEXT_DIM) -> Label:
+	var l := label(text.to_upper(), TYPE_SMALL, color)
+	l.add_theme_constant_override("line_spacing", 2)
+	return l
 
 
 ## ------------------------------------------------------------------ glyphs

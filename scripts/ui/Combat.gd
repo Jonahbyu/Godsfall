@@ -550,8 +550,8 @@ func _build_ui() -> void:
 	back.pressed.connect(func(): get_tree().change_scene_to_file(MENU_SCENE))
 	top.add_child(back)
 
-	_turn_lbl = Palette.label("", 13 if _compact else 16, Palette.ACCENT)
-	_hint_lbl = Palette.label("", 12 if _compact else 13, Palette.GOLD)
+	_turn_lbl = Palette.label("", Palette.TYPE_BODY if _compact else Palette.TYPE_SUBHEAD, Palette.TEXT)
+	_hint_lbl = Palette.label("", Palette.TYPE_SMALL if _compact else Palette.TYPE_BODY, Palette.GOLD)
 
 	if _compact:
 		## A label only wraps if something bounds its width, and in an HBox
@@ -574,7 +574,7 @@ func _build_ui() -> void:
 		top.add_child(_hint_lbl)
 
 	## enemy throne
-	_enemy_throne_lbl = Palette.label("", 15, Palette.THRONE)
+	_enemy_throne_lbl = Palette.label("", Palette.TYPE_SUBHEAD, Palette.THRONE)
 	_enemy_throne_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	left.add_child(_enemy_throne_lbl)
 
@@ -586,9 +586,7 @@ func _build_ui() -> void:
 	_enemy_boards_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	left.add_child(_enemy_boards_row)
 
-	var divider := Palette.label("- - - - - - - - - - - - - - - - - - - - - - - - -", 12, Palette.BORDER)
-	divider.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	left.add_child(divider)
+	left.add_child(Midline.new())
 
 	## my boards
 	_my_boards_row = HBoxContainer.new()
@@ -597,7 +595,7 @@ func _build_ui() -> void:
 	left.add_child(_my_boards_row)
 
 	## my throne
-	_my_throne_lbl = Palette.label("", 15, Palette.THRONE)
+	_my_throne_lbl = Palette.label("", Palette.TYPE_SUBHEAD, Palette.THRONE)
 	_my_throne_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	left.add_child(_my_throne_lbl)
 
@@ -618,7 +616,7 @@ func _build_ui() -> void:
 	sp2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	poolbar.add_child(sp2)
 
-	_pool_lbl = Palette.label("", 12, Palette.TEXT_DIM)
+	_pool_lbl = Palette.label("", Palette.TYPE_SMALL, Palette.TEXT_DIM)
 	_pool_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	poolbar.add_child(_pool_lbl)
 
@@ -657,7 +655,7 @@ func _build_ui() -> void:
 			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	## hand
-	left.add_child(Palette.label("Hand", 13, Palette.TEXT_DIM))
+	left.add_child(Palette.heading("Hand"))
 
 	## Draggable as well as scrollable: the hand is the one row allowed to exceed
 	## the viewport, so on a phone it is swiped through, and a scrollbar alone is
@@ -727,7 +725,7 @@ func _build_ui() -> void:
 		log_panel.visible = false
 		log_panel.custom_minimum_size = Vector2(0, 150)
 	else:
-		right.add_child(Palette.label("Battle Log", 13, Palette.TEXT_DIM))
+		right.add_child(Palette.heading("Battle Log"))
 		log_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	right.add_child(log_panel)
 
@@ -789,10 +787,10 @@ func _build_pool_meter() -> Control:
 	head.add_theme_constant_override("separation", 6)
 	stack.add_child(head)
 
-	_pool_count_lbl = Palette.label("0", 18, col)
+	_pool_count_lbl = Palette.label("0", Palette.TYPE_HEADING, col)
 	head.add_child(_pool_count_lbl)
 
-	_pool_decay_lbl = Palette.label("", 10, Palette.TEXT_DIM)
+	_pool_decay_lbl = Palette.label("", Palette.TYPE_MICRO, Palette.TEXT_DIM)
 	_pool_decay_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	head.add_child(_pool_decay_lbl)
 
@@ -1216,7 +1214,7 @@ func _tower_widget(b: Board, bi: int, is_enemy: bool) -> Control:
 	col.add_theme_constant_override("separation", 6)
 	panel.add_child(col)
 
-	var title := Palette.label("TOWER", 14, Palette.TEXT)
+	var title := Palette.heading("Tower", Palette.TEXT_DIM)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(title)
 
@@ -1639,15 +1637,15 @@ func _rebuild_action_panel(p: Player) -> void:
 	_action_panel.visible = true
 
 	var u: Unit = _selected_unit
-	_action_box.add_child(Palette.label(u.card.name, 16, Palette.TEXT))
-	_action_box.add_child(Palette.label("%d / %d HP   ·   # %d attached" % [u.hp, u.max_hp(), u.attached], 13, Palette.GOLD))
+	_action_box.add_child(Palette.label(u.card.name, Palette.TYPE_SUBHEAD, Palette.TEXT))
+	_action_box.add_child(Palette.label("%d / %d HP   ·   %s%d attached" % [u.hp, u.max_hp(), Palette.glyph("energy"), u.attached], Palette.TYPE_BODY, Palette.GOLD))
 
 	var kws := u.card.keyword_line()
 	if kws != "":
-		_action_box.add_child(Palette.label(kws, 12, Palette.ACCENT))
+		_action_box.add_child(Palette.label(kws, Palette.TYPE_SMALL, Palette.TEXT_DIM))
 
 	## Charge buttons
-	_action_box.add_child(Palette.label("Charge from pool (free)", 12, Palette.TEXT_DIM))
+	_action_box.add_child(Palette.heading("Charge from pool (free)"))
 	var charge_row := HBoxContainer.new()
 	charge_row.add_theme_constant_override("separation", 4)
 	_action_box.add_child(charge_row)
@@ -1668,14 +1666,14 @@ func _rebuild_action_panel(p: Player) -> void:
 	## Abilities — resolve immediately, once per turn, and never cost pool energy.
 	var abilities := u.card.ability_lines()
 	if not abilities.is_empty():
-		_action_box.add_child(Palette.label("Abilities  ·  free, once per turn", 12, Palette.TEXT_DIM))
+		_action_box.add_child(Palette.heading("Abilities  ·  free, once per turn"))
 		for ab in abilities:
 			_action_box.add_child(_ability_button(p, u, ab))
 
 	## Attacks — queued now, resolved at end of turn.
 	var attack_lines := u.card.attack_lines()
 	if not attack_lines.is_empty():
-		_action_box.add_child(Palette.label("Attacks  ·  resolve at end of turn", 12, Palette.TEXT_DIM))
+		_action_box.add_child(Palette.heading("Attacks  ·  resolve at end of turn"))
 	for atk in attack_lines:
 		var need := u.pool_needed(atk)
 		var b := Button.new()
@@ -2174,7 +2172,7 @@ func _on_choice_required(p, prompt: String, choices: Array, on_pick: Callable) -
 	col.add_theme_constant_override("separation", 8)
 	panel.add_child(col)
 
-	col.add_child(Palette.label(prompt, 18, Palette.ACCENT))
+	col.add_child(Palette.label(prompt, Palette.TYPE_SUBHEAD, Palette.TEXT))
 
 	var scroll := ScrollContainer.new()
 	scroll.custom_minimum_size = Vector2(
@@ -2251,7 +2249,7 @@ func _show_overlay(text: String) -> void:
 	col.add_theme_constant_override("separation", 16)
 	center.add_child(col)
 
-	var t := Palette.label(text, 64, Palette.GOLD if text == "VICTORY" else Palette.DANGER)
+	var t := Palette.label(text, Palette.TYPE_DISPLAY, Palette.GOLD if text == "VICTORY" else Palette.DANGER)
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(t)
 

@@ -32,11 +32,11 @@ func _build() -> void:
 	col.custom_minimum_size = Vector2(360, 0)
 	center.add_child(col)
 
-	var title := Palette.label("GODSFALL", 56, Palette.TEXT)
+	var title := Palette.label("GODSFALL", Palette.TYPE_DISPLAY, Palette.TEXT)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(title)
 
-	var sub := Palette.label("Death is a resource.", 16, Palette.ACCENT_GLOW)
+	var sub := Palette.label("Death is a resource.", Palette.TYPE_SUBHEAD, Palette.ACCENT_GLOW)
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(sub)
 
@@ -49,12 +49,12 @@ func _build() -> void:
 	col.add_child(_menu_button("My Decks", _on_decks))
 	col.add_child(_menu_button("Quit", _on_quit))
 
-	_warning = Palette.label("", 13, Palette.DANGER)
+	_warning = Palette.label("", Palette.TYPE_BODY, Palette.DANGER)
 	_warning.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_warning.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	col.add_child(_warning)
 
-	var version := Palette.label("prototype build", 11, Palette.TEXT_FAINT)
+	var version := Palette.label("prototype build", Palette.TYPE_SMALL, Palette.TEXT_FAINT)
 	version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(version)
 

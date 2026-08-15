@@ -21,7 +21,7 @@ extends SceneTree
 ## CardViewTest.gd does it.
 
 ## 3 glyph-table + 9 source files + 4 screens x 2 layouts + 4 overflow.
-const EXPECTED_ASSERTIONS := 28
+const EXPECTED_ASSERTIONS := 29
 
 ## The phone viewport, in design units: ViewportFit.MOBILE_DESIGN_WIDTH by the
 ## height a 390x844 phone maps to at that scale.
@@ -130,6 +130,7 @@ func _test_ui_strings() -> void:
 		"res://scripts/ui/DragScroll.gd",
 		"res://scripts/ui/Motion.gd",
 		"res://scripts/ui/Starfield.gd",
+		"res://scripts/ui/Midline.gd",
 		"res://scripts/core/TutorialData.gd",
 	]
 	var lit := RegEx.new()
