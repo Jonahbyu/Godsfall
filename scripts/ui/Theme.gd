@@ -406,12 +406,16 @@ func title(text: String, size: int = TYPE_TITLE, color: Color = TEXT) -> Label:
 
 ## Every non-alphanumeric symbol the UI prints, in one table.
 ##
-## The project bundles no font, so everything renders in Godot's built-in
-## **Open Sans SemiBold** — which covers Latin-1 and essentially nothing else.
-## Arrows, geometric shapes and emoji are all absent from it and render as
-## empty boxes. That is not a web-only problem, but it is worst there, because
-## a desktop Godot window can sometimes fall back to a system font and a
-## browser canvas cannot fall back to anything.
+## The UI now renders in bundled **Inter** (see *fonts* above), which is a wider
+## safe set than the built-in Open Sans this table was written against — but it
+## is still a text face: it has no arrows, no geometric shapes and no emoji, and
+## every one of those renders as an empty box. That is not a web-only problem,
+## but it is worst there, because a desktop Godot window can sometimes fall back
+## to a system font and a browser canvas cannot fall back to anything.
+##
+## The table therefore stays exactly as it is. Bundling a font widened the floor;
+## it did not remove the need to check, and the ASCII stand-ins below cost
+## nothing and cannot regress.
 ##
 ## Verified against `Font.has_char()` rather than by eye: the whole class of bug
 ## here is a glyph that looks fine in an editor and is a box in the game.

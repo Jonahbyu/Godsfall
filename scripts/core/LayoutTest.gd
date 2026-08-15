@@ -5,11 +5,16 @@ extends SceneTree
 ## Two things that are invisible to every other harness because they are
 ## properties of what the UI *draws*, not of what the rules engine computes.
 ##
-## **Glyphs.** The project bundles no font, so everything renders in Godot's
-## built-in Open Sans SemiBold, which has no arrows, no geometric shapes and no
-## emoji. Any of those render as an empty box — and a box looks fine in the
-## editor, fine in a code review, and broken only on screen. This walks every
-## string literal the UI can print and asserts the theme font can draw it.
+## **Glyphs.** The UI renders in bundled Inter, which like any text face has no
+## arrows, no geometric shapes and no emoji. Any of those render as an empty box
+## — and a box looks fine in the editor, fine in a code review, and broken only
+## on screen. This walks every string literal the UI can print and asserts the
+## theme font can draw it.
+##
+## The font is resolved off a live `Label` rather than loaded by path, so this
+## checks whatever the game actually renders with. Changing the bundled font
+## re-runs the whole check against the new one for free, which is the property
+## that makes it worth reading the theme instead of hardcoding a path.
 ##
 ## **Layouts.** Every screen now builds in two shapes. Both have to construct
 ## without error and produce the nodes the rest of the screen expects, or the

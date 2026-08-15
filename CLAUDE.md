@@ -1683,33 +1683,49 @@ user clears site data. That is a real limitation of the web build, not a bug.
 
 ### Fonts and glyphs
 
-**The project bundles no font, so every character renders in Godot's built-in Open Sans
-SemiBold — which covers Latin-1 and essentially nothing else.** Arrows, geometric shapes
-and emoji are all absent and render as empty boxes.
+**The project bundles two fonts, both SIL Open Font License**, in `assets/fonts/`:
 
-This shipped broken for a long time and was only noticed on the live web build: `←`, `→`,
-`◆`, `⚠`, `⬢`, `☠`, `⚒`, `✓`, `✕`, `▸`, `▾`, `▶`, `↑`, `↩`, `⊘`, `🔒`, `🔓` and `🎲` were all
-in use. The `⬢` was the worst of them — it is the **energy symbol**, printed on every attack
-cost, every card frame and the pool meter, so the game's central currency was a box.
+| | Face | Used for |
+|---|---|---|
+| **Display** | Cinzel | The wordmark, screen titles, section headings |
+| **UI** | Inter | Everything else — the project-wide default |
 
-**Every symbol now lives in `Palette.GLYPH`**, and the safe set is narrow:
+Before these, everything rendered in Godot's built-in **Open Sans SemiBold**. That
+is a perfectly good typeface and also the loudest available signal that a Godot
+project has not been art-directed, because it is what every unstyled Godot game
+looks like.
 
-| | |
-|---|---|
-| **Renders** | ASCII, plus `·` `—` `×` `•` `−` `"` `"` |
-| **Does not** | every arrow, every geometric shape, every emoji |
+**Inter is installed as the root theme's `default_font`** by the `Palette`
+autoload, so every Control inherits it without a call site asking. That is
+load-bearing for more than convenience: `LayoutTest` resolves "the theme font" by
+reading it off a bare `Label`, so setting the default is what makes the glyph
+check validate against the font the game actually renders with.
 
-Two rules, both enforced by `LayoutTest.gd` rather than by discipline:
+**Cinzel is display-only and `Palette.title()` refuses to draw it below
+`TYPE_SUBHEAD`.** An inscriptional face is cut for size; at 11px it is less
+legible than Inter, not more characterful.
 
-- **Add a symbol to `Palette.GLYPH`, never inline.** One table means one place to check and
-  one place to fix when a glyph turns out to be unavailable.
-- **Check it with `Font.has_char()` before using it.** The whole failure mode is that a
-  glyph looks correct in an editor, correct in a diff, correct in review, and is a box on
-  screen — so the only trustworthy check is asking the actual theme font.
+**Both are subset** to Latin-1 plus the punctuation `GLYPH` needs — 174KB for the
+pair against 1MB unsubset. Regenerate with `tools/make_fonts.py`.
 
-Bundling a symbol font was the alternative and was rejected: megabytes onto an already 39MB
-wasm download to draw about twenty characters. ASCII stand-ins cost nothing and cannot
-regress.
+**Windows' Georgia, Cambria and Bookman were the obvious candidates and are
+unusable**: Microsoft- and Monotype-licensed, redistribution prohibited. The repo
+is public and ships to GitHub Pages, so a license-locked font is not a risk to
+manage but a thing that cannot be done. Checked before downloading rather than
+after.
+
+**The glyph rules are unchanged, and still enforced by `LayoutTest`.** The safe
+set is wider now that Inter is the default, but the discipline is the same one and
+for the same reason:
+
+- **Add a symbol to `Palette.GLYPH`, never inline.** One table, one place to fix.
+- **Check it with `Font.has_char()` before using it.** The failure mode is that a
+  glyph looks correct in an editor, in a diff, and in review, and is a box on
+  screen — so the only trustworthy check is asking the theme font.
+
+The energy symbol is still `#` rather than `⬢`. Inter has no hexagon either, and
+the *drawn* `EnergyIcon` is the real answer everywhere a cost is shown; `#` is the
+fallback for the handful of places that print energy inside a string.
 
 ### Mobile mode
 
@@ -2302,6 +2318,51 @@ which would cost the flash its meaning on the turn it actually matters.
 Every `Motion` entry point no-ops on a freed node or one outside the tree. A node
 being animated can be freed mid-tween by an unrelated refresh, which is normal
 here rather than an error, and it must never raise.
+
+### The reskin
+
+Three passes, each benchmarked against a shipped card game, because "make it look
+professional" is not actionable and "what does Arena do that we do not" is.
+
+| Pass | Benchmark | What it bought |
+|---|---|---|
+| 1 | **Hearthstone** | Real type, and a menu that is a place |
+| 2 | **MTG Arena** | A board that reads as a battlefield |
+| 3 | **TCG Pocket** | Card finish and tactility |
+
+**Everything is drawn in code.** No bitmaps, no shaders, no licensed art. That is
+partly a constraint — this project has no artist — and partly the same call the
+card art already made: drawn geometry is regenerable, cannot drift from the
+palette, and adds nothing to a 39MB download. The pieces:
+
+| File | Draws |
+|---|---|
+| `Starfield` | The cosmic ground under every screen |
+| `Crest` | The menu mark: a throne under a lit fracture in a broken ring |
+| `Midline` | The contact line between the two armies |
+| `LanePanel` | A lane's surface, ownership tint, and front edge |
+| `SlotSocket` | An empty lane position, as a well rather than the word "empty" |
+| `TowerGlyph` | The tower, degrading visibly as it takes damage |
+| `FactionSpine` | A deck's colours, down the edge of its row |
+| `EnergyIcon` | The energy hexagon, as a struck token |
+
+Three of these encode a principle worth keeping:
+
+- **`SlotSocket` extends `DropZone`, not `Button`.** The whole drag contract,
+  click-to-deploy and the tutorial ring are inherited rather than reimplemented,
+  which is what made a visual change to every empty slot pass `DragDropTest`
+  untouched. A reskin that rewrites behaviour is not a reskin.
+- **`TowerGlyph`'s cracks come from a fixed table, never RNG.** Combat rebuilds
+  the board on every state change, so a randomly-cracked tower would re-crack
+  several times a turn. Same reasoning as `Starfield`'s fixed seed.
+- **`TowerGlyph` makes condition a silhouette.** Merlons break away as HP falls,
+  cracks open below two-thirds, rubble gathers below a third — so *which tower is
+  nearly down* is answered by shape rather than by comparing two fractions. That
+  is the reason to draw a structure rather than restyle a panel.
+
+**The board's geometry did not move.** Slot sizes, card sizes and the six-across
+phone row are all unchanged, which is why `LayoutTest`'s 540-unit assertions still
+pass on all four screens. The reskin is entirely in what those boxes contain.
 
 ### The battle log
 
@@ -3219,7 +3280,11 @@ even if the rule text later changes. Keep entries to one or two lines.
   wasm to draw twenty characters. `LayoutTest.gd` now asks the actual theme font
   `has_char()` for every literal in the UI sources, and it caught three more (`↑`, `↩`, `⊘`)
   the manual sweep missed — **the check has to be mechanical, because reading is exactly
-  what does not work here.**
+  what does not work here.** **Updated 2026-08-14:** the project now bundles Inter and
+  Cinzel, so the premise "bundles no font" no longer holds — but the conclusion does. Inter
+  is a text face with no arrows, shapes or emoji either, so `GLYPH` and the mechanical check
+  both stay exactly as they are. Bundling widened the floor; it did not remove the need to
+  check.
 - **Mobile mode is a UI scale and a layout switch together, never one without the other.**
   Drawing bigger costs width, and the desktop screens are fixed-width columns that cannot
   survive losing it — so zooming without restacking just moves the clipping to the other
@@ -3347,6 +3412,47 @@ even if the rule text later changes. Keep entries to one or two lines.
   tree never frees, which showed up immediately as leaked `RichTextLabel` RIDs in the harness
   — caught only because a clean checkout leaked zero, so the baseline was worth measuring
   before blaming the engine.
+- **The project bundles Cinzel and Inter, and the licence question was settled before
+  anything was downloaded.** Everything had rendered in Godot's built-in Open Sans, which
+  is a good typeface and is also the loudest available signal that a Godot project has not
+  been art-directed. Windows' Georgia, Cambria and Bookman were the obvious upgrades and
+  are Microsoft/Monotype licensed: this repo is public and publishes to Pages, so a
+  license-locked font is not a risk to manage but a thing that cannot be done. Both bundled
+  faces are SIL OFL and **subset** to Latin-1 plus the `GLYPH` punctuation — 174KB for the
+  pair against 1MB. Inter is installed as the root theme's `default_font`, which is what
+  makes `LayoutTest`'s glyph scan validate against the font the game actually renders with,
+  since it reads the font off a live `Label` rather than a path. Cinzel is display-only and
+  `Palette.title()` refuses to draw it below `TYPE_SUBHEAD`, because an inscriptional face
+  at 11px is less legible than the UI face rather than more characterful.
+- **Bundling a font widened the safe glyph set; it did not retire the check.** Inter is a
+  text face with no arrows, no geometric shapes and no emoji, exactly like the font it
+  replaced. `Palette.GLYPH` and `LayoutTest`'s mechanical scan are unchanged, and the
+  energy symbol is still the ASCII `#` in strings — the *drawn* `EnergyIcon` is the real
+  answer wherever a cost is rendered. **The general shape: fixing the cause of a class of
+  bug is not the same as removing the conditions for it**, and a check that costs nothing
+  should outlive the specific font that motivated it.
+- **The reskin is drawn in code, and the board's geometry did not move.** Seven new
+  `_draw`-based pieces (`Crest`, `LanePanel`, `SlotSocket`, `TowerGlyph`, `FactionSpine`,
+  plus the earlier `Starfield` and `Midline`) replace flat panels and captions. No bitmaps
+  and no shaders: partly a constraint, since this project has no artist, and partly the
+  same call the card art already made — drawn geometry is regenerable, cannot drift from
+  the palette, and adds nothing to a 39MB download. Slot sizes, card sizes and the
+  six-across phone row are all untouched, which is why the 540-unit assertions still pass.
+- **`SlotSocket` extends `DropZone`, not `Button`, and that is what made it a reskin.** The
+  whole drag contract, click-to-deploy and the tutorial ring are inherited rather than
+  reimplemented, so replacing the appearance of every empty slot in the game left
+  `DragDropTest` passing untouched. A visual change that rewrites behaviour is not a
+  reskin, and the way to keep it visual is to extend the thing that already holds the
+  behaviour.
+- **`TowerGlyph` turns the tower's condition into a silhouette, and its cracks come from a
+  fixed table.** Merlons break away as HP falls, cracks open below two-thirds, rubble
+  gathers below a third — so *which tower is nearly down* is answered by shape rather than
+  by comparing two fractions, which is the reason to draw a structure rather than restyle a
+  panel. The crack positions are a constant, never RNG: Combat rebuilds the board on every
+  state change, so a randomly-cracked tower would re-crack several times a turn. Same
+  reasoning as `Starfield`'s fixed seed, and it is now the second time this project has
+  needed it.
+
 - **UI colour is split into faction-neutral chrome and meaningful content, and the
   collisions were separated by hue.** `ACCENT` was byte-identical to Hel's purple, so
   every button hover, selection ring and focus state in the game was Hel-coloured
