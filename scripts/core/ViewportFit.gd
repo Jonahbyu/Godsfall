@@ -215,6 +215,20 @@ func _load() -> void:
 
 
 func _save() -> void:
+	## A headless process is never a player, so it must never persist a layout
+	## override to the live file. Sandboxing via `use_sandbox_path()` is still
+	## the rule, but it is opt-in — a throwaway verification script has to
+	## remember to call it, and three separate times one did not, leaving the
+	## real game forced into phone mode on a 1440-wide desktop. The symptom is
+	## the worst part: it looks exactly like the layout bug that had just been
+	## fixed, so the obvious diagnosis is the wrong one.
+	##
+	## This makes the unsafe case unreachable rather than merely discouraged.
+	## A harness that genuinely wants to exercise persistence sandboxes the path
+	## first, and is then writing a test file this guard does not care about.
+	if DisplayServer.get_name() == "headless" and not save_path.contains("test_"):
+		return
+
 	var f := FileAccess.open(save_path, FileAccess.WRITE)
 	if f == null:
 		return

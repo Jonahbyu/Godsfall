@@ -51,8 +51,8 @@ var _my_throne_lbl: Label
 var _turn_lbl: Label
 var _pool_lbl: Label
 var _hint_lbl: Label
-var _enemy_boards_row: BoxContainer
-var _my_boards_row: BoxContainer
+var _enemy_boards_row: HBoxContainer
+var _my_boards_row: HBoxContainer
 var _hand_row: HBoxContainer
 var _pool_bar: ProgressBar
 var _pool_bar_fill: StyleBoxFlat
@@ -61,6 +61,31 @@ var _pool_decay_lbl: Label
 
 ## Hover lift. Exactly one hand card is raised at a time: hovering a new card
 ## lowers the previous one, so the hand never ends up with two cards up.
+## Motion.
+##
+## The board is rebuilt wholesale on every state change — the node holding a
+## unit's old HP is freed before the new one exists — so a card cannot simply
+## tween its own value. Instead the last-seen HP of every unit is snapshotted
+## here, and the *new* card compares itself against it as it is built. That
+## keeps motion entirely inside the UI: the rules engine emits `state_changed`
+## and nothing else, exactly as before.
+##
+## Keyed by the unit's instance id, because a unit has no stable id of its own
+## and two different bodies may occupy one slot across a rebuild.
+var _hp_seen: Dictionary = {}
+## Units seen last refresh, so a body that has vanished can be told apart from
+## one that was never there. Used to decide whether an arriving card animates in.
+var _units_seen: Dictionary = {}
+## Suppresses arrival animations for the very first build, so the screen does
+## not play a deal animation for a board that was already there.
+var _motion_primed: bool = false
+## Last-seen hand size and structure values, for the same diff-then-animate
+## approach the board uses. Structures are plain labels rather than cards, so
+## they flash in place instead of taking a hit animation.
+var _hand_seen: int = -1
+var _throne_seen: Dictionary = {}
+var _pool_seen: int = -1
+
 const HOVER_LIFT := 26.0            ## pixels — "up a little", not a full popout
 const HOVER_TIME := 0.09            ## seconds; short enough to feel like tracking
 
@@ -477,10 +502,9 @@ func _open_compendium(page_id: String) -> void:
 func _build_ui() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 
-	var bg := ColorRect.new()
-	bg.color = Palette.BG
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(bg)
+	## The cosmic backdrop rather than a flat fill, so every screen shares one
+	## ground and the game reads as a place rather than as a dark theme.
+	add_child(Starfield.new())
 
 	## Side by side on a desktop, stacked on a phone. The battlefield column has a
 	## hard minimum width (six 132px board slots), so on a narrow screen the only
@@ -507,38 +531,7 @@ func _build_ui() -> void:
 	## Tight: this column stacks two board rows, two throne labels, the pool bar
 	## and the hand, so separation is paid ~9 times over.
 	left.add_theme_constant_override("separation", 3)
-
-	## On a phone the battlefield scrolls vertically.
-	##
-	## Stacking the two boards is what made the cards readable, and it costs
-	## height: four board rows instead of two. Even with the hand trimmed, the
-	## column needs more vertical space than a phone screen has, and the honest
-	## answer is to let it scroll rather than to shrink everything back down
-	## until it fits — shrinking to fit is exactly what made the first attempt a
-	## zoomed-out desktop. A phone is a tall thin window and scrolling is its
-	## native gesture.
-	##
-	## Horizontal scrolling stays OFF: nothing may exceed the width, and
-	## LayoutTest enforces that. Only the vertical axis gives.
-	##
-	## The pool bar, the turn controls and the hand do NOT scroll with it — they
-	## are pinned underneath in `dock`. Those are the things you touch every
-	## turn, and burying the hand under four board rows would mean scrolling to
-	## the bottom before every single play.
-	var dock := left
-	if _compact:
-		var battlefield := ScrollContainer.new()
-		battlefield.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		battlefield.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		root.add_child(battlefield)
-		left.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		battlefield.add_child(left)
-
-		dock = VBoxContainer.new()
-		dock.add_theme_constant_override("separation", 3)
-		root.add_child(dock)
-	else:
-		root.add_child(left)
+	root.add_child(left)
 
 	## top bar
 	##
@@ -586,17 +579,11 @@ func _build_ui() -> void:
 	left.add_child(_enemy_throne_lbl)
 
 	## enemy boards
-	## The two boards sit side by side on a desktop and STACK on a phone.
-	##
-	## Side by side means six card slots across, which on a 540-unit viewport
-	## forces a 78-unit card — the whole reason phone mode read as "the desktop
-	## layout, smaller". Stacked, each board owns a full-width row of three
-	## slots, so a card gets ~150 units and carries its real frame again.
-	##
-	## Both boards stay on screen either way, because the rules need them: an
-	## attack resolves against the board it faces, shielding is per-board, and
-	## targeting decisions are made by comparing the two.
-	_enemy_boards_row = _make_boards_row()
+	_enemy_boards_row = HBoxContainer.new()
+	## Six board cards plus two panel frames have to fit the width; on a phone the
+	## gap between the two boards is the cheapest thing to give back.
+	_enemy_boards_row.add_theme_constant_override("separation", 4 if _compact else 12)
+	_enemy_boards_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	left.add_child(_enemy_boards_row)
 
 	var divider := Palette.label("- - - - - - - - - - - - - - - - - - - - - - - - -", 12, Palette.BORDER)
@@ -604,7 +591,9 @@ func _build_ui() -> void:
 	left.add_child(divider)
 
 	## my boards
-	_my_boards_row = _make_boards_row()
+	_my_boards_row = HBoxContainer.new()
+	_my_boards_row.add_theme_constant_override("separation", 4 if _compact else 12)
+	_my_boards_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	left.add_child(_my_boards_row)
 
 	## my throne
@@ -621,7 +610,7 @@ func _build_ui() -> void:
 	var poolbar := HBoxContainer.new()
 	poolbar.add_theme_constant_override("separation", 12)
 	poolbar.alignment = BoxContainer.ALIGNMENT_BEGIN
-	dock.add_child(poolbar)
+	left.add_child(poolbar)
 
 	## The spacer comes first, so everything after it is pushed to the right edge:
 	## deck/discard counts, then the pool meter, then the turn controls.
@@ -639,7 +628,7 @@ func _build_ui() -> void:
 	if _compact:
 		controls = HBoxContainer.new()
 		controls.add_theme_constant_override("separation", 6)
-		dock.add_child(controls)
+		left.add_child(controls)
 
 	_global_lock_btn = Button.new()
 	_global_lock_btn.toggle_mode = true
@@ -668,21 +657,22 @@ func _build_ui() -> void:
 			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	## hand
-	dock.add_child(Palette.label("Hand", 13, Palette.TEXT_DIM))
+	left.add_child(Palette.label("Hand", 13, Palette.TEXT_DIM))
 
-	var hand_scroll := ScrollContainer.new()
+	## Draggable as well as scrollable: the hand is the one row allowed to exceed
+	## the viewport, so on a phone it is swiped through, and a scrollbar alone is
+	## a poor target for a thumb. `DragScroll` claims a press only once it has
+	## moved clearly sideways, so pulling a card *up* to play it still works and
+	## a plain tap still selects. See DragScroll.gd for why the axis is what
+	## separates the two gestures.
+	var hand_scroll := DragScroll.new()
 	## Exactly the holder height from _wrap_hand_card — the lift needs its 26px,
 	## but nothing needs padding on top of that.
-	##
-	## The lift is a *hover* affordance and there is no hover on a touch screen,
-	## so the phone layout does not reserve it. That is 26 units back, on the
-	## screen where vertical budget is scarcest.
-	var hand_h: float = CardView.size_for(CardView.Mode.HAND).y
-	if not _compact:
-		hand_h += HOVER_LIFT
-	hand_scroll.custom_minimum_size = Vector2(0, hand_h)
-	hand_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	dock.add_child(hand_scroll)
+	hand_scroll.custom_minimum_size = Vector2(0, CardView.size_for(CardView.Mode.HAND).y + HOVER_LIFT)
+	## MOUSE_FILTER_PASS lets the scroller see the press for its direction test
+	## while still letting an unclaimed event through to the card underneath.
+	hand_scroll.mouse_filter = Control.MOUSE_FILTER_PASS
+	left.add_child(hand_scroll)
 
 	_hand_row = HBoxContainer.new()
 	_hand_row.add_theme_constant_override("separation", 8)
@@ -849,6 +839,17 @@ func _refresh_pool_meter(you: Player) -> void:
 	_pool_bar.max_value = target
 	_pool_bar.value = min(you.pool, target)
 
+	## Energy moving is the game's central resource event, and the pool is a
+	## number in a bar that otherwise changes with no announcement at all. Gain
+	## pops gold, spend flashes dim — different directions get different motion
+	## so the player can tell which happened without reading the number.
+	if _motion_primed and _pool_seen >= 0 and you.pool != _pool_seen:
+		if you.pool > _pool_seen:
+			Motion.flash(_pool_count_lbl, Palette.GOLD, Motion.QUICK)
+			Motion.pop(_pool_count_lbl, 1.12, Motion.QUICK)
+		else:
+			Motion.flash(_pool_count_lbl, Palette.TEXT_DIM, Motion.QUICK)
+	_pool_seen = you.pool
 	_pool_count_lbl.text = str(you.pool)
 
 	## Show what end of turn will actually take, so "spend or save" is a decision
@@ -887,6 +888,11 @@ func _refresh() -> void:
 		]
 	_enemy_throne_lbl.text = "ENEMY THRONE   %d / %d" % [max(0, foe.throne_hp), foe.throne_max_hp]
 	_my_throne_lbl.text = "YOUR THRONE   %d / %d" % [max(0, you.throne_hp), you.throne_max_hp]
+	## Throne damage is the most consequential number on the screen and the one
+	## easiest to miss, because it is text in a corner rather than a card that
+	## moves. Flashing the label is the cheapest way to make it register.
+	_flash_structure(_enemy_throne_lbl, "enemy", foe.throne_hp)
+	_flash_structure(_my_throne_lbl, "you", you.throne_hp)
 	_pool_lbl.text = "Deck %d   ·   Discard %d   ·   Hand %d/%d" % [
 		you.deck.size(), you.discard.size(), you.hand.size(), Player.MAX_HAND
 	]
@@ -917,6 +923,7 @@ func _refresh() -> void:
 
 	_rebuild_boards(_enemy_boards_row, foe, true)
 	_rebuild_boards(_my_boards_row, you, false)
+	_sweep_motion_state()
 	_rebuild_hand(you)
 	_rebuild_action_panel(you)
 
@@ -938,22 +945,7 @@ func _refresh() -> void:
 		Palette.style_button(_end_turn_btn, Palette.ACCENT_DIM, Palette.ACCENT)
 
 
-## The container holding one player's two boards: an HBox on a desktop, a VBox on
-## a phone. Both are BoxContainers, so `_rebuild_boards` fills either identically
-## and the stacking decision lives in exactly one place.
-func _make_boards_row() -> BoxContainer:
-	var row: BoxContainer
-	if _compact:
-		row = VBoxContainer.new()
-		row.add_theme_constant_override("separation", 3)
-	else:
-		row = HBoxContainer.new()
-		row.add_theme_constant_override("separation", 12)
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	return row
-
-
-func _rebuild_boards(row: BoxContainer, p: Player, is_enemy: bool) -> void:
+func _rebuild_boards(row: HBoxContainer, p: Player, is_enemy: bool) -> void:
 	for c in row.get_children():
 		c.queue_free()
 
@@ -1032,6 +1024,7 @@ func _slot_widget(p: Player, b: Board, bi: int, si: int, is_enemy: bool) -> Cont
 	var view := CardView.new(u.card, u, CardView.Mode.BOARD)
 	view.selected = (u == _selected_unit or u == _pending_two)
 	view.enemy = is_enemy
+	_animate_board_card(view, u)
 	## Board type is small by design; hovering raises a readable copy.
 	view.hover_changed.connect(func(on: bool):
 		if on:
@@ -1073,6 +1066,59 @@ func _slot_widget(p: Player, b: Board, bi: int, si: int, is_enemy: bool) -> Cont
 		view.on_drop = func(data): _drop_on_unit(data, u)
 
 	return _wrap_with_status(view, u)
+
+
+## Play whatever motion this unit has earned since the last refresh.
+##
+## Called as the card is built, before it enters the tree — so the tween is
+## deferred a frame. `Motion` refuses to animate a node outside the tree, and
+## a card is parented immediately after this returns.
+func _animate_board_card(view: CardView, u: Unit) -> void:
+	var key := u.get_instance_id()
+	var now: int = u.hp
+	var had: bool = _hp_seen.has(key)
+	var before: int = _hp_seen.get(key, now)
+	_hp_seen[key] = now
+	_units_seen[key] = true
+
+	if not _motion_primed:
+		return
+
+	if not had:
+		## A body that was not on the board last refresh has just arrived.
+		view.ready.connect(func(): Motion.pop(view, 1.05, Motion.QUICK), CONNECT_ONE_SHOT)
+		return
+
+	if now < before:
+		view.ready.connect(func(): Motion.hit(view), CONNECT_ONE_SHOT)
+	elif now > before:
+		view.ready.connect(func(): Motion.mend(view), CONNECT_ONE_SHOT)
+
+
+## Flash a throne readout when its HP has moved since the last refresh.
+##
+## Damage flashes red on either throne; growth (the +5 a round both thrones
+## gain) is deliberately NOT flashed, because it happens every single round to
+## both players and a pulse that fires unconditionally teaches the eye to ignore
+## it — which would cost the flash its meaning on the turn it matters.
+func _flash_structure(lbl: Label, key: String, hp: int) -> void:
+	var before: int = _throne_seen.get(key, hp)
+	_throne_seen[key] = hp
+	if _motion_primed and hp < before:
+		Motion.flash(lbl, Palette.DANGER, Motion.NORMAL)
+
+
+## Forget units that are no longer anywhere on the board.
+##
+## Without this the snapshot grows for the whole game and, worse, a recycled
+## instance id could inherit a dead unit's HP and flash on arrival. Called at
+## the end of a refresh, once both sides have been rebuilt.
+func _sweep_motion_state() -> void:
+	for k in _hp_seen.keys():
+		if not _units_seen.has(k):
+			_hp_seen.erase(k)
+	_units_seen.clear()
+	_motion_primed = true
 
 
 ## Raise a scaled copy of a board card near its slot.
@@ -1310,8 +1356,16 @@ func _rebuild_hand(p: Player) -> void:
 		## has to be waited for.
 		view.hover_text = _hand_hover_text(p, card)
 
+		## A card beyond the count we had last refresh was just drawn. Fading it
+		## in is what makes a draw legible — otherwise a card simply exists, and
+		## on a wide hand the player never sees which one is new.
+		if _motion_primed and _hand_seen >= 0 and i >= _hand_seen:
+			view.ready.connect(func(): Motion.slide_in(view, Vector2(0, -14), Motion.NORMAL),
+				CONNECT_ONE_SHOT)
+
 		_hand_row.add_child(_wrap_hand_card(view))
 
+	_hand_seen = p.hand.size()
 
 ## Hand cards live inside a fixed-size holder so the raised card can move without
 ## the HBoxContainer immediately laying it back down. The holder keeps the slot;

@@ -26,6 +26,15 @@ var _opponent_row: HBoxContainer
 var _opponent_pick: OptionButton
 var _opponent_note: Label
 
+## Phone only: the "Contents" overlay and the button that summons it.
+##
+## On a desktop the contents pane is always on screen beside the list, so both
+## are null there and every path below has to tolerate that.
+var _contents_layer: Control = null
+var _contents_btn: Button = null
+## Hidden owner of `_detail` while the overlay is closed. See `_open_contents`.
+var _detail_home: VBoxContainer = null
+
 ## Which layout this screen was built for. Latched at build time rather than
 ## read live, so every part of one build agrees about its shape and
 ## `_on_layout_changed` can tell that the shape is now stale.
@@ -49,9 +58,15 @@ func _on_layout_changed(is_mobile: bool) -> void:
 	if is_mobile == _mobile:
 		return
 	_renaming = -1
+	## Close first: the overlay holds `_detail`, and freeing the layer with the
+	## label still inside it would take the label with it.
+	_close_contents()
 	for child in get_children():
 		remove_child(child)
 		child.queue_free()
+	_detail = null
+	_contents_btn = null
+	_detail_home = null
 	_build()
 	_refresh()
 
@@ -60,10 +75,9 @@ func _build() -> void:
 	_mobile = ViewportFit.mobile
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 
-	var bg := ColorRect.new()
-	bg.color = Palette.BG
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(bg)
+	## The cosmic backdrop rather than a flat fill, so every screen shares one
+	## ground and the game reads as a place rather than as a dark theme.
+	add_child(Starfield.new())
 
 	var root := VBoxContainer.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -136,6 +150,12 @@ func _build() -> void:
 	## fiddly target on a touch screen — so the two panes stack and the page
 	## scrolls instead. The list comes first because choosing is the point of the
 	## screen; the contents are what you check afterwards.
+	## On a phone the contents pane is not stacked under the list at all — it
+	## becomes an overlay summoned by a button. Stacking gave each half roughly
+	## half the height, which is the worst of both: too few decks visible to
+	## choose between, and too little of the contents to read. Choosing is what
+	## this screen is *for*, so the list gets the whole column and the contents
+	## get the whole screen on demand.
 	var middle: Container
 	if _mobile:
 		middle = VBoxContainer.new()
@@ -166,27 +186,49 @@ func _build() -> void:
 	scroll.add_child(_list_box)
 	middle.add_child(left)
 
-	var right := VBoxContainer.new()
-	right.add_theme_constant_override("separation", 6)
-	if _mobile:
-		right.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	right.add_child(Palette.label("Contents", 16, Palette.ACCENT))
-
-	var detail_scroll := ScrollContainer.new()
-	detail_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	right.add_child(detail_scroll)
-
-	var detail_panel := Palette.make_panel(Palette.PANEL)
-	detail_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	detail_scroll.add_child(detail_panel)
-
+	## The contents view itself is identical in both layouts — the same label
+	## inside the same scroller. Only its *parent* differs, which is what keeps
+	## `_show_detail()` and every caller of it working unchanged.
 	_detail = RichTextLabel.new()
 	_detail.bbcode_enabled = true
 	_detail.fit_content = true
 	_detail.add_theme_color_override("default_color", Palette.TEXT)
-	detail_panel.add_child(_detail)
-	middle.add_child(right)
+
+	if _mobile:
+		## While the overlay is shut the label still has to belong to something,
+		## or it is an orphan the scene tree will never free — the overlay only
+		## borrows it. A zero-height hidden holder inside the screen owns it, so
+		## the label's lifetime matches the screen's in both layouts.
+		_detail_home = VBoxContainer.new()
+		_detail_home.visible = false
+		_detail_home.custom_minimum_size = Vector2(0, 0)
+		middle.add_child(_detail_home)
+		_detail_home.add_child(_detail)
+
+		## A button under the list, rather than a permanently reserved pane.
+		## Its label carries the deck name so the row it will open is obvious
+		## before it is tapped; `_refresh()` keeps that text current.
+		_contents_btn = Button.new()
+		_contents_btn.custom_minimum_size = Vector2(0, 40)
+		_contents_btn.add_theme_font_size_override("font_size", 15)
+		Palette.style_button(_contents_btn)
+		_contents_btn.pressed.connect(_open_contents)
+		middle.add_child(_contents_btn)
+	else:
+		var right := VBoxContainer.new()
+		right.add_theme_constant_override("separation", 6)
+		right.add_child(Palette.label("Contents", 16, Palette.ACCENT))
+
+		var detail_scroll := ScrollContainer.new()
+		detail_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		right.add_child(detail_scroll)
+
+		var detail_panel := Palette.make_panel(Palette.PANEL)
+		detail_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		detail_scroll.add_child(detail_panel)
+		detail_panel.add_child(_detail)
+		middle.add_child(right)
 
 	## --- opponent row: which deck the AI brings. Defaults to Random, which is
 	## why it sits here as one compact control rather than a second deck list —
@@ -263,6 +305,14 @@ func _refresh() -> void:
 	_rebuild_list()
 	_rebuild_opponent()
 	_show_detail(DeckStore.active_index)
+
+	## The button names the deck it will open, so the overlay's contents are
+	## predictable before it is tapped.
+	if _contents_btn != null and is_instance_valid(_contents_btn):
+		_contents_btn.text = "View contents - %s (%d)" % [
+			DeckStore.name_at(DeckStore.active_index),
+			DeckStore.total_at(DeckStore.active_index),
+		]
 
 	var errs := DeckStore.validation_errors()
 	if errs.is_empty():
@@ -400,6 +450,101 @@ func _icon_button(text: String, cb: Callable) -> Button:
 	Palette.style_button(b)
 	b.pressed.connect(cb)
 	return b
+
+
+## ------------------------------------------------------------ contents overlay
+##
+## Phone only. Built to the same recipe as the deck builder's card inspector —
+## a full-rect layer, a dimming scrim, a transparent button behind the panel to
+## catch outside taps, and Escape handled in `_unhandled_input` — so the two
+## modals in the game behave identically rather than each inventing a gesture.
+func _open_contents() -> void:
+	if _detail == null:
+		return
+	_close_contents()
+
+	_contents_layer = Control.new()
+	_contents_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_contents_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(_contents_layer)
+
+	var scrim := ColorRect.new()
+	scrim.color = Color(0, 0, 0, 0.62)
+	scrim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	scrim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_contents_layer.add_child(scrim)
+
+	var dismiss := Button.new()
+	dismiss.flat = true
+	dismiss.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dismiss.pressed.connect(_close_contents)
+	_contents_layer.add_child(dismiss)
+
+	## Inset from the edges rather than sized to content, so a 60-card list
+	## scrolls inside the panel instead of growing off the bottom of the screen.
+	var panel := Palette.make_panel(Palette.PANEL)
+	panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	panel.offset_left = 16
+	panel.offset_right = -16
+	panel.offset_top = 28
+	panel.offset_bottom = -28
+	_contents_layer.add_child(panel)
+
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 8)
+	panel.add_child(col)
+
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", 8)
+	col.add_child(head)
+
+	var title := Palette.label(
+		DeckStore.name_at(DeckStore.active_index), 16, Palette.ACCENT)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(title)
+
+	var close := Button.new()
+	close.text = "X"
+	close.custom_minimum_size = Vector2(40, 34)
+	Palette.style_button(close)
+	close.pressed.connect(_close_contents)
+	head.add_child(close)
+
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	col.add_child(scroll)
+
+	## `_detail` is reparented rather than duplicated, so there is exactly one
+	## contents label in the screen and `_show_detail()` keeps addressing it
+	## whether the overlay is open or shut.
+	var host := VBoxContainer.new()
+	host.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(host)
+	if _detail.get_parent() != null:
+		_detail.get_parent().remove_child(_detail)
+	host.add_child(_detail)
+
+
+func _close_contents() -> void:
+	## The label outlives the overlay: pull it back out before the layer is
+	## freed, or the next `_show_detail()` writes to a freed node.
+	if _detail != null and is_instance_valid(_detail) and _detail.get_parent() != null:
+		_detail.get_parent().remove_child(_detail)
+		if _detail_home != null and is_instance_valid(_detail_home):
+			_detail_home.add_child(_detail)
+	if _contents_layer != null and is_instance_valid(_contents_layer):
+		_contents_layer.queue_free()
+	_contents_layer = null
+
+
+## Escape closes the overlay rather than falling through to the screen.
+func _unhandled_input(event: InputEvent) -> void:
+	if _contents_layer == null:
+		return
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		_close_contents()
+		get_viewport().set_input_as_handled()
 
 
 func _show_detail(i: int) -> void:

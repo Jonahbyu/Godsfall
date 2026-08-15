@@ -178,10 +178,9 @@ func _build() -> void:
 	_mobile = ViewportFit.mobile
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 
-	var bg := ColorRect.new()
-	bg.color = Palette.BG
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(bg)
+	## The cosmic backdrop rather than a flat fill, so every screen shares one
+	## ground and the game reads as a place rather than as a dark theme.
+	add_child(Starfield.new())
 
 	var root := VBoxContainer.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)

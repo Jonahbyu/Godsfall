@@ -19,10 +19,9 @@ func _ready() -> void:
 func _build() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 
-	var bg := ColorRect.new()
-	bg.color = Palette.BG
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(bg)
+	## The cosmic backdrop, rather than a flat fill. The menu is the first thing
+	## anyone sees, so it is where the game's own look has to be stated.
+	add_child(Starfield.new())
 
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -37,7 +36,7 @@ func _build() -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(title)
 
-	var sub := Palette.label("Death is a resource.", 16, Palette.ACCENT)
+	var sub := Palette.label("Death is a resource.", 16, Palette.ACCENT_GLOW)
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(sub)
 
@@ -55,11 +54,18 @@ func _build() -> void:
 	_warning.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	col.add_child(_warning)
 
-	var version := Palette.label("prototype build — Hel (Toll) only", 11, Palette.TEXT_DIM)
+	var version := Palette.label("prototype build", 11, Palette.TEXT_FAINT)
 	version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(version)
 
 	_refresh()
+
+	## The title and the buttons arrive rather than appearing. This is the one
+	## screen where a beat of motion is worth spending, because it is the first
+	## impression and it is seen once per session rather than once per turn.
+	title.ready.connect(func(): Motion.slide_in(title, Vector2(0, -18), Motion.SLOW),
+		CONNECT_ONE_SHOT)
+	sub.ready.connect(func(): Motion.fade_in(sub, Motion.SLOW), CONNECT_ONE_SHOT)
 
 
 func _menu_button(text: String, cb: Callable) -> Button:

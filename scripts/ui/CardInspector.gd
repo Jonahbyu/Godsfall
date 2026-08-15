@@ -63,9 +63,17 @@ func _init(c: CardData) -> void:
 
 
 func _ready() -> void:
-	add_theme_stylebox_override("panel", Palette.panel_style(Palette.PANEL, Palette.ACCENT, 2, 10))
+	## A raised style rather than a flat panel: the inspector floats over the
+	## screen behind it, and a drop shadow is what says so.
+	add_theme_stylebox_override("panel",
+		Palette.raised_style(Palette.PANEL, Palette.ACCENT, 10, 14))
 	_build()
 	refresh_counts()
+	## Modals scale up from slightly small. A panel that simply appears reads as
+	## a screen change; one that grows into place reads as something opening on
+	## top of what is still there.
+	Motion.pop(self, 1.03, Motion.QUICK)
+	Motion.fade_in(self, Motion.QUICK)
 
 
 func _build() -> void:
