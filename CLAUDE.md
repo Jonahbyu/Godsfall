@@ -1725,11 +1725,11 @@ single-column and give the width back.
 |---|---|---|
 | Reference width | the window, clamped to ≥1180 | a fixed **540** design units |
 | Effective scale on a 390px phone | 0.33× (unreadable) | **0.72×** |
-| Board layout | two boards side by side (6 slots across) | **two boards stacked** (3 slots per row) |
-| Board card | 132×196 | **150×205**, the full frame |
-| Hand card | 168×262 | **118×184** |
+| Board layout | two boards side by side (6 slots across) | **the same — 6 slots across**, both sides visible |
+| Board card | 132×196 | **78×116**, a reduced frame |
+| Hand card | 168×262 | **112×175** |
 | Combat | board \| action+log side by side | stacked, log becomes a drawer |
-| Deck select | list \| contents in an `HSplitContainer` | stacked, actions on their own row |
+| Deck select | list \| contents in an `HSplitContainer` | list fills the column, **contents is an overlay** |
 | Deck builder | collection \| deck in an `HSplitContainer` | **tabs** |
 | Main menu | — | unchanged; it is already one column |
 
@@ -1744,36 +1744,76 @@ So the phone sizes above are arithmetic, not taste: `6 × 78 + 5 × 4 + 2 × 10 
 540, and the board panel's margins and lane separations were trimmed to buy the rest. **Any
 fixed-size UI element needs a phone value, or it silently sets the layout's floor.**
 
-**Stacking the two boards is what makes the phone layout a reformat rather than a zoom.**
-Side by side, a board row is six card slots, which on a 540-unit viewport forces a 78-unit
-card — too small for the real frame, so the first attempt printed a stripped "micro" card
-and still read as a shrunken desktop. Stacked, a row is three slots and a card gets 150
-units: `3 × 150 + 2 × 4 + 2 × 6 = 470`, inside 540. At that size the full Pokémon-style
-frame fits, so **the phone board card is the same card as the desktop one** and the "one
-layout at two sizes" rule holds with no exception. The micro card is gone.
+**The two boards stay side by side on a phone, and the board card shrinks to pay for it.**
+This was tried the other way first: the boards were stacked so a card could be 150 units and
+carry the full frame. It reads well card-by-card and it is the wrong trade, because it turns
+the battlefield into four rows and you can no longer see both sides at once. The screen's job
+is the *comparison* — which of their units is in range, what is across from what, whether a
+board is clear — and a layout that shows one side at a time makes the read the whole screen
+exists for into a scroll.
 
-Both boards stay on screen because the rules need them side by side conceptually — an attack
-resolves against the board it faces, shielding is per-board, and targeting is a comparison.
+So the geometry is fixed at **six slots across, twelve on screen**, and the card is sized to
+fit it: `6 × 78 + 5 × 4 + 2 × 10 = 508` inside 540, with each row 137 units tall. Two rows
+instead of four, and the hand sits under them.
 
-**The cost is vertical, and it is paid by scrolling.** Four board rows instead of two means
-Combat's phone column needs ~1450 units against a 1169 viewport, so on a phone the
-battlefield sits in a vertical `ScrollContainer`. Shrinking everything until it fit is what
-produced the zoomed-out desktop in the first place; a phone is a tall thin window and
-scrolling is its native gesture. Horizontal scrolling stays off — nothing may exceed the
-width, and `LayoutTest` enforces it.
+**The phone board card is therefore a reduced frame**, keeping name, HP, keyword chips and
+the queued-attack marker and dropping the art, ability banner, attack rows and footer. That
+is consistent with the one-layout rule rather than an exception to it: the rule exists to
+stop a card **contradicting** itself in two places, and a reduced card only ever *omits*.
+Tapping one opens the full frame, which is where the detail lives.
 
-**The pool bar, turn controls and hand are pinned below the scroller, not inside it.** They
-are what you touch every turn, and burying the hand under four board rows would mean
-scrolling to the bottom before every play.
+The board read this preserves is the at-a-glance one — which unit is hurt, which still holds
+a charge, which attack is queued. That is what board decisions are actually made from, and it
+is exactly what survives at 78 units.
 
 **The hand row is the sanctioned exception to fitting the viewport.** It scrolls
 horizontally, because six hand cards are meant to be swiped through rather than shrunk to
 nothing, and the hand is where cards are actually read before being played.
 
-**The builder uses tabs where the others stack**, and that is the one deliberate
-inconsistency: both its halves are tall scrolling lists, so stacking would mean scrolling
-past the entire collection to reach the deck. Tabs also match how the screen is used — you
-browse, then you review, and rarely need both at once.
+**It is dragged as well as scrolled, and the two gestures are separated by axis.** A
+scrollbar is a poor target for a thumb, so `DragScroll` (`scripts/ui/DragScroll.gd`) lets a
+press-and-swipe move the hand. The conflict this has to resolve is that hand cards are
+*themselves* draggable — dragging one onto the board is how you deploy, evolve and charge —
+so Godot's built-in touch panning is unusable here: the card claims the press first, and
+every swipe would pick up whichever card the finger landed on.
+
+Direction is what separates them, and the mapping is not arbitrary:
+
+| Movement | Reads as |
+|---|---|
+| **Horizontal** past 8px, and clearly more sideways than vertical | scroll the hand |
+| **Vertical** — or any diagonal without a clear horizontal majority | a card being pulled out to play |
+| Under 8px | a tap; the card gets it |
+
+The hand is a horizontal strip, so sideways is the only direction it *can* scroll; and every
+card destination — a board slot, a unit to charge — is above the hand, so playing a card is
+always an upward pull. Neither gesture wants the other's axis. The 1.4× majority requirement
+is what keeps a 45-degree pull toward the board from flipping into a scroll on noise.
+
+**A hold-then-drag delay was the alternative and was rejected**: it taxes the common case by
+making every card drag wait, and a scroll that only starts after a pause reads as broken
+rather than deliberate. The claim threshold is deliberately *below* Godot's own drag
+threshold, because a scroll claimed after the card drag has begun is a scroll that never
+happens.
+
+**Deck select puts its contents pane in an overlay rather than stacking it.** Stacked, the
+deck list and the contents each got about half the height, which is the worst of both — too
+few decks visible to choose between, and too little of the contents to read. Choosing is what
+the screen is *for*, so the list takes the whole column and a button under it summons the
+contents over the top. The button names the deck it will open, so what it shows is
+predictable before it is tapped.
+
+**The builder uses tabs where deck select uses an overlay**, and the difference is which half
+is primary. In deck select the list is the screen and the contents are a thing you check;
+in the builder both halves are equally the point — you swap between collection and deck
+constantly while editing — so neither can be demoted to a summoned panel. Both halves are
+also tall scrolling lists, so stacking would mean scrolling past the entire collection to
+reach the deck.
+
+**Both modals are built to one recipe**, the deck builder's card inspector: a full-rect
+layer, a dimming scrim, a transparent button behind the panel catching outside taps, and
+Escape handled in `_unhandled_input`. Three ways to dismiss, identical everywhere, so a modal
+never needs a gesture learned per screen.
 
 Combat also moves its turn line and hint onto their own full-width rows on a phone. A
 `Label` in an `HBoxContainer` has nothing bounding its width, so it never wraps — it just
@@ -2172,6 +2212,97 @@ keyword in `Palette.KEYWORD_COLORS` has a page and that no page documents a keyw
 does not have, so **a new keyword fails the suite until someone documents it**. Nothing
 catches a *changed number*, so a tuning change still has to be propagated by hand.
 
+### The visual system
+
+**Colour is split into two namespaces, and they may never borrow from each other.**
+
+| | Holds | Rule |
+|---|---|---|
+| **Chrome** | Backgrounds, borders, buttons, focus rings | Faction-**neutral** |
+| **Content** | Faction energy, keyword chips, HP, structures | Where colour means something |
+
+The split exists because three pairs had collided outright. `ACCENT` was
+byte-identical to Hel's purple, so every button hover and selection ring in the
+game was Hel-coloured no matter which faction was being played; `HP_GREEN`
+equalled Gaia's `earth`, so a healthy unit and a Gaia keyword were the same
+green; `DANGER` equalled `retribution`. The chrome accent is now a cold
+starlight blue that belongs to the game rather than to any colour in it, and the
+content collisions were separated **in hue rather than in brightness** — a
+difference you need two swatches side by side to see is not a difference on a
+7px chip.
+
+**Each faction is a `deep` / `base` / `bright` ramp**, not a single value. A flat
+fill reads as a coloured sticker; three tones read as a material with a light
+source, which is most of what makes the energy hexagon look struck rather than
+drawn. `FACTION_COLORS` still holds one flat value per faction for the many call
+sites that want one, and it is kept in step with the ramps by hand.
+
+**Gradient fills are unavailable, and the reason is not aesthetic.** Assigning a
+`GradientTexture2D` to `StyleBoxFlat.texture` **hangs indefinitely under
+`--headless`** — isolated by probe to that exact assignment, with the `Gradient`
+and the `GradientTexture2D` both constructing fine on their own. Every screen
+has to build headlessly for the harnesses, so a gradient fill would trade the
+whole test suite for a shading effect. Light is implied with edges and shadow
+instead, which on a dark ground carries most of the same information. The
+`Starfield` backdrop draws its own bands in `_draw` and is unaffected, because
+that never leaves the CPU until a frame is actually rasterised.
+
+**Type and space are scales, not per-call-site choices.** The UI had fifteen
+distinct font sizes with 12/13/14/15/16 all in heavy use, and twelve separation
+values including 1, 2, 3 and 5. Steps that close together cannot be perceived as
+different, so everything reads as one middle weight and nothing is emphasised.
+`TYPE_DISPLAY` through `TYPE_MICRO` and `SPACE_XS` through `SPACE_XL` replace
+them. The rule the spacing scale encodes: **space within a group is XS or SM,
+space between groups is MD or larger** — when those ranges overlap, grouping
+stops being readable.
+
+**Structural labels use `Palette.heading()`** — small, dim, uppercase — rather
+than accent-coloured body text. A group label is furniture; it should be findable
+without competing with the thing it labels.
+
+**Typed punctuation is never a graphic.** The board divider was a `Label` holding
+forty-nine hyphens; it is now `Midline`, a drawn hairline that fades at both ends
+around a centre diamond. The fade is the part that matters: a hard rule across
+the full width reads as a container boundary cutting the screen into two
+unrelated halves, where the two boards are meant to read as one battlefield.
+
+### Motion
+
+**`Motion.gd` is the one timing vocabulary**, and everything animated goes
+through it. Durations are named by intent (`FAST`, `QUICK`, `NORMAL`, `SLOW`)
+rather than by number, because two panels that fade at 0.15s and 0.4s read as two
+different products and nobody can say why.
+
+Everything is short on purpose. This is a turn-based game; an animation exists to
+say *that* something changed and *where*, then get out of the way. Anything the
+player waits on becomes an annoyance by the fiftieth turn.
+
+**Motion is driven by diffing in the UI, never by new signals from the engine.**
+Combat rebuilds its board wholesale on every state change — the node holding a
+unit's old HP is freed before the new one exists — so a card cannot tween its own
+value. The UI snapshots each unit's HP by instance id and compares as the new
+card is built. The rules engine still emits `state_changed` and nothing else.
+
+What is animated, and what deliberately is not:
+
+| Event | Motion |
+|---|---|
+| Unit damaged | Red flash + short horizontal shake |
+| Unit healed | Green flash + slight swell |
+| Unit arrives | Pop |
+| Card drawn | Slides in from above |
+| Throne damaged | Label flashes red |
+| Pool changed | Gold pop on gain, dim flash on spend |
+| **Throne growth** | **Nothing** |
+
+Throne growth is the deliberate omission. It happens to both players every single
+round, and a pulse that fires unconditionally teaches the eye to ignore it —
+which would cost the flash its meaning on the turn it actually matters.
+
+Every `Motion` entry point no-ops on a freed node or one outside the tree. A node
+being animated can be freed mid-tween by an unrelated refresh, which is normal
+here rather than an error, and it must never raise.
+
 ### The battle log
 
 **Every finished game appends a record to `logs/battles.log`** — real games from `Combat`
@@ -2192,9 +2323,9 @@ Two guards worth keeping: the writer never raises (a balance log that can fail a
 or break a game is worse than no log), and a stall is recorded as `NO WINNER — stalled at
 round N`, since that is the single most important thing the file can capture.
 
-Verified by fourteen headless harnesses (all passing — run 2026-08-10 after the mobile
-layout and glyph work landed, **891 counted assertions**, with the long-standing
-`SupportUITest` flake fixed rather than merely absent; `SceneSmokeTest`, `PlaythroughTest`
+Verified by fourteen headless harnesses (all passing — run 2026-08-14 after the phone board
+geometry, the deck-select overlay and hand drag-scrolling landed, **893 counted
+assertions**, with the long-standing `SupportUITest` flake fixed rather than merely absent; `SceneSmokeTest`, `PlaythroughTest`
 and `TutorialWalkTest` report pass/fail without a count and are not in that total):
 
 | Harness | Covers |
@@ -2212,7 +2343,7 @@ and `TutorialWalkTest` report pass/fail without a count and are not in that tota
 | `GaiaTest.gd` | 146 assertions: Gaia card data including per-colour attack costs, the Earth aura summed across both boards and excluding the dead, aura-adjusted max HP, healing that reaches the aura's ceiling, downward clamping that never kills, the aura on attack damage and on tower damage, `Resist` in both damage paths and on Retribution recoil with its minimum-1 floor, Sanctuary preceding Resist, `Essence` **through the real `_cleanup_dead`** (payment, the nearest-living heir, ties-go-left, never crossing boards, skipping a corpse in a batched death, and fizzling when unaffordable), grown Earth resetting on Rise and evolution, Earth derived live from attached energy, the additive rate-breaker, and Makeshift Tower's free auto-fire, per-round growth, and obedience to the shielding chain |
 | `TutorialTest.gd` | 119 assertions: lesson content integrity (unique ids, every step carrying text, every `advance` predicate one the evaluator handles), every card id a lesson names existing, every `read_more` resolving to a real page, every lesson deck building a `GameState`, the unshuffled deal being reproducible **and the default path still shuffling**, every scripted placement landing on a real non-tower slot, the gating hooks answering permissively when inactive, all eight step predicates **driven against a real `GameState`**, progress round-tripping through a sandboxed file, and compendium coverage of every keyword in `Palette.KEYWORD_COLORS`. **Also that every lesson declares an opening hand, that the hand is fully present in its deck, and that it holds the Basics/Stage 1/support/energy its steps actually demand** |
 | `TutorialWalkTest.gd` | Drives all 13 battle lessons through the **real Combat screen**, performing what each step asks via the entry points a player clicks, and fails if any step cannot be satisfied. Reports per-lesson rather than a counted total. This is the harness that checks a lesson can be **finished**, not merely that it is well formed |
-| `LayoutTest.gd` | 24 assertions on what the UI *draws*: every entry in `Palette.GLYPH` being renderable by the actual theme font, every double-quoted literal across the nine UI source files containing no character the font lacks (comments exempt — their ASCII diagrams are never rendered), all four screens building in **both** the desktop and phone layouts, and — the assertion that matters most — **no phone layout exceeding the 540-unit phone viewport**, measured with `get_combined_minimum_size()` and ignoring content inside a horizontally scrolling container. The glyph half reads the source rather than the running scene on purpose: a label built only in a rare branch — an error state, a disabled button's tooltip — is never instantiated by a smoke test, and those are exactly the strings that ship broken. The overflow half exists because its absence is what let mobile mode ship as pure zoom: every screen *built* fine, which is all the build assertions ever checked |
+| `LayoutTest.gd` | 26 assertions on what the UI *draws*: every entry in `Palette.GLYPH` being renderable by the actual theme font, every double-quoted literal across the eleven UI source files containing no character the font lacks (comments exempt — their ASCII diagrams are never rendered), all four screens building in **both** the desktop and phone layouts, and — the assertion that matters most — **no phone layout exceeding the 540-unit phone viewport**, measured with `get_combined_minimum_size()` and ignoring content inside a horizontally scrolling container. The glyph half reads the source rather than the running scene on purpose: a label built only in a rare branch — an error state, a disabled button's tooltip — is never instantiated by a smoke test, and those are exactly the strings that ship broken. The overflow half exists because its absence is what let mobile mode ship as pure zoom: every screen *built* fine, which is all the build assertions ever checked |
 
 The Heaven pipeline tests deliberately call `GameState._deal_lane_damage` rather than
 simulating the ordering inline — a test that reimplements the rule it is checking proves
@@ -3153,20 +3284,110 @@ even if the rule text later changes. Keep entries to one or two lines.
   third time this shape has cost real time** (`DeckStore` twice, now this), and the rule is
   now unconditional: *any* file the player's install writes gets a `save_path` variable and
   a `use_sandbox_path()`, on the day it is created.
-- **Phone Combat stacks the two boards; that is the change that made it a reformat instead
-  of a zoom.** Twice the mobile layout was "fixed" by making things smaller — first the
-  containers, then the cards — and both times the report back was the same: *it still looks
-  like a zoomed in version.* The reason is that the **geometry** never changed. Six card
-  slots across is a desktop shape, and at 540 units it forces a 78-unit card no matter how
-  the type is tuned. Stacking makes a row three slots, which affords a 150-unit card
-  carrying the real frame, and retires the stripped micro card entirely. The lesson is that
-  a responsive layout is a question about *arrangement* first and size second: if the
-  arrangement is unchanged, every size you pick is just a zoom level.
-- **The phone battlefield scrolls vertically, and the hand does not scroll with it.**
-  Stacking costs height — four board rows against a 1169-unit viewport — and the honest
-  answer is to let the board scroll rather than shrink it back until it fits, which is the
-  mistake that started this. The pool bar, turn controls and hand are pinned outside the
-  scroller because they are touched every turn; the board is what you consult.
+- **It happened a fourth time, which proved the sandboxing rule cannot be the only guard.**
+  The same symptom returned — a desktop window rendering the phone layout, `display.cfg`
+  holding `{"layout_override":1}` — written by a throwaway screenshot script that has since
+  been deleted, so nothing in the repo pointed at the cause. The rule above was already
+  written down and already called unconditional; it failed anyway because it is **opt-in**,
+  and an opt-in rule only binds the scripts whose authors remember it. Scratch verification
+  scripts are exactly the ones that do not: they are written to be run once and thrown away,
+  they never get reviewed, and they outlive their session only through the file they
+  corrupted. `ViewportFit._save()` now refuses to write when `DisplayServer.get_name()` is
+  `headless` unless the path is a sandbox one, which makes the unsafe case **unreachable
+  instead of merely discouraged**. Verified by probe in both directions — an unsandboxed
+  headless `set_override()` leaves the live file untouched with the guard, and clobbers it
+  without. **The general shape: when a convention has been restated and violated three
+  times, the next fix is a mechanism, not a fourth restatement of the convention.**
+- **Phone Combat keeps the two boards side by side; the card shrinks to pay for it.**
+  Reverses the stacking change, which was right about card legibility and wrong about what
+  the screen is for. Stacked, a card gets 150 units and carries the full frame — but the
+  battlefield becomes four rows and both sides are never visible at once. Combat's whole job
+  is the **comparison**: what is across from what, which of their units is in range, whether
+  a board is clear enough to reach the tower. A layout that shows one side at a time turns
+  the read the screen exists for into a scroll. Six slots across, twelve on screen, at
+  `6 × 78 + 5 × 4 + 2 × 10 = 508` inside 540 and 137 units per row — two rows instead of
+  four, so the vertical `ScrollContainer` is gone too and the hand sits directly under the
+  boards. **The general shape: legibility of a single element is not the same objective as
+  legibility of the relationship between elements, and for a board game it is the second one
+  that decides the layout.**
+- **The phone board card is a reduced frame, and that is consistent with the one-layout rule
+  rather than an exception to it.** 78 units admits no font size at which the full frame
+  reads, so it keeps name, HP, keyword chips and the queued-attack marker and drops the art,
+  ability banner, attack rows and footer. The rule those rows are protected by exists to stop
+  a card **contradicting** itself in two places; a reduced card only ever *omits*, and
+  tapping it opens the full frame. Uniformity was never the goal — non-contradiction was.
+- **Deck select's contents pane is an overlay on a phone, not a stacked half.** Stacking gave
+  the list and the contents about half the height each, which is the worst of both: too few
+  decks visible to choose between, and too little of the contents to read. The list is what
+  the screen is *for*, so it takes the whole column and a button summons the contents over
+  the top. The builder deliberately keeps **tabs** instead, because the difference is which
+  half is primary — in the builder you swap between collection and deck constantly while
+  editing, so neither can be demoted to something you summon. Both modals follow the card
+  inspector's recipe (scrim, outside-tap, X, Escape) so a modal never needs a gesture learned
+  per screen.
+- **The hand is draggable as well as scrollable, and the gestures are told apart by axis,
+  not by timing.** Hand cards are already draggable — that is how you deploy, evolve and
+  charge — so Godot's built-in touch panning could not be used: the card claims the press
+  and every swipe would pick one up. Horizontal movement past 8px (and 1.4x more sideways
+  than vertical) scrolls; anything else is left alone for the card. The mapping follows the
+  geometry rather than being a convention to learn: the hand is a horizontal strip so
+  sideways is the only way it can scroll, and every card destination is *above* the hand so
+  playing one is always an upward pull. A hold-then-drag delay was rejected for taxing the
+  common case, and the claim threshold sits below Godot's own drag threshold because a
+  scroll claimed after the card drag has started never happens at all.
+- **`LayoutTest`'s glyph scan lists files explicitly, so a new UI file is invisible to it
+  until added.** `SettingsButton.gd` had been missing since it shipped and `DragScroll.gd`
+  would have been too. Neither had a bad glyph, so nothing was broken — but a file outside
+  the scan is exactly how the original glyph bug shipped, and the check is only worth what
+  it covers. Both added; `EXPECTED_ASSERTIONS` moved 24 -> 26 for a known reason, which is
+  the only way that guard means anything.
+- **The contents label is reparented into the overlay, never duplicated.** One label means
+  `_show_detail()` and every caller keep working whether the overlay is open or shut. It also
+  needs a hidden owner while the overlay is closed: left parentless it is an orphan the scene
+  tree never frees, which showed up immediately as leaked `RichTextLabel` RIDs in the harness
+  — caught only because a clean checkout leaked zero, so the baseline was worth measuring
+  before blaming the engine.
+- **UI colour is split into faction-neutral chrome and meaningful content, and the
+  collisions were separated by hue.** `ACCENT` was byte-identical to Hel's purple, so
+  every button hover, selection ring and focus state in the game was Hel-coloured
+  whatever the player was actually playing — the UI silently declaring the whole game
+  to be one faction. `HP_GREEN` equalled Gaia's `earth` and `DANGER` equalled
+  `retribution`, so a healthy unit and a Gaia keyword were the same green. Fixed by
+  moving hue rather than brightness: **a difference you need two swatches side by side
+  to see is not a difference on a 7px chip.** Each faction also became a deep/base/bright
+  ramp, because a flat fill reads as a coloured sticker and three tones read as a
+  material — which is most of what makes the energy hexagon, the game's most-printed
+  mark, look struck rather than drawn.
+- **`GradientTexture2D` cannot be assigned to a code-built `StyleBoxFlat`, and the
+  failure is a hang rather than an error.** Isolated by probe to that exact assignment;
+  the `Gradient` and the `GradientTexture2D` both construct fine alone, and it is the
+  binding that needs a rendering server. Every screen must build headlessly for the
+  harnesses, so a gradient fill costs the entire test suite. Light is implied with edges
+  and shadow instead. The general shape is one this log already carries: **a feature that
+  works in the editor and hangs headless is indistinguishable from a slow test**, and the
+  first LayoutTest run after adding it simply timed out at two minutes with no message.
+- **Motion is diffed in the UI, never added as engine signals.** Combat rebuilds its
+  board wholesale on each `state_changed`, so the node holding a unit's old HP is freed
+  before the new one exists and a card cannot tween its own value. The UI snapshots HP by
+  instance id and compares as the replacement card is built, which keeps the rules engine
+  untouched — it still emits `state_changed` and nothing else. One shared `Motion.gd`
+  owns every duration, because animations assembled per call site are what make an
+  interface feel homemade: two panels fading at 0.15s and 0.4s read as two products.
+- **Throne growth is deliberately not animated, and that omission is the point.** Damage
+  flashes; the +5 both thrones gain every round does not. A pulse that fires
+  unconditionally teaches the eye to ignore it, which would cost the flash its meaning on
+  the turn it matters. **The general rule: feedback that fires on every tick is
+  indistinguishable from no feedback**, and it is worse, because it also hides the signal.
+- **Type and space are scales; picking a size per call site is what looked amateur.** The
+  UI carried fifteen distinct font sizes with 12/13/14/15/16 all in heavy use, and twelve
+  separation values including 1, 2, 3 and 5. Steps that close cannot be perceived as
+  different, so the screen reads as one undifferentiated middle weight with nothing for
+  the eye to land on — the problem is not that any single number is wrong, it is that
+  there is no system for them to be right *within*. Also retired the board divider, a
+  `Label` holding forty-nine hyphens, in favour of a drawn `Midline` that fades at both
+  ends: **typed punctuation standing in for a graphic is one of the most reliable tells
+  that an interface was assembled rather than designed.**
+
 - **`ViewportFit` must measure the window, never `root.get_visible_rect()`.** The auto
   detection read the viewport — a value `_apply()` sets itself — so entering phone mode
   shrank the viewport to 540, the next read saw `540 < 820`, and a 1440-wide desktop could
