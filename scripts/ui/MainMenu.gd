@@ -28,28 +28,50 @@ func _build() -> void:
 	add_child(center)
 
 	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 14)
-	col.custom_minimum_size = Vector2(360, 0)
+	col.add_theme_constant_override("separation", Palette.SPACE_MD)
+	col.custom_minimum_size = Vector2(340, 0)
 	center.add_child(col)
 
-	var title := Palette.label("GODSFALL", Palette.TYPE_DISPLAY, Palette.TEXT)
+	## The mark. A menu needs a focal object that is not a button — it is what
+	## makes the screen a place rather than a list of links.
+	var crest := Crest.new(126.0)
+	crest.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	col.add_child(crest)
+
+	## The wordmark, in the display face and letterspaced. Tracking is what makes
+	## a title read as a *mark* rather than as a large label — an inscriptional
+	## face is designed to be cut with air around each letter.
+	var title := Palette.title("GODSFALL", Palette.TYPE_DISPLAY, Palette.TEXT)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_constant_override("outline_size", 0)
 	col.add_child(title)
 
-	var sub := Palette.label("Death is a resource.", Palette.TYPE_SUBHEAD, Palette.ACCENT_GLOW)
+	var rule := Midline.new()
+	rule.custom_minimum_size = Vector2(0, 10)
+	col.add_child(rule)
+
+	var sub := Palette.label("Death is a resource.", Palette.TYPE_SUBHEAD, Palette.TEXT_DIM)
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(sub)
 
 	var spacer := Control.new()
-	spacer.custom_minimum_size = Vector2(0, 24)
+	spacer.custom_minimum_size = Vector2(0, Palette.SPACE_LG)
 	col.add_child(spacer)
 
-	col.add_child(_menu_button("Play vs. AI", _on_play))
+	## One primary action, then the rest. Four identically-styled buttons make the
+	## player read all four every time; giving "Play" the accent fill means the
+	## common case is found without reading, and the others recede to where they
+	## belong. Exactly one primary per screen is what makes primary mean anything.
+	col.add_child(_menu_button("Play vs. AI", _on_play, true))
 	col.add_child(_menu_button("Learn to Play", _on_tutorial))
 	col.add_child(_menu_button("My Decks", _on_decks))
+
+	var gap := Control.new()
+	gap.custom_minimum_size = Vector2(0, Palette.SPACE_SM)
+	col.add_child(gap)
 	col.add_child(_menu_button("Quit", _on_quit))
 
-	_warning = Palette.label("", Palette.TYPE_BODY, Palette.DANGER)
+	_warning = Palette.label("", Palette.TYPE_SMALL, Palette.DANGER)
 	_warning.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_warning.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	col.add_child(_warning)
@@ -60,20 +82,25 @@ func _build() -> void:
 
 	_refresh()
 
-	## The title and the buttons arrive rather than appearing. This is the one
-	## screen where a beat of motion is worth spending, because it is the first
-	## impression and it is seen once per session rather than once per turn.
-	title.ready.connect(func(): Motion.slide_in(title, Vector2(0, -18), Motion.SLOW),
+	## The mark and the title arrive rather than appearing. This is the one screen
+	## where a beat of motion is worth spending: it is the first impression, and it
+	## is seen once per session rather than once per turn.
+	crest.ready.connect(func(): Motion.fade_in(crest, Motion.SLOW), CONNECT_ONE_SHOT)
+	title.ready.connect(func(): Motion.slide_in(title, Vector2(0, -14), Motion.SLOW),
 		CONNECT_ONE_SHOT)
 	sub.ready.connect(func(): Motion.fade_in(sub, Motion.SLOW), CONNECT_ONE_SHOT)
 
 
-func _menu_button(text: String, cb: Callable) -> Button:
+func _menu_button(text: String, cb: Callable, primary: bool = false) -> Button:
 	var b := Button.new()
 	b.text = text
-	b.custom_minimum_size = Vector2(0, 46)
-	b.add_theme_font_size_override("font_size", 18)
-	Palette.style_button(b)
+	b.custom_minimum_size = Vector2(0, 50 if primary else 42)
+	b.add_theme_font_size_override("font_size",
+		Palette.TYPE_SUBHEAD if primary else Palette.TYPE_BODY)
+	if primary:
+		Palette.style_primary_button(b)
+	else:
+		Palette.style_button(b)
 	b.pressed.connect(cb)
 	return b
 

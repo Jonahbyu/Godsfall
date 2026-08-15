@@ -265,6 +265,71 @@ func style_primary_button(b: Button) -> void:
 	b.add_theme_color_override("font_color", Color.WHITE)
 
 
+## ------------------------------------------------------------------ fonts
+
+## The two bundled families.
+##
+## The project shipped with **no font at all**, so everything rendered in Godot's
+## built-in Open Sans SemiBold — which is a perfectly good typeface and is also
+## the single loudest signal that a Godot game has not been art-directed, because
+## it is what every unstyled Godot project looks like. Type is most of what
+## separates a finished card game from a prototype.
+##
+##   DISPLAY  Cinzel — a Roman inscriptional face. Used for the game's name, screen
+##            titles and section headings. It is a *display* face: it is beautiful
+##            at 20px and up and turns to mush below about 14, so it is never used
+##            for running text or anything on a card.
+##   UI       Inter — designed specifically for user interfaces at small sizes,
+##            with a tall x-height and open apertures. This is what makes the
+##            board's 7px type legible where Open Sans was marginal.
+##
+## Both are SIL Open Font License, so they can ship in a public repo and to the
+## web build. Windows' own Georgia and Cambria were the obvious candidates and are
+## license-locked — they may not be redistributed, which rules them out entirely
+## for a repo that publishes to GitHub Pages.
+##
+## Both are **subset** to Latin-1 plus the punctuation `GLYPH` needs: 174KB for the
+## pair, against 1MB unsubset. Regenerate with `tools/make_fonts.py` if the glyph
+## table ever grows beyond what they cover — `LayoutTest` fails loudly if it does,
+## because it checks every UI literal against the live theme font.
+const FONT_DISPLAY_PATH := "res://assets/fonts/Cinzel.ttf"
+const FONT_UI_PATH      := "res://assets/fonts/Inter.ttf"
+
+var _font_display: Font
+var _font_ui: Font
+
+
+## The display face, loaded once. Returns null if the file is missing, and every
+## caller treats null as "use the default" — a missing font must degrade to
+## Godot's built-in rather than crash the screen.
+func font_display() -> Font:
+	if _font_display == null and ResourceLoader.exists(FONT_DISPLAY_PATH):
+		_font_display = load(FONT_DISPLAY_PATH)
+	return _font_display
+
+
+func font_ui() -> Font:
+	if _font_ui == null and ResourceLoader.exists(FONT_UI_PATH):
+		_font_ui = load(FONT_UI_PATH)
+	return _font_ui
+
+
+## Build the project-wide default theme.
+##
+## Applied to the scene tree root by `_ready`, so **every** Control inherits Inter
+## without a single call site having to ask for it. That matters for more than
+## convenience: `LayoutTest` resolves "the theme font" by reading it off a bare
+## `Label`, so setting the default is what makes the glyph check validate against
+## the font the game actually renders with.
+func build_theme() -> Theme:
+	var t := Theme.new()
+	var ui := font_ui()
+	if ui != null:
+		t.default_font = ui
+	t.default_font_size = TYPE_BODY
+	return t
+
+
 ## ------------------------------------------------------------ type & space
 
 ## The type scale.
@@ -320,6 +385,20 @@ const SPACE_XL := 22
 func heading(text: String, color: Color = TEXT_DIM) -> Label:
 	var l := label(text.to_upper(), TYPE_SMALL, color)
 	l.add_theme_constant_override("line_spacing", 2)
+	var f := font_display()
+	if f != null:
+		l.add_theme_font_override("font", f)
+	return l
+
+
+## A display-face title. Cinzel is an inscriptional face and only works large —
+## it is deliberately unavailable below TYPE_SUBHEAD, where it would be less
+## legible than the UI face rather than more characterful.
+func title(text: String, size: int = TYPE_TITLE, color: Color = TEXT) -> Label:
+	var l := label(text, max(size, TYPE_SUBHEAD), color)
+	var f := font_display()
+	if f != null:
+		l.add_theme_font_override("font", f)
 	return l
 
 
@@ -416,3 +495,21 @@ func hp_color(current: int, maximum: int) -> Color:
 	if f > 0.3:
 		return GOLD
 	return HP_RED
+
+
+## Install the default theme on the scene tree root.
+##
+## Deferred a frame: an autoload's `_ready` can run before the root window is in
+## a state where assigning a theme sticks, and the symptom of getting this wrong
+## is the silent one — the theme is simply ignored and everything renders in the
+## built-in font, which looks exactly like not having bundled a font at all.
+func _ready() -> void:
+	call_deferred("_install_theme")
+
+
+func _install_theme() -> void:
+	var loop := Engine.get_main_loop()
+	if loop == null:
+		return
+	var t := build_theme()
+	loop.root.theme = t
