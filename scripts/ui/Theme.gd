@@ -149,6 +149,10 @@ const GLYPH := {
 	"locked":    "[L]",   ## attack lock on
 	"unlocked":  "[ ]",   ## attack lock off
 	"random":    "?",     ## the Random opponent entry
+	## The settings cog. A real gear (U+2699) is not in Open Sans, so this is the
+	## ASCII stand-in — read as a small dial rather than a gear, which is the same
+	## affordance at this size.
+	"settings":  "[=]",
 	"tool":      "=",     ## an attached Tool
 	"ability":   "-",     ## an ability line, vs. an attack line
 	"queued":    ">",     ## an attack queued this turn

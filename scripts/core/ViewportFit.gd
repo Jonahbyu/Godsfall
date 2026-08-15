@@ -62,7 +62,22 @@ const NARROW_WIDTH := 820
 ##   OFF   - force the desktop layout, e.g. on a tablet that is wide enough
 enum Override { AUTO, ON, OFF }
 
-const SAVE_PATH := "user://display.cfg"
+## Where the layout override persists.
+##
+## A **variable**, not a const, so a harness can redirect it — the same rule
+## `DeckStore.save_path` follows, and for the same reason. This was learned the
+## hard way twice already for decks, and then a third time here: a verification
+## script wrote `Override.ON` to the real file, failed to clean it up, and left
+## the actual game stuck in phone mode on a desktop. A test that shares a mutable
+## file with the user is a data-loss bug, not a hygiene nitpick.
+##
+## Any harness touching this MUST call `use_sandbox_path()` before it writes.
+var save_path: String = "user://display.cfg"
+
+
+## Point persistence at a throwaway file. Call before any test writes.
+func use_sandbox_path(tag: String) -> void:
+	save_path = "user://test_display_%s.cfg" % tag
 
 ## True while screens should use their single-column layout. Read by every
 ## screen at build time; see `layout_changed`.
@@ -161,7 +176,7 @@ func _set_mobile(value: bool) -> void:
 
 
 func _load() -> void:
-	var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	var f := FileAccess.open(save_path, FileAccess.READ)
 	if f == null:
 		return
 	var text := f.get_as_text()
@@ -185,7 +200,7 @@ func _load() -> void:
 
 
 func _save() -> void:
-	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var f := FileAccess.open(save_path, FileAccess.WRITE)
 	if f == null:
 		return
 	f.store_string(JSON.stringify({"layout_override": _override}))

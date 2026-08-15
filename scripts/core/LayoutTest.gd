@@ -34,6 +34,12 @@ var _count := 0
 
 func _initialize() -> void:
 	print("Layout + glyph harness\n")
+	## Redirect the layout override away from the player's real display.cfg
+	## before anything can write it. A verification script once wrote
+	## `Override.ON` to the live file and left the actual game stuck in phone
+	## mode on a desktop; the same rule DeckStore follows applies here.
+	root.get_node("ViewportFit").use_sandbox_path("layout")
+
 	_test_glyph_table()
 	_test_ui_strings()
 	_test_screens_build()

@@ -3215,3 +3215,76 @@ Damage by card (unit / tower / throne, total):
     Gnawing Absence                 52  (0 / 16 / 36 over 5 hits)
     Hollow Acolyte                  47  (8 / 39 / 0 over 4 hits)
     Rust Crawler                    24  (24 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-14T21:21:04  [RulesTest]
+Barrow Wall  vs  Cacophony Ramp
+Result: Barrow Wall wins on round 6
+------------------------------------------------------------------------
+Barrow Wall (You)
+  throne 125 / 125
+  tower 1: 75 / 75  +5 dmg
+  tower 2: 43 / 75
+  tower fire dealt: 122
+Cacophony Ramp (Opponent)
+  throne 0 / 125
+  tower 1: DESTROYED (max was 65)
+  tower 2: 39 / 75
+  tower fire dealt: 62
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Barrow Wall
+    Grave Tide                     109  (69 / 0 / 40 over 4 hits)
+    Thornshade                      88  (88 / 0 / 0 over 4 hits)
+  Cacophony Ramp
+    Nithogg, Root-Gnawer            20  (20 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-14T21:21:07  [SupportTest]
+Barrow Wall  vs  Standing Stones
+Result: Barrow Wall wins on round 6
+------------------------------------------------------------------------
+Barrow Wall (You)
+  throne 125 / 125
+  tower 1: 95 / 95
+  tower 2: 70 / 75
+  tower fire dealt: 78
+Standing Stones (Opponent)
+  throne 0 / 125
+  tower 1: DESTROYED (max was 85)
+  tower 2: DESTROYED (max was 65)
+  tower fire dealt: 119
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Barrow Wall
+    Thornshade                     150  (106 / 44 / 0 over 7 hits)
+    Charnel Colossus               114  (0 / 38 / 76 over 3 hits)
+    Barrow Knight                   25  (0 / 0 / 25 over 1 hits)
+    Hollow Servant                  24  (0 / 24 / 0 over 2 hits)
+  Standing Stones
+    Seedbearer                      14  (14 / 0 / 0 over 1 hits)
+    Makeshift Tower                 11  (11 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-14T21:21:16  [Combat]
+Toll Engine  vs  Barrow Wall
+Result: Barrow Wall wins on round 6
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 125
+  tower 1: DESTROYED (max was 70)
+  tower 2: DESTROYED (max was 60)
+  tower fire dealt: 80
+Barrow Wall (Opponent)
+  throne 125 / 125
+  tower 1: 115 / 115
+  tower 2: 75 / 75
+  tower fire dealt: 92
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Barrow Knight                   25  (25 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Charnel Colossus               128  (0 / 52 / 76 over 4 hits)
+    Hollow Servant                  60  (36 / 24 / 0 over 5 hits)
+    Barrow Knight                   25  (0 / 25 / 0 over 1 hits)

@@ -1767,9 +1767,24 @@ grows and drags the row past the edge. Its own row gives it a bound, and then
 Basics · Towers hold fire in round 1" running off the screen.
 
 **Activation is automatic with a manual override.** Below 820px the layout switches on its
-own; a three-way `Auto / Phone / Desktop` control in the main menu forces it either way and
-persists to `user://display.cfg`. The override is not a nicety — it is the only way to test
-the phone layout without a phone, and it is the recourse when detection misjudges a tablet.
+own; a three-way `Auto / Phone / Desktop` control forces it either way and persists to
+`user://display.cfg`. The override is not a nicety — it is the only way to test the phone
+layout without a phone, and it is the recourse when detection misjudges a device.
+
+**The override lives behind a settings cog pinned to the top-right of every screen**
+(`Settings`, an autoload on a `CanvasLayer` above every scene). It is deliberately *not* a
+main-menu item: the override is the recovery path for a UI that has become unusable, and a
+recovery control has to be reachable from wherever you are when you notice — which is
+usually Combat, the screen furthest from the menu. Being a `CanvasLayer` autoload also means
+it survives every scene change without being rebuilt and cannot be pushed off the edge by a
+screen's own layout. The panel states what Auto currently resolves to, so the control
+reports the state it is *in* rather than only the rule it follows.
+
+**`ViewportFit.save_path` is a variable, and every harness touching it must call
+`use_sandbox_path()`** — the same rule `DeckStore.save_path` follows, for the same reason.
+It was a `const` at first, and a verification script wrote `Override.ON` to the real file
+and failed to clean up, leaving the game stuck in phone mode on a 1440-wide desktop. That is
+the third instance of this exact shape in the project.
 
 **Crossing the threshold rebuilds the screen wholesale rather than re-parenting.** The two
 shapes differ in which nodes exist at all, not merely in parentage, and every screen's real
@@ -3106,3 +3121,20 @@ even if the rule text later changes. Keep entries to one or two lines.
   edit to the shell would have shipped mojibake. **This is the third distinct PowerShell 5.1
   encoding trap in this one script** (BOM on write, non-ASCII in the script body, ANSI on
   read); the rule for this file is now simply *never let PowerShell guess an encoding.*
+- **The layout override lives behind a settings cog on every screen, not in the main menu.**
+  It is the recovery path for a UI that has become unusable, so it has to be reachable from
+  wherever the player is when they notice — and the screen most likely to need it is Combat,
+  which is the furthest from the menu. Implemented as an autoload on a `CanvasLayer` above
+  every scene, so it survives scene changes, cannot be covered by Combat's hover-zoom layer,
+  and can never be pushed off the edge by a screen's own layout. The panel reports what Auto
+  *currently resolves to*, because "Auto" alone tells you nothing when the detection is what
+  went wrong.
+- **`ViewportFit.save_path` must be a variable, and harnesses must sandbox it.** It shipped
+  as a `const`, so no test could redirect it — and a verification script then wrote
+  `Override.ON` to the live `user://display.cfg`, failed to clean up, and left the real game
+  stuck in phone mode on a 1440-wide desktop. The user reported it as "it still looks like a
+  zoomed in version," which is the worst possible symptom: it looks exactly like the layout
+  bug that had just been fixed, so the obvious diagnosis is the wrong one. **This is the
+  third time this shape has cost real time** (`DeckStore` twice, now this), and the rule is
+  now unconditional: *any* file the player's install writes gets a `save_path` variable and
+  a `use_sandbox_path()`, on the day it is created.
