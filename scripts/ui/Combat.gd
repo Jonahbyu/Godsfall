@@ -949,17 +949,11 @@ func _rebuild_boards(row: HBoxContainer, p: Player, is_enemy: bool) -> void:
 
 	for bi in p.boards.size():
 		var b: Board = p.boards[bi]
-		var panel := Palette.make_panel(Palette.PANEL)
-		## The panel's default 8px side margins are 32 units across two boards,
-		## which is most of a phone card. Trimmed to 2 so the frame still reads
-		## as a boundary between the two lanes without costing a slot.
-		if _compact:
-			var st := Palette.panel_style(Palette.PANEL)
-			st.content_margin_left = 2
-			st.content_margin_right = 2
-			st.content_margin_top = 3
-			st.content_margin_bottom = 3
-			panel.add_theme_stylebox_override("panel", st)
+		## A drawn playing surface rather than a flat container: it carries the
+		## light, the ownership tint and the front edge that make the two sides
+		## read as facing each other. LanePanel handles its own compact padding,
+		## which on a phone is what keeps six slots inside 540 units.
+		var panel := LanePanel.new(is_enemy, _compact)
 		row.add_child(panel)
 
 		var lane := HBoxContainer.new()
@@ -998,16 +992,21 @@ func _slot_widget(p: Player, b: Board, bi: int, si: int, is_enemy: bool) -> Cont
 		## During a support pick the board belongs to the support: an empty slot
 		## is never a target, so don't offer to deploy into it.
 		var playable := droppable and _selected_hand >= 0 and _pending_support == null
-		var e: Button = DropZoneScript.new()
+		var e := SlotSocket.new()
 		e.custom_minimum_size = CardView.size_for(CardView.Mode.BOARD)
-		e.text = "+ deploy" if playable else ("drop here" if _dragging_basic else "empty")
-		e.add_theme_font_size_override("font_size", 12)
-		## A lesson step pointing at this slot rings it in gold, so "deploy here"
-		## has somewhere obvious to land.
+		## A socket is drawn, not captioned — an empty position reads as a shape
+		## waiting to be filled rather than as the word "empty". Only the states
+		## the player can act on carry a label, and only on the roomier desktop
+		## card; at 78 units there is no space for one.
 		var tut_ring := (not is_enemy) and _tut_highlights("my_slot", bi, si)
-		Palette.style_button(e, Palette.PANEL_LIGHT.darkened(0.45),
-			Palette.GOLD if tut_ring else (
-				Palette.ACCENT if (playable or (droppable and _dragging_basic)) else Palette.BORDER))
+		if tut_ring:
+			e.state = SlotSocket.State.TUTORIAL
+		elif droppable and _dragging_basic:
+			e.state = SlotSocket.State.DROP
+		elif playable:
+			e.state = SlotSocket.State.PLAYABLE
+		e.text = "" if _compact else (
+			"deploy" if playable else ("drop" if (droppable and _dragging_basic) else ""))
 		e.disabled = not playable
 		e.mouse_filter = Control.MOUSE_FILTER_PASS
 		if playable:
@@ -1199,26 +1198,32 @@ func _tower_widget(b: Board, bi: int, is_enemy: bool) -> Control:
 	panel.custom_minimum_size = CardView.size_for(CardView.Mode.BOARD)
 
 	var s := StyleBoxFlat.new()
-	s.bg_color = Palette.TOWER.darkened(0.62)
-	s.border_color = Palette.GOLD if targetable else Palette.TOWER
+	s.bg_color = Palette.TOWER.darkened(0.72)
+	s.border_color = Palette.GOLD if targetable else Palette.TOWER.darkened(0.2)
 	s.set_border_width_all(3 if targetable else 2)
 	s.set_corner_radius_all(8)
-	s.content_margin_left = 7
-	s.content_margin_right = 7
-	s.content_margin_top = 6
-	s.content_margin_bottom = 6
+	s.content_margin_left = Palette.SPACE_SM
+	s.content_margin_right = Palette.SPACE_SM
+	s.content_margin_top = Palette.SPACE_SM
+	s.content_margin_bottom = Palette.SPACE_SM
 	panel.add_theme_stylebox_override("panel", s)
 
 	var col := VBoxContainer.new()
 	col.alignment = BoxContainer.ALIGNMENT_CENTER
-	col.add_theme_constant_override("separation", 6)
+	col.add_theme_constant_override("separation", Palette.SPACE_XS)
 	panel.add_child(col)
 
-	var title := Palette.heading("Tower", Palette.TEXT_DIM)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	col.add_child(title)
+	## The structure itself, drawn. Its battlements break and it cracks as HP
+	## falls, so "which tower is nearly down" is answerable from the silhouette
+	## rather than by comparing two fractions. It takes the space the old "TOWER"
+	## caption used, which was a word doing no work the shape cannot do better.
+	var glyph := TowerGlyph.new(b.tower_hp, b.tower_max_hp, is_enemy, targetable)
+	glyph.custom_minimum_size = Vector2(0, 52 if _compact else 74)
+	glyph.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.add_child(glyph)
 
-	var hp := Palette.label("%d / %d" % [b.tower_hp, b.tower_max_hp], 16,
+	var hp := Palette.label("%d / %d" % [b.tower_hp, b.tower_max_hp],
+		Palette.TYPE_BODY if _compact else Palette.TYPE_SUBHEAD,
 		Palette.hp_color(b.tower_hp, b.tower_max_hp))
 	hp.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(hp)
@@ -1238,7 +1243,7 @@ func _tower_widget(b: Board, bi: int, is_enemy: bool) -> Control:
 	var dmg_text := "fires for %d" % full
 	if not facing.has_living_unit():
 		dmg_text = "chips for %d" % max(1, full / 4)
-	var dmg := Palette.label(dmg_text, 10, Palette.TEXT_DIM)
+	var dmg := Palette.label(dmg_text, Palette.TYPE_MICRO, Palette.TEXT_DIM)
 	dmg.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(dmg)
 
