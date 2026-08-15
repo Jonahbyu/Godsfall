@@ -16,19 +16,26 @@ const SELECT_SCENE := "res://scenes/DeckSelect.tscn"
 const TUTORIAL_SCENE := "res://scenes/Tutorial.tscn"
 const COMPENDIUM_SCENE := "res://scenes/Compendium.tscn"
 
-## The deck grid draws real card frames, shrunk to thumbnails. Four across fits
-## the right-hand pane without forcing a horizontal scrollbar.
+## The deck grid draws real card frames, shrunk to thumbnails.
+##
+## The column count is computed from the pane's actual width rather than fixed.
+## At a hardcoded 5 the grid left ~330px of the right-hand pane empty on a
+## 1440-wide window — the deck is the half you judge as a whole, so unused width
+## there is the most expensive unused width on the screen.
 ##
 ## The count badge and remove button sit in a strip *under* each card rather than
 ## on top of it: overlaid, they covered the card's name, which is the one thing
 ## you need to identify a thumbnail by.
-const DECK_GRID_COLUMNS := 5
+const DECK_GRID_MIN_COLUMNS := 4
+const DECK_GRID_MAX_COLUMNS := 9
 const DECK_CARD_SCALE := 0.86
 const DECK_TILE_FOOTER := 24
+const DECK_GRID_GAP := 6
 
 var _collection_box: VBoxContainer
 var _deck_box: Container
 var _detail: RichTextLabel
+var _detail_panel: PanelContainer
 var _header: Label
 var _title: Label
 var _errors: Label
@@ -272,19 +279,20 @@ func _build() -> void:
 
 	## --- bottom: card detail
 	##
-	## Shorter on a phone: 120 units of always-reserved detail is a large share
-	## of the vertical budget, and the tapped card's full text is one tap away in
-	## the inspector anyway.
-	var detail_panel := Palette.make_panel(Palette.PANEL)
-	detail_panel.custom_minimum_size = Vector2(0, 72 if _mobile else 120)
-	root.add_child(detail_panel)
+	## Hover-fed, so it is the fast read while scanning the collection — the
+	## inspector is the deliberate one. It sizes to whatever is in it rather than
+	## reserving a fixed block: empty, a 120-unit panel saying "Select a card"
+	## was the largest single piece of dead space on the screen, and that space
+	## belongs to the deck grid, which is the half you judge as a whole.
+	_detail_panel = Palette.make_panel(Palette.PANEL)
+	root.add_child(_detail_panel)
 
 	_detail = RichTextLabel.new()
 	_detail.bbcode_enabled = true
 	_detail.fit_content = true
 	_detail.add_theme_color_override("default_color", Palette.TEXT)
-	_detail.text = "[color=#8f88a3]Select a card to see its details.[/color]"
-	detail_panel.add_child(_detail)
+	_detail.text = "[color=#8f88a3]Hover a card for its details; click to inspect it.[/color]"
+	_detail_panel.add_child(_detail)
 
 
 func _make_column(title: String, is_collection: bool) -> Control:
@@ -316,11 +324,20 @@ func _make_column(title: String, is_collection: bool) -> Control:
 		## Four across on a phone: at a 0.62 tile scale that is 4 x 82 + gaps,
 		## which fits 540 while keeping enough tiles per row that a 60-card deck is
 		## still scannable rather than a single long column.
-		grid.columns = 4 if _mobile else DECK_GRID_COLUMNS
-		grid.add_theme_constant_override("h_separation", 6)
-		grid.add_theme_constant_override("v_separation", 6)
+		##
+		## On a desktop the count is recomputed from the pane's real width as it
+		## resizes — see `_fit_columns`. A fixed 5 left a third of the pane empty
+		## on a 1440-wide window and would overflow a narrow one.
+		grid.columns = 4 if _mobile else DECK_GRID_MIN_COLUMNS
+		grid.add_theme_constant_override("h_separation", DECK_GRID_GAP)
+		grid.add_theme_constant_override("v_separation", DECK_GRID_GAP)
 		box = grid
 		_deck_box = box
+		if not _mobile:
+			## `resized` rather than a one-off measurement: the split handle is
+			## draggable and the window is resizable, so the pane's width is not
+			## known at build time and does not stay put afterwards.
+			scroll.resized.connect(func(): _fit_columns(scroll))
 
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(box)
@@ -617,6 +634,26 @@ func _sort_group(c: CardData) -> int:
 	return 2
 
 
+## Choose how many card tiles fit across the deck pane at its current width.
+##
+## Called on every resize of the scroller. Clamped at both ends: below the
+## minimum the tiles would be unreadably narrow, and above the maximum a very
+## wide window would produce a single row of tiny cards rather than a grid you
+## can take in as a block.
+func _fit_columns(scroll: ScrollContainer) -> void:
+	if _deck_box == null or not is_instance_valid(_deck_box):
+		return
+	if not (_deck_box is GridContainer):
+		return
+	var tile: float = CardView.BOARD_SIZE.x * DECK_CARD_SCALE + DECK_GRID_GAP
+	## Leave room for the vertical scrollbar, which a 60-card deck always has.
+	var avail: float = scroll.size.x - 14.0
+	var n: int = clampi(int(floor(avail / tile)),
+		DECK_GRID_MIN_COLUMNS, DECK_GRID_MAX_COLUMNS)
+	if (_deck_box as GridContainer).columns != n:
+		(_deck_box as GridContainer).columns = n
+
+
 func _rebuild_deck() -> void:
 	_clear(_deck_box)
 
@@ -689,30 +726,51 @@ func _deck_tile(card: CardData) -> Control:
 	return tile
 
 
-## Copy count on the left, remove on the right, under the card.
+## The copy count and the two controls that change it, in a strip under the card.
+##
+## Under rather than overlaid: on top of the frame they covered the card's name,
+## which is the one thing a thumbnail is identified by.
+##
+## Both "+" and "−" are here. Previously only "−" was, so removing a copy was a
+## click on the tile and *adding* one meant scrolling the collection to find the
+## same card again — asymmetric for two halves of one decision. The count sits
+## between them, which is also the order they read in.
 func _tile_footer(id: String, width: float) -> Control:
 	var footer := HBoxContainer.new()
 	footer.custom_minimum_size = Vector2(width, DECK_TILE_FOOTER)
-	footer.add_theme_constant_override("separation", 4)
+	footer.add_theme_constant_override("separation", Palette.SPACE_XS)
+	footer.alignment = BoxContainer.ALIGNMENT_CENTER
 
-	var count := Palette.label("×%d" % DeckStore.count_of(id), 14, Palette.GOLD)
+	var less := _step_button("−", "Remove one copy", Palette.DANGER)
+	less.pressed.connect(func(): DeckStore.remove(id))
+	footer.add_child(less)
+
+	var count := Palette.label("%d" % DeckStore.count_of(id),
+		Palette.TYPE_BODY, Palette.GOLD)
+	count.custom_minimum_size = Vector2(20, 0)
+	count.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	footer.add_child(count)
 
-	var sp := Control.new()
-	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	footer.add_child(sp)
-
-	var rem := Button.new()
-	rem.text = "−"
-	rem.custom_minimum_size = Vector2(30, DECK_TILE_FOOTER)
-	rem.tooltip_text = "Remove one copy"
-	rem.add_theme_font_size_override("font_size", 15)
-	Palette.style_button(rem, Palette.PANEL_LIGHT, Palette.DANGER)
-	rem.pressed.connect(func(): DeckStore.remove(id))
-	footer.add_child(rem)
+	var more := _step_button("+", "Add one copy", Palette.ACCENT)
+	## A card already at its 4-copy limit can't take another. Disabled rather
+	## than hidden, so the control stays where the eye learned to find it.
+	more.disabled = not DeckStore.can_add(id)
+	more.pressed.connect(func(): DeckStore.add(id))
+	footer.add_child(more)
 
 	return footer
+
+
+func _step_button(text: String, tip: String, border: Color) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.tooltip_text = tip
+	b.focus_mode = Control.FOCUS_NONE
+	b.custom_minimum_size = Vector2(26, DECK_TILE_FOOTER)
+	b.add_theme_font_size_override("font_size", Palette.TYPE_SUBHEAD)
+	Palette.style_button(b, Palette.PANEL_LIGHT, border)
+	return b
 
 
 func _show_detail(card: CardData) -> void:
