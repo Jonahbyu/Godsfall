@@ -2,7 +2,7 @@ extends SceneTree
 
 ## Total assertions this harness is expected to run; see the check at
 ## the end of the run. Update deliberately when assertions change.
-const EXPECTED_ASSERTIONS := 70
+const EXPECTED_ASSERTIONS := 74
 
 ## Exercises the saved-deck collection: create, select, rename, duplicate,
 ## delete, per-deck validation, and round-tripping through disk.
@@ -47,6 +47,7 @@ func _initialize() -> void:
 	_opponent_choice(ds)
 	_seed_samples(ds)
 	_hero_card(ds)
+	_composition(ds)
 
 	## A harness that errors out mid-run still reports "0 failed", because an
 	## assertion that never RUNS cannot fail — that is how the Gaia harness passed
@@ -415,3 +416,44 @@ Hero card:")
 	## An empty deck likewise.
 	var i3: int = ds.create_deck("Empty")
 	_check("empty deck has no hero", ds.hero_card_at(i3) == null)
+
+
+## `composition_at` is what the builder's mix bar and the deck-select contents
+## header both draw. It has to total the deck exactly, or the bar's segments
+## silently misrepresent their share.
+func _composition(ds) -> void:
+	print("
+Composition:")
+
+	ds.decks = []
+	ds.active_index = 0
+	ds.seed_samples()
+
+	## The segments must sum to the deck size, since each one is drawn as a
+	## fraction of that total.
+	var sums_ok := true
+	for i in ds.deck_count():
+		var total := 0
+		for t in ds.composition_at(i):
+			total += int(ds.composition_at(i)[t])
+		if total != ds.total_at(i):
+			sums_ok = false
+	_check("composition totals the deck", sums_ok)
+
+	## The energy segment must agree with `energy_at`, which the rest of the UI
+	## reports independently — two numbers for one fact that could disagree.
+	var energy_ok := true
+	for i in ds.deck_count():
+		var mix: Dictionary = ds.composition_at(i)
+		if int(mix.get(CardData.Type.ENERGY, 0)) != ds.energy_at(i):
+			energy_ok = false
+	_check("composition energy matches energy_at", energy_ok)
+
+	## Types the deck does not run are absent rather than present as zero, so a
+	## caller can iterate the mix without filtering.
+	var i2: int = ds.create_deck("Units Only")
+	ds.select(i2)
+	ds.add("grave_whelp")
+	var mix2: Dictionary = ds.composition_at(i2)
+	_check("absent types are omitted", not mix2.has(CardData.Type.TOOL))
+	_check("present type is counted", int(mix2.get(CardData.Type.UNIT, 0)) == 1)

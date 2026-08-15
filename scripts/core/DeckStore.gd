@@ -678,6 +678,27 @@ func factions_at(i: int) -> Array:
 ## and supports are skipped: an energy card is the same picture in every deck of
 ## that colour, which is the opposite of identifying one. A deck holding no units
 ## at all returns null and the caller falls back to the faction spine alone.
+## How a deck breaks down by card type: units, supports, tools, tower support
+## and energy. The one number a deckbuilder needs that neither the card count
+## nor the energy count answers — "what kind of deck is this".
+##
+## Returned as a plain Dictionary keyed by `CardData.Type` so the caller decides
+## how to present it; `CompositionBar` draws it, and the deck-select contents
+## pane prints it.
+func composition_at(i: int) -> Dictionary:
+	var out: Dictionary = {}
+	for id in cards_at(i):
+		var c: CardData = CardDB.get_card(id)
+		if c == null:
+			continue
+		out[c.type] = int(out.get(c.type, 0)) + int(cards_at(i)[id])
+	return out
+
+
+func composition() -> Dictionary:
+	return composition_at(active_index)
+
+
 func hero_card_at(i: int) -> CardData:
 	var best: CardData = null
 	var best_cost: int = -1

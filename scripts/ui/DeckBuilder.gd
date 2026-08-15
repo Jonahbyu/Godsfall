@@ -39,6 +39,8 @@ var _detail_panel: PanelContainer
 var _header: Label
 var _title: Label
 var _errors: Label
+var _mix_bar: CompositionBar
+var _mix_text: Label
 var _selected: CardData = null
 
 var _inspector: CardInspector = null
@@ -246,8 +248,9 @@ func _build() -> void:
 	cog_gap.custom_minimum_size = Vector2(Palette.COG_RESERVE, 0)
 	top.add_child(cog_gap)
 
-	_errors = Palette.label("", 13, Palette.DANGER)
+	_errors = Palette.label("", Palette.TYPE_BODY, Palette.DANGER)
 	root.add_child(_errors)
+
 
 	## --- middle: collection | deck
 	##
@@ -299,11 +302,31 @@ func _make_column(title: String, is_collection: bool) -> Control:
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 6)
 
-	var head := Palette.label(title, 16, Palette.ACCENT)
+	var head := Palette.label(title, Palette.TYPE_SUBHEAD, Palette.ACCENT)
 	col.add_child(head)
 	if is_collection:
 		_collection_title = head
 		col.add_child(_make_filter_bar())
+	else:
+		## The deck's type mix, as a bar plus the numbers behind it. It belongs
+		## in this column rather than across the top of the screen: it describes
+		## the deck, and spanning the collection too would attribute it to both.
+		##
+		## The header could say "60 cards, 19 energy" and nothing about the
+		## deck's *shape*, which is what you actually ask while editing — am I
+		## unit-heavy, is there still room for supports. A proportion is compared
+		## by area, not by reading five numbers and doing the arithmetic.
+		_mix_bar = CompositionBar.new({})
+		_mix_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		col.add_child(_mix_bar)
+
+		## The numbers go *under* the bar rather than beside it. Beside, the bar
+		## takes the expanding share and the label clips to nothing at any width
+		## the deck pane actually has.
+		_mix_text = Palette.label("", Palette.TYPE_SMALL, Palette.TEXT_DIM)
+		_mix_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		_mix_text.clip_text = true
+		col.add_child(_mix_text)
 
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -458,7 +481,11 @@ func _refresh() -> void:
 	_header.add_theme_color_override("font_color",
 		Palette.TEXT if total == DeckStore.DECK_SIZE else Palette.DANGER)
 	var errs := DeckStore.validation_errors()
-	_errors.text = ("! " + "  ".join(errs)) if not errs.is_empty() else ""
+	_errors.text = ("%s %s" % [Palette.glyph("warn"), "  ".join(errs)]) if not errs.is_empty() else ""
+
+	var mix := DeckStore.composition()
+	_mix_bar.set_mix(mix)
+	_mix_text.text = CompositionBar.describe(mix)
 
 	_rebuild_collection()
 	_rebuild_deck()

@@ -22,6 +22,8 @@ var for_combat: bool = true
 
 var _list_box: VBoxContainer
 var _detail: RichTextLabel
+var _detail_head: Control = null
+var _mix_bar: CompositionBar = null
 var _fight_btn: Button
 var _status: Label
 var _rename_row: HBoxContainer
@@ -233,8 +235,16 @@ func _build() -> void:
 		middle.add_child(_contents_btn)
 	else:
 		var right := VBoxContainer.new()
-		right.add_theme_constant_override("separation", 6)
+		right.add_theme_constant_override("separation", Palette.SPACE_SM)
 		right.add_child(Palette.heading("Contents"))
+
+		## A header carrying the deck's hero art, its name and its type mix, above
+		## the card list. The pane was a plain text list in a mostly empty half of
+		## the screen; the deck being previewed deserves to be *shown* here for the
+		## same reason its row is, and the mix answers "what kind of deck is this"
+		## before the list answers "which cards".
+		_detail_head = _build_detail_head()
+		right.add_child(_detail_head)
 
 		var detail_scroll := ScrollContainer.new()
 		detail_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -617,7 +627,91 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+## The contents pane's header: hero plate, deck name, and the composition bar.
+## Desktop only — on a phone the contents live in an overlay that is already
+## titled, and the width is better spent on the list itself.
+func _build_detail_head() -> Control:
+	var panel := Palette.make_panel(Palette.PANEL)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", Palette.SPACE_SM)
+	panel.add_child(col)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", Palette.SPACE_MD)
+	col.add_child(row)
+
+	## Rebuilt per refresh by `_show_detail`, so it is only a placeholder here.
+	var art_slot := HBoxContainer.new()
+	art_slot.name = "ArtSlot"
+	row.add_child(art_slot)
+
+	var names := VBoxContainer.new()
+	names.add_theme_constant_override("separation", Palette.SPACE_XS)
+	names.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	names.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(names)
+
+	var title := Palette.label("", Palette.TYPE_HEADING, Palette.TEXT)
+	title.name = "DeckName"
+	title.clip_text = true
+	names.add_child(title)
+
+	var sub := Palette.label("", Palette.TYPE_SMALL, Palette.TEXT_DIM)
+	sub.name = "DeckStats"
+	names.add_child(sub)
+
+	_mix_bar = CompositionBar.new({})
+	col.add_child(_mix_bar)
+
+	var mix_text := Palette.label("", Palette.TYPE_SMALL, Palette.TEXT_DIM)
+	mix_text.name = "MixText"
+	mix_text.clip_text = true
+	col.add_child(mix_text)
+
+	return panel
+
+
+## Refresh the contents header for deck `i`. No-op on a phone, where the header
+## is not built at all.
+func _refresh_detail_head(i: int) -> void:
+	if _detail_head == null or not is_instance_valid(_detail_head):
+		return
+
+	var slot: HBoxContainer = _detail_head.find_child("ArtSlot", true, false)
+	if slot != null:
+		for c in slot.get_children():
+			slot.remove_child(c)
+			c.queue_free()
+		var hero: CardData = DeckStore.hero_card_at(i)
+		if hero != null:
+			slot.add_child(DeckArtTile.new(hero, HERO_H))
+
+	var title: Label = _detail_head.find_child("DeckName", true, false)
+	if title != null:
+		title.text = DeckStore.name_at(i)
+
+	var sub: Label = _detail_head.find_child("DeckStats", true, false)
+	if sub != null:
+		var errs := DeckStore.errors_at(i)
+		if errs.is_empty():
+			sub.text = "%d cards %s %d energy" % [
+				DeckStore.total_at(i), Palette.glyph("dot"), DeckStore.energy_at(i)]
+			sub.add_theme_color_override("font_color", Palette.TEXT_DIM)
+		else:
+			sub.text = "%s %s" % [Palette.glyph("warn"), errs[0]]
+			sub.add_theme_color_override("font_color", Palette.DANGER)
+
+	var mix := DeckStore.composition_at(i)
+	if _mix_bar != null and is_instance_valid(_mix_bar):
+		_mix_bar.set_mix(mix)
+	var mix_text: Label = _detail_head.find_child("MixText", true, false)
+	if mix_text != null:
+		mix_text.text = CompositionBar.describe(mix)
+
+
 func _show_detail(i: int) -> void:
+	_refresh_detail_head(i)
+
 	var cards := DeckStore.cards_at(i)
 	if cards.is_empty():
 		_detail.text = "[color=#8f88a3]“%s” is empty. Hit [b]Edit Deck[/b] to build it.[/color]" % DeckStore.name_at(i)
@@ -636,9 +730,10 @@ func _show_detail(i: int) -> void:
 		return ca.name < cb.name
 	)
 
-	var s := "[b][color=#e6e1f0]%s[/color][/b]\n[color=#8f88a3]%d cards · %d energy[/color]\n\n" % [
-		DeckStore.name_at(i), DeckStore.total_at(i), DeckStore.energy_at(i)
-	]
+	## The deck's name and counts are in the header above this list on a desktop,
+	## and in the overlay's own title on a phone — so printing them again at the
+	## top of the list is duplication in both layouts. This is the card list.
+	var s := ""
 
 	var last_group := ""
 	for id in ids:
@@ -647,7 +742,8 @@ func _show_detail(i: int) -> void:
 			continue
 		var group := "Energy" if not card.is_unit() else card.stage_name()
 		if group != last_group:
-			s += "\n[color=#7c4dff]— %s —[/color]\n" % group
+			## No blank line before the first group, now that nothing precedes it.
+			s += "%s[color=#7c4dff]— %s —[/color]\n" % ["" if last_group == "" else "\n", group]
 			last_group = group
 		s += "  [color=#d9b45b]%d×[/color]  %s\n" % [int(cards[id]), card.name]
 
