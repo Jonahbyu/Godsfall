@@ -22,26 +22,19 @@ const BOARD_SIZE := Vector2(132, 196)
 
 ## Phone sizes.
 ##
-## These are not a style choice, they are arithmetic against the 540-unit mobile
-## viewport.
+## These are not a style choice, they are arithmetic. A board row is two boards
+## of three slots — six cards — side by side, and the mobile viewport is 540
+## design units wide. At the desktop BOARD_SIZE of 132 that row alone needs
+## `6 x 132 + separations` = ~850 units, which is why the first cut of mobile
+## mode was "zoomed in and cut off": the container was told to be narrower and
+## the cards inside it were not, so everything past the second card fell off the
+## edge. 78 x 116 is what actually fits: `6 x 78 + 5 x 4 + 2 x 10` = 508.
 ##
-## The first cut put both boards side by side on a phone — six card slots across
-## — which forces a 78-unit card and produced the "it is just the desktop layout,
-## smaller" problem. Combat now STACKS the two boards on a phone, so a row is
-## three slots, not six, and the budget per card roughly doubles:
-##
-##     3 x 150 + 2 x 4 + 2 x 6 = 470, inside 540 with room for the panel frame.
-##
-## 150 units is wide enough to carry the real card frame — name, HP, art,
-## keyword chips and an attack row — rather than the stripped micro card that
-## three slots of 78 units forced. That is the difference between reformatting
-## for a phone and shrinking a desktop.
-##
-## The hand keeps its own size because the hand row *scrolls* horizontally — it
-## is the one row allowed to exceed the viewport — and the hand is where cards
-## are actually read before being played.
-const BOARD_SIZE_MOBILE := Vector2(150, 205)
-const HAND_SIZE_MOBILE := Vector2(118, 184)
+## The hand keeps a larger card because the hand row *scrolls* horizontally —
+## it is the one row that may exceed the viewport — and the hand is where cards
+## are read before being played, so it is the wrong place to economise.
+const BOARD_SIZE_MOBILE := Vector2(78, 116)
+const HAND_SIZE_MOBILE := Vector2(112, 175)
 
 
 ## The card size for a mode, honouring the current layout.
@@ -78,19 +71,19 @@ static func size_for(m: int) -> Vector2:
 ## survives is therefore printed *larger* relative to the card than on desktop,
 ## because there is far less of it competing for the space.
 const METRICS := {
-	"title_size":         { "hand": 12, "board": 9,  "hand_m": 11, "board_m": 11 },
-	"stage_size":         { "hand": 8,  "board": 7,  "hand_m": 8,  "board_m": 8 },
-	"hp_size":            { "hand": 15, "board": 11, "hand_m": 14, "board_m": 14 },
-	"evolve_size":        { "hand": 8,  "board": 7,  "hand_m": 8,  "board_m": 8 },
-	"art_h":              { "hand": 74, "board": 40, "hand_m": 58, "board_m": 56 },
-	"chip_size":          { "hand": 8,  "board": 7,  "hand_m": 8,  "board_m": 8 },
-	"chip_h":             { "hand": 15, "board": 13, "hand_m": 14, "board_m": 14 },
-	"ability_title_size": { "hand": 9,  "board": 7,  "hand_m": 9,  "board_m": 9 },
-	"ability_text_size":  { "hand": 8,  "board": 7,  "hand_m": 8,  "board_m": 8 },
-	"attack_name_size":   { "hand": 10, "board": 8,  "hand_m": 10, "board_m": 10 },
-	"attack_dmg_size":    { "hand": 11, "board": 9,  "hand_m": 11, "board_m": 11 },
-	"icon_size":          { "hand": 10, "board": 7,  "hand_m": 9,  "board_m": 9 },
-	"footer_size":        { "hand": 8,  "board": 7,  "hand_m": 8,  "board_m": 8 },
+	"title_size":         { "hand": 12, "board": 9,  "hand_m": 10, "board_m": 8 },
+	"stage_size":         { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
+	"hp_size":            { "hand": 15, "board": 11, "hand_m": 12, "board_m": 11 },
+	"evolve_size":        { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
+	"art_h":              { "hand": 74, "board": 40, "hand_m": 46, "board_m": 34 },
+	"chip_size":          { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 7 },
+	"chip_h":             { "hand": 15, "board": 13, "hand_m": 13, "board_m": 12 },
+	"ability_title_size": { "hand": 9,  "board": 7,  "hand_m": 8,  "board_m": 6 },
+	"ability_text_size":  { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
+	"attack_name_size":   { "hand": 10, "board": 8,  "hand_m": 9,  "board_m": 7 },
+	"attack_dmg_size":    { "hand": 11, "board": 9,  "hand_m": 10, "board_m": 9 },
+	"icon_size":          { "hand": 10, "board": 7,  "hand_m": 9,  "board_m": 7 },
+	"footer_size":        { "hand": 8,  "board": 7,  "hand_m": 7,  "board_m": 6 },
 }
 
 var card: CardData
@@ -227,33 +220,33 @@ func _m(key: String) -> int:
 	return int(entry.get(col, 0))
 
 
-## Whether this card drops rows because its frame is too small to carry them.
+## A phone board card is 78 units wide, which is not enough for the full frame
+## at any font size — the art box, the ability banner and the attack rows would
+## each be a few pixels tall and legible as nothing.
 ##
-## Now always false, and kept as a named concept rather than deleted because the
-## reasoning is worth preserving: while phone mode put six slots in a row the
-## board card was 78 units and *had* to be a stripped card. Stacking the two
-## boards made the slot 150 units, which carries the real frame — so the phone
-## board card is once again the same card as the desktop one, and the
-## "one layout at two sizes" rule holds everywhere with no exception.
+## So the phone board card is deliberately a *different* card: name, HP, keyword
+## chips and the queued-attack marker, and nothing else. That is a real departure
+## from the "one layout at two sizes" rule this renderer was built on, and it is
+## justified by the same reasoning that rule was: the point was never uniformity
+## for its own sake, it was that a card must not *read* differently in two
+## places. A micro card omits information; it never contradicts the full one, and
+## tapping it opens the full frame (Combat's hover/tap zoom).
 func _is_micro() -> bool:
-	return false
+	return _phone and mode == Mode.BOARD
 
 
 func _frame_style() -> StyleBoxFlat:
 	var border := Palette.BORDER
-	var bg := Palette.PANEL_LIGHT
-
-	if enemy:
-		bg = Color("141a24")     ## cool slate, so sides read apart instantly
+	var bg := _ground()
 
 	if card.is_energy():
 		border = Palette.GOLD
-		bg = Color("2a2210")
+		bg = _tinted(Palette.GOLD, 0.16)
 	elif card.is_support_like():
 		## Supports read as their own class at a glance: teal rather than the
 		## energy gold or the unit's HP-tinted border.
 		border = Palette.TOWER
-		bg = Color("11242a")
+		bg = _tinted(Palette.TOWER, 0.14)
 
 	if unit != null:
 		border = Palette.hp_color(unit.hp, unit.max_hp())
@@ -264,20 +257,55 @@ func _frame_style() -> StyleBoxFlat:
 		border = highlight
 	if selected:
 		border = Palette.ACCENT
-		bg = Palette.ACCENT_DIM.darkened(0.4)
+		bg = _tinted(Palette.ACCENT, 0.2)
 
 	var s := StyleBoxFlat.new()
 	s.bg_color = bg
 	s.border_color = border
 	s.set_border_width_all(3 if selected else 2)
-	s.set_corner_radius_all(8)
+	## The top edge is drawn a shade brighter than the rest, which is how every
+	## surface in the UI implies the same overhead light. A real gradient fill is
+	## unavailable here — see `Palette.lit_style`, which documents the headless
+	## hang that rules it out.
+	s.set_corner_radius_all(9)
 	s.content_margin_left = 7
 	s.content_margin_right = 7
 	s.content_margin_top = 6
 	s.content_margin_bottom = 6
-	s.shadow_color = Color(0, 0, 0, 0.35)
-	s.shadow_size = 3
+	## A card should read as an object lying above the board, not as a region
+	## painted onto it. Selected cards lift further, which is the depth cue doing
+	## the work an outline alone used to do.
+	s.shadow_color = Color(0, 0, 0, 0.55 if selected else 0.42)
+	s.shadow_size = 7 if selected else 4
+	s.shadow_offset = Vector2(0, 3 if selected else 2)
 	return s
+
+
+## The card's resting background: the neutral panel ground, pulled a little way
+## toward its own faction colour.
+##
+## Every card used to sit on the same two fills (one for yours, one cooler for
+## the enemy's), so a hand of four factions read as four identical grey frames
+## with differently-coloured text on them. A faint tint — deliberately faint, a
+## sixth of the way — makes a Gaia card recognisably green-grounded and a Void
+## card slate before a single word is read, which is the whole job of faction
+## colour on a card.
+func _ground() -> Color:
+	var base: Color = Palette.PANEL_LIGHT
+	if enemy:
+		## The enemy's side stays cooler and darker, so the two sides separate
+		## instantly even when both are playing the same faction.
+		base = Color("121826")
+	if card == null or card.faction == "":
+		return base
+	return base.lerp(Palette.faction_shade(card.faction, "deep"), 0.22)
+
+
+## The ground tinted toward an arbitrary colour, for the card classes that are
+## identified by role rather than by faction (energy, supports, selection).
+func _tinted(c: Color, amount: float) -> Color:
+	var base: Color = Color("121826") if enemy else Palette.PANEL_LIGHT
+	return base.lerp(c, amount)
 
 
 ## The header, in Pokémon's reading order:
@@ -336,7 +364,7 @@ func _add_header(root: VBoxContainer) -> void:
 	## The faction dot. A card's color is its energy color (CLAUDE.md: a faction
 	## *is* an energy color), so one dot in a fixed corner identifies the color
 	## without spending a row on the word.
-	var dot := EnergyIcon.new(Palette.faction_color(card.faction), true, false, _m("hp_size") * 0.72)
+	var dot := EnergyIcon.new(Palette.faction_color(card.faction), true, false, _m("hp_size") * 0.72, card.faction)
 	row.add_child(dot)
 
 	## Row 2 — the name, at the frame's full width.
@@ -816,13 +844,13 @@ func _cost_icons(atk: AttackData, attached: int) -> Control:
 
 	## The attack's printed color, falling back to the card's own faction when the
 	## cost block named none (a purely colorless cost).
-	var col: Color = Palette.faction_color(
-		atk.cost_color if atk.cost_color != "" else card.faction)
+	var fac: String = atk.cost_color if atk.cost_color != "" else card.faction
+	var col: Color = Palette.faction_color(fac)
 
 	for i in cost:
 		var is_colorless: bool = i >= atk.cost_faction
 		var is_filled: bool = unit != null and i < attached
-		box.add_child(EnergyIcon.new(col, is_filled, is_colorless, _m("icon_size")))
+		box.add_child(EnergyIcon.new(col, is_filled, is_colorless, _m("icon_size"), fac))
 	return box
 
 
@@ -939,7 +967,7 @@ func _add_play_cost(root: VBoxContainer) -> void:
 
 	## Priced: icons, so the cost reads the same way an attack's does.
 	for _i in card.cost:
-		row.add_child(EnergyIcon.new(Palette.faction_color(card.faction), true, false, _m("icon_size")))
+		row.add_child(EnergyIcon.new(Palette.faction_color(card.faction), true, false, _m("icon_size"), card.faction))
 
 	var lbl := Label.new()
 	lbl.text = "to play"

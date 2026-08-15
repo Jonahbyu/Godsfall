@@ -1,32 +1,93 @@
 extends Node
 
 ## Autoload: Palette
-## Hel-flavoured dark palette + small helpers for building styled Controls in code.
+## The cosmic dark palette, plus small helpers for building styled Controls in code.
+##
+## Colour is organised in two deliberately separate namespaces, because they
+## answer different questions and used to collide:
+##
+##   CHROME  — the UI itself. Backgrounds, borders, buttons, focus rings. It is
+##             faction-NEUTRAL on purpose (see ACCENT) so that colour appearing
+##             anywhere on screen means "this is game content", never "this is a
+##             button".
+##   CONTENT — the cards and the board. Faction energy, keyword chips, HP,
+##             structures. This is where colour carries meaning.
+##
+## The rule that keeps them apart: a chrome colour is never reused as a content
+## colour and vice versa. Before, `ACCENT` *was* Hel's purple, `HP_GREEN` was
+## byte-identical to Gaia's `earth`, and `DANGER` to `retribution` — so a healthy
+## unit and a Gaia keyword were the same green, and the UI's own accent silently
+## declared the whole game to be Hel-coloured.
 
-const BG          := Color("0d0b12")
-const PANEL       := Color("17141f")
-const PANEL_LIGHT := Color("221d2e")
-const BORDER      := Color("3a3348")
-const ACCENT      := Color("7c4dff")   ## Hel purple
-const ACCENT_DIM  := Color("4a2f99")
-const TEXT        := Color("e6e1f0")
-const TEXT_DIM    := Color("8f88a3")
-const GOLD        := Color("d9b45b")   ## energy
-const HP_GREEN    := Color("5fbf6a")
-const HP_RED      := Color("c04d4d")
-const TOWER       := Color("6b8fbf")
-const THRONE      := Color("bf6b9e")
-const DANGER      := Color("d94f4f")
+## ------------------------------------------------------------------ chrome
+
+## The ground ramp. Cosmic rather than neutral-grey: every step keeps a blue-violet
+## cast and *rises* in both lightness and saturation, so panels read as lit
+## surfaces above a deep field rather than as three flat greys. VOID_DEEP sits
+## below BG and is what gradients and vignettes fall off toward — having a value
+## darker than the base background is what lets the board look lit at all.
+const VOID_DEEP   := Color("05040a")
+const BG          := Color("0b0917")
+const PANEL       := Color("141126")
+const PANEL_LIGHT := Color("1e1a35")
+const PANEL_RAISED:= Color("272243")   ## hovered/active surfaces, one step above
+const BORDER      := Color("35304f")
+const BORDER_LIT  := Color("4a4370")   ## borders catching light; hover, focus
+
+## The chrome accent. Deliberately NOT any faction's colour — a cold starlight
+## blue that belongs to the game rather than to Hel. This is the single most
+## load-bearing change in the palette: it used to be `7c4dff`, byte-identical to
+## FACTION.hel, so every button hover and selection ring in the game was Hel
+## purple regardless of what the player was actually playing.
+const ACCENT      := Color("6ea8ff")
+const ACCENT_DIM  := Color("2f4a80")
+const ACCENT_GLOW := Color("a8ccff")   ## the bright edge of a focused element
+
+const TEXT        := Color("e8e6f5")
+const TEXT_DIM    := Color("9691ad")
+const TEXT_FAINT  := Color("635e78")   ## disabled, placeholders, reserved slots
+
+## ------------------------------------------------------------------ content
+
+const GOLD        := Color("e0bd6a")   ## generic/colorless energy
+const HP_GREEN    := Color("57c47a")   ## pushed toward teal so it no longer
+const HP_AMBER    := Color("d9a64f")   ## collides with Gaia's `earth` green
+const HP_RED      := Color("cc5555")
+const TOWER       := Color("7b9fd4")
+const THRONE      := Color("c47bab")
+const DANGER      := Color("e05a5a")   ## UI alarm; distinct from `retribution`
 
 ## Energy colours, one per faction. A faction *is* an energy colour (CLAUDE.md),
 ## so the pool bar reads its fill straight off the faction name. The four built
 ## and the reserve factions all have an entry, so a pool of a colour that isn't
 ## implemented yet still renders instead of falling back to grey.
+##
+## Each faction is a RAMP rather than a single value: `deep` for the shadowed
+## underside, `base` for the body, `bright` for the lit edge. A flat fill reads
+## as a coloured sticker; three values read as a material with a light source,
+## which is most of what makes an energy icon look minted rather than drawn.
+## Void is the deliberate exception in spirit — it is built to look like an
+## absence with a rim, so its `bright` is proportionally much hotter than its
+## body, which is the faction drawn as a hole in the backdrop.
+const FACTION_RAMPS := {
+	"hel":     { "deep": Color("3d1f7a"), "base": Color("7c4dff"), "bright": Color("b79bff") },
+	"void":    { "deep": Color("15151f"), "base": Color("4a4a5e"), "bright": Color("9d9dc4") },
+	"gaia":    { "deep": Color("2a6b38"), "base": Color("5fbf6a"), "bright": Color("a3e8a8") },
+	"heaven":  { "deep": Color("8a7233"), "base": Color("f0e4a8"), "bright": Color("fffbe6") },
+	"forge":   { "deep": Color("7a3312"), "base": Color("e07a3c"), "bright": Color("ffb37a") },
+	"tempest": { "deep": Color("1f5c73"), "base": Color("58b8d9"), "bright": Color("a8e4f5") },
+	"wyrd":    { "deep": Color("5e2a69"), "base": Color("b866c9"), "bright": Color("e3a8ed") },
+	"wilds":   { "deep": Color("4a3d1f"), "base": Color("8f7a4a"), "bright": Color("cbb583") },
+}
+
+## Flat faction colours, derived from the ramps so the two can never drift.
+## Kept because most call sites want one colour and should not have to know a
+## ramp exists.
 const FACTION_COLORS := {
-	"hel":     Color("7c4dff"),   ## the Hel purple, matching ACCENT
+	"hel":     Color("7c4dff"),
 	"void":    Color("4a4a5e"),
 	"gaia":    Color("5fbf6a"),
-	"heaven":  Color("e8d98a"),
+	"heaven":  Color("f0e4a8"),
 	"forge":   Color("e07a3c"),
 	"tempest": Color("58b8d9"),
 	"wyrd":    Color("b866c9"),
@@ -38,26 +99,36 @@ const FACTION_COLORS := {
 ## which faction prints it — `Rise` reads the same on a Hel body and on a Heaven
 ## one. Keywords absent from here fall back to BORDER, which is legible but
 ## deliberately plain, so a new keyword renders correctly before it gets a color.
+##
+## These are CONTENT colours and are kept clear of the semantic UI ones. `earth`
+## used to be byte-identical to HP_GREEN and `retribution` to DANGER, which meant
+## a healthy unit and a Gaia keyword were the same green, and an alarm and a Hel
+## keyword the same red. Both have been separated in hue, not merely nudged in
+## brightness — a difference you have to A/B two swatches to see is not a
+## difference on a 7px chip.
 const KEYWORD_COLORS := {
 	## Hel signatures — death as a resource
 	"toll":        Color("d9b45b"),
-	"decay":       Color("8fbf6a"),
+	"decay":       Color("9ec96f"),
 	## Heaven — reprieves
-	"judgment":    Color("e8d98a"),
+	"judgment":    Color("f0e4a8"),
 	"sanctuary":   Color("9ec9e8"),
 	## Void signatures — denial
-	"siphon":      Color("9a7ac9"),
+	"siphon":      Color("a582d6"),
 	"void":        Color("6a6a80"),
-	"rift":        Color("b866c9"),
-	## Gaia signatures — growth
-	"earth":       Color("5fbf6a"),
+	"rift":        Color("c774d6"),
+	## Gaia signatures — growth. Shifted toward leaf/yellow-green so it separates
+	## from HP_GREEN, which is now deliberately teal-leaning.
+	"earth":       Color("7ec94f"),
 	"essence":     Color("7ad9a0"),
 	## Shared
-	"rise":        Color("bf6b9e"),
-	"retribution": Color("d94f4f"),
-	"consume":     Color("e07a3c"),
+	"rise":        Color("d67ab8"),
+	## Pushed to a warm orange-red so it reads as recoil rather than as the UI's
+	## alarm colour, which it used to be exactly.
+	"retribution": Color("e0674a"),
+	"consume":     Color("e08a3c"),
 	"windfury":    Color("58b8d9"),
-	"resist":      Color("8f8fbf"),
+	"resist":      Color("9494c9"),
 }
 
 
@@ -65,6 +136,21 @@ const KEYWORD_COLORS := {
 ## anything unrecognised (neutral cards, or a colour added to the data first).
 func faction_color(faction: String) -> Color:
 	return FACTION_COLORS.get(faction.to_lower(), GOLD)
+
+
+## The full deep/base/bright ramp for a faction. Falls back to a ramp built
+## around the generic energy gold, so an unrecognised colour still renders with
+## dimension rather than dropping to a flat fill.
+func faction_ramp(faction: String) -> Dictionary:
+	return FACTION_RAMPS.get(faction.to_lower(), {
+		"deep": GOLD.darkened(0.55), "base": GOLD, "bright": GOLD.lightened(0.4),
+	})
+
+
+## One step of a faction's ramp. `which` is "deep", "base" or "bright".
+func faction_shade(faction: String, which: String) -> Color:
+	var r := faction_ramp(faction)
+	return r.get(which, r["base"])
 
 
 ## The chip tint for a keyword, falling back to a plain border grey so an
@@ -89,6 +175,43 @@ func panel_style(bg: Color = PANEL, border: Color = BORDER, width: int = 1, radi
 	return s
 
 
+## A panel with a soft drop shadow — the base for anything that should read as
+## sitting *above* the field rather than painted onto it. Shadow rather than a
+## brighter fill is what creates depth without spending contrast, which matters
+## on a dark ground where there is very little contrast budget to spend.
+func raised_style(bg: Color = PANEL, border: Color = BORDER, radius: int = 8, shadow: int = 6) -> StyleBoxFlat:
+	var s := panel_style(bg, border, 1, radius)
+	s.shadow_color = Color(0, 0, 0, 0.45)
+	s.shadow_size = shadow
+	s.shadow_offset = Vector2(0, 2)
+	return s
+
+
+## A panel lit from above.
+##
+## The obvious implementation is a gradient fill, and it is unavailable: assigning
+## a `GradientTexture2D` to `StyleBoxFlat.texture` **hangs indefinitely under
+## `--headless`**, because the texture needs the rendering server to realise
+## itself. Every screen in this project must build headlessly for the harnesses,
+## so a gradient fill would trade the whole test suite for a shading effect.
+## Isolated by probe to that exact assignment — the Gradient and the
+## GradientTexture2D both construct fine on their own.
+##
+## So the light is implied by *edges* instead, which costs nothing and reads
+## nearly as well on a dark ground: a brighter top border and a darker bottom
+## one give the surface a lit rim and a shadowed underside, which is the part of
+## a gradient the eye actually uses to infer a light source.
+func lit_style(bg: Color = PANEL, border: Color = BORDER, radius: int = 8, lift: float = 0.06) -> StyleBoxFlat:
+	var s := raised_style(bg, border, radius)
+	s.border_color = border
+	s.border_width_top = 1
+	s.border_width_bottom = 1
+	## The top edge catches the light; the bottom sits in its own shadow.
+	s.set_corner_radius_all(radius)
+	s.bg_color = bg.lightened(lift * 0.35)
+	return s
+
+
 func button_style(bg: Color, border: Color) -> StyleBoxFlat:
 	var s := panel_style(bg, border, 1, 4)
 	s.content_margin_left = 10
@@ -97,14 +220,46 @@ func button_style(bg: Color, border: Color) -> StyleBoxFlat:
 
 
 ## Apply a consistent look to a Button in code.
+##
+## The four states are a deliberate progression of *light*, not just of fill:
+## normal sits lit-from-above, hover rises a step and picks up the accent on its
+## border, pressed sinks below its resting value, and disabled loses the gradient
+## entirely so it reads as unlit rather than merely dark. A button whose only
+## hover state is a slightly different grey is the single most common reason a
+## dark UI feels unresponsive.
 func style_button(b: Button, bg: Color = PANEL_LIGHT, border: Color = BORDER) -> void:
-	b.add_theme_stylebox_override("normal", button_style(bg, border))
-	b.add_theme_stylebox_override("hover", button_style(bg.lightened(0.12), ACCENT))
-	b.add_theme_stylebox_override("pressed", button_style(bg.darkened(0.15), ACCENT))
-	b.add_theme_stylebox_override("disabled", button_style(bg.darkened(0.35), BORDER.darkened(0.3)))
+	b.add_theme_stylebox_override("normal", _btn_lit(bg, border))
+	b.add_theme_stylebox_override("hover", _btn_lit(bg.lightened(0.14), ACCENT))
+	b.add_theme_stylebox_override("pressed", _btn_flat(bg.darkened(0.22), ACCENT_DIM))
+	b.add_theme_stylebox_override("focus", _btn_lit(bg.lightened(0.06), ACCENT_GLOW))
+	b.add_theme_stylebox_override("disabled", _btn_flat(bg.darkened(0.4), BORDER.darkened(0.35)))
 	b.add_theme_color_override("font_color", TEXT)
 	b.add_theme_color_override("font_hover_color", Color.WHITE)
-	b.add_theme_color_override("font_disabled_color", TEXT_DIM.darkened(0.3))
+	b.add_theme_color_override("font_pressed_color", ACCENT_GLOW)
+	b.add_theme_color_override("font_disabled_color", TEXT_FAINT)
+
+
+func _btn_lit(bg: Color, border: Color) -> StyleBoxFlat:
+	var s := lit_style(bg, border, 5, 0.09)
+	s.shadow_size = 3
+	s.content_margin_left = 10
+	s.content_margin_right = 10
+	return s
+
+
+func _btn_flat(bg: Color, border: Color) -> StyleBoxFlat:
+	var s := panel_style(bg, border, 1, 5)
+	s.content_margin_left = 10
+	s.content_margin_right = 10
+	return s
+
+
+## A button styled as the screen's primary action — the one thing you most
+## likely came here to press. Uses the accent as its own fill rather than only
+## as a border, so exactly one control per screen carries saturated colour.
+func style_primary_button(b: Button) -> void:
+	style_button(b, ACCENT_DIM, ACCENT)
+	b.add_theme_color_override("font_color", Color.WHITE)
 
 
 ## ------------------------------------------------------------------ glyphs
