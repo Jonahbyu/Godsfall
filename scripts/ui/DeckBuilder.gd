@@ -233,6 +233,12 @@ func _build() -> void:
 	clear.pressed.connect(func(): DeckStore.clear())
 	top.add_child(clear)
 
+	## Keep clear of the settings cog, drawn on a CanvasLayer above the scene and
+	## therefore invisible to this layout — "Clear" sat underneath it.
+	var cog_gap := Control.new()
+	cog_gap.custom_minimum_size = Vector2(Palette.COG_RESERVE, 0)
+	top.add_child(cog_gap)
+
 	_errors = Palette.label("", 13, Palette.DANGER)
 	root.add_child(_errors)
 

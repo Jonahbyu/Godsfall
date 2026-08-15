@@ -663,6 +663,37 @@ func factions_at(i: int) -> Array:
 	return out
 
 
+## The one card that best represents a deck, for the deck list's art tile.
+##
+## Every card game fronts a saved deck with a picture rather than a name, because
+## a shelf of ten identical rows is a reading task and a shelf of ten pictures is
+## a looking one. The pick has to be deterministic — a hero that changed between
+## refreshes would make the list flicker — so it is a plain ranking rather than
+## anything random or usage-based:
+##
+##   the highest-stage unit, then the most expensive, then alphabetical
+##
+## Stage first because a deck's Stage 2 is what it is *trying* to do, and cost
+## breaks the tie because among equals the expensive one is the payoff. Energy
+## and supports are skipped: an energy card is the same picture in every deck of
+## that colour, which is the opposite of identifying one. A deck holding no units
+## at all returns null and the caller falls back to the faction spine alone.
+func hero_card_at(i: int) -> CardData:
+	var best: CardData = null
+	var best_cost: int = -1
+	for id in cards_at(i):
+		var c: CardData = CardDB.get_card(id)
+		if c == null or not c.is_unit():
+			continue
+		var cost: int = 0
+		for a in c.attacks:
+			cost = maxi(cost, a.total_cost())
+		if best == null 				or c.stage > best.stage 				or (c.stage == best.stage and cost > best_cost) 				or (c.stage == best.stage and cost == best_cost and c.name < best.name):
+			best = c
+			best_cost = cost
+	return best
+
+
 ## Energy is the *only* exempt type. Supports obey the 4-copy limit like units —
 ## exempting them too would turn the deck into a combo engine.
 func is_energy(card_id: String) -> bool:

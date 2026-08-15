@@ -24,6 +24,21 @@ extends CanvasLayer
 
 const MARGIN := 10
 
+## How much top-right space the cog occupies, for screens to reserve.
+##
+## The cog is drawn on a CanvasLayer above every scene and is therefore invisible
+## to each screen's layout — so a top bar that runs its controls to the right
+## edge puts them *underneath* it. Deck select's "+ New Deck" and the deck
+## builder's "Clear" were both partly covered.
+##
+## Published as a constant rather than fixed with per-screen padding so there is
+## one number, and it is the same number the cog positions itself with. A screen
+## reserves it by adding a spacer of `Palette.COG_RESERVE` at the end of its top
+## row. That constant lives on `Palette` because an autoload cannot be named at
+## a screen's class scope without breaking the headless harnesses; `_build`
+## asserts the two agree so they cannot drift apart silently.
+const BTN_SIZE := Vector2(44, 32)
+
 var _panel: PanelContainer
 var _btn: Button
 var _pick: OptionButton
@@ -50,7 +65,14 @@ func _build() -> void:
 	_btn.text = Palette.glyph("settings")
 	_btn.tooltip_text = "Display settings"
 	_btn.add_theme_font_size_override("font_size", 14)
-	_btn.custom_minimum_size = Vector2(44, 32)
+	_btn.custom_minimum_size = BTN_SIZE
+
+	## The screens reserve `Palette.COG_RESERVE` for this button. If the button
+	## ever grows past what they reserve it silently overlaps their controls
+	## again, which is the exact bug this constant was introduced to fix — so
+	## the two are checked against each other rather than kept in step by hand.
+	assert(BTN_SIZE.x + MARGIN * 2 <= Palette.COG_RESERVE,
+		"settings cog is wider than the space screens reserve for it")
 	Palette.style_button(_btn, Palette.PANEL, Palette.BORDER)
 	_btn.pressed.connect(_toggle)
 	add_child(_btn)

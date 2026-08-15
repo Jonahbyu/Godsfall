@@ -2,7 +2,7 @@ extends SceneTree
 
 ## Total assertions this harness is expected to run; see the check at
 ## the end of the run. Update deliberately when assertions change.
-const EXPECTED_ASSERTIONS := 64
+const EXPECTED_ASSERTIONS := 70
 
 ## Exercises the saved-deck collection: create, select, rename, duplicate,
 ## delete, per-deck validation, and round-tripping through disk.
@@ -46,6 +46,7 @@ func _initialize() -> void:
 	_survives_cold_carddb(ds)
 	_opponent_choice(ds)
 	_seed_samples(ds)
+	_hero_card(ds)
 
 	## A harness that errors out mid-run still reports "0 failed", because an
 	## assertion that never RUNS cannot fail — that is how the Gaia harness passed
@@ -347,3 +348,70 @@ func _seed_samples(ds) -> void:
 	_check("seeded decks are named", bare.name_at(0) != "")
 	_check("seeded decks deal a full list", bare.list_at(0).size() == ds.DECK_SIZE)
 	bare.free()
+
+
+## `hero_card_at` picks the one card that fronts a deck in the deck list. It has
+## to be deterministic — a hero that changed between refreshes would make the
+## list flicker as it rebuilt — and it has to skip non-units, since an energy
+## card is the same picture in every deck of that colour.
+func _hero_card(ds) -> void:
+	print("
+Hero card:")
+
+	ds.decks = []
+	ds.active_index = 0
+	ds.seed_samples()
+
+	## Every shipped deck must front *something*, or the list falls back to a
+	## bare spine for a deck that plainly has units in it.
+	var all_have := true
+	for i in ds.deck_count():
+		if ds.hero_card_at(i) == null:
+			all_have = false
+	_check("every sample deck has a hero", all_have)
+
+	## Stable across calls: same deck, same answer, every time.
+	var a = ds.hero_card_at(0)
+	var b = ds.hero_card_at(0)
+	_check("hero is deterministic", a != null and b != null and a.id == b.id)
+
+	## Never an energy card or a support — those identify a colour, not a deck.
+	var units_only := true
+	for i in ds.deck_count():
+		var h = ds.hero_card_at(i)
+		if h != null and not h.is_unit():
+			units_only = false
+	_check("hero is always a unit", units_only)
+
+	## The highest stage present wins, because a deck's Stage 2 is what it is
+	## trying to do. Checked against the deck's own contents rather than against
+	## a hardcoded card name, so it survives any future rebalancing of the lists.
+	## `CardDB` is resolved through the tree rather than named directly: naming
+	## an autoload at class scope drags it into compile time under `--script`,
+	## which fails before `_initialize` ever runs. Same trap the decision log
+	## records for `Palette` in EnergyIcon.
+	var db = root.get_node_or_null("CardDB")
+	var stage_ok := db != null
+	for i in ds.deck_count():
+		var h = ds.hero_card_at(i)
+		if h == null:
+			continue
+		var best := 0
+		for id in ds.cards_at(i):
+			var c = db.get_card(id)
+			if c != null and c.is_unit():
+				best = maxi(best, c.stage)
+		if h.stage != best:
+			stage_ok = false
+	_check("hero is the highest stage in the deck", stage_ok)
+
+	## A deck holding no units returns null rather than raising, so the caller
+	## can fall back to the faction spine alone.
+	var i2: int = ds.create_deck("Energy Only")
+	ds.select(i2)
+	ds.add("hel_energy")
+	_check("unit-less deck has no hero", ds.hero_card_at(i2) == null)
+
+	## An empty deck likewise.
+	var i3: int = ds.create_deck("Empty")
+	_check("empty deck has no hero", ds.hero_card_at(i3) == null)

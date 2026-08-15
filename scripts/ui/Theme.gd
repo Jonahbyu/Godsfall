@@ -265,6 +265,22 @@ func style_primary_button(b: Button) -> void:
 	b.add_theme_color_override("font_color", Color.WHITE)
 
 
+## A `PopupMenu` styled to match the panels around it.
+##
+## Godot's default popup is a light-grey system menu, which on this ground looks
+## like a different application has opened on top of the game. Every popup in
+## the project goes through here so there is one place to change them.
+func style_popup(p: PopupMenu) -> void:
+	p.add_theme_stylebox_override("panel", panel_style(PANEL_LIGHT, BORDER_LIT, 1, 8))
+	p.add_theme_stylebox_override("hover", panel_style(PANEL_RAISED, PANEL_RAISED, 0, 5))
+	p.add_theme_color_override("font_color", TEXT)
+	p.add_theme_color_override("font_hover_color", ACCENT_GLOW)
+	p.add_theme_color_override("font_disabled_color", TEXT_FAINT)
+	p.add_theme_color_override("font_separator_color", TEXT_FAINT)
+	p.add_theme_font_size_override("font_size", TYPE_BODY)
+	p.add_theme_constant_override("v_separation", SPACE_SM)
+
+
 ## ------------------------------------------------------------------ fonts
 
 ## The two bundled families.
@@ -375,6 +391,19 @@ const SPACE_MD := 8
 const SPACE_LG := 14
 const SPACE_XL := 22
 
+## Width the settings cog occupies in every screen's top-right corner.
+##
+## The cog lives on a CanvasLayer above the scene, so it is invisible to each
+## screen's layout — a top bar that runs its controls to the right edge puts
+## them *underneath* it. Deck select's "+ New Deck" and the deck builder's
+## "Clear" were both partly covered by it.
+##
+## It lives here rather than on the `Settings` autoload because an autoload has
+## no `class_name`: naming `Settings` at class scope in a screen would drag the
+## autoload into compile time and break every headless harness, which is a trap
+## this project has already hit twice. `SettingsButton` asserts it matches.
+const COG_RESERVE := 64
+
 
 ## A section heading: small, wide-tracked, and dim.
 ##
@@ -448,6 +477,9 @@ const GLYPH := {
 	"locked":    "[L]",   ## attack lock on
 	"unlocked":  "[ ]",   ## attack lock off
 	"random":    "?",     ## the Random opponent entry
+	## Overflow menu. U+2026 HORIZONTAL ELLIPSIS is in the Inter subset
+	## (checked with has_char, not by eye); U+22EF MIDLINE ELLIPSIS is not.
+	"more":      "…",     ## row actions collapsed behind one button
 	## The settings cog. A real gear (U+2699) is not in Open Sans, so this is the
 	## ASCII stand-in — read as a small dial rather than a gear, which is the same
 	## affordance at this size.

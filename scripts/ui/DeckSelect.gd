@@ -11,6 +11,11 @@ const MENU_SCENE := "res://scenes/MainMenu.tscn"
 const COMBAT_SCENE := "res://scenes/Combat.tscn"
 const BUILDER_SCENE := "res://scenes/DeckBuilder.tscn"
 
+## Height of a deck row's hero card thumbnail. Sized so a row stays comfortably
+## clickable and about eight decks are visible at once on a 900-unit desktop —
+## a shelf you scan rather than a list you scroll.
+const HERO_H := 74.0
+
 ## Set false by the main menu's "Manage Decks" entry, so the screen shows
 ## "Edit" as the primary action instead of "Fight".
 var for_combat: bool = true
@@ -116,6 +121,13 @@ func _build() -> void:
 	new_btn.pressed.connect(_on_new)
 	top.add_child(new_btn)
 
+	## Keep clear of the settings cog, which is drawn on a CanvasLayer above the
+	## scene and is therefore invisible to this layout. Without this reservation
+	## "+ New Deck" sits underneath it.
+	var cog_gap := Control.new()
+	cog_gap.custom_minimum_size = Vector2(Palette.COG_RESERVE, 0)
+	top.add_child(cog_gap)
+
 	## --- rename row, hidden until a rename starts
 	_rename_row = HBoxContainer.new()
 	_rename_row.add_theme_constant_override("separation", 8)
@@ -162,7 +174,12 @@ func _build() -> void:
 		middle.add_theme_constant_override("separation", 10)
 	else:
 		var split := HSplitContainer.new()
-		split.split_offset = 560
+		## The list is the screen's purpose and now carries an art plate per row,
+		## so it takes the larger share. At 560 the rows were cramped enough to
+		## clip an illegal deck's reason mid-word while the contents pane sat
+		## half empty — a 60-card list is two narrow columns of short lines, not
+		## a wide one.
+		split.split_offset = 700
 		middle = split
 	middle.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	root.add_child(middle)
@@ -391,9 +408,6 @@ func _deck_row(i: int) -> Control:
 		Palette.ACCENT if is_active else Palette.BORDER
 	)
 
-	## Desktop puts the name and the three actions on one line. On a phone the
-	## name needs the full width to stay readable, so the actions drop to a
-	## second line underneath it and stretch to share it evenly.
 	## A colour spine down the left edge, so a deck is identifiable by what it
 	## plays before its name is read. Ten decks as ten identical panels made
 	## finding one a reading task.
@@ -402,66 +416,110 @@ func _deck_row(i: int) -> Control:
 	panel.add_child(spined)
 	spined.add_child(FactionSpine.new(DeckStore.factions_at(i)))
 
+	## The deck's hero card, as a real card frame. Every card game fronts a saved
+	## deck with a picture rather than a name — a shelf of pictures is scanned,
+	## a column of identical rows is read. Dropped on a phone, where the width is
+	## needed for the name and the spine already carries the colour.
+	if not _mobile:
+		var hero: CardData = DeckStore.hero_card_at(i)
+		if hero != null:
+			spined.add_child(DeckArtTile.new(hero, HERO_H))
+
 	var outer := VBoxContainer.new()
-	outer.add_theme_constant_override("separation", Palette.SPACE_SM + 2)
+	outer.add_theme_constant_override("separation", Palette.SPACE_XS)
 	outer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	outer.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	spined.add_child(outer)
 
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
-	outer.add_child(row)
-
-	var actions := row
-	if _mobile:
-		actions = HBoxContainer.new()
-		actions.add_theme_constant_override("separation", 6)
-		outer.add_child(actions)
-
-	## The whole left side is the select button.
+	## The whole text block is the select target, so picking a deck is one large
+	## click rather than a hunt for a small button.
 	var pick := Button.new()
 	pick.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	pick.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	pick.custom_minimum_size = Vector2(0, 40)
-	pick.add_theme_font_size_override("font_size", 15)
-	var mark := "* " if is_active else "  "
-	var warn := "" if legal else "   !"
-	pick.text = "%s%s%s\n      %d cards · %d energy" % [
-		mark, DeckStore.name_at(i), warn, DeckStore.total_at(i), DeckStore.energy_at(i)
+	## Sized to the text, not to the art plate beside it. Stretching the button
+	## to the plate's full height left the name stranded in a large empty box —
+	## the row's height is the plate's job, and the VBox centres this against it.
+	pick.custom_minimum_size = Vector2(0, 44 if _mobile else 34)
+	pick.add_theme_font_size_override("font_size", Palette.TYPE_SUBHEAD)
+	pick.clip_text = true
+	pick.tooltip_text = "Play with “%s”" % DeckStore.name_at(i)
+	pick.text = "%s%s" % [
+		(Palette.glyph("active") + " ") if is_active else "",
+		DeckStore.name_at(i),
 	]
-	Palette.style_button(pick, Palette.ACCENT_DIM.darkened(0.45) if is_active else Palette.PANEL_LIGHT)
+	## Flat until it is the active deck. Ten filled buttons in a column is ten
+	## things claiming to be pressed; the selected row is the only one that reads
+	## as a control, and the panel behind it carries the accent border. A filled
+	## box the width of the row also made the name look stranded inside it.
+	Palette.style_button(pick,
+		Palette.ACCENT_DIM.darkened(0.45) if is_active else Palette.PANEL)
+	if not is_active:
+		pick.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
 	if not legal:
 		pick.add_theme_color_override("font_color", Palette.DANGER)
 	pick.pressed.connect(func():
 		DeckStore.select(i)
 		_show_detail(i)
 	)
-	row.add_child(pick)
+	outer.add_child(pick)
 
-	actions.add_child(_icon_button("Rename", func(): _start_rename(i)))
-	actions.add_child(_icon_button("Copy", func(): DeckStore.duplicate_deck(i)))
+	## The stat line sits *outside* the button rather than as a second line of
+	## its label, so the count and the warning can be coloured independently of
+	## the deck name — an illegal deck needs its reason marked, not its title.
+	outer.add_child(_deck_stats(i, legal))
 
-	var del := _icon_button("Delete", func(): DeckStore.delete_deck(i))
-	del.disabled = DeckStore.deck_count() <= 1
-	del.tooltip_text = "The last deck can't be deleted." if del.disabled else "Delete this deck"
-	Palette.style_button(del, Palette.PANEL_LIGHT, Palette.DANGER if not del.disabled else Palette.BORDER)
-	actions.add_child(del)
+	## Rename / Copy / Delete behind one "…". Thirty buttons for ten decks made
+	## the destructive actions the loudest thing on a screen whose only job is
+	## picking one — see OverflowMenu.
+	var menu := OverflowMenu.new([
+		{ "label": "Rename", "cb": func(): _start_rename(i) },
+		{ "label": "Duplicate", "cb": func(): DeckStore.duplicate_deck(i) },
+		{ "label": "Edit cards", "cb": func():
+			DeckStore.select(i)
+			get_tree().change_scene_to_file(BUILDER_SCENE) },
+		{
+			"label": "Delete", "danger": true,
+			"disabled": DeckStore.deck_count() <= 1,
+			"tooltip": "The last deck can't be deleted.",
+			"cb": func(): DeckStore.delete_deck(i),
+		},
+	], _mobile)
+	menu.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	spined.add_child(menu)
 
 	return panel
 
 
-func _icon_button(text: String, cb: Callable) -> Button:
-	var b := Button.new()
-	b.text = text
-	## 40 tall on a desktop is already a fine pointer target; on a phone it is
-	## the minimum comfortable touch target, and the three of them share the row
-	## rather than sitting at their text width.
-	b.custom_minimum_size = Vector2(0, 44 if _mobile else 40)
-	b.add_theme_font_size_override("font_size", 13)
-	if _mobile:
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	Palette.style_button(b)
-	b.pressed.connect(cb)
-	return b
+## "60 cards · 19 energy", or the reason the deck can't be played.
+##
+## Legal decks say nothing about legality — a green tick on every row is noise.
+## An illegal one states what is wrong in the alarm colour, because that is the
+## row the player has to act on.
+func _deck_stats(i: int, legal: bool) -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", Palette.SPACE_SM)
+
+	var counts := Palette.label("%d / %d cards" % [
+		DeckStore.total_at(i), DeckStore.DECK_SIZE], Palette.TYPE_SMALL,
+		Palette.TEXT_DIM if legal else Palette.DANGER)
+	row.add_child(counts)
+
+	row.add_child(Palette.label(Palette.glyph("dot"), Palette.TYPE_SMALL, Palette.TEXT_FAINT))
+	row.add_child(Palette.label("%d energy" % DeckStore.energy_at(i),
+		Palette.TYPE_SMALL, Palette.TEXT_DIM))
+
+	if not legal:
+		var errs := DeckStore.errors_at(i)
+		if not errs.is_empty():
+			row.add_child(Palette.label(Palette.glyph("dot"),
+				Palette.TYPE_SMALL, Palette.TEXT_FAINT))
+			var why := Palette.label("%s %s" % [Palette.glyph("warn"), errs[0]],
+				Palette.TYPE_SMALL, Palette.DANGER)
+			why.clip_text = true
+			why.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			row.add_child(why)
+
+	return row
 
 
 ## ------------------------------------------------------------ contents overlay
