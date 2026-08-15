@@ -166,6 +166,12 @@ func _build() -> void:
 	_button.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_button.mouse_filter = Control.MOUSE_FILTER_PASS
 	_button.pressed.connect(func(): pressed.emit())
+	## Tactile press. A card that visually depresses under the cursor is the
+	## cheapest way to make a UI feel like objects rather than regions, and it is
+	## the thing Pocket does that a static frame cannot fake. `button_down` rather
+	## than `pressed` so the feedback lands on the press, not on the release.
+	_button.button_down.connect(func(): Motion.press(self, true))
+	_button.button_up.connect(func(): Motion.press(self, false))
 	_button.set_drag_forwarding(_get_drag_data, Callable(), Callable())
 	## The button covers the whole frame, so its hover is the card's hover.
 	_button.mouse_entered.connect(func(): hover_changed.emit(true))
@@ -327,11 +333,30 @@ func _tinted(c: Color, amount: float) -> Color:
 ## priorities backwards. Giving the name its own full-width row costs one line of
 ## vertical space and buys back the identity of every card in the game.
 func _add_header(root: VBoxContainer) -> void:
+	## The header sits in its own banded field, tinted toward the card's faction
+	## and separated from the body by a hairline.
+	##
+	## Every printed card game does this and for the same reason: the header is
+	## *identity* (what this card is) and everything below it is *content* (what
+	## it does). Running them together on one background makes the card a list of
+	## text, which is what the frame looked like before — a band gives the eye a
+	## fixed place to find the name and the HP, and it is what makes the faction
+	## colour a property of the card rather than a dot in the corner.
+	var band := PanelContainer.new()
+	band.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	band.add_theme_stylebox_override("panel", _header_style())
+	root.add_child(band)
+
+	var head := VBoxContainer.new()
+	head.add_theme_constant_override("separation", 0)
+	head.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	band.add_child(head)
+
 	## Row 1 — stage on the left, HP and the faction dot on the right.
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 4)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(row)
+	head.add_child(row)
 
 	var stage := Label.new()
 	stage.name = "StageLabel"
@@ -389,7 +414,31 @@ func _add_header(root: VBoxContainer) -> void:
 	elif card.name.length() > 17:
 		title_px = max(6, title_px - 1)
 	nm.add_theme_font_size_override("font_size", title_px)
-	root.add_child(nm)
+	head.add_child(nm)
+
+
+## The header band's fill: the card's faction at low saturation over the frame
+## ground, with a brighter hairline along the bottom acting as the divider
+## between identity and content.
+##
+## Non-unit cards (energy, supports, tools) take their type colour instead, so a
+## support's band reads teal and an energy card's gold — the class of the card is
+## legible from the band alone, before the type word is read.
+func _header_style() -> StyleBoxFlat:
+	var tint: Color = Palette.faction_color(card.faction) if card.faction != "" 		else _type_color()
+	var s := StyleBoxFlat.new()
+	s.bg_color = _ground().lerp(tint, 0.20)
+	s.set_corner_radius_all(4)
+	## The divider. A bottom border only — a full outline would box the header
+	## and make the card read as two stacked panels rather than one object.
+	s.border_color = Color(tint.r, tint.g, tint.b, 0.55)
+	s.border_width_bottom = 1
+	var pad: int = 2 if _is_micro() else 3
+	s.content_margin_left = pad + 1
+	s.content_margin_right = pad + 1
+	s.content_margin_top = pad - 1
+	s.content_margin_bottom = pad
+	return s
 
 
 ## "↑ Evolves from Charmeleon" — its own strip under the header.

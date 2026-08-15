@@ -641,6 +641,28 @@ func energy_at(i: int) -> int:
 	return _energy_of(cards_at(i))
 
 
+## The factions a saved deck actually runs, most-cards-first.
+##
+## Neutral cards are excluded: every deck may run them, so counting them would
+## make every list read the same and defeat the point of asking. A deck that is
+## nothing but neutral supports returns an empty array rather than a fake colour.
+##
+## Used by the UI to colour a deck entry by what it plays. Lives here rather than
+## in the screen because "what colour is this deck" is a property of the deck,
+## and two screens already want the answer.
+func factions_at(i: int) -> Array:
+	var tally: Dictionary = {}
+	var cards: Dictionary = cards_at(i)
+	for id in cards:
+		var c: CardData = CardDB.get_card(id)
+		if c == null or c.faction == "":
+			continue
+		tally[c.faction] = int(tally.get(c.faction, 0)) + int(cards[id])
+	var out: Array = tally.keys()
+	out.sort_custom(func(a, b): return int(tally[a]) > int(tally[b]))
+	return out
+
+
 ## Energy is the *only* exempt type. Supports obey the 4-copy limit like units —
 ## exempting them too would turn the deck into a combo engine.
 func is_energy(card_id: String) -> bool:

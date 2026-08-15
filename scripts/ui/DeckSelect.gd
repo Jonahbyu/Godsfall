@@ -394,9 +394,18 @@ func _deck_row(i: int) -> Control:
 	## Desktop puts the name and the three actions on one line. On a phone the
 	## name needs the full width to stay readable, so the actions drop to a
 	## second line underneath it and stretch to share it evenly.
+	## A colour spine down the left edge, so a deck is identifiable by what it
+	## plays before its name is read. Ten decks as ten identical panels made
+	## finding one a reading task.
+	var spined := HBoxContainer.new()
+	spined.add_theme_constant_override("separation", Palette.SPACE_MD)
+	panel.add_child(spined)
+	spined.add_child(FactionSpine.new(DeckStore.factions_at(i)))
+
 	var outer := VBoxContainer.new()
-	outer.add_theme_constant_override("separation", 6)
-	panel.add_child(outer)
+	outer.add_theme_constant_override("separation", Palette.SPACE_SM + 2)
+	outer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	spined.add_child(outer)
 
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)

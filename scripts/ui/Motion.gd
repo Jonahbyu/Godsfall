@@ -129,6 +129,28 @@ static func perish(n: Control, dur: float = SLOW) -> void:
 	tw.tween_property(n, "position:y", n.position.y + 10.0, dur)
 
 
+## Depress a node under the pointer, and release it.
+##
+## Scale rather than position, and a very small amount of it: 2% reads clearly as
+## "this responded" while leaving the card legible and its neighbours undisturbed.
+## Moving the card instead would fight the hand's hover-lift, which already owns
+## the vertical axis.
+##
+## The release is eased with BACK so it overshoots a hair on the way home, which
+## is what makes it feel sprung rather than merely animated.
+static func press(n: Control, down: bool) -> void:
+	if not _ready_node(n):
+		return
+	n.pivot_offset = n.size * 0.5
+	var tw := n.create_tween()
+	if down:
+		tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw.tween_property(n, "scale", Vector2.ONE * 0.98, FAST)
+	else:
+		tw.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tw.tween_property(n, "scale", Vector2.ONE, QUICK)
+
+
 ## Slide a node in from an edge. `from` is a pixel offset applied at the start.
 static func slide_in(n: Control, from: Vector2, dur: float = NORMAL) -> void:
 	if not _ready_node(n):
