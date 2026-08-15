@@ -2344,6 +2344,8 @@ palette, and adds nothing to a 39MB download. The pieces:
 | `SlotSocket` | An empty lane position, as a well rather than the word "empty" |
 | `TowerGlyph` | The tower, degrading visibly as it takes damage |
 | `FactionSpine` | A deck's colours, down the edge of its row |
+| `DeckArtTile` | A deck's hero card, as an emblem plate |
+| `CompositionBar` | A deck's card-type mix, as one proportional bar |
 | `EnergyIcon` | The energy hexagon, as a struck token |
 
 Three of these encode a principle worth keeping:
@@ -2363,6 +2365,74 @@ Three of these encode a principle worth keeping:
 **The board's geometry did not move.** Slot sizes, card sizes and the six-across
 phone row are all unchanged, which is why `LayoutTest`'s 540-unit assertions still
 pass on all four screens. The reskin is entirely in what those boxes contain.
+
+### The deck screens
+
+Three passes over deck select and the deck builder, benchmarked the same way the
+reskin was.
+
+| Pass | Benchmark | What it bought |
+|---|---|---|
+| 1 | **Hearthstone / Runeterra** | A shelf of decks instead of a table of buttons |
+| 2 | **MTG Arena** | The deck grid gets the room it was wasting |
+| 3 | **TCG Pocket** | A deck's *shape*, not just its counts |
+
+**A deck row is fronted by its hero card, and the hero is the emblem, not a
+shrunken card.** The first attempt scaled a whole `CardView` to 74px and it was
+mush. A card frame is a *layout of nine small elements*, so scaling it down does
+not simplify it — it makes all nine illegible at once. `DeckArtTile` draws the
+card's emblem on a faction-tinted ground instead, which works because the emblems
+were drawn at 128px specifically to be read small.
+
+The plate carries **no caption**. It had one, and it clipped to "pyrean Senti";
+the deck's own name is immediately beside it and the card's name is in the
+tooltip, so the caption was redundant *and* broken.
+
+`DeckStore.hero_card_at()` picks it: **highest stage, then cost, then name**.
+Fully deterministic, because Combat and the deck list both rebuild on every state
+change and a hero that varied between refreshes would make the list flicker.
+Stage leads because a deck's Stage 2 is what it is *trying* to do. Energy and
+supports are skipped — an energy card is the same picture in every deck of that
+colour, which is the opposite of identifying one.
+
+**Row actions live behind a `…` overflow menu.** Ten decks presented thirty
+buttons, and Rename / Copy / Delete were the loudest thing on a screen whose only
+job is picking a deck. `OverflowMenu` is built on `MenuButton` so keyboard
+navigation, outside-click dismissal and edge-aware positioning are inherited
+rather than reimplemented slightly wrong. Destructive entries get a **separator**,
+not a colour: `set_item_icon_modulate` tints an item's *icon*, and these items
+have none, so the obvious approach would have silently done nothing.
+
+**The deck grid fits its columns to the pane's real width**, clamped 4–9 and
+recomputed on `resized` — the split handle is draggable and the window resizes,
+so the width is neither known at build time nor stable afterwards. At a hardcoded
+5 the grid left ~330px of the pane empty on a 1440-wide window, which is the most
+expensive unused space on the screen: the deck is the half you judge as a whole.
+
+**The builder's detail panel sizes to its content** — about 31px idle against 133
+when a card is hovered. It previously reserved 120px permanently to say "Select a
+card", and that space belongs to the collection, which now shows four more rows.
+
+**Each deck tile's footer is `− N +`.** It was `×N −`, so removing a copy was a
+click on the tile while *adding* one meant scrolling the collection to find the
+same card again — asymmetric halves of one decision. `+` disables at the 4-copy
+limit rather than disappearing, so the control stays where the eye learned it.
+
+**`CompositionBar` is deliberately not a mana curve.** Every deckbuilder in the
+genre draws one, and it would measure nothing here: this game's costs sit on
+*attacks*, not on cards, because cards are free to play. Type mix is the real
+axis, and it is the worked example of why a genre convention has to be
+re-derived rather than copied. It uses chrome tones rather than faction ramps,
+since a deck's type mix is orthogonal to its colours — borrowing the ramps would
+make a Gaia deck's support segment look like Gaia energy.
+
+**The settings cog no longer overlaps either top bar.** It is drawn on a
+`CanvasLayer` above the scene and is therefore invisible to every screen's
+layout, so both screens ran controls underneath it. Screens now reserve
+`Palette.COG_RESERVE`, and `SettingsButton._build` asserts the cog still fits
+inside what they reserve — the constant lives on `Palette` because naming the
+`Settings` autoload at a screen's class scope would break every headless
+harness.
 
 ### The battle log
 
@@ -2384,16 +2454,15 @@ Two guards worth keeping: the writer never raises (a balance log that can fail a
 or break a game is worse than no log), and a stall is recorded as `NO WINNER — stalled at
 round N`, since that is the single most important thing the file can capture.
 
-Verified by fourteen headless harnesses (all passing — run 2026-08-14 after the phone board
-geometry, the deck-select overlay and hand drag-scrolling landed, **893 counted
-assertions**, with the long-standing `SupportUITest` flake fixed rather than merely absent; `SceneSmokeTest`, `PlaythroughTest`
+Verified by fourteen headless harnesses (all passing — run 2026-08-14 after the three
+deck-screen passes landed, **914 counted assertions**, with the long-standing `SupportUITest` flake fixed rather than merely absent; `SceneSmokeTest`, `PlaythroughTest`
 and `TutorialWalkTest` report pass/fail without a count and are not in that total):
 
 | Harness | Covers |
 |---|---|
 | `RulesTest.gd` | 126 assertions: decay, energy scaling, Toll, attach/queue, targeting (all four steps of the chain, shielding, the per-board limit, no-overkill, and clearing a board mid-volley), tower fire (the 0/5/8/11 schedule, full to units, the half chip to tower then throne, round-1 silence, the min-1 floor, and off-slot shielding), Retribution, evolution, Rise, abilities/Consume, the attack lock, setup (the guaranteed-Basic deal across every sample deck, the mulligan and its once/timing limits, free deployment, and both-players-ready gating), structure growth at +5 per *round*, full AI-vs-AI game |
 | `SupportTest.gd` | 158 assertions: card data integrity, the 4-copy limit on supports, draw/energy/healing/damage supports, Tools, tower support, retreat and its lock, the hand limit, and a random-matchup AI-vs-AI game |
-| `DeckStoreTest.gd` | 64 assertions: create, select, rename/collision/truncation, duplicate, delete, per-deck validation, edit isolation, save/load round-trip, the opponent-deck choice (random legality, pinning, stale and illegal fallback), and `seed_samples` on a bare store |
+| `DeckStoreTest.gd` | 74 assertions: create, select, rename/collision/truncation, duplicate, delete, per-deck validation, edit isolation, save/load round-trip, the opponent-deck choice (random legality, pinning, stale and illegal fallback), `seed_samples` on a bare store, `hero_card_at` (present for every sample, deterministic, always a unit, always the deck's highest stage, and null rather than raising on a unit-less or empty deck), and `composition_at` (totalling the deck exactly, agreeing with `energy_at`, and omitting absent types rather than reporting them as zero) |
 | `DragDropTest.gd` | 27 assertions: payload resolution against a shifting hand, deploy/evolve/charge by drop, the illegal-drop guards, and leaving setup via the Ready button |
 | `SceneSmokeTest.gd` | All four screens instantiate without error |
 | `PlaythroughTest.gd` | Drives the real combat UI: deploy, charge, queue, end turn |
@@ -2404,7 +2473,7 @@ and `TutorialWalkTest` report pass/fail without a count and are not in that tota
 | `GaiaTest.gd` | 146 assertions: Gaia card data including per-colour attack costs, the Earth aura summed across both boards and excluding the dead, aura-adjusted max HP, healing that reaches the aura's ceiling, downward clamping that never kills, the aura on attack damage and on tower damage, `Resist` in both damage paths and on Retribution recoil with its minimum-1 floor, Sanctuary preceding Resist, `Essence` **through the real `_cleanup_dead`** (payment, the nearest-living heir, ties-go-left, never crossing boards, skipping a corpse in a batched death, and fizzling when unaffordable), grown Earth resetting on Rise and evolution, Earth derived live from attached energy, the additive rate-breaker, and Makeshift Tower's free auto-fire, per-round growth, and obedience to the shielding chain |
 | `TutorialTest.gd` | 119 assertions: lesson content integrity (unique ids, every step carrying text, every `advance` predicate one the evaluator handles), every card id a lesson names existing, every `read_more` resolving to a real page, every lesson deck building a `GameState`, the unshuffled deal being reproducible **and the default path still shuffling**, every scripted placement landing on a real non-tower slot, the gating hooks answering permissively when inactive, all eight step predicates **driven against a real `GameState`**, progress round-tripping through a sandboxed file, and compendium coverage of every keyword in `Palette.KEYWORD_COLORS`. **Also that every lesson declares an opening hand, that the hand is fully present in its deck, and that it holds the Basics/Stage 1/support/energy its steps actually demand** |
 | `TutorialWalkTest.gd` | Drives all 13 battle lessons through the **real Combat screen**, performing what each step asks via the entry points a player clicks, and fails if any step cannot be satisfied. Reports per-lesson rather than a counted total. This is the harness that checks a lesson can be **finished**, not merely that it is well formed |
-| `LayoutTest.gd` | 26 assertions on what the UI *draws*: every entry in `Palette.GLYPH` being renderable by the actual theme font, every double-quoted literal across the eleven UI source files containing no character the font lacks (comments exempt — their ASCII diagrams are never rendered), all four screens building in **both** the desktop and phone layouts, and — the assertion that matters most — **no phone layout exceeding the 540-unit phone viewport**, measured with `get_combined_minimum_size()` and ignoring content inside a horizontally scrolling container. The glyph half reads the source rather than the running scene on purpose: a label built only in a rare branch — an error state, a disabled button's tooltip — is never instantiated by a smoke test, and those are exactly the strings that ship broken. The overflow half exists because its absence is what let mobile mode ship as pure zoom: every screen *built* fine, which is all the build assertions ever checked |
+| `LayoutTest.gd` | 37 assertions on what the UI *draws*: every entry in `Palette.GLYPH` being renderable by the actual theme font, every double-quoted literal across the twenty-one UI source files containing no character the font lacks (comments exempt — their ASCII diagrams are never rendered), all four screens building in **both** the desktop and phone layouts, and — the assertion that matters most — **no phone layout exceeding the 540-unit phone viewport**, measured with `get_combined_minimum_size()` and ignoring content inside a horizontally scrolling container. The glyph half reads the source rather than the running scene on purpose: a label built only in a rare branch — an error state, a disabled button's tooltip — is never instantiated by a smoke test, and those are exactly the strings that ship broken. The overflow half exists because its absence is what let mobile mode ship as pure zoom: every screen *built* fine, which is all the build assertions ever checked |
 
 The Heaven pipeline tests deliberately call `GameState._deal_lane_damage` rather than
 simulating the ordering inline — a test that reimplements the rule it is checking proves
@@ -3494,6 +3563,41 @@ even if the rule text later changes. Keep entries to one or two lines.
   ends: **typed punctuation standing in for a graphic is one of the most reliable tells
   that an interface was assembled rather than designed.**
 
+- **A deck is fronted by its hero card's emblem, never by a shrunken card.** The
+  first attempt scaled a whole `CardView` to 74px and it was mush: a card frame is
+  a *layout of nine small elements*, so shrinking it makes all nine illegible at
+  once rather than simplifying any of them. The emblems were drawn at 128px to be
+  read small, and they are what survives. The plate also lost its caption, which
+  clipped to "pyrean Senti" and duplicated the deck name sitting beside it.
+  **The general shape: reducing a composite element is not the same as scaling
+  it**, and the phone board card had already established which one works.
+- **A `…` overflow menu replaced thirty row buttons on deck select.** Rename /
+  Copy / Delete on ten rows made the destructive actions the loudest thing on a
+  screen whose only job is picking a deck. `OverflowMenu` extends `MenuButton` so
+  keyboard nav, outside-click dismissal and edge positioning come for free —
+  the same reasoning that made `SlotSocket` extend `DropZone`. Destructive items
+  get a separator rather than a colour, because `set_item_icon_modulate` tints an
+  *icon* and menu items here have none: the obvious call would have compiled,
+  run, and done nothing.
+- **The deck grid fits its column count to the pane's measured width.** Hardcoded
+  at 5 it left ~330px empty on a 1440-wide window, and the deck pane is the half
+  you judge as a whole. Recomputed on `resized` rather than once at build time,
+  since the split handle is draggable. The builder's hover-detail panel likewise
+  sizes to its content — it had reserved 120px permanently to say "Select a card".
+- **`CompositionBar` shows type mix, not a mana curve, and that is the point.**
+  Every deckbuilder in the genre draws a cost curve; here it would measure
+  something the player never pays, because costs sit on *attacks* and cards are
+  free to play. **A genre convention has to be re-derived against this game's
+  rules rather than copied**, and the deck's type mix is what the equivalent
+  question actually is. Drawn in chrome tones, since type mix is orthogonal to
+  faction colour and the ramps would misread as energy.
+- **The settings cog had been overlapping every screen's top bar.** It is drawn
+  on a `CanvasLayer` above the scene, so it is invisible to each screen's layout
+  and both deck screens ran controls underneath it. Screens reserve
+  `Palette.COG_RESERVE` and `SettingsButton` asserts the cog still fits inside
+  it, so the two cannot drift. The constant lives on `Palette` rather than on the
+  `Settings` autoload because naming an autoload at a screen's class scope breaks
+  every headless harness — the third time that trap has come up.
 - **`ViewportFit` must measure the window, never `root.get_visible_rect()`.** The auto
   detection read the viewport — a value `_apply()` sets itself — so entering phone mode
   shrank the viewport to 540, the next read saw `540 < 820`, and a 1440-wide desktop could
