@@ -608,7 +608,10 @@ func _add_keyword_chips(root: VBoxContainer) -> void:
 	row.add_theme_constant_override("separation", 3)
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.custom_minimum_size = Vector2(0, _m("chip_h"))
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	## PASS, not IGNORE: the chips carry hover tooltips and this row is their parent.
+	## PASS still lets the click fall through to the card's own button underneath, so
+	## the only thing it changes is that the hover reaches the chips.
+	row.mouse_filter = Control.MOUSE_FILTER_PASS
 	root.add_child(row)
 
 	for part in text.split(",", false):
@@ -625,7 +628,14 @@ func _keyword_chip(text: String) -> Control:
 	var col: Color = Palette.keyword_color(kw_name)
 
 	var chip := PanelContainer.new()
-	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	## PASS rather than IGNORE: the chip has to receive a hover to show its tooltip,
+	## and PASS still lets the click fall through to the card's own button underneath,
+	## so hovering a keyword never costs the player the ability to select the card.
+	## The inner Label stays IGNORE so the tooltip belongs to exactly one node.
+	chip.mouse_filter = Control.MOUSE_FILTER_PASS
+	var help: String = Palette.keyword_help(kw_name)
+	if help != "":
+		chip.tooltip_text = help
 
 	var s := StyleBoxFlat.new()
 	s.bg_color = col.darkened(0.68)

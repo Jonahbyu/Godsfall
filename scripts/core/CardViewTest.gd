@@ -2,7 +2,7 @@ extends SceneTree
 
 ## Total assertions this harness is expected to run; see the check at
 ## the end of the run. Update deliberately when assertions change.
-const EXPECTED_ASSERTIONS := 75   ## +6 cost colours, +9 attached badge, -2 merged w/r checks (2026-08-15)
+const EXPECTED_ASSERTIONS := 79   ## +4 keyword chip tooltips and help coverage (2026-08-15)
 
 ## Structural assertions on the card frame.
 ##
@@ -105,6 +105,7 @@ func _initialize() -> void:
 	await _test_non_units(db)
 	await _test_cost_icons_show_required_color(db)
 	await _test_attached_badge(db)
+	await _test_keyword_tooltips(db)
 
 	## A harness that errors out mid-run still reports "0 failed", because an
 	## assertion that never RUNS cannot fail — that is how the Gaia harness passed
@@ -560,3 +561,54 @@ func _test_attached_badge(db) -> void:
 		"an uncharged board card draws no badge")
 	zv.queue_free()
 	await process_frame
+
+
+## The chips carry hover help, and every coloured keyword has an entry.
+##
+## The coverage assertion is the one that earns its keep long-term: it builds a
+## list of KEYWORD_COLORS keys with no help text and asserts the list is empty, so
+## the failure message *names* the keyword rather than saying a count is wrong.
+## That makes a newly-printed keyword fail this suite until someone writes its
+## help, which is the same guard TutorialTest applies to Compendium coverage.
+##
+## What this cannot check is whether the hover actually reaches the chip: mouse
+## routing needs a real cursor and never runs under --headless. It asserts the
+## tooltip text is *attached to the right node*, which is the half a harness can
+## see; a human has to confirm it appears.
+func _test_keyword_tooltips(db) -> void:
+	var pal = root.get_node("Palette")
+
+	## `null_adept` (Sevwane) prints Rift 1 — Rift is the least guessable keyword
+	## in the game and the reason these tooltips exist, since it scales off a
+	## board-wide number the chip itself cannot show.
+	var card: CardData = db.get_card("null_adept")
+	check(card != null and card.has_kw("rift"), "fixture prints Rift")
+	if card == null:
+		return
+
+	var view := make_view(card, null, MODE_HAND)
+	root.add_child(view)
+	await process_frame
+
+	var chips := find_node_named(view, "KeywordChips")
+	var tip := ""
+	if chips != null:
+		for c in chips.get_children():
+			if (c as Control) != null and (c as Control).tooltip_text != "":
+				tip = (c as Control).tooltip_text
+				break
+	check(tip != "", "a Rift chip carries a tooltip")
+	var low := tip.to_lower()
+	check(low.contains("rift") or low.contains("gap"),
+		"the Rift tooltip mentions Rift or the Gap, got '%s'" % tip)
+	view.queue_free()
+	await process_frame
+
+	## Coverage. Not a census — this asserts a property (every coloured keyword is
+	## explained), so it stays correct as keywords are added rather than needing a
+	## number bumped.
+	var missing: Array = []
+	for kw in pal.KEYWORD_COLORS.keys():
+		if str(pal.keyword_help(str(kw))).strip_edges() == "":
+			missing.append(str(kw))
+	check(missing.is_empty(), "every coloured keyword has help, missing: %s" % str(missing))

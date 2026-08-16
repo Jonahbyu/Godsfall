@@ -159,6 +159,126 @@ func keyword_color(kw: String) -> Color:
 	return KEYWORD_COLORS.get(kw.to_lower(), BORDER)
 
 
+## Hover help for a keyword chip, keyed the same way KEYWORD_COLORS is.
+##
+## A chip is two words at 7px. That is enough to *recognise* a keyword you already
+## know and nothing at all if you do not, which bites hardest exactly where the
+## rules are least guessable — `Void 2` and `Rift 2` cannot be read off the card,
+## and Rift additionally scales off a board-wide number no chip can show.
+##
+## These are condensed from the Compendium's keyword pages in `TutorialData.gd`,
+## which remain the authoritative long form. The job here is a reminder at the
+## point of decision, not a rules page: 2-4 short lines, leading with what the
+## keyword *does* and following with the one detail players get wrong.
+##
+## Two constraints on the text:
+##
+##   * ASCII plus Latin-1 punctuation only. The bundled Inter has no arrows,
+##     geometric shapes or emoji, and `LayoutTest` scans these literals against
+##     the real theme font — an unrenderable character ships as a blank box that
+##     looks correct in every editor and diff.
+##   * Never promise what the engine does not do. `Windfury` says outright that it
+##     is unimplemented, for the same reason the inspector said so about retreat
+##     costs before the retreat action existed.
+const KEYWORD_HELP := {
+	"toll":
+		"When this unit dies, you gain N pool energy.
+"
+		+ "N is printed (HP / 25) and never recalculates in play.
+"
+		+ "Retreat pays no Toll — the unit did not die.",
+	"decay":
+		"At end of turn, deal N damage to the unit across from this one.
+"
+		+ "Free and automatic, every turn.
+"
+		+ "Follows the normal targeting chain, so it cannot chip past a wall to a tower or throne.",
+	"judgment":
+		"ONE charge, spent by either half.
+"
+		+ "Defensive: when this unit would die, it survives at N HP instead.
+"
+		+ "Offensive: when this unit's attack leaves a defender at N HP or below, that defender dies.
+"
+		+ "Either use spends the charge, and it returns only if the card returns to hand.",
+	"sanctuary":
+		"A depleting pool of N that absorbs damage from any source.
+"
+		+ "When the pool cannot cover a hit it absorbs that hit ENTIRELY, then is spent.
+"
+		+ "So N is a floor, not a ceiling: many small hits break it, one big hit feeds it.",
+	"siphon":
+		"MOVES N attached energy from an enemy unit onto this one — it is not destroyed, you gain what they lose.
+"
+		+ "That swings the Gap by 2N.
+"
+		+ "On a support card it goes to your pool instead, which does NOT feed the Gap.",
+	"void":
+		"DESTROYS N attached energy on an enemy unit. Nobody gains it.
+"
+		+ "Attached energy only, never the pool.
+"
+		+ "Obeys the normal targeting chain and never reaches a tower or throne.",
+	"rift":
+		"This unit's attacks deal +N damage per point of your Gap.
+"
+		+ "Gap = your total attached energy minus theirs, floored at 0, living units only.
+"
+		+ "Deliberately uncapped — a large Gap is energy staked on bodies that can all die at once.",
+	"earth":
+		"A board-wide aura. Every point of Earth on your LIVING units grants
+"
+		+ "+1 damage and +1 max HP to each of your units and both your towers.
+"
+		+ "It is a live sum: killing an Earth body shrinks the whole aura immediately.",
+	"essence":
+		"When this unit dies, spend N POOL energy to move its Earth and attached energy
+"
+		+ "to the nearest living friendly unit on the same board. It never crosses boards.
+"
+		+ "The energy has to be banked in advance; if you cannot pay, it does not fire.",
+	"rise":
+		"When this dies, it returns to an empty slot on your side at the start of your next turn,
+"
+		+ "at HALF HP and WITHOUT Rise. Everything else returns at printed values.
+"
+		+ "Attached energy is not restored, and anything the card grew in play resets.",
+	"retribution":
+		"When this unit takes damage from an attack, it deals N damage back to the attacker.
+"
+		+ "It still fires from a unit that the attack killed — nothing leaves the board mid-attack.
+"
+		+ "If the recoil kills the attacker, both die.",
+	"consume":
+		"This line DESTROYS N attached energy every time it is used.
+"
+		+ "It is the only cost an ability may carry; abilities are otherwise free.
+"
+		+ "Unlike an attack's cost, it is not paid once — the unit must be re-charged each use.",
+	"windfury":
+		"This unit may attack twice per turn.
+"
+		+ "NOT YET IMPLEMENTED — no card uses it, and the engine does not grant the second attack.
+"
+		+ "It is defined so the reserve storm faction has a home.",
+	"resist":
+		"Reduce each incoming INSTANCE of damage by X, to a minimum of 1 damage.
+"
+		+ "Per instance, so four hits of 10 into Resist 5 total 20, not 35.
+"
+		+ "Strong against chip damage, weak against one big attack.",
+}
+
+
+## The hover help for a keyword, or "" for one that has none.
+##
+## Empty rather than a placeholder, so a chip without help renders as an ordinary
+## chip instead of advertising a missing entry. `CardViewTest` asserts every key in
+## KEYWORD_COLORS has one, so a new keyword fails the suite until it is written.
+func keyword_help(kw: String) -> String:
+	return KEYWORD_HELP.get(kw.to_lower(), "")
+
+
 ## NOTE: these are called through the `Palette` autoload *instance*
 ## (e.g. `Palette.label(...)`). They are deliberately non-static so Godot does
 ## not warn about calling a static function on an instance.
