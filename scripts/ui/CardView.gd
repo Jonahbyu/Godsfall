@@ -938,9 +938,50 @@ func _add_footer(root: VBoxContainer) -> void:
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(row)
 
+	## Attached energy, bottom-left: the faction's energy symbol and a plain total.
+	##
+	## This is what a unit HOLDS, as opposed to what an attack REQUIRES — the cost
+	## icons beside each attack. The two used to share one widget, with cost icons
+	## filled left-to-right by attached energy, and that overload is what rendered
+	## every requirement in hand as an empty colourless socket: `unit` is null there,
+	## so every icon was unfilled, and an unfilled icon never reaches the faction
+	## ramp. Splitting them is what let the cost row state its colours again.
+	##
+	## Attached energy is also the half of the economy that DIES WITH THE UNIT, so
+	## its total is the number a trade is judged on — worth stating plainly rather
+	## than leaving to be counted off a row of icons.
+	##
+	## Drawn only when something is attached. A "0" on every uncharged body is noise
+	## at this size.
+	if unit != null and unit.attached > 0:
+		var badge := HBoxContainer.new()
+		badge.name = "AttachedBadge"
+		badge.add_theme_constant_override("separation", 1)
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(badge)
+
+		## The card's own faction colour, so the symbol says WHICH energy this is.
+		badge.add_child(EnergyIcon.new(
+			Palette.faction_color(card.faction), true, false,
+			_m("footer_size") + 1, card.faction))
+
+		var n := Label.new()
+		n.text = str(unit.attached)
+		n.add_theme_font_size_override("font_size", _m("footer_size") + 1)
+		n.add_theme_color_override("font_color", Palette.GOLD)
+		n.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		n.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		badge.add_child(n)
+
 	## Weakness / resistance — reserved, not implemented.
+	##
+	## Abbreviated to a single letter to buy back the width the attached-energy badge
+	## costs. The footer's content box is 118px on a board card, and with a retreat-4
+	## body and a two-digit attached total the row reached exactly 118 — no slack, and
+	## the card clips silently rather than erroring. The slots are the reservation, not
+	## their captions, so shortening them keeps the whole point of having them.
 	var wk := Label.new()
-	wk.text = "wk —"
+	wk.text = "w —"
 	wk.add_theme_font_size_override("font_size", _m("footer_size"))
 	wk.add_theme_color_override("font_color", Palette.TEXT_DIM.darkened(0.2))
 	wk.tooltip_text = "Weakness — not yet implemented."
@@ -948,7 +989,7 @@ func _add_footer(root: VBoxContainer) -> void:
 	row.add_child(wk)
 
 	var res := Label.new()
-	res.text = "res —"
+	res.text = "r —"
 	res.add_theme_font_size_override("font_size", _m("footer_size"))
 	res.add_theme_color_override("font_color", Palette.TEXT_DIM.darkened(0.2))
 	res.tooltip_text = "Resistance — not yet implemented."

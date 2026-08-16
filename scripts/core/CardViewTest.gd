@@ -2,7 +2,7 @@ extends SceneTree
 
 ## Total assertions this harness is expected to run; see the check at
 ## the end of the run. Update deliberately when assertions change.
-const EXPECTED_ASSERTIONS := 68   ## +5: cost icons state the required colour (2026-08-15)
+const EXPECTED_ASSERTIONS := 75   ## +6 cost colours, +9 attached badge, -2 merged w/r checks (2026-08-15)
 
 ## Structural assertions on the card frame.
 ##
@@ -104,6 +104,7 @@ func _initialize() -> void:
 	await _test_footer(db)
 	await _test_non_units(db)
 	await _test_cost_icons_show_required_color(db)
+	await _test_attached_badge(db)
 
 	## A harness that errors out mid-run still reports "0 failed", because an
 	## assertion that never RUNS cannot fail — that is how the Gaia harness passed
@@ -374,8 +375,14 @@ func _test_footer(db) -> void:
 		check(icons == 2, "retreat 2 draws 2 icons in the footer, got %d" % icons)
 		## Weakness and resistance are reserved but undesigned — they print an
 		## em-dash so the frame does not need re-laying-out when the system lands.
-		check(find_label(footer, "wk") != null, "footer reserves a weakness slot")
-		check(find_label(footer, "res") != null, "footer reserves a resistance slot")
+		## Matched on the em-dash rather than the caption: the captions were
+		## shortened to buy width for the attached-energy badge, and the assertion
+		## is about the slots existing, not about what they are labelled.
+		var dashes: int = 0
+		for l in all_labels(footer):
+			if (l as Label).text.contains("—"):
+				dashes += 1
+		check(dashes >= 2, "footer reserves weakness and resistance slots, found %d" % dashes)
 	view.queue_free()
 	await process_frame
 
@@ -491,4 +498,65 @@ func _test_cost_icons_show_required_color(db) -> void:
 			board_all_filled = false
 	check(board_all_filled, "uncharged board card still shows a solid requirement")
 	bv.queue_free()
+	await process_frame
+
+
+## The footer's attached-energy badge: what the unit HOLDS, as opposed to what an
+## attack REQUIRES.
+##
+## Position is asserted, not merely presence. "Bottom-left" is the whole request —
+## a badge sitting on the right of the footer would satisfy an existence check and
+## still be the wrong card.
+func _test_attached_badge(db) -> void:
+	var card: CardData = db.get_card("charnel_colossus")
+
+	## In hand there is no unit, so there is nothing to hold.
+	var hv := make_view(card, null, MODE_HAND)
+	root.add_child(hv)
+	await process_frame
+	check(find_node_named(hv, "AttachedBadge") == null,
+		"a card in hand has no attached-energy badge")
+	hv.queue_free()
+	await process_frame
+
+	## A charged body states its total. Unit._init sets hp from the card's printed
+	## max, so nothing but `attached` needs setting to get a living unit.
+	var u = load("res://scripts/core/Unit.gd").new(card)
+	u.attached = 5
+	var view := make_view(card, u, MODE_BOARD)
+	root.add_child(view)
+	await process_frame
+
+	var badge := find_node_named(view, "AttachedBadge")
+	check(badge != null, "a charged board card has an attached-energy badge")
+	if badge != null:
+		check(find_label(badge, "5") != null, "badge states the attached total (5)")
+		check(_count_icons(badge) == 1, "badge draws one energy symbol, got %d"
+			% _count_icons(badge))
+
+		## Bottom-left means the footer row's FIRST child, ahead of the reserved
+		## weakness/resistance slots.
+		var footer := find_node_named(view, "CardFooter")
+		check(footer != null, "charged board card has a CardFooter")
+		if footer != null:
+			check(footer.get_child_count() > 0 and footer.get_child(0) == badge,
+				"badge is the footer row's first child (bottom-left)")
+			## The reservation must survive the addition.
+			var reserved: int = 0
+			for l in all_labels(footer):
+				if (l as Label).text.contains("—"):
+					reserved += 1
+			check(reserved >= 2,
+				"footer still reserves both w/r slots, found %d" % reserved)
+	view.queue_free()
+	await process_frame
+
+	## Nothing attached, nothing drawn — a "0" on every uncharged body is noise.
+	var u0 = load("res://scripts/core/Unit.gd").new(card)
+	var zv := make_view(card, u0, MODE_BOARD)
+	root.add_child(zv)
+	await process_frame
+	check(find_node_named(zv, "AttachedBadge") == null,
+		"an uncharged board card draws no badge")
+	zv.queue_free()
 	await process_frame
