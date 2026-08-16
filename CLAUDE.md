@@ -160,14 +160,14 @@ So while towers live: **2 usable unit slots per board = 4 total.**
 When both towers die: **3 slots per board = 6 total.**
 
 ```
-              ENEMY THRONE (100 HP)
+              ENEMY THRONE (150 HP)
    ┌─────────────────────┐  ┌─────────────────────┐
    │  [ 1 ][ 2 ][TOWER]  │  │  [ 1 ][ 2 ][TOWER]  │   enemy boards
    └─────────────────────┘  └─────────────────────┘
    ┌─────────────────────┐  ┌─────────────────────┐
    │  [ 1 ][ 2 ][TOWER]  │  │  [ 1 ][ 2 ][TOWER]  │   your boards
    └─────────────────────┘  └─────────────────────┘
-              YOUR THRONE (100 HP)
+              YOUR THRONE (150 HP)
 ```
 
 ### Targeting
@@ -405,8 +405,8 @@ effects: play, resolve, discard.
   gating. Every support card is tuned to roughly the same power level.
 
 The design constraint that replaces the play limit: **hand size is the cost.** A support
-card is a card you drew instead of a unit, in a game where you draw one per turn. Playing
-four supports in a turn means you spent four draws to do it.
+card is a card you drew instead of a unit, in a game where you draw two per turn. Playing
+four supports in a turn means you spent two turns of draw to do it.
 
 ### The support power band
 
@@ -499,7 +499,7 @@ being a strict upgrade over `Shore Up` rather than a different choice. Enforced 
 in `SupportTest.gd`, not by convention.
 
 The line that does **not** move: a priced support still may not sell damage at attack
-rates. `12 damage per energy` is what an attack buys, and an attack's cost stays attached
+rates. **7–9 damage per energy** is what an attack buys (by stage), and an attack's cost stays attached
 and pays out every turn after — a support's cost is spent for good. So a support's damage
 per energy must sit visibly *below* the attack curve, and the priced damage variants above
 buy the removal of a *condition*, not raw points.
@@ -535,7 +535,7 @@ See `support.md` for the neutral card list, including Tools.
 
 Before round 1, in order:
 
-1. Both players draw an opening hand of **6**, guaranteed to contain a Basic unit.
+1. Both players draw an opening hand of **8**, guaranteed to contain **two** Basic units.
 2. Each player may **mulligan** once — see *The mulligan*.
 3. **Both players deploy Basics.** Any number, from hand, into empty slots on either
    board. Nothing else happens: no energy, no supports, no evolution, no attacks.
@@ -705,24 +705,69 @@ to be re-charged to keep using it.
 
 These are **working anchors for playtesting**, not final numbers.
 
-| Attack type | Formula | Rationale |
+**Cost is derived from damage, and the rate rises with stage:**
+
+| Stage | Cost band | Damage per energy |
 |---|---|---|
-| **Standard attack** | `≈ 12 damage per energy` | One-time cost, pays out every turn — priced as an annuity |
-| **Consume attack** | `≈ 20 damage per energy consumed` | Destroys the investment, so it pays ~1.7× up front |
+| **Basic** | 1–6 | ≈ 7 |
+| **Stage 1** | 4–10 | ≈ 8 |
+| **Stage 2** | 8–20 | ≈ 9 |
+| **Consume attack** | — | ≈ 20 per energy consumed |
+
+**Only six Basic attacks — the "openers" — sit in the round-1 window of cost 1–2.**
+Every other Basic attack is priced at 4–6. This is a deliberate scarcity, not a
+side effect of the curve, and the reason is that **cheap attacks fire far more
+often than expensive ones**: a 2-cost attack, once paid, re-fires free every turn
+from round 1, while a 9-cost fires only in the last rounds of the ~37% of games
+that reach round 9. A cheap attack therefore generates roughly 3× the activations
+of an expensive one, so printed parity produces a heavy cheap-attack majority in
+play. Measured: 34.6% of printed attacks at cost ≤3 produced **77.8%** of attacks
+actually queued. Holding the played mix near half requires printed cheap attacks
+to be well under parity — currently 11.5% printed, giving **38%** queued.
+
+`cost = round(damage ÷ rate)`, clamped into the stage's band. The rate rises with
+stage so that **evolving improves how well a body converts energy** — that is what
+makes a slower, more expensive Stage 2 worth reaching at all.
 
 Linear, not superlinear. Big attacks are not more efficient per point — they're
 *better because the board caps at 4 units*, so concentrated damage is worth more than
 its raw total.
 
-Reference breakpoints against a 50 HP basic unit:
+**A band's ceiling is reached only by attacks whose payoff is an effect, not
+damage.** At 9 damage per energy a cost-20 Stage 2 attack would need 180 damage,
+which exceeds the largest printed HP in the game (175) — so no *damage* attack
+belongs at the top of the Stage 2 band. The two cards that sit there
+(`THE LAST TOLL`, `The Long Quiet`) both print 0 damage and win through effects.
+That is the band working correctly, not a gap in it. In practice damage attacks
+stop around cost 13, and **no single attack exceeds 120 damage**, so removing the
+biggest bodies always takes chip support or a second attacker.
 
-| Cost | Standard dmg | Meaning |
-|---|---|---|
-| 1 | 12 | Chip. 5 hits to kill. |
-| 2 | 25 | Half a unit. |
-| 3 | 38 | Threatens a kill with chip support. |
-| 4 | 50 | **Exactly kills a fresh basic.** |
-| 5 | 65 | Kills through buffs. |
+Reference breakpoints, by stage:
+
+| Stage | Cost | Damage | Meaning |
+|---|---|---|---|
+| Basic (opener) | 1–2 | 8–16 | Chip. The only thing playable in **round 1**. Six of these exist. |
+| Basic | 4 | 30 | The common Basic swing. |
+| Basic | 5–6 | 35–40 | Threatens a kill on a median Basic. |
+| Stage 1 | 4–5 | 35–40 | The workhorse midgame attack. |
+| Stage 1 | 6–7 | 45–55 | Kills a median Basic outright. |
+| Stage 1 | 9–10 | 70–80 | Kills most Basics, threatens a Stage 1. |
+| Stage 2 | 8–10 | 65–90 | Kills any Basic, threatens a Stage 1. |
+| Stage 2 | 13 | 120 | The damage ceiling. Still does not one-shot a 175 HP body. |
+
+**Round 1 gives exactly 2 energy** (one energy card at `t + 1`), which is what sets
+the floor of the Basic band: a few cheap Basics must be able to attack on the
+opening turn, so 1–2 cost attacks have to exist and have to be Basics.
+
+Costs may include **colorless** requirements, payable with any color. Multi-faction
+units cost more total energy but get access to **stronger effects** — never higher raw
+damage. Multi-faction should be common and manageable, not strictly superior.
+
+Re-price the whole card pool from these bands with:
+
+```
+python tools/reprice_attacks.py --dry-run    # then --apply
+```
 
 Costs may include **colorless** requirements, payable with any color. Multi-faction
 units cost more total energy but get access to **stronger effects** — never higher raw
@@ -947,8 +992,8 @@ filling in the wrong field. The only cost that reads is `"consume": N`.
 
 | | HP | Per round |
 |---|---|---|
-| **Tower** (one per board, 2 total) | 50 | +5 max HP; deals damage to the unit in front |
-| **Throne** | 100 | +5 max HP |
+| **Tower** (one per board, 2 total) | 75 | +5 max HP; deals damage to the unit in front |
+| **Throne** | 150 | +5 max HP |
 
 **Growth is per round, not per turn.** Structures gain their +5 once both players have
 acted, not at the end of each player's turn. This was a real bug rather than a tuning
@@ -959,7 +1004,7 @@ available — the formal stall in Open Questions — and halving it is the cheap
 dials named there.
 
 - **Towers are silent for the first round.** They deal **0 damage** while round 1 is
-  being played and do not grow. A tower's first shot is **5 damage from a 55 HP tower**,
+  being played and do not grow. A tower's first shot is **5 damage from an 80 HP tower**,
   at the end of round 2, and it climbs **+3 a round** after that.
 - Towers hit **units at full damage**, and **structures at half** — see *Towers against
   an empty board* below.
@@ -986,7 +1031,7 @@ P1 in particular ate a shot with nothing on the table. A round of grace costs th
 race almost nothing (it is 5 damage, once) and buys every deck a turn to put a body down,
 which is what makes the tower an *attrition* engine rather than an opening move.
 
-It also makes the tower's own number legible: the first tower shot is 5 from a 55 HP
+It also makes the tower's own number legible: the first tower shot is 5 from an 80 HP
 tower, so the tower has visibly taken one round of growth before it does anything.
 - Towers occupy a lane slot. Killing your opponent's tower opens that slot for *them*
   — but exposes their throne. **You may strategically sacrifice your own tower for
@@ -1118,16 +1163,19 @@ HP. See Open Questions.
 ### Draw & Hand
 
 - A **clean hand** — small and curated, not Pokémon's flood.
-- **Opening hand: 6 cards. Draw 1 per turn.** Chosen as the midpoint of the old 5–7
-  working range and implemented in the prototype. Provisional — this is a playtesting
-  dial, not a settled rule.
+- **Opening hand: 8 cards. Draw 2 per turn.** Raised from 6/1 on 2026-08-15, alongside
+  the 75 HP tower and 150 HP throne, to answer games ending too fast. The bigger
+  structures lengthen the clock; the extra draw is what lets a player *use* the added
+  time — more cards per turn means more bodies to rebuild a cleared board with, so the
+  longer game is spent defending rather than waiting. Provisional — this is a
+  playtesting dial, not a settled rule.
 - **Maximum hand size: 10.**
 
 ### The opening hand
 
-**Every opening hand contains at least one Basic unit**, for both players. The deal is
-retried up to a fixed number of shuffles; if a deck genuinely holds no Basic — legal, but
-unplayable — a Basic is not conjured and the hand stands as dealt.
+**Every opening hand contains at least two Basic units**, for both players. The deal is
+retried up to a fixed number of shuffles; if a deck genuinely holds fewer — legal, but
+barely playable — Basics are not conjured and the hand stands as dealt.
 
 This is not a courtesy. **A hand with no Basic cannot take a single action all turn**:
 units are the only free thing to play, every Stage 1 needs a Basic already on the board,
@@ -1136,14 +1184,23 @@ in a hand like that, only a lost turn — and losing turn 1 in a game with a sca
 is close to losing the game. Pokémon solves the same problem the same way, and for the
 same reason.
 
+**Two rather than one, because setup deploys Basics and nothing else.** A one-Basic opener
+technically has a legal action, but it walks into round 1 holding a single body against a
+board that may show two — and with shielding, the side with fewer units has its tower
+exposed sooner. Guaranteeing the second Basic makes the setup phase a real placement
+decision rather than a formality, which is what setup was added for.
+
+**The guarantee is clamped to what the deck holds.** A list running one Basic gets one; the
+deal does not spin through every retry chasing a card that isn't there.
+
 **It is a deal filter, not a stacked hand.** The deck is reshuffled and re-dealt whole
-rather than a Basic being searched out and placed on top, so nothing about the *rest* of
-the hand is biased — a two-Basic hand is still as likely as the deck makes it.
+rather than Basics being searched out and placed on top, so nothing about the *rest* of
+the hand is biased — a three-Basic hand is still as likely as the deck makes it.
 
 ### The mulligan
 
 **Once per game, during setup, you may mulligan your opening hand.** The whole hand
-shuffles back into the deck and you draw a fresh 6, under the same guaranteed-Basic rule.
+shuffles back into the deck and you draw a fresh 8, under the same guaranteed-Basics rule.
 
 - **No penalty.** The new hand is the same size. The cost is that you may not do it again
   and the second hand might be worse.
@@ -1298,6 +1355,18 @@ pool destruction, punishing large pools — most naturally belong in **Void**, w
   remove exactly that asymmetry**, so this wants re-measuring before anything else is tried.
   **Eight runs cannot distinguish a real first-player penalty from noise**; the next step is
   a 30-run sample counting wins by seat, ignoring decks entirely.
+- **The 2026-08-15 structure and draw raise moved the AI game to ~9 rounds, not decisively
+  longer.** Measured immediately after 75 HP towers, 150 HP thrones, an 8-card opener and
+  draw 2: rounds **5, 7, 8, 9, 10, 11, 11, 11** over eight random-deck runs of
+  `RulesTest.gd`, mean ~9, no stalls, against the ~8.4 the re-pricing entry below
+  recorded.
+  That is a smaller shift than the size of the change suggests, and the likely reason is
+  that **draw 2 partly cancels the HP raise**: both sides now develop faster and answer
+  removal faster, so more damage lands per round against the bigger structures. Whether
+  that is the intended trade is exactly what a human playtest has to say — the AI does not
+  retreat, does not model shielding, and now discards more, so it is the worst case for a
+  change whose point is *defensive* capacity. **Eight runs cannot separate this from noise;
+  do not tune on it.**
 - **The 2026-08-09 tower rework left the AI game shorter, not longer — 4 to 10 rounds.**
   Round-1 silence, the `5`-then-`+3` curve, half-rate structure chip, and the corrected
   per-round growth landed together and push in opposite directions. Measured immediately
@@ -1371,13 +1440,26 @@ pool destruction, punishing large pools — most naturally belong in **Void**, w
   anchors to match the new HP curve. Do not tune on AI numbers alone — the AI never
   retreats and does not model clearing a board across a volley — but a hard stall at 300
   rounds is not a heuristics artifact.
-- **Should the damage anchors rise with the HP curve?** `12 damage per energy` was set when
-  a Basic had ~50 HP, so `4 energy = 50 = exactly kills a fresh Basic` was a real
-  breakpoint. With Basics at 40–90 and Stage 1 at 80–120 that relationship is gone, and
-  every printed attack is now worth proportionally less. Leaving the anchors alone is the
-  conservative choice and is what makes the games longer; raising them would undo much of
-  the intended lengthening. Related to the stall question above — raising damage is one of
-  the three dials for it.
+- **Did the 2026-08-15 re-pricing achieve what it was for?** Partly, and the shortfall is
+  worth watching. It was adopted to stop 93.9% of attacks costing 1–3 and to make a
+  substantial attack sit at 5–6. Measured over 24,000 games immediately after: the 1–3 tier
+  fell to **77.8%**, cost 4–5 rose from 3.6% to **19.9%**, and cost 4 now fires in 66% of
+  games against 10% before. So the ladder did stretch.
+
+  A second pass on 2026-08-15 pushed it further, to **38% of attacks queued at
+  cost ≤3** (from 77.8%), by cutting the round-1 openers to six and re-pricing
+  every other Basic attack to 4–6. Cost 4+ is now **62%** of attacks played.
+
+  What did *not* move much is the clock. Games went 8.06 → **8.43 rounds** — the reasoning
+  that higher costs slow the game for both sides is sound and visible (games ending by
+  round 4 halved, 3.0% → 1.4%), but it is a much smaller effect than the tower's share of
+  total damage. **The 8-round median is a tower problem, not a cost problem**, and the
+  cheapest dial remains the structure-chip rate. See the entry below.
+
+  The deck spread also did not improve (Toll Engine 81.7% → 79.8%, Lamp Wall 28.8% →
+  21.4%), so re-pricing is not a balance fix and was not expected to be one. **Needs a
+  human playtest** — every number here is an AI reading, and the AI has no Judgment or
+  Sanctuary heuristics, which is most of why both Heaven decks sit at the bottom.
 - **Unit shielding lengthened games ~5×, and that is now the most urgent number to
   playtest.** Measured 2026-08-08, immediately after the shielding rule landed. The
   unit-only AI mirror in `RulesTest.gd` had been ending on **round 9**; over eight runs it
@@ -1564,6 +1646,55 @@ box.
 Because nothing is displayed, `launch.ps1` must never call `Read-Host` or `pause`: with
 no console attached it would hang forever, leaving an invisible stuck process.
 
+### The bestiary
+
+**Every unit is a creature, and every evolution chain reads as one creature at
+successive ages.** Landed 2026-08-15; full design in `docs/specs/bestiary.md`.
+
+The roster went from 56 units to 234 in two waves (292 cards total). Nothing mechanical
+changed in the pass — no keyword, no rule, no engine code — and **no card `id`
+moved**, which is what made it cheap: ids are referenced 130+ times across 15
+files (`TutorialData.gd` alone names 40), and they are internal, so `grave_whelp`
+displays as *Osslit* without a line of GDScript changing.
+
+**The naming system is per-faction, and that is the load-bearing part.** A chain
+shares a stem; the suffix escalates with age; and the suffix *pools differ per
+faction* so a name places its own colour. The first draft used one shared suffix
+table and it was wrong for two reasons worth keeping: every faction's Basic ended
+in the same syllable, so 114 cards rhymed with each other, and a shared suffix
+carries zero faction information, which puts the whole burden on the stem.
+
+| Faction | Element | Sound | Example chain |
+|---|---|---|---|
+| **Hel** | bone, rot, grave-cold | hard, clipped | Hollowgrub → Hollowmaw → Hollowdrung |
+| **Heaven** | light, gold, judgment | open, ringing | Solemim → Solemmant → Solemtribune |
+| **Void** | absence, entropy | hollow, trailing off | Vastsk → Vastebb → Vastnought |
+| **Gaia** | moss, stone, root | soft, earthy | Granling → Grancrag → Granthane |
+
+**Named legendaries are the sanctioned exception** — `Hel, Queen of the
+Unclaimed` and both Nithoggs keep their proper nouns, because Nithogg is the
+Norse root-gnawing serpent and that is load-bearing flavour rather than a
+placeholder. Kept rare, always at the top of a chain, never a Basic.
+
+**A chain's creatures also share a silhouette.** Each family is drawn as one
+shape function called at three scales, so the Stage 2 is visibly the Basic grown
+up. Drawing each stage independently is what lets a chain drift apart, which is
+exactly what the evolution read cannot survive.
+
+**The new cards are generated, not hand-authored, and the generator enforces the
+rules rather than trusting them.** `tools/add_bestiary_units.py` derives every
+cost from damage on the documented curve, and refuses to write if a card breaks
+the two-line rule, an HP band, a Judgment cap, the Sanctuary minimum, the
+no-new-round-1-openers rule, or Void's per-keyword damage budget. It also scrapes
+the implemented `op` list out of the GDScript and rejects any effect the engine
+does not handle — an unknown op parses fine and silently does nothing, which is
+the exact shape of the dropped-`effects` bug already in this log.
+
+That last check earned its keep immediately: two Rift 2 Stage 2s were authored at
+85 and 80 damage, which `VoidTest` correctly rejected as over Void's budget. The
+budget rule now lives in the generator too, so the failure surfaces at authoring
+time rather than three steps later.
+
 ### Card art
 
 Every card has a small emblem in `assets/art/<card_id>.png`, generated by
@@ -1587,7 +1718,7 @@ The pipeline is deliberately the same shape as `make_icon.py`:
 | | |
 |---|---|
 | **Drawn in code** | Pillow, one function per card keyed by card id, coordinates in 0–1 space |
-| **Regenerable** | `python tools/make_card_art.py` rebuilds all 95 from scratch |
+| **Regenerable** | `python tools/make_card_art.py` rebuilds all 292 from scratch |
 | **Supersampled** | Drawn at 4× and downscaled, so edges are smooth without anti-aliasing work |
 | **128px source** | Above the largest size the game shows (the inspector's 1.55× scale makes the 74px box ~115px). Upscaling is what looks soft |
 
@@ -1978,7 +2109,7 @@ with no console errors.
 Implemented: main menu, deck select, deck builder, combat vs. a heuristic AI, **both
 factions in full** — 15 Hel units and 13 Heaven units, each with its own energy card — the
 38 neutral supports, and the full turn/energy/combat rule set. Card data is data-driven
-from `data/cards.json` (**114 cards**: 16 Hel, 15 Heaven, 21 Void, 19 Gaia, 43 neutral).
+from `data/cards.json` (**292 cards**: 61 Hel, 59 Heaven, 66 Void, 63 Gaia, 43 neutral).
 
 **Heaven is built — two factions now exist.** 13 units, an energy card, and one Tool,
 implementing the `Judgment` and `Sanctuary` keywords and the within-attack damage
@@ -1989,7 +2120,7 @@ resolution order. See `heaven.md`. Three things are deliberately *not* done:
   sample over 5 runs finished on rounds 8, 8, 10, 11, and 17 with Heaven taking 2 — but
   **AI results are not a balance reading for this faction** until those heuristics exist.
 - ~~No Heaven sample deck.~~ **Done** — `Verdict Engine` and `Lamp Wall` ship alongside the
-  four Hel lists, so the collection is six decks and the Hel/Heaven matchup is playable from
+  four Hel lists, so the Hel/Heaven matchup is playable from
   deck select without hand-building anything.
 - ~~No Heaven card art.~~ **Done** — all 15 carry a generated emblem.
 
@@ -2017,10 +2148,10 @@ tests seed and round-trip deck data, and while they shared the real path, **ever
 silently destroyed the player's saved decks.** Any new harness that touches `DeckStore`
 must call `use_sandbox_path()` before it writes.
 
-**Ten sample decks ship as the starter collection** — four Hel, two Heaven, two Void, two Gaia — laid down on
-first run by `DeckStore.sample_decks()`. Each is built around a single idea rather than a
-spread of the card pool, because a deck holding one of everything has no plan to read and
-plays the same whatever you draw:
+**Eighteen sample decks ship as the starter collection** — six Hel, four Heaven, four Void,
+four Gaia — laid down on first run by `DeckStore.sample_decks()`. Each is built around a
+single idea rather than a spread of the card pool, because a deck holding one of everything
+has no plan to read and plays the same whatever you draw:
 
 | Deck | Faction | Identity | Energy |
 |---|---|---|---|
@@ -2028,25 +2159,47 @@ plays the same whatever you draw:
 | **Barrow Wall** | Hel | Retribution bodies plus the whole heal suite and tower support. Survives the tower clock and wins on attrition. | 19 |
 | **Rise & Recur** | Hel | `Rise`, Bonepicker's Scavenge, and Hel Queen recycling the discard; the retreat suite as a second recursion angle. | 19 |
 | **Cacophony Ramp** | Hel | Both Stage 2 lines complete, with `Offering`/`Tithe`/`Ration Pack` to reach a 14-cost attack. Does nothing early, everything late. | 22 |
+| **Wasting Fen** | Hel | `Decay` on every body, and two Stage 2s with a free board-wide 15 damage. Wins without winning a fight; `Reconsecrate` is the mirror-breaker. | 18 |
+| **Unquiet Dead** | Hel | Two full `Rise` chains under Stage 2s that return a unit from the discard *every turn*. Rise is one reprieve; Exhume is a repeating one. | 22 |
 | **Verdict Engine** | Heaven | Every unit carries `Judgment`. Chip anything into threshold range and execute it; `Court of Bells` reloads the board's charges and `Verdict of the Throne` turns the kills into throne damage. | 15 |
 | **Lamp Wall** | Heaven | Deliberately **no `Judgment` at all**, so it keeps the standard damage curve — `Pillar of Light` at 65 and `Judgment of Light` at 75. Sanctuary chaff shields the Bastion while it charges. | 19 |
+| **Sealed Light** | Heaven | The 60/80/100 Sanctuary ladder at every stage, with Stage 2s that *restore their own shield* each turn. A shield that comes back is what breaks the wide-board answer to Sanctuary. | 21 |
+| **Reaffirmation** | Heaven | `Judgment` released from its brake — both Stage 2s restore Judgment to every unit you control, free, once a turn. Wide rather than big, since Judgment buys damage at the reduced rate. | 17 |
+| **Starve** | Void | `Siphon` denial that funds itself; the opponent never accumulates enough to act. | 18 |
+| **Widening Rift** | Void | `Rift` scaling off the Gap, with the Gap built by attaching rather than spending. | 20 |
+| **Total Eclipse** | Void | Siphon on nearly every body, plus Stage 2s that destroy *attached* energy and eat 20% of the pool. No safe place to keep energy. | 19 |
+| **Widening Dark** | Void | Rift on **every** unit and two Rift 2 Stage 2s. The one deck that wants to bank energy onto bodies it never attacks with. | 21 |
+| **Standing Stones** | Gaia | `Earth` into towers and `Makeshift Tower`'s free auto-fire. | 21 |
+| **Deep Grove** | Gaia | The growth engine — Earth from attached energy, `Essence` to survive a wipe. | 21 |
+| **Bedrock** | Gaia | `Earth` and `Resist` on the same bodies, topping out at two Earth 3 / Resist 10 Stage 2s at 165 and 168 HP. Best against exactly the wide chip that beats Sanctuary. | 23 |
+| **Thicket** | Gaia | `Retribution` 20–25 plus `Essence`, so attacking into the board is the mistake and the units that die hand their Earth to the next one. | 23 |
 
 **Every sample deck is exactly 60 cards**, not merely under the cap — `DeckStoreTest`
 asserts it, because a shipped deck should be battle-ready as printed rather than a
 partially-built list the player has to finish.
 
-All six run 15–21 support cards, and the *mix* is part of the identity — the aggro deck
+They run 14–21 support cards, and the *mix* is part of the identity — the aggro deck
 takes draw and reach, the wall takes healing and tower support, and they barely overlap.
 `default_deck()` returns the first sample, so `reset_to_default()` and the harnesses keep
 working unchanged.
 
 Each deck is checked at design time for the trap that a themed list invites: an evolution
 whose Basic isn't in the deck. Mourning Bell was cut from Toll Engine for exactly that —
-it needs Thornshade, which that deck doesn't run.
+it needs Thornshade, which that deck doesn't run, and Petriwold was cut from Bedrock for
+the same reason.
 
-The two Heaven decks are also the first demonstration that a faction's *internal* split is
+The Heaven pairs are the clearest demonstration that a faction's *internal* split is
 deckbuildable: Verdict Engine and Lamp Wall share a color and an energy card and have
-almost no card overlap, because Judgment and Sanctuary want opposite things from a body.
+almost no card overlap, because Judgment and Sanctuary want opposite things from a body —
+and Reaffirmation and Sealed Light are the same split one power level up, each built on
+the Stage 2 that *resets* its half of it.
+
+**The eight decks added 2026-08-15 exist to make the bestiary reachable.** The roster went
+to 234 units in two waves, and the ten decks in front of it used 55 of them — so 179
+creatures were collection content the player would only meet by hand-building. Each new
+deck is anchored on a wave-2 Stage 2 whose free ability *is* the archetype (Interment,
+Exhume, Renewal, Reaffirm, Expunge, Consume Light, Upthrust, Seed the Grove), which is what
+makes them read as eight plans rather than eight piles of new cards.
 
 **Cards use a Pokémon-TCG-style frame.** One layout, built by `CardView`, rendered at
 both sizes — hand cards at 168×262 and board cards at 132×196 — with every font size and
@@ -2083,15 +2236,34 @@ disappears and `Sanctuary N` shows its remaining pool. One chip per keyword, tin
 `Palette.keyword_color()`, because *"does that body still hold its charge?"* is a lookup
 rather than a sentence to read.
 
-**Cards can be clicked or dragged.** Drag-and-drop is an alternative input method for
-actions that already exist — deploy a Basic onto an empty slot, drop an evolution onto its
-base form, drop an energy card onto a unit to play it and charge that unit in one motion.
-Click-then-click still works everywhere; neither style is required. There is deliberately
-**no free drag-to-rearrange**: moving a unit between slots is the printed effect of the
-`Reposition` support card, and giving it away for free would make that card worthless.
-Placement no longer being the sole targeting lever doesn't change this — repositioning
-also moves which unit eats the tower shot and which one shields, so it stays a card
-effect rather than a free action.
+**Cards can be clicked or dragged.** Drag-and-drop covers deploying a Basic onto an empty
+slot, dropping an evolution onto its base form, dropping an energy card onto a unit to play
+it and charge that unit in one motion, and dropping a **single-target support** onto the
+unit it affects. Click-then-click still works everywhere; neither style is required.
+
+Two supports stay **click-only**, because a single drop cannot express them: **tower
+support**, whose target is a structure rather than a unit, and **two-unit supports**, which
+need a second pick. Both keep the board's pick mode.
+
+**Units drag freely between slots, and across your two boards.** Moving one of your own
+units to any empty usable slot is **free and unlimited**, adopted 2026-08-15. This reverses
+a rule that stood from the first prototype, and the reason it could go is that its own
+justification had already expired: it rested on *placement is targeting*, and chosen
+targeting retired that premise — an attack may name any living enemy unit, so placement is
+now the **default and the fallback** rather than the only lever.
+
+What movement still decides is real, which is why it needs no card and no energy to be
+interesting: which of your units eats the tower shot, which one shields the structures
+behind it, which slot an *unnamed* enemy attack faces, and whether moving off a board
+leaves it clear — which is what opens it up.
+
+It is emphatically **not a retreat**. Nothing is paid, no death effect fires, no `Toll` and
+no `Rise`, attached energy and any Tool ride along untouched, the unit is not locked, and it
+never leaves the board. Gated on your own main phase: **no repositioning during setup**,
+since setup deployment is meant to be committed without seeing the opponent's board.
+
+`Reposition` was **repurposed rather than left dead** — it now moves an *enemy* unit within
+its own board. See `support.md`.
 
 **Clicking a card in the deck builder inspects it.** `CardInspector.gd` opens a modal
 holding the card's full detail: the real in-game `CardView` frame scaled up, its keywords
@@ -2455,21 +2627,21 @@ or break a game is worse than no log), and a stall is recorded as `NO WINNER —
 round N`, since that is the single most important thing the file can capture.
 
 Verified by fourteen headless harnesses (all passing — run 2026-08-14 after the three
-deck-screen passes landed, **914 counted assertions**, with the long-standing `SupportUITest` flake fixed rather than merely absent; `SceneSmokeTest`, `PlaythroughTest`
+the board-clarity and free-movement pass landed (run 2026-08-15), **989 counted assertions**, with the long-standing `SupportUITest` flake fixed rather than merely absent; `SceneSmokeTest`, `PlaythroughTest`
 and `TutorialWalkTest` report pass/fail without a count and are not in that total):
 
 | Harness | Covers |
 |---|---|
-| `RulesTest.gd` | 126 assertions: decay, energy scaling, Toll, attach/queue, targeting (all four steps of the chain, shielding, the per-board limit, no-overkill, and clearing a board mid-volley), tower fire (the 0/5/8/11 schedule, full to units, the half chip to tower then throne, round-1 silence, the min-1 floor, and off-slot shielding), Retribution, evolution, Rise, abilities/Consume, the attack lock, setup (the guaranteed-Basic deal across every sample deck, the mulligan and its once/timing limits, free deployment, and both-players-ready gating), structure growth at +5 per *round*, full AI-vs-AI game |
-| `SupportTest.gd` | 158 assertions: card data integrity, the 4-copy limit on supports, draw/energy/healing/damage supports, Tools, tower support, retreat and its lock, the hand limit, and a random-matchup AI-vs-AI game |
+| `RulesTest.gd` | 146 assertions: decay, energy scaling, Toll, attach/queue, targeting (all four steps of the chain, shielding, the per-board limit, no-overkill, and clearing a board mid-volley), tower fire (the 0/5/8/11 schedule, full to units, the half chip to tower then throne, round-1 silence, the min-1 floor, and off-slot shielding), Retribution, evolution, Rise, abilities/Consume, the attack lock, **free unit movement** (within a board, across both your boards, attached energy riding along, and the refusals: occupied slot, a living tower's slot, a same-slot no-op, a dead unit), setup (the guaranteed-Basic deal across every sample deck, the mulligan and its once/timing limits, free deployment, and both-players-ready gating), structure growth at +5 per *round*, full AI-vs-AI game |
+| `SupportTest.gd` | 169 assertions: card data integrity, the 4-copy limit on supports, draw/energy/healing/damage supports, Tools, tower support, retreat and its lock, the hand limit, the **repurposed `Reposition`** (moves an enemy unit, never crosses boards, never changes owner, keeps attached energy, fizzles safely on a full board), and a random-matchup AI-vs-AI game |
 | `DeckStoreTest.gd` | 74 assertions: create, select, rename/collision/truncation, duplicate, delete, per-deck validation, edit isolation, save/load round-trip, the opponent-deck choice (random legality, pinning, stale and illegal fallback), `seed_samples` on a bare store, `hero_card_at` (present for every sample, deterministic, always a unit, always the deck's highest stage, and null rather than raising on a unit-less or empty deck), and `composition_at` (totalling the deck exactly, agreeing with `energy_at`, and omitting absent types rather than reporting them as zero) |
-| `DragDropTest.gd` | 27 assertions: payload resolution against a shifting hand, deploy/evolve/charge by drop, the illegal-drop guards, and leaving setup via the Ready button |
+| `DragDropTest.gd` | 33 assertions: payload resolution against a shifting hand, deploy/evolve/charge by drop, the illegal-drop guards, **drag-to-move** (a legal empty slot, relocation within and across boards, an out-of-range payload refused, and a hand payload never resolving as a unit), and leaving setup via the Ready button |
 | `SceneSmokeTest.gd` | All four screens instantiate without error |
 | `PlaythroughTest.gd` | Drives the real combat UI: deploy, charge, queue, end turn |
-| `SupportUITest.gd` | 43 assertions driving the real combat UI: leaving setup by pressing Ready, support targeting mode, the two-unit pick, tower targeting for both owners, Tool attach by click and by drop, the retreat button, and the modal card picker |
+| `SupportUITest.gd` | 55 assertions driving the real combat UI: leaving setup by pressing Ready, support targeting mode, the two-unit pick, tower targeting for both owners, Tool attach by click and by drop, **support drop-targeting** (a heal drops and heals, tower support and two-unit supports still refused on a unit, an enemy-targeting support accepted on an enemy and refused on your own, and the drop path agreeing with the click path on both a legal and an illegal target), the retreat button, and the modal card picker |
 | `HeavenTest.gd` | 61 assertions: Heaven card data, Sanctuary pool depletion and terminal overflow, both halves of Judgment **driven through the real damage pipeline**, the Heaven mirror ordering, the save-is-not-re-executed guard, Sanctuary preceding Judgment, both reset cards, and keyword restoration on Rise and evolution |
-| `CardViewTest.gd` | 62 assertions on the card frame's *structure*: the header's HP and stage cells, the evolves-from strip (present on evolutions, absent on Basics), keyword chips including a spent `Judgment` dropping its chip, the ability banner (present with an ability, absent without), attack rows with the right icon count and attached-energy fill, the retreat footer and its reserved weakness/resistance slots, and a complete frame for all four non-unit card types. Checks which nodes exist and what they say, never pixel positions — those would break on every metric tweak |
-| `VoidTest.gd` | 61 assertions: Void card data and the printed damage budget, Gap direction/floor/living-units-only, Siphon moving energy on a unit vs. into the pool on a support, Void N destruction, the damage-per-voided rider, Rift scaling **through the real damage pipeline**, Rift granted by a Tool, pool destruction, Gap-to-throne damage, and Siphon obeying the shielding chain |
+| `CardViewTest.gd` | 79 assertions on the card frame's *structure*: the header's HP and stage cells, the evolves-from strip (present on evolutions, absent on Basics), keyword chips including a spent `Judgment` dropping its chip, the ability banner (present with an ability, absent without), attack rows whose cost icons are **always solid and always in the required colour** (the regression that rendered every requirement in hand as an empty colourless socket), the **attached-energy badge** as the footer's first child and absent when nothing is attached, **keyword-chip tooltips** and coverage of every keyword in `Palette.KEYWORD_COLORS`, the retreat footer and its reserved weakness/resistance slots, and a complete frame for all four non-unit card types. Checks which nodes exist and what they say, never pixel positions — those would break on every metric tweak |
+| `VoidTest.gd` | 69 assertions: Void card data and the printed damage budget, Gap direction/floor/living-units-only, Siphon moving energy on a unit vs. into the pool on a support, Void N destruction, the damage-per-voided rider, Rift scaling **through the real damage pipeline**, Rift granted by a Tool, pool destruction, Gap-to-throne damage, **Gap relevance** (false with no Void card, true from either player's deck or from hand), and Siphon obeying the shielding chain |
 | `GaiaTest.gd` | 146 assertions: Gaia card data including per-colour attack costs, the Earth aura summed across both boards and excluding the dead, aura-adjusted max HP, healing that reaches the aura's ceiling, downward clamping that never kills, the aura on attack damage and on tower damage, `Resist` in both damage paths and on Retribution recoil with its minimum-1 floor, Sanctuary preceding Resist, `Essence` **through the real `_cleanup_dead`** (payment, the nearest-living heir, ties-go-left, never crossing boards, skipping a corpse in a batched death, and fizzling when unaffordable), grown Earth resetting on Rise and evolution, Earth derived live from attached energy, the additive rate-breaker, and Makeshift Tower's free auto-fire, per-round growth, and obedience to the shielding chain |
 | `TutorialTest.gd` | 119 assertions: lesson content integrity (unique ids, every step carrying text, every `advance` predicate one the evaluator handles), every card id a lesson names existing, every `read_more` resolving to a real page, every lesson deck building a `GameState`, the unshuffled deal being reproducible **and the default path still shuffling**, every scripted placement landing on a real non-tower slot, the gating hooks answering permissively when inactive, all eight step predicates **driven against a real `GameState`**, progress round-tripping through a sandboxed file, and compendium coverage of every keyword in `Palette.KEYWORD_COLORS`. **Also that every lesson declares an opening hand, that the hand is fully present in its deck, and that it holds the Basics/Stage 1/support/energy its steps actually demand** |
 | `TutorialWalkTest.gd` | Drives all 13 battle lessons through the **real Combat screen**, performing what each step asks via the entry points a player clicks, and fails if any step cannot be satisfied. Reports per-lesson rather than a counted total. This is the harness that checks a lesson can be **finished**, not merely that it is well formed |
@@ -2571,11 +2743,26 @@ pays anything. Colorless is counted in the total.
 
 Next steps, in order:
 
-0. **Eyeball the new card frame in a real game.** The layout rework landed with all ten
-   harnesses green and the inspector renders correctly, but the harness checks *structure* —
-   which nodes exist and what they say — not legibility. The two things only a human can
-   answer: whether ~7px board type supports the at-a-glance read, and whether
-   hover-to-enlarge lands where you expect it to on the rightmost slot.
+0. **Eyeball the board-clarity pass in a real game.** All fourteen harnesses are green at 989
+   assertions, but every one of them checks *structure* — which nodes exist and what they say
+   — and the whole point of this pass was legibility and feel. Six things only a human can
+   answer, roughly in order of how likely they are to be wrong:
+   - **Does a keyword chip's tooltip actually appear on hover, and does clicking the chip
+     still select the card?** The chip had to move from `MOUSE_FILTER_IGNORE` to `PASS` to
+     receive a hover at all, and mouse routing is precisely what a headless harness cannot
+     exercise. This is the single most likely thing in the pass to be silently broken.
+   - **Does picking a unit up fight hover-to-enlarge?** A board card raises a scaled copy on
+     hover, and now the same press-and-move starts a drag. The rightmost slot already had an
+     open question about where the zoom lands.
+   - **Is the bottom-left attached badge readable at 132×196?** It sits at 8px against the
+     footer's 7px. The footer measured 102 of 118 available px at a two-digit total, so it
+     fits — fitting is not the same as reading.
+   - **Do the gold card in hand and the gold rings on its targets read as one gesture?**
+     And does the hint's new dim resting colour read as deliberate rather than as broken?
+   - **Does the Gap row appear only in a Void matchup?** Pin a Void deck as the opponent from
+     deck select to see it, then a non-Void one to confirm it stays hidden.
+   - **Is ~7px board type still legible**, the question this item originally asked, now that
+     the cost icons are solid rather than hollow.
 1. **Read whether quarter-rate tower fire overshot.** The stall it was adopted to fix has
    not recurred, but the AI mirror fell from ~61 rounds to ~13 — back to roughly the length
    previously flagged as too short. This wants a human playtest rather than another AI
@@ -2584,14 +2771,14 @@ Next steps, in order:
 2. **Toll Engine is beating everything** — 9-0 vs Barrow Wall, 8-1 vs Lamp Wall, 8-1 vs
    Widening Rift, 5-4 vs Verdict Engine over 9-run samples. It predates Void and is now the
    clearest balance outlier in the game. See `hel.md`.
-3. ~~**Card art for Heaven and Void.**~~ **Done** — all 114 cards have emblems, Gaia included.
+3. ~~**Card art for Heaven and Void.**~~ **Done** — all 292 cards have emblems, both bestiary waves included.
 4. **Walk the tutorial end to end as a player.** All fourteen lessons build and every step
    predicate fires against a real `GameState`, but the harness cannot read *pacing* — whether
    a step's text lands before the board changes under it, whether the coach panel is where
    the eye already is, and whether the gating ever refuses something a reasonable player
    would try at that moment. The nudge on a blocked action is the thing to watch: it is the
    one place the tutorial can feel broken rather than instructive.
-5. **Human playtesting.** All four factions and ten sample decks now exist; every balance
+5. **Human playtesting.** All four factions and eighteen sample decks now exist; every balance
    number in these docs is still an AI reading, and the AI does not retreat, does not model
    clearing a board across a volley, and has no Judgment or Sanctuary heuristics.
 6. ~~Then **Gaia**, the last of the original four.~~ **Done** — 19 cards in five chains.
@@ -2712,6 +2899,23 @@ even if the rule text later changes. Keep entries to one or two lines.
   be built into, rather than naming a single mechanic.
 - **Opening hand 6, draw 1 per turn.** Midpoint of the prior 5–7 working range, picked
   so the prototype could be built. Explicitly a tuning dial, not a settled rule.
+  **Superseded 2026-08-15 by 8 and 2** — see the entry below.
+- **Structures grew to 75 (tower) and 150 (throne), and draw grew to 8/2 in the same
+  pass.** Adopted because games were ending too fast — the AI mirror sat around 8 rounds
+  against a docs note already calling round 9 too short for a deckbuilder. The two halves
+  do different jobs and were deliberately taken together: bigger structures lengthen the
+  clock, and the extra draw is what lets a player *use* the added time instead of waiting
+  through it. A cleared board is what exposes a tower, so the deciding question late is
+  whether you can rebuild one — and that is a draw problem, not an HP problem. Raising HP
+  alone would have made games longer *and* more passive, which is the failure mode the
+  Open Questions already name for tower stall.
+- **The opening hand guarantees two Basics, not one, clamped to what the deck holds.**
+  Setup deploys Basics and nothing else, so a one-Basic opener enters round 1 with a
+  single body against a board that may show two — and under shielding, the side with
+  fewer units loses its tower cover first. The clamp matters because the guarantee is a
+  *re-deal* loop: without it, a deck running one Basic would exhaust all 20 shuffles
+  chasing a second and hand back the last one anyway. Same deal-filter shape as before —
+  the hand is reshuffled whole, never stacked, so nothing but the guarantee is biased.
 - **Retreat returns a unit to hand, not to a bench.** There is no bench in this game, so
   Pokémon's switch has nothing to switch to. Returning to hand makes retreat a real
   decision — you keep the card but surrender the slot.
@@ -2837,11 +3041,74 @@ even if the rule text later changes. Keep entries to one or two lines.
   bet that the body survives.
 - **Support cards obey the 4-copy limit.** Energy is the only exempt type — exempting
   supports too would turn the deck into a combo engine.
-- **Drag-and-drop is an input method, never a new rule.** Cards can be dragged from hand
-  to deploy, evolve, or charge, but units cannot be freely dragged between slots — that
-  would make the `Reposition` support card worthless and quietly delete the rule that
-  placement *is* targeting. Dropping energy on a unit is a shortcut for two existing
-  legal actions (play energy, then charge), not a third one.
+- **Drag-and-drop was an input method until 2026-08-15, when free unit movement made it a
+  rule change.** The old entry read *"never a new rule"*, and the ban on drag-to-rearrange
+  was its main evidence: repositioning was `Reposition`'s printed effect, and giving it away
+  would both delete the card and delete the rule that placement *is* targeting. **Both
+  halves had already stopped holding.** Chosen targeting retired *placement is targeting* —
+  an attack may name any living enemy unit, so placement became the default and the fallback
+  rather than the only lever — and the card was **repurposed** (it now moves an *enemy* unit
+  within its board) instead of being left a dead draw. What movement still costs the player
+  is unchanged and is why it is not free of consequence: it decides which unit eats the tower
+  shot, which one shields, what an unnamed attack faces, and whether a board is left clear.
+  Dropping energy on a unit remains a shortcut for two existing legal actions rather than a
+  third one, so that half of the original entry survives intact.
+  **The general shape: a rule justified by another rule has to be re-examined when the rule
+  underneath it changes** — this ban outlived its own premise by several months because
+  nothing forced the two to be read together.
+- **An attack's cost states what it REQUIRES; what a unit HOLDS moved to the bottom-left.**
+  One widget had been encoding two questions: the cost icons beside each attack were filled
+  left-to-right by attached energy, so the row doubled as a progress bar. That overload is
+  what broke the requirement read. Encoding "held" as fill state forces an "unfilled" state,
+  and `EnergyIcon`'s unfilled branch paints a black well and **returns before the faction
+  colour is ever used** — so with `unit` null for every card in hand, every cost icon in
+  your hand rendered as an empty colourless socket. The requirement was invisible on the
+  screen where you decide what to play, and it shipped that way because the progress-bar
+  behaviour was *documented as a feature* in three separate comments. Costs are now always
+  solid and always in the colour they demand (colorless stays grey — *which* colour is part
+  of the requirement), and attached energy is a faction symbol plus a number in the footer.
+  The split serves "can this fire yet" better anyway: comparing a stated `3` against a
+  stated `5` beats counting filled sockets, and a unit saving toward a 14-cost attack shows a
+  number instead of a maxed-out row of eight.
+  **The general shape: when one widget encodes two different questions, the second
+  question's states will eventually corrupt the first one's** — and a test can enshrine the
+  corruption, as one here did (`"2 attached energy fills 2 icons"` asserted the bug).
+- **Single-target supports drop onto their target, and both input paths share one legality
+  predicate.** Supports were click-then-click with the only feedback a hint at the top of the
+  screen — furthest from the board, which is where the eye is during a pick. Dragging a card
+  onto the thing it affects is the most direct statement of intent available. The pending
+  card now also lifts **gold** in hand, matching the gold rings on its legal targets, so the
+  card and its candidates read as one gesture; the hint's resting colour moved to dim so that
+  gold could *mean* something. Tower support and two-unit supports stay click-only, since a
+  tower is not a unit and one drop cannot express two picks.
+  The load-bearing detail is that the drop path and the click path were made to call the
+  **same** predicate rather than two that agreed at the time of writing. Making them share
+  immediately exposed a live bug: the Tool drop path used `can_play_support`, whose TOOL
+  branch never checked *ownership*, while the click path used `_tool_candidates`, which does
+  — so `Deadweight`, the one enemy-attaching Tool, could be dropped on your own unit and
+  ordinary Tools onto an enemy's. **Two code paths for one question is one path too many.**
+- **Keyword chips carry their rules text as a tooltip.** The chips are the densest
+  information on a card and had **no tooltip at all** — both the chip and its label were
+  `MOUSE_FILTER_IGNORE`, so they could not even receive a hover. A chip is enough to
+  *recognise* a keyword you already know and nothing whatever if you don't, which bites
+  hardest where the rules are least guessable: `Void 2` and `Rift 2` are unreadable without
+  the rules, and Rift additionally scales off a board-wide number the chip cannot show.
+  `Palette.KEYWORD_HELP` is one table condensed from the Compendium's keyword pages, and
+  `CardViewTest` asserts **every coloured keyword has an entry**, so a new keyword fails the
+  suite until someone writes its help. `Windfury`'s entry says outright that it is not
+  implemented — a tooltip must never promise what the engine cannot do.
+  One trap found while wiring it: flipping the *header* row to `MOUSE_FILTER_PASS` by mistake
+  (a shadowed `row` variable) pushed Combat's phone layout to **544 units**. `LayoutTest`
+  caught it, which is the 540-unit assertion earning its keep on a change that had nothing to
+  do with layout.
+- **The Gap readout appears only when a Void card is in the game.** The Gap is a real board
+  number at all times but **nothing reads it** without Void, so a permanent meter would be
+  clutter in roughly three-quarters of matchups. `gap_is_relevant()` measures decks, hands,
+  discards and boards rather than the board alone, so the readout does not blink in and out
+  as Void units are drawn, played and killed. Both Gaps are shown, because they are **not
+  symmetric** — if you hold 10 attached and they hold 4, yours is 6 and theirs is 0, and
+  showing only your own would make an enemy Rift unit's damage unexplainable. Drawn in
+  Rift's own purple, so the number reads as belonging to the keyword that spends it.
 - **Decks are exactly 60 cards, and an off-size deck cannot be taken into a fight.**
   Replaces the original "up to 60". A fixed size means an opening hand of 6 and one draw
   per turn represent the same fraction of the deck in every game, so the energy ratio a
@@ -2868,6 +3135,47 @@ even if the rule text later changes. Keep entries to one or two lines.
 - **Inspecting a card and adding it are separate gestures.** The deck builder row opens the
   inspector; `+`/`−` edit the deck. Click-to-add meant you could not read a card without
   also committing to it, which is backwards for the screen where you are deciding.
+- **The card inspector is content-sized and centred, not a full-rect panel.** It was
+  anchored `PRESET_FULL_RECT` with fixed 90/40 insets, so a four-line support card
+  produced a 1341x907 sheet of empty panel with the card marooned in the top-left and the
+  deck buttons stranded at the far bottom-right. The screen stopped reading as *a card
+  being examined* and started reading as a page that had failed to load. It is now sized
+  to its content inside a `CenterContainer` — 765 wide on every card, 542-689 tall
+  depending on how much the card prints — with `MAX_PANEL` capping the scrolling rules
+  region so a long unit still scrolls internally instead of growing off-screen, which is
+  the one thing the full-rect version got right. Measured across all 292 cards: the cap
+  never engages on desktop, so nothing scrolls that does not need to.
+- **The inspector's rules text is grouped into boxed sections rather than run together.**
+  Every line in the right-hand column was a dim label at the same size, so a card's own
+  printed effect and the standing note that supports obey the 4-copy limit carried
+  identical weight. A box per section (EFFECT / HOW IT PLAYS / KEYWORDS / ATTACKS /
+  TOLL / RETREAT) restores the hierarchy the card itself has. Keyword names are tinted with
+  `Palette.keyword_color()`, the same colour the board chips use, so a keyword is
+  recognisable before it is read.
+- **The evolution line sits under the card plate, in the card's own column.** It began
+  filed among the rules text, which was wrong on ownership — the line is a property of the
+  *card*, not a rule — and it was a horizontally scrolling strip nested inside a
+  vertically scrolling column, so reaching a Stage 2 meant scrolling twice in two
+  directions. Moving it to a full-width band under both columns fixed the nesting and
+  overcorrected: at 749 units the strip read as the most important thing on the panel,
+  when it is really wayfinding you glance at to see where a card sits in its family. Under
+  the plate it gets the left column's 305 units, which three stages fit in at 290 without
+  scrolling at all. **The failure mode was scale, not placement** — the same element was
+  wrong at 749 and right at 305.
+- **Every band on the phone layout adds to one column, so the phone cap is much tighter
+  than the desktop one.** Phone stacks the plate above the rules and keeps the chain under
+  the plate, so `MAX_PANEL_PHONE` is 500 tall against the desktop's 660 — at 600 the
+  tallest card reached 1203 in a 1170-unit viewport. Desktop is unaffected because the
+  chain shares the plate's column rather than the panel's height.
+- **The scroll region's height cap must be applied deferred, and the measurement that
+  would catch getting it wrong is not the one to reach for.** Read during `_build()`,
+  the rules column's `get_combined_minimum_size()` is still 0 because its children have
+  not laid out — which sets the scroll region's minimum to 0 and collapses the entire
+  rules column, rendering the inspector as a bare card plate. The trap is that
+  `get_combined_minimum_size()` on the *finished panel* still reports the correct 765,
+  because the minimum is right while the drawn result is not. **A layout bug that only
+  affects what is drawn cannot be caught by measuring minimums**; dumping the live node
+  rects is what showed it.
 - **The inspector shows the real `CardView`, scaled, not a bespoke large card.** One
   renderer means the card cannot read differently in the builder than it does in play — a
   second one would drift the first time either changed.
@@ -2934,7 +3242,7 @@ even if the rule text later changes. Keep entries to one or two lines.
 - **Card art is generated by a script, not hand-drawn files.** `tools/make_card_art.py`
   draws one emblem per card in code, the same way `make_icon.py` draws the app icon.
   Regenerable means the art can't drift from the card list, and a palette change
-  propagates to all 95 images in one run. They are symbolic — a shape that matches the
+  propagates to all 292 images in one run. They are symbolic — a shape that matches the
   *name* — because the art box is 74px and an illustration would be mud at that size.
   **The 74px read is the binding constraint, not the 128px one**: several Heaven and Void
   emblems were legible in the inspector and mush on the board, and every one of them failed
@@ -3522,6 +3830,40 @@ even if the rule text later changes. Keep entries to one or two lines.
   reasoning as `Starfield`'s fixed seed, and it is now the second time this project has
   needed it.
 
+- **Attack costs were widened into per-stage bands: Basic 1–6, Stage 1 4–10, Stage 2
+  8–20, with cost derived from damage at 7/8/9 per energy by stage.** A 100k-game sample
+  found the ladder compressed at the bottom — **no Basic attack cost more than 3**, yet two
+  Basics dealt 36–38, as much as a 5-cost Stage 1 — which is why 93.9% of every attack
+  queued cost 1–3 and the 4+ tier was nearly dead content. The floor of the Basic band is
+  set by the opening turn: **round 1 gives exactly 2 energy**, so 1–2 cost Basic attacks
+  have to exist or nobody attacks on turn one.
+
+  Two things were learned building it, both by getting them wrong first. **Rank-mapping a
+  stage's attacks evenly across its band is not the same as pricing them**: spreading Stage
+  2 across 8–20 by damage rank put a 42-damage attack at cost 14 (3.0/e) while the Stage 1
+  under it dealt 60 for 9 — evolving would have been a strict downgrade. Deriving cost
+  *from* damage at a target rate, with the band as a **clamp** rather than a target, is
+  what keeps the arithmetic sane. And **a floor rate applied to a stretched band
+  multiplies**: holding 9/e across an 8–20 band demanded 180 damage at the ceiling, which
+  exceeds the largest printed HP in the game. That is the real constraint — above roughly
+  cost 13 an attack cannot be bought with damage at all, so **the top of a band belongs to
+  effect cards**, and the two that sit there already print 0 damage.
+
+  The rate rising with stage (7 → 8 → 9) is what makes evolving worth its slower arrival.
+  Stage 2 damage roughly doubled to fill the usable part of its band, capped at 120 so no
+  single attack deletes a 175 HP body outright.
+
+  **Cheap attacks fire ~3x as often as expensive ones**, because an attack's cost is
+  paid once and the attack is then free every turn. So the printed mix and the played
+  mix are not the same distribution, and pricing to a target *played* share means
+  making cheap attacks genuinely scarce on the cards — six round-1 openers in the whole
+  game, against 46 attacks at cost 4+.
+
+  Re-pricing is **not** a balance fix and did not act as one: the deck spread was unchanged
+  and the game lengthened only 8.06 → 8.43 rounds. Higher costs do slow the game for both
+  sides — that reasoning is sound and short games halved — but the 8-round median is
+  dominated by tower fire being 52.6% of all damage dealt, which no cost change touches.
+
 - **UI colour is split into faction-neutral chrome and meaningful content, and the
   collisions were separated by hue.** `ACCENT` was byte-identical to Hel's purple, so
   every button hover, selection ring and focus state in the game was Hel-coloured
@@ -3604,3 +3946,95 @@ even if the rule text later changes. Keep entries to one or two lines.
   never get back out. It is a control loop reading its own output as its input, and the
   symptom was the settings panel cheerfully reporting *"Auto would pick phone for this
   window"* on a full-size desktop.
+
+- **Every unit became a creature and the roster doubled to 114 units / 172 cards,
+  without a single card id or mechanic moving.** The ids are internal and heavily
+  referenced (130+ times across 15 files), so renaming only the display `name`
+  bought the entire creature reskin for zero engine churn — the tutorial, all ten
+  sample decks and every harness kept working untouched. **The general shape: when
+  an identifier is load-bearing and a label is not, change the label.**
+- **A naming system's suffix pools have to be per-faction, or the system defeats
+  itself.** The first draft shared one suffix table across all four colours, which
+  makes every faction's Basic end in the same syllable — 114 cards that rhyme, and
+  half of every name carrying no faction information at all. Per-faction pools
+  (`-drung` is Hel, `-nought` is Void, `-thane` is Gaia) mean a name places its own
+  colour before you read the card. `-colossus` was retired outright: it is a
+  complete English word, so it reads as a title bolted onto a stem rather than as
+  one creature's name, and it had appeared in two factions at once.
+- **A chain shares a silhouette as well as a stem.** Each family is one shape
+  function called at three scales rather than three independently drawn emblems,
+  because independent drawings drift and the evolution read is exactly what cannot
+  survive that. Three emblems had to be redrawn after looking at them at *board*
+  size rather than at 128px: a shroud drawn under a skull was invisible, three
+  bells at equal size read as a mound, and wings behind a shield read as a flying
+  saucer. All three failed the same way the Heaven and Void emblems failed once
+  before — **a figure competing with its own props for the silhouette** — and the
+  fix each time was to drop the props.
+- **The card generator enforces the design rules instead of trusting the author.**
+  `tools/add_bestiary_units.py` derives cost from damage on the documented curve
+  and refuses to write when a card breaks the two-line rule, an HP band, a Judgment
+  cap, the Sanctuary floor, the no-new-openers rule, or Void's damage budget — and
+  it scrapes the implemented `op` list out of the GDScript so a card cannot print an
+  effect the engine silently ignores. Two Rift 2 cards were authored over budget and
+  the check caught them; the Void budget then moved into the generator so the same
+  mistake surfaces at authoring time rather than in a harness three steps later.
+  **A guard that only exists in the test suite is a guard you hit late.**
+- **Census assertions and invariant assertions are different things and should be
+  labelled as such.** Doubling the roster broke five `VoidTest` counts (`15 Void
+  units`, `6 Basics`, …) while every invariant it checks — the two-line rule, the HP
+  bands, the retreat formula, the damage budget — passed untouched. The counts exist
+  to catch a card failing to load, not to freeze the roster, and they are now
+  commented to say so. `CardViewTest` had the same shape in a smaller way: it
+  hardcoded the literal `"Charnel Colossus"` and broke on a rename while the frame
+  it was testing was perfectly correct, so it now reads the name off the card.
+
+- **Wave 2 added 30 creatures per faction (234 units, 292 cards), pitched at three
+  deliberately different power levels.** At this size a 60-card deck picks ~12 unit
+  slots from ~57 candidates, so most cards are *collection* content rather than deck
+  content — and writing 120 more cards all competing at the same power produces 120
+  interchangeable creatures, which is the sameness failure one layer down from the
+  naming one. So each faction got roughly 12 vanillas, 13 staples and 5
+  build-arounds. **Uniform power is not the same thing as good balance** once a
+  roster outgrows what a deck can hold.
+- **A card need not touch a mechanic, but a keyword-less Basic must evolve into one
+  that does.** A vanilla body is a legitimate card — cheap, clean, the bottom of a
+  line — while a vanilla that goes *nowhere* is a dead draw. Enforced in the
+  generator rather than by care: a Basic with no keywords fails the build unless the
+  next form in its chain carries one. 42 of the 234 units are vanillas on those terms.
+- **Wave 2 assigned each family a distinct drawing object up front, instead of
+  varying a shared one.** Wave 1 learned this the hard way: Rime and Oss were both
+  "purple skull with marks radiating out" and were indistinguishable at 78px until
+  Rime was redrawn as an ice crystal. At 234 units across four colours, "another
+  skull" and "another green mound" identify nothing — so Hel wave 2 is fens, shrouds,
+  embers and husks (never skulls), Heaven is books, chalices, keys and candles (never
+  halos), Void is spirals, wedges and lacunae (never the round hole-with-a-rim), and
+  Gaia is ferns, sedge, amber and burrs (never generic mounds). **A visual grammar
+  has to be partitioned before it is drawn, not deduplicated afterward.**
+- **Two wave-2 emblems still had to be redrawn, and both failed the same way: not
+  enough object.** `Grimkin` was a pair of scales, which at 78px is a thin cross with
+  two commas; `Sevsk` was a line with two dots. Both were replaced with a single
+  closed shape (a spiked collar, a chain with one severed link). The wave-1 lesson
+  was *too many props*; the wave-2 lesson is the mirror of it — **a silhouette needs
+  exactly one object, and thin linework is not one.**
+
+- **Eight decks were added so the bestiary is reachable without hand-building.** Two waves
+  took the roster to 234 units, and the ten shipped decks used **55 of them** — so 179
+  creatures existed only as collection content, which is the deck-screen version of the bug
+  where Heaven's cards loaded fine and could not be added to a deck. Each new list is
+  anchored on a **wave-2 Stage 2 whose free ability is the archetype** (Interment, Exhume,
+  Renewal, Reaffirm, Expunge, Consume Light, Upthrust, Seed the Grove) rather than on a pile
+  of same-colour bodies, which is what makes eight new decks read as eight plans. The
+  pairing rule from the original four still governs: one idea per list, and the support mix
+  is part of the identity.
+- **The new decks were checked for stranded evolutions before anything was run, and one was
+  found.** Bedrock ran Petriwold without Petribud — the same trap that cost Toll Engine its
+  Mourning Bell. Worth noting that **no harness catches this**: `errors_at()` checks size,
+  energy, Basics and the copy cap, and a deck full of unplayable Stage 1s is legal by every
+  one of those. It is a design-time check, so it needs a design-time pass.
+- **A deck that validates is not a deck that plays, so the eight were driven through real AI
+  games.** Five games each against an established foil finished 7–12 rounds with **zero
+  stalls** — the point being that `DeckStoreTest` proves a list is *legal* and says nothing
+  about whether it functions, which is the same distinction `TutorialWalkTest` exists for
+  ("valid" vs "completable"). The win-loss spread (Sealed Light 5-0, Thicket 1-4) is **not a
+  balance reading**: five games is noise, and the AI has no Judgment or Sanctuary heuristics
+  and dumps its whole pool onto one body, which flatters Rift decks and wastes Heaven's.
