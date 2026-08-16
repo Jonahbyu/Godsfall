@@ -2,11 +2,12 @@ extends SceneTree
 
 ## Total assertions this harness is expected to run; see the check at
 ## the end of the run. Update deliberately when assertions change.
-const EXPECTED_ASSERTIONS := 27
+## 27 before unit movement; +6 for dragging your own bodies between slots.
+const EXPECTED_ASSERTIONS := 33
 
 ## Drives the drag-and-drop paths on the real Combat screen: payload
-## resolution, deploy-by-drop, evolve-by-drop, energy-onto-unit, and the
-## guards that must reject an illegal drop.
+## resolution, deploy-by-drop, evolve-by-drop, energy-onto-unit, moving one of
+## your own units between slots, and the guards that must reject an illegal drop.
 ##   godot --headless --script res://scripts/core/DragDropTest.gd
 
 var _passed := 0
@@ -46,6 +47,7 @@ func _initialize() -> void:
 	await _evolve(combat, gs, you)
 	await _energy_onto_unit(combat, gs, you)
 	await _guards(combat, gs, you)
+	await _move(combat, gs, you)
 
 	## A harness that errors out mid-run still reports "0 failed", because an
 	## assertion that never RUNS cannot fail — that is how the Gaia harness passed
@@ -218,3 +220,55 @@ func _guards(combat, gs, you) -> void:
 		u.hp = 0
 		_ok("dead unit rejects drops", not combat._can_drop_on_unit(_payload(i, "grave_whelp"), u))
 		u.hp = hp
+
+
+func _unit_payload(bi: int, si: int) -> Dictionary:
+	return { "kind": "board_unit", "board": bi, "slot": si }
+
+
+func _move(combat, gs, you) -> void:
+	print("Move your own units between slots:")
+
+	## Start from a clean pair of boards so the slot arithmetic is unambiguous.
+	## Towers are killed off board 1 only, leaving board 0 on two usable slots
+	## and board 1 on three — enough to test both boards without the tower slot
+	## muddying which index is legal.
+	for b in you.boards:
+		for i in range(Board.SLOT_COUNT):
+			b.slots[i] = null
+	you.boards[0].tower_hp = 50
+	you.boards[1].tower_hp = 50
+
+	var db = root.get_node_or_null("CardDB")
+	var u = Unit.new(db.get_card("grave_whelp"))
+	you.boards[0].slots[0] = u
+	gs.active = 0
+
+	_ok("a legal empty slot accepts the dragged unit",
+		combat._can_move_to(_unit_payload(0, 0), 0, 1))
+
+	combat._move_from_drag(_unit_payload(0, 0), 0, 1)
+	await process_frame
+	_ok("unit relocated within the board",
+		you.boards[0].unit_at(0) == null and you.boards[0].unit_at(1) == u)
+
+	## Movement crosses to your other board — the engine allows either of yours,
+	## and the drop zone on that board has to reach the same primitive.
+	combat._move_from_drag(_unit_payload(0, 1), 1, 0)
+	await process_frame
+	_ok("unit moved to your other board",
+		you.boards[0].unit_at(1) == null and you.boards[1].unit_at(0) == u)
+
+	## A payload naming a board that does not exist must resolve to nothing
+	## rather than indexing off the end of `boards`.
+	_ok("out-of-range board in the payload resolves to null",
+		combat._payload_unit(_unit_payload(9, 0)) == null)
+	_ok("out-of-range board refuses the move",
+		not combat._can_move_to(_unit_payload(9, 0), 0, 1))
+
+	## The whole point of the distinct `kind` string: a card being played must
+	## never be mistaken for a body being moved.
+	var i: int = _give(you, "grave_whelp")
+	_ok("a hand-card payload is not a unit payload",
+		combat._payload_unit(_payload(i, "grave_whelp")) == null)
+	you.hand.remove_at(i)

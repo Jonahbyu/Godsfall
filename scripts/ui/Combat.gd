@@ -48,6 +48,10 @@ var _pending_two: Unit = null
 ## Drag state, used only to light up legal targets while a card is in flight.
 var _drag_card: CardData = null
 var _dragging_basic: bool = false
+## The unit being dragged between slots, or null. Mutually exclusive with
+## `_drag_card` — one of your own bodies is in flight, not a card from hand —
+## and it is what makes every legal destination pre-light.
+var _drag_unit: Unit = null
 
 ## UI nodes
 var _enemy_throne_lbl: Label
@@ -1003,28 +1007,52 @@ func _slot_widget(p: Player, b: Board, bi: int, si: int, is_enemy: bool) -> Cont
 		## the player can act on carry a label, and only on the roomier desktop
 		## card; at 78 units there is no space for one.
 		var tut_ring := (not is_enemy) and _tut_highlights("my_slot", bi, si)
+		## Either gesture pre-lights its destinations: a Basic from hand looking
+		## for somewhere to deploy, or one of your bodies looking for somewhere
+		## to stand.
+		var in_flight := droppable and (_dragging_basic or _drag_unit != null)
 		if tut_ring:
 			e.state = SlotSocket.State.TUTORIAL
-		elif droppable and _dragging_basic:
+		elif in_flight:
 			e.state = SlotSocket.State.DROP
 		elif playable:
 			e.state = SlotSocket.State.PLAYABLE
 		e.text = "" if _compact else (
-			"deploy" if playable else ("drop" if (droppable and _dragging_basic) else ""))
+			"move" if (droppable and _drag_unit != null)
+			else ("deploy" if playable
+			else ("drop" if (droppable and _dragging_basic) else "")))
 		e.disabled = not playable
 		e.mouse_filter = Control.MOUSE_FILTER_PASS
 		if playable:
 			e.pressed.connect(func(): _deploy_to(bi, si))
-		## A Basic dropped on an empty, legal slot deploys there.
+		## One zone, two payload kinds: a Basic from hand deploys here, one of
+		## your own board units moves here. Dispatching on the kind is why
+		## `_payload_unit` uses a distinct `kind` string — the zone never has to
+		## know which gesture started.
 		if droppable:
-			e.set("can_drop", func(data): return _is_basic_payload(data))
-			e.set("on_drop", func(data): _deploy_from_drag(data, bi, si))
+			e.set("can_drop", func(data):
+				if _payload_unit(data) != null:
+					return _can_move_to(data, bi, si)
+				return _is_basic_payload(data))
+			e.set("on_drop", func(data):
+				if _payload_unit(data) != null:
+					_move_from_drag(data, bi, si)
+				else:
+					_deploy_from_drag(data, bi, si))
 		return _wrap_with_status(e, null)
 
 	## Occupied slot — render the full card
 	var view := CardView.new(u.card, u, CardView.Mode.BOARD)
 	view.selected = (u == _selected_unit or u == _pending_two)
 	view.enemy = is_enemy
+	## Your own living bodies can be picked up and carried to another slot on
+	## either of your boards. Not during setup — `_my_turn()` is false there, and
+	## setup deployment is meant to be committed without seeing the enemy board —
+	## and not during a support pick, where the board belongs to the support and a
+	## drag would fight the click it is waiting for.
+	if (not is_enemy) and u.is_alive() and _my_turn() and _pending_support == null:
+		view.drag_payload = { "kind": "board_unit", "board": bi, "slot": si }
+		view.drag_started.connect(func(): _on_unit_drag_started(u))
 	_animate_board_card(view, u)
 	## Board type is small by design; hovering raises a readable copy.
 	view.hover_changed.connect(func(on: bool):
@@ -1895,9 +1923,22 @@ func _on_drag_started(i: int, card: CardData) -> void:
 	_refresh()
 
 
+## One of your own units picked up off the board. Same reasoning as above: the
+## drag is a complete gesture, so the click selection is dropped rather than
+## left half-made underneath it.
+func _on_unit_drag_started(u: Unit) -> void:
+	_drag_unit = u
+	_drag_card = null
+	_dragging_basic = false
+	_selected_hand = -1
+	_selected_unit = null
+	_refresh()
+
+
 func _end_drag() -> void:
 	_drag_card = null
 	_dragging_basic = false
+	_drag_unit = null
 
 
 ## The hand shifts whenever a card is played, so a payload's index is only
@@ -1922,6 +1963,54 @@ func _payload_card(data: Variant) -> CardData:
 	if i < 0:
 		return null
 	return CardDB.get_card(gs.players[GameState.P1].hand[i])
+
+
+## Resolve a `{"kind": "board_unit", ...}` payload to a live unit on YOUR boards.
+##
+## The `kind` string is deliberately distinct from `"hand_card"`, so a drop zone
+## can tell "a card being played" from "a unit being moved" without inspecting
+## anything else — one zone serves both gestures and dispatches on this.
+##
+## Indices are re-read rather than trusted: the board is rebuilt on every state
+## change, so the slot a payload names may have emptied since the pickup.
+func _payload_unit(data: Variant) -> Unit:
+	if typeof(data) != TYPE_DICTIONARY:
+		return null
+	var d: Dictionary = data
+	if d.get("kind", "") != "board_unit":
+		return null
+	var bi := int(d.get("board", -1))
+	var si := int(d.get("slot", -1))
+	var p: Player = gs.players[GameState.P1]
+	if bi < 0 or bi >= p.boards.size():
+		return null
+	if si < 0 or si >= Board.SLOT_COUNT:
+		return null
+	return p.boards[bi].unit_at(si)
+
+
+## True when this dragged unit may land on this slot. `move_unit` re-checks all
+## of it, so this exists to light the slot up and to refuse the drop cleanly.
+func _can_move_to(data: Variant, bi: int, si: int) -> bool:
+	if not _my_turn():
+		return false
+	var u := _payload_unit(data)
+	if u == null or not u.is_alive():
+		return false
+	var p: Player = gs.players[GameState.P1]
+	if bi < 0 or bi >= p.boards.size():
+		return false
+	return p.boards[bi].is_slot_playable(si)
+
+
+func _move_from_drag(data: Variant, bi: int, si: int) -> void:
+	var u := _payload_unit(data)
+	_end_drag()
+	if u == null or not _my_turn():
+		return
+	_selected_hand = -1
+	gs.move_unit(gs.players[GameState.P1], u, bi, si)
+	_refresh()
 
 
 func _is_basic_payload(data: Variant) -> bool:
@@ -2287,6 +2376,6 @@ func _unhandled_input(event: InputEvent) -> void:
 ## A drag dropped on empty space never reaches a target, so clear the in-flight
 ## highlights here rather than leaving the board lit up.
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_DRAG_END and _drag_card != null:
+	if what == NOTIFICATION_DRAG_END and (_drag_card != null or _drag_unit != null):
 		_end_drag()
 		_refresh()
