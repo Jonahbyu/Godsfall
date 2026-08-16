@@ -119,6 +119,62 @@ func gap_for(p: Player) -> int:
 	return max(0, _attached_total(players[idx]) - _attached_total(players[1 - idx]))
 
 
+## Whether the Gap is worth showing the player at all.
+##
+## The Gap is a real board value in every game, but **nothing reads it without
+## Void**: `Rift N` and the Gap supports are the only cards that care. A permanent
+## readout would therefore be clutter in the roughly three matchups in four that
+## contain no Void card, and clutter on the pool row is expensive — that row also
+## carries deck, discard, hand and the energy meter.
+##
+## Relevant if either player could ever draw or play a Void card. Checked against
+## **decks, hands and discards as well as the boards**, deliberately: measuring the
+## board alone would make the readout blink in and out as Void units are drawn,
+## deployed and killed, and a number that appears only while it is already being
+## used is no use for planning around. Once a Void card is in the game the Gap
+## stays on screen for the rest of it.
+##
+## Either player's Void card counts. Their Rift unit reads *their* Gap against
+## you, so an opponent's Void deck makes the number just as load-bearing as your
+## own would.
+func gap_is_relevant() -> bool:
+	for p in players:
+		if p == null:
+			continue
+		for pile in [p.deck, p.hand, p.discard]:
+			for id in pile:
+				if _is_void_card(str(id)):
+					return true
+		for u in p.all_units():
+			if u != null and _is_void_card(u.card.id):
+				return true
+	return false
+
+
+## Is this card id a Void card? Guards against a null lookup, so an id that has
+## been removed from the data cannot take the readout down with it.
+func _is_void_card(id: String) -> bool:
+	var db = _card_db()
+	if db == null:
+		return false
+	var c = db.get_card(id)
+	return c != null and c.faction == "void"
+
+
+## CardDB by node lookup rather than by its global name.
+##
+## Under `--script` the autoload node exists but the identifier `CardDB` is not
+## resolvable at compile time, and naming it here fails the whole compile — the
+## trap CLAUDE.md records for Player.gd and the harnesses. The rest of this file
+## names it directly and gets away with it because those call sites are only
+## reached with a full scene tree; this one is read by VoidTest.
+func _card_db():
+	var t := Engine.get_main_loop() as SceneTree
+	if t != null:
+		return t.root.get_node_or_null("CardDB")
+	return null
+
+
 ## Total energy attached to a player's living units. Dead-but-not-yet-cleaned
 ## units are excluded: within a volley a unit marked dead still sits on the board
 ## for Retribution, but its energy is already forfeit, so counting it would let a

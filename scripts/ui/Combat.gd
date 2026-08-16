@@ -58,6 +58,7 @@ var _enemy_throne_lbl: Label
 var _my_throne_lbl: Label
 var _turn_lbl: Label
 var _pool_lbl: Label
+var _gap_lbl: Label
 var _hint_lbl: Label
 var _enemy_boards_row: HBoxContainer
 var _my_boards_row: HBoxContainer
@@ -630,6 +631,26 @@ func _build_ui() -> void:
 	_pool_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	poolbar.add_child(_pool_lbl)
 
+	## The Void Gap, shown only when a Void card is in the game — see
+	## GameState.gap_is_relevant(). Tinted with Rift's keyword colour so it reads
+	## as belonging to the keyword that consumes it rather than as another
+	## resource counter.
+	##
+	## Both numbers are shown because the two Gaps are NOT symmetric: if you hold
+	## 10 attached and they hold 4, yours is 6 and theirs is 0. Showing only your
+	## own would make an enemy Rift unit's damage unexplainable.
+	_gap_lbl = Palette.label("", Palette.TYPE_SMALL, Palette.keyword_color("rift"))
+	_gap_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_gap_lbl.visible = false
+	_gap_lbl.tooltip_text = (
+		"The Gap: your total attached energy minus theirs, floored at 0.
+"
+		+ "Rift attacks deal +N damage per point of their owner's Gap.
+"
+		+ "Living units only, and pool energy does not count."
+	)
+	poolbar.add_child(_gap_lbl)
+
 	poolbar.add_child(_build_pool_meter())
 
 	var controls := poolbar
@@ -904,6 +925,18 @@ func _refresh() -> void:
 	_pool_lbl.text = "Deck %d   ·   Discard %d   ·   Hand %d/%d" % [
 		you.deck.size(), you.discard.size(), you.hand.size(), Player.MAX_HAND
 	]
+
+	## Conditional rather than permanent: nothing reads the Gap without Void, so an
+	## always-on meter would be clutter in most matchups. Kept short on a phone,
+	## where this row also carries deck/discard/hand and the energy meter.
+	_gap_lbl.visible = gs.gap_is_relevant()
+	if _gap_lbl.visible:
+		var mine: int = gs.gap_for(you)
+		var theirs: int = gs.gap_for(foe)
+		if _compact:
+			_gap_lbl.text = "Gap %d/%d" % [mine, theirs]
+		else:
+			_gap_lbl.text = "Gap %d   ·   Theirs %d" % [mine, theirs]
 	_refresh_pool_meter(you)
 	_refresh_global_lock(you)
 

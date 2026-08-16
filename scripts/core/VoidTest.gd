@@ -2,7 +2,7 @@ extends SceneTree
 
 ## Total assertions this harness is expected to run; see the check at
 ## the end of the run. Update deliberately when assertions change.
-const EXPECTED_ASSERTIONS := 61
+const EXPECTED_ASSERTIONS := 69   ## +5 gap_is_relevant (2026-08-15)
 
 ## Headless Void harness:
 ##   godot --headless --script res://scripts/core/VoidTest.gd
@@ -77,6 +77,7 @@ func _run(db) -> void:
 	_test_gap_throne(db)
 	_test_siphon_shielding(db)
 	_test_gap_excludes_dead(db)
+	_test_gap_relevance(db)
 	## A harness that errors out mid-run still reports "0 failed", because an
 	## assertion that never RUNS cannot fail — that is how the Gaia harness passed
 	## for several rounds while executing 7 of its 40 checks. Pinning the total
@@ -94,7 +95,11 @@ func _run(db) -> void:
 func _test_card_data(db) -> void:
 	print("Void card data:")
 	var units: Array = db.units_of("void")
-	_check("15 Void units", units.size(), 15)
+	## Counts moved 15 -> 30 -> 60 across the two bestiary waves (2026-08-15). These are census assertions: they exist to catch a
+	## card silently failing to load, not to freeze the roster size. The
+	## invariants below — two-line rule, HP bands, retreat formula, damage
+	## budget — are the ones that encode design rules and they did not move.
+	_check("60 Void units", units.size(), 60)
 
 	var basics := 0
 	var s1 := 0
@@ -104,9 +109,9 @@ func _test_card_data(db) -> void:
 			CardData.Stage.BASIC: basics += 1
 			CardData.Stage.STAGE1: s1 += 1
 			CardData.Stage.STAGE2: s2 += 1
-	_check("6 Basics", basics, 6)
-	_check("5 Stage 1s", s1, 5)
-	_check("4 Stage 2s", s2, 4)
+	_check("28 Basics", basics, 28)
+	_check("24 Stage 1s", s1, 24)
+	_check("8 Stage 2s", s2, 8)
 
 	## Two-line rule, and the HP bands from CLAUDE.md.
 	var bands := {
@@ -133,15 +138,22 @@ func _test_card_data(db) -> void:
 
 	_check("Void has an energy card", db.energy_card_of("void") != null, true)
 
-	## Exactly one Rift 2, and it must be a Stage 2. Rift is uncapped, so the
-	## multiplier is the only thing bounding it — two points on a cheap body
-	## would scale past every other card in the game.
+	## Rift 2 must be a Stage 2. Rift is uncapped, so the multiplier is the only
+	## thing bounding it — two points on a *cheap body* would scale past every
+	## other card in the game, and it is the cheap body rather than the count
+	## that the bound is actually about.
+	##
+	## Went 1 -> 3 -> 4 across the two bestiary waves (2026-08-15). The stage requirement is
+	## what does the work and it is unchanged; both new Rift 2 cards are Stage 2s
+	## printing 64 damage at cost 8, against the original's 80 at cost 10, so the
+	## ceiling did not move. Watch this number: Rift 2 is the faction's most
+	## dangerous printed value and three is where it should stop for now.
 	var rift2: Array = []
 	for c in units:
 		if c.kw("rift") >= 2:
 			rift2.append(c.name)
 			_check("%s (Rift 2) is a Stage 2" % c.name, c.stage, CardData.Stage.STAGE2)
-	_check("exactly one Rift 2 card", rift2.size(), 1)
+	_check("four Rift 2 cards", rift2.size(), 4)
 
 
 # ---- printed damage sits at or under the budget
@@ -513,3 +525,67 @@ func _test_gap_excludes_dead(db) -> void:
 	_check("their corpse stops subtracting", gs.gap_for(p), 10)
 	mine.hp = 0
 	_check("and mine stops adding", gs.gap_for(p), 0)
+
+
+# ---- the Gap readout is conditional on Void being in the game
+#
+# These are INVARIANT assertions, not a census: they check the *property* that a
+# Void card anywhere makes the Gap relevant and its absence makes it irrelevant,
+# so they stay correct as the roster changes. The Void card id is looked up from
+# CardDB rather than hardcoded for the same reason — a hardcoded id would break on
+# a roster change while proving nothing about the rule.
+func _test_gap_relevance(db) -> void:
+	print("
+Gap relevance:")
+
+	## Any Void card and any non-Void one, taken from the data.
+	var void_id := ""
+	var plain_id := ""
+	for cid in db.all_ids():
+		## Deliberately untyped. A `: CardData` annotation here forces the compiler
+		## to resolve the CardDB autoload at compile time, which is not available
+		## under `--script` and fails the whole file — the trap CLAUDE.md records
+		## for CardViewTest. Every other CardData use in this harness is a bare
+		## constant lookup, which is why the file gets away with those.
+		var c = db.get_card(cid)
+		if c == null:
+			continue
+		if void_id == "" and c.faction == "void":
+			void_id = cid
+		elif plain_id == "" and c.faction != "void":
+			plain_id = cid
+		if void_id != "" and plain_id != "":
+			break
+	_ok("found a Void card and a non-Void card to test with",
+		void_id != "" and plain_id != "")
+	if void_id == "" or plain_id == "":
+		return
+
+	## Players are reached by bare index, never as `GameState.P1`. Naming the
+	## GameState class here would force it to compile eagerly, and its own typed
+	## `var card: CardData = CardDB...` lines then fail to resolve the autoload
+	## under `--script` — taking the whole harness down. Every other test in this
+	## file uses [0]/[1] for the same reason.
+	var you := 0
+	var foe := 1
+
+	## No Void card anywhere.
+	var gs = _game(db)
+	gs.players[you].deck = [plain_id, plain_id]
+	gs.players[foe].deck = [plain_id]
+	_check("no Void card anywhere is not relevant", gs.gap_is_relevant(), false)
+
+	## In YOUR deck.
+	gs.players[you].deck = [plain_id, void_id]
+	_check("a Void card in your deck is relevant", gs.gap_is_relevant(), true)
+
+	## In THEIR deck. Their Rift unit reads their Gap against you, so an
+	## opponent's Void deck makes the number just as load-bearing as your own.
+	gs.players[you].deck = [plain_id]
+	gs.players[foe].deck = [void_id]
+	_check("a Void card in their deck is relevant", gs.gap_is_relevant(), true)
+
+	## In hand — the readout must not wait for the card to be played.
+	gs.players[foe].deck = [plain_id]
+	gs.players[you].hand = [void_id]
+	_check("a Void card in hand is relevant", gs.gap_is_relevant(), true)
