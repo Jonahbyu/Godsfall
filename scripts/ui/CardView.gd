@@ -857,9 +857,9 @@ One per turn."
 
 ## The cost icons for one attack.
 ##
-## Filled left-to-right by `attached`, so the row doubles as a progress bar
-## toward affording the attack — the read that makes accumulating energy on a
-## unit legible, and the reason big attacks feel reachable rather than abstract.
+## These state what the attack REQUIRES, so they are always solid and always in
+## the required colour. `attached` is still read by the numeric chip below, which
+## states both numbers rather than encoding one of them as fill.
 ##
 ## Costs above 8 collapse to a numeric chip. Nine or more icons overflow a 132px
 ## frame, and the cards that cost that much (Cacophony Ramp reaches 14) are
@@ -896,10 +896,22 @@ func _cost_icons(atk: AttackData, attached: int) -> Control:
 	var fac: String = atk.cost_color if atk.cost_color != "" else card.faction
 	var col: Color = Palette.faction_color(fac)
 
+	## Always solid, always in the required colour.
+	##
+	## These icons state what the attack REQUIRES, which does not depend on what the
+	## unit happens to hold — so they are drawn the same in hand, on an uncharged
+	## body, and on a fully charged one. They used to be filled left-to-right by
+	## attached energy, which meant a card in hand (where `unit` is null) drew every
+	## icon unfilled, and `EnergyIcon`'s unfilled branch paints a black well and
+	## never reaches the faction colour: the requirement rendered as empty grey
+	## sockets on every card in your hand.
+	##
+	## "How close am I to affording this" is answered by the attached-energy badge in
+	## the footer, which states the total as a number — a comparison of two stated
+	## numbers rather than a count of filled sockets.
 	for i in cost:
 		var is_colorless: bool = i >= atk.cost_faction
-		var is_filled: bool = unit != null and i < attached
-		box.add_child(EnergyIcon.new(col, is_filled, is_colorless, _m("icon_size"), fac))
+		box.add_child(EnergyIcon.new(col, true, is_colorless, _m("icon_size"), fac))
 	return box
 
 

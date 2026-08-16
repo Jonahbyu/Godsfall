@@ -2,7 +2,7 @@ extends SceneTree
 
 ## Total assertions this harness is expected to run; see the check at
 ## the end of the run. Update deliberately when assertions change.
-const EXPECTED_ASSERTIONS := 62
+const EXPECTED_ASSERTIONS := 68   ## +5: cost icons state the required colour (2026-08-15)
 
 ## Structural assertions on the card frame.
 ##
@@ -103,6 +103,7 @@ func _initialize() -> void:
 	await _test_attack_rows(db)
 	await _test_footer(db)
 	await _test_non_units(db)
+	await _test_cost_icons_show_required_color(db)
 
 	## A harness that errors out mid-run still reports "0 failed", because an
 	## assertion that never RUNS cannot fail — that is how the Gaia harness passed
@@ -140,7 +141,11 @@ func _test_header(db) -> void:
 	if stage != null:
 		check(stage.text.to_upper().contains("BASIC"), "stage reads BASIC, got '%s'" % stage.text)
 
-	check(find_label(view, "Charnel Colossus") != null, "name is present")
+	## Read the name off the card rather than hardcoding the string. The bestiary
+	## pass (2026-08-15) renamed every unit, and a literal here broke while the
+	## frame it is testing was perfectly correct — the assertion is about the
+	## name being *rendered*, not about what the name happens to be.
+	check(find_label(view, card.name) != null, "name is present")
 
 	view.queue_free()
 	await process_frame
@@ -303,18 +308,36 @@ func _test_attack_rows(db) -> void:
 	check(rows != null, "unit has an AttackRows block")
 	if rows != null:
 		check(find_label(rows, "Crush") != null, "attack row names the attack")
-		check(find_label(rows, "38") != null, "attack row shows damage")
+		## Damage and cost are read off the card rather than hardcoded: this test
+		## is about the frame *rendering* what the card says, and pinning the
+		## numbers makes it fail on any re-pricing pass that never touched the UI.
+		## `db`, not the CardDB autoload: under --script the identifier is not
+		## resolvable at compile time, which is the trap this file's header
+		## documents and which this line hit on the first attempt.
+		var crush: AttackData = null
+		for a in db.get_card("charnel_colossus").attack_lines():
+			if a.name == "Crush":
+				crush = a
+		check(crush != null, "Crush is on the card")
+		if crush != null:
+			check(find_label(rows, str(crush.damage)) != null, "attack row shows damage")
 		## The ability moved to the banner in Task 5 — it must not also appear here.
 		check(find_label(rows, "Consume the Fallen") == null,
 			"ability is not duplicated in the attack rows")
 
 		var icons: int = _count_icons(rows)
-		check(icons == 3, "Crush shows 3 cost icons, got %d" % icons)
+		var want_icons: int = crush.total_cost() if crush != null else 0
+		check(icons == want_icons,
+			"Crush shows %d cost icons, got %d" % [want_icons, icons])
 	view.queue_free()
 	await process_frame
 
-	## In play, attached energy fills the icons so a player can see how close the
-	## unit is to affording the attack.
+	## Partial attached energy does NOT change the cost row. This assertion used to
+	## read the other way — "2 attached energy fills 2 icons" — because the row was
+	## a progress bar toward affording the attack. That is what cost every card in
+	## hand its cost colours, since `unit` is null there and an unfilled icon never
+	## reaches the faction ramp. The row states the requirement now, and the
+	## progress read lives in the footer's attached-energy badge.
 	var u = load("res://scripts/core/Unit.gd").new(card)
 	u.attached = 2
 	var live := make_view(card, u, MODE_BOARD)
@@ -323,11 +346,15 @@ func _test_attack_rows(db) -> void:
 	var live_rows := find_node_named(live, "AttackRows")
 	check(live_rows != null, "board card has attack rows")
 	if live_rows != null:
+		var want: int = 0
+		for a in card.attack_lines():
+			want += a.total_cost()
 		var filled: int = 0
 		for n in _collect_icons(live_rows):
 			if n.filled:
 				filled += 1
-		check(filled == 2, "2 attached energy fills 2 icons, got %d" % filled)
+		check(filled == want,
+			"partial charge still shows the full requirement (%d), got %d" % [want, filled])
 	live.queue_free()
 	await process_frame
 
@@ -407,3 +434,61 @@ func _test_non_units(db) -> void:
 
 		view.queue_free()
 		await process_frame
+
+
+## An attack's cost states what it REQUIRES, in the colour it requires, whether the
+## card is in hand or on the board.
+##
+## This is a regression test for a real bug: `is_filled` was `unit != null and i <
+## attached`, so in hand (where `unit` is always null) every icon rendered unfilled —
+## and `EnergyIcon`'s unfilled branch paints a black well and returns before the
+## faction colour is ever used. A card in hand showed its requirement as a row of
+## empty grey sockets. The progress-bar reading moves to the bottom-left badge in a
+## later task, so the cost row is now free to just state the requirement.
+func _test_cost_icons_show_required_color(db) -> void:
+	var card: CardData = db.get_card("grave_whelp")
+	if card == null:
+		check(false, "a unit exists to test costs")
+		return
+	var atk: AttackData = null
+	if card.attack_lines().size() > 0:
+		atk = card.attack_lines()[0]
+	if atk == null or atk.total_cost() <= 0:
+		check(false, "test card has a priced attack")
+		return
+
+	## In hand: no unit, so nothing is attached — and the icons must STILL be solid
+	## and coloured, because the requirement does not depend on what is attached.
+	var view := make_view(card, null, MODE_HAND)
+	root.add_child(view)
+	await process_frame
+	var icons: Array = _collect_icons(find_node_named(view, "AttackRows"))
+	check(icons.size() > 0, "hand card draws its cost icons")
+	var all_filled := true
+	var any_faction_colored := false
+	for ic in icons:
+		if not ic.filled:
+			all_filled = false
+		if not ic.colorless:
+			any_faction_colored = true
+	check(all_filled, "hand cost icons are solid, not empty sockets")
+	check(any_faction_colored, "hand cost icons carry the required faction colour")
+	view.queue_free()
+	await process_frame
+
+	## On the board with ZERO attached: still solid. The old code drew these empty.
+	## Unit._init already sets hp from the card's printed max, so the body is
+	## undamaged and — the point of this half — carries zero attached energy.
+	var u = load("res://scripts/core/Unit.gd").new(card)
+	var bv := make_view(card, u, MODE_BOARD)
+	root.add_child(bv)
+	await process_frame
+	var bicons: Array = _collect_icons(find_node_named(bv, "AttackRows"))
+	check(bicons.size() > 0, "uncharged board card draws its cost icons")
+	var board_all_filled := true
+	for ic in bicons:
+		if not ic.filled:
+			board_all_filled = false
+	check(board_all_filled, "uncharged board card still shows a solid requirement")
+	bv.queue_free()
+	await process_frame

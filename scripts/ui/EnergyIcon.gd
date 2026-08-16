@@ -10,10 +10,20 @@ extends Control
 ## either soft when scaled up or heavy when scaled down. A polygon is crisp at
 ## every size and costs one draw call.
 ##
-## `filled` has a second meaning on the board: an attack's cost icons are filled
-## left-to-right by the unit's *attached* energy, so a player can see how close a
-## unit is to affording each attack. That is the same information the old pip row
-## carried, kept because it is the core read of the energy economy.
+## `filled` is styling only — solid token or hollow socket. It carries no meaning
+## about what a unit holds, and **cost rows always pass `true`**: an attack's cost
+## states what it *requires*, and a requirement does not change with the board.
+##
+## It used to mean the opposite. Cost icons were filled left-to-right by the unit's
+## attached energy so the row doubled as a progress bar, which cost the requirement
+## its colour entirely: `unit` is null for every card in hand, so every icon there
+## was unfilled, and the unfilled branch below paints a black well and returns
+## before either shade ramp is touched. A player's hand showed rows of empty grey
+## sockets on the one screen where the colours are what you are deciding from.
+##
+## The progress read moved to the attached-energy badge in the card footer, which
+## states the total as a number. Two stated numbers compare more directly than a
+## count of filled sockets, and neither one has to borrow the other's channel.
 
 var color: Color = Color.WHITE
 var filled: bool = true
@@ -73,9 +83,11 @@ func _draw() -> void:
 	var bright: Color = sh[2]
 
 	if not filled:
-		## An unpaid cost: a hollow socket. Drawn as a recessed well rather than
-		## an empty outline so the row reads as "slots waiting to be filled",
-		## which is what makes the fill-left-to-right progress read at a glance.
+		## A hollow socket: a recessed well rather than an empty outline, so it
+		## reads as a slot with nothing in it. No cost row asks for this any more
+		## (see the header) — it is kept for callers that want an unfilled token,
+		## and it deliberately drops the colour, which is exactly why a cost row
+		## must never use it.
 		draw_colored_polygon(pts, Color(0, 0, 0, 0.5))
 		_outline(pts, deep.lightened(0.1), max(1.0, r * 0.16))
 		return
