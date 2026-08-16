@@ -763,21 +763,77 @@ Costs may include **colorless** requirements, payable with any color. Multi-fact
 units cost more total energy but get access to **stronger effects** — never higher raw
 damage. Multi-faction should be common and manageable, not strictly superior.
 
+### The colorless split
+
+**A generic attack prints part of its cost as colorless; an identity attack does
+not.** The colored half is the card's faction requirement, and it is the real
+design decision — it is what stays gated when multi-color enforcement is built.
+
+| Split | Applies to |
+|---|---|
+| Pure colored | any line on a card carrying a **signature keyword** |
+| Pure colored | total cost ≤ 3 |
+| `N-1` + 1 colorless | total cost 4–5 |
+| Half and half | total cost 6+ |
+
+`tools/split_colorless.py` holds the rule (`--dry-run`, then `--apply`) and
+**total cost never moves when it runs**, so it changes no balance number.
+
+**Signature-keyword lines stay pure on purpose**: the colored requirement *is*
+the identity, and a splashable `Toll` or `Siphon` at half the colored cost would
+let any deck rent a faction's mechanic. That check reads the **card's** keywords,
+not the attack's own text — Toll lives on `grave_whelp` while its attack "Gnaw"
+never mentions it, so an attack-level reading finds 7 signature lines where the
+rule means 195. It currently leaves **195 of 230 lines pure and splits 35**,
+which is nearly all vanilla bodies: the cards with no identity to dilute.
+
+A cost that **already prints colorless** was authored deliberately and is left
+alone rather than re-derived.
+
 Re-price the whole card pool from these bands with:
 
 ```
 python tools/reprice_attacks.py --dry-run    # then --apply
 ```
 
-Costs may include **colorless** requirements, payable with any color. Multi-faction
-units cost more total energy but get access to **stronger effects** — never higher raw
-damage. Multi-faction should be common and manageable, not strictly superior.
-
 ---
 
 ## Shared Keywords
 
 These belong to the whole game. Faction files list only their signatures.
+
+### Keyword values are modifiable
+
+**A printed keyword value is a starting point, not a constant.** A card may raise
+any keyword on any unit, and every rule that consumes that keyword reads the
+modified value — so a `Toll 2` body under a "+2 Toll" effect refunds 4.
+
+- **Modifiers stack without limit.** Two +2 effects make Toll 6. The bound on
+  Tools is one-per-unit; a board-wide support has no such bound and is not given
+  an artificial one.
+- **They are history, not print**, so `Rise` and evolution clear them, exactly
+  as they clear grown `Earth`. Rise restores the card, not the history.
+- **They floor at 0 on read.** A reduction can zero a keyword but never make it
+  negative, and a −5 followed by a +5 returns to the printed value rather than
+  being clamped away in between.
+- **The live value renders on the card.** A raised keyword shows its modified
+  number, the same rule as a spent `Judgment` vanishing — state the engine tracks
+  per-unit has to be *visible* per-unit, or the mechanic is correct and invisible.
+
+Two ops carry it, and both name the keyword in the data rather than in the code,
+so one op serves every keyword in the game:
+
+```json
+{"op": "buff_keyword_all", "kw": "toll",   "n": 2}   // every unit you control
+{"op": "buff_keyword",     "kw": "siphon", "n": 1}   // one chosen unit
+```
+
+**This is the substrate for cross-keyword rule-breakers.** A card that makes a
+death pay `Toll` *as* `Siphon` converts a refund into *attached* energy, which is
+the resource `Rift` reads — Hel's trigger spending into Void's currency. Those
+interactions are the point of the layer: each one is still authored deliberately
+per card, but the engine no longer has to grow a new op for every keyword it
+touches.
 
 | Keyword | Effect |
 |---|---|
@@ -2626,9 +2682,10 @@ Two guards worth keeping: the writer never raises (a balance log that can fail a
 or break a game is worse than no log), and a stall is recorded as `NO WINNER — stalled at
 round N`, since that is the single most important thing the file can capture.
 
-Verified by fourteen headless harnesses (all passing — run 2026-08-14 after the three
-the board-clarity and free-movement pass landed (run 2026-08-15), **989 counted assertions**, with the long-standing `SupportUITest` flake fixed rather than merely absent; `SceneSmokeTest`, `PlaythroughTest`
-and `TutorialWalkTest` report pass/fail without a count and are not in that total):
+Verified by fifteen headless harnesses, all passing — run 2026-08-16 after the
+colorless split and the keyword modifier layer landed, **1004 counted assertions**
+across the twelve that count (`SceneSmokeTest`, `PlaythroughTest` and
+`TutorialWalkTest` report pass/fail without a count and are not in that total):
 
 | Harness | Covers |
 |---|---|
@@ -2645,6 +2702,7 @@ and `TutorialWalkTest` report pass/fail without a count and are not in that tota
 | `GaiaTest.gd` | 146 assertions: Gaia card data including per-colour attack costs, the Earth aura summed across both boards and excluding the dead, aura-adjusted max HP, healing that reaches the aura's ceiling, downward clamping that never kills, the aura on attack damage and on tower damage, `Resist` in both damage paths and on Retribution recoil with its minimum-1 floor, Sanctuary preceding Resist, `Essence` **through the real `_cleanup_dead`** (payment, the nearest-living heir, ties-go-left, never crossing boards, skipping a corpse in a batched death, and fizzling when unaffordable), grown Earth resetting on Rise and evolution, Earth derived live from attached energy, the additive rate-breaker, and Makeshift Tower's free auto-fire, per-round growth, and obedience to the shielding chain |
 | `TutorialTest.gd` | 119 assertions: lesson content integrity (unique ids, every step carrying text, every `advance` predicate one the evaluator handles), every card id a lesson names existing, every `read_more` resolving to a real page, every lesson deck building a `GameState`, the unshuffled deal being reproducible **and the default path still shuffling**, every scripted placement landing on a real non-tower slot, the gating hooks answering permissively when inactive, all eight step predicates **driven against a real `GameState`**, progress round-tripping through a sandboxed file, and compendium coverage of every keyword in `Palette.KEYWORD_COLORS`. **Also that every lesson declares an opening hand, that the hand is fully present in its deck, and that it holds the Basics/Stage 1/support/energy its steps actually demand** |
 | `TutorialWalkTest.gd` | Drives all 13 battle lessons through the **real Combat screen**, performing what each step asks via the entry points a player clicks, and fails if any step cannot be satisfied. Reports per-lesson rather than a counted total. This is the harness that checks a lesson can be **finished**, not merely that it is well formed |
+| `KeywordModTest.gd` | 15 assertions on the keyword modifier layer: every previously-flat keyword (`toll`, `siphon`, `decay`, `judgment`, `essence`, `resist`) accepting a modifier, unbounded stacking, the accessors reporting the modified value rather than only the raw dictionary, the floor at 0 applying **on read** so a −5 then +5 returns to the print, and modifiers clearing on both `Rise` and evolution. Verified by reverting `toll()` to its flat form and watching two assertions fail before restoring the fix |
 | `LayoutTest.gd` | 37 assertions on what the UI *draws*: every entry in `Palette.GLYPH` being renderable by the actual theme font, every double-quoted literal across the twenty-one UI source files containing no character the font lacks (comments exempt — their ASCII diagrams are never rendered), all four screens building in **both** the desktop and phone layouts, and — the assertion that matters most — **no phone layout exceeding the 540-unit phone viewport**, measured with `get_combined_minimum_size()` and ignoring content inside a horizontally scrolling container. The glyph half reads the source rather than the running scene on purpose: a label built only in a rare branch — an error state, a disabled button's tooltip — is never instantiated by a smoke test, and those are exactly the strings that ship broken. The overflow half exists because its absence is what let mobile mode ship as pure zoom: every screen *built* fine, which is all the build assertions ever checked |
 
 The Heaven pipeline tests deliberately call `GameState._deal_lane_damage` rather than
@@ -2842,6 +2900,29 @@ even if the rule text later changes. Keep entries to one or two lines.
 
 - **Cards are free to play; energy only buys attacks.** The constraint is acting, not
   deploying. This is the game's core identity.
+- **Generic attacks print part of their cost as colorless; signature lines stay pure.**
+  The colored half is what stays gated to the faction once multi-color enforcement is
+  built, so it is the real decision — a `{"hel": 4}` becoming `{"hel": 2, "colorless": 2}`
+  means "any deck splashing 2 Hel may run this." The signature check reads the **card's**
+  keywords rather than the attack's own text, and that distinction was worth the whole
+  exercise: `Toll` lives on `grave_whelp` while its attack "Gnaw" never mentions it, so an
+  attack-level check found **7** signature lines where the rule means **195**. Applying
+  that version would have diluted the colored requirement on nearly every Toll, Decay,
+  Rise, Earth and Judgment body in the game — and **no harness could have caught it**,
+  because the script preserves total cost and every balance assertion would still pass.
+  **The general shape: a check that reads the wrong level of the data fails silently when
+  its output is invariant-preserving**, so the invariant is not the thing to verify.
+- **Every keyword value is modifiable at runtime, and modifiers stack without limit.**
+  The engine was inconsistent about this: `rift()` and `earth()` already accepted Tool
+  grants and card effects, while `toll()`, `siphon()`, `decay()`, `judgment()`, `essence()`
+  and `resist()` returned the printed value flat — so "a support that boosts Toll by 2" was
+  impossible while the identical card for Rift already worked. That asymmetry was an
+  accident of which keyword happened to need a Tool when it shipped, not a design decision.
+  Everything now reads through `Unit.kw_value()`. The two ops carrying it name the keyword
+  **in the data** (`{"op": "buff_keyword_all", "kw": "toll", "n": 2}`) rather than in the
+  code, so the engine never needs a `grant_toll`, `grant_siphon`, `grant_decay` and so on —
+  which is what makes cross-keyword rule-breakers authorable as cards instead of as engine
+  work. Modifiers are history, so `Rise` and evolution clear them.
 - **Energy attaches permanently to units, and is consumed only by death or `Consume`.**
   Makes charging a durable investment and big attacks reachable by accumulation.
 - **Queueing an attack pulls exactly its cost from the pool.** No overpayment, no waste
