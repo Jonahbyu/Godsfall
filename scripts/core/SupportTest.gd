@@ -2,7 +2,9 @@ extends SceneTree
 
 ## Total assertions this harness is expected to run; see the check at
 ## the end of the run. Update deliberately when assertions change.
-const EXPECTED_ASSERTIONS := 158
+## 158 -> 169: eleven for Reposition, repurposed from swapping two of your own
+## units to shoving an enemy unit within its own board.
+const EXPECTED_ASSERTIONS := 169
 
 ## Headless support/retreat harness:
 ##   godot --headless --script res://scripts/core/SupportTest.gd
@@ -59,6 +61,7 @@ func _run(db) -> void:
 	_test_tower_support(db)
 	_test_retreat(db)
 	_test_retreat_supports(db)
+	_test_reposition(db)
 	_test_hand_limit(db)
 	_test_full_game_with_supports(db)
 	## A harness that errors out mid-run still reports "0 failed", because an
@@ -395,8 +398,8 @@ func _test_damage_and_removal(db) -> void:
 	## Toppling Blow reaches the tower and only the tower.
 	p.hand = ["toppling_blow"]
 	_check("Toppling Blow plays", gs.play_support(p, 0, 0), true)
-	_check("tower took 25", foe.boards[0].tower_hp, 25)
-	_check("throne untouched", foe.throne_hp, 100)
+	_check("tower took 25", foe.boards[0].tower_hp, 50)
+	_check("throne untouched", foe.throne_hp, 150)
 
 
 # ---- Tools: one per unit, carried through evolution, lost on death and retreat
@@ -470,8 +473,8 @@ func _test_tower_support(db) -> void:
 	## Reinforced Base raises the ceiling rather than healing.
 	p.hand = ["reinforced_base"]
 	_check("tower support plays on your tower", gs.play_support(p, 0, 0), true)
-	_check("max HP raised", p.boards[0].tower_max_hp, 70)
-	_check("current HP raised too", p.boards[0].tower_hp, 70)
+	_check("max HP raised", p.boards[0].tower_max_hp, 95)
+	_check("current HP raised too", p.boards[0].tower_hp, 95)
 	_check("mod recorded", p.boards[0].tower_mods[0].id, "reinforced_base")
 
 	## Permanents stack: a tower takes any number, including repeats.
@@ -483,7 +486,7 @@ func _test_tower_support(db) -> void:
 	## A repeat of the same card stacks its effect again.
 	p.hand = ["reinforced_base"]
 	_check("a duplicate is accepted", gs.play_support(p, 0, 0), true)
-	_check("max HP raised twice", p.boards[0].tower_max_hp, 90)
+	_check("max HP raised twice", p.boards[0].tower_max_hp, 115)
 	_check("three mods held", p.boards[0].tower_mods.size(), 3)
 
 	## The other tower is independent.
@@ -497,10 +500,10 @@ func _test_tower_support(db) -> void:
 	_check("Rebuild plays alongside a permanent", gs.play_support(p, 0, 0), true)
 	_check("repaired 25", p.boards[0].tower_hp, 55)
 	_check("permanents untouched by a one-shot", p.boards[0].tower_mods.size(), 3)
-	p.boards[0].tower_hp = 85
+	p.boards[0].tower_hp = 110
 	p.hand = ["rebuild"]
 	gs.play_support(p, 0, 0)
-	_check("cannot heal above max", p.boards[0].tower_hp, 90)
+	_check("cannot heal above max", p.boards[0].tower_hp, 115)
 
 	## A tower support must name a tower you control — a dead tower is no target.
 	p.boards[0].tower_take_damage(999)
@@ -658,6 +661,49 @@ func _test_retreat_supports(db) -> void:
 	gs4.play_support(p4, p4.hand.find("rally_the_line"), null)
 	_check("lock lifted", p4.is_locked("barrow_knight"), false)
 	_check("can be replayed this turn", gs4.play_unit(p4, p4.hand.find("barrow_knight"), 0, 1), true)
+
+
+# ---- Reposition: shoves an ENEMY unit within its own board
+## Repurposed 2026-08-15. Free unit movement made the old "swap two of your own
+## units" redundant, so the card points at the enemy instead — the one lever the
+## player otherwise has none of. The assertions that matter are the two
+## restrictions: the unit never leaves its own board, and it never changes owner.
+func _test_reposition(db) -> void:
+	print("Reposition:")
+
+	var card = db.get_card("reposition")
+	_check("reposition still exists", card != null, true)
+	_check("moves an enemy unit", card.has_effect("move_enemy"), true)
+	_check("no longer swaps your own units", card.has_effect("swap_slots"), false)
+
+	var f = _fresh()
+	var gs = f[0]
+	var p = f[1]
+	var foe = f[2]
+
+	## Slot 2 is the tower slot on a fresh board, so the only empty usable slot
+	## on board 0 is slot 1 — which is where the shove has to land.
+	var shoved = _place(db, foe, "barrow_knight", 0, 0)
+	shoved.attached = 3
+	p.hand = ["reposition"]
+	_check("Reposition plays on an enemy unit", gs.play_support(p, 0, shoved), true)
+	_check("left its original slot", foe.boards[0].unit_at(0), null)
+	_check("landed on the same board", foe.boards[0].unit_at(1), shoved)
+	_check("never crossed to the enemy's other board", foe.boards[1].units().size(), 0)
+	_check("never came to your side", p.all_units().size(), 0)
+	_check("attached energy rides along", shoved.attached, 3)
+
+	## A board with no empty usable slot fizzles: the unit stays put and nothing
+	## raises. Slot 2 holds the living tower, so filling 0 and 1 is a full board.
+	var f2 = _fresh()
+	var gs2 = f2[0]
+	var p2 = f2[1]
+	var foe2 = f2[2]
+	var stuck = _place(db, foe2, "barrow_knight", 0, 0)
+	_place(db, foe2, "grave_whelp", 0, 1)
+	p2.hand = ["reposition"]
+	_check("plays even with nowhere to go", gs2.play_support(p2, 0, stuck), true)
+	_check("stayed where it was", foe2.boards[0].unit_at(0), stuck)
 
 
 # ---- hand limit, checked at end of turn

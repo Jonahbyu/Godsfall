@@ -634,6 +634,8 @@ const UNIT_TARGET_OPS := [
 	"protect",
 	"damage_uncharged", "destroy_energy", "retreat_unit", "retreat_free",
 	"retreat_from_pool", "return_to_hand",
+	## Reposition — the one neutral support that names an enemy body.
+	"move_enemy",
 	## Void — all three point at an enemy unit.
 	"siphon_support", "void_all", "gap_damage",
 ]
@@ -673,6 +675,16 @@ func _support_unit_candidates(p: Player, card: CardData) -> Array:
 	if card.has_effect("siphon_support") or card.has_effect("void_all"):
 		for u in foe_p.all_units():
 			if u.is_alive() and u.attached > 0:
+				out.append(u)
+		return out
+
+	## Reposition names any living enemy body. No energy filter — the card moves a
+	## body rather than touching what is on it, so an uncharged unit is as good a
+	## target as a charged one. Without this branch the fall-through at the bottom
+	## would offer YOUR units, which is the effect the card was repurposed away from.
+	if card.has_effect("move_enemy"):
+		for u in foe_p.all_units():
+			if u.is_alive():
 				out.append(u)
 		return out
 
@@ -886,6 +898,9 @@ func _resolve_support_effects(p: Player, card: CardData, target) -> void:
 	## ---- board
 	if card.has_effect("swap_slots"):
 		_do_swap_slots(p, target)
+
+	if card.has_effect("move_enemy"):
+		_do_move_enemy(enemy, target)
 
 	## ---- healing
 	if card.has_effect("heal"):
@@ -1213,6 +1228,64 @@ func _do_swap_slots(p: Player, target) -> void:
 	p.boards[la[0]].slots[la[1]] = b
 	p.boards[lb[0]].slots[lb[1]] = a
 	_log("  Swaps %s and %s. Attached energy stays with each unit." % [a.card.name, b.card.name])
+
+
+## Reposition. Shoves an ENEMY unit into another slot on the board it already
+## stands on.
+##
+## This replaced `swap_slots`, which was the card's printed effect until free unit
+## movement landed. Once a player could rearrange their own board for nothing, a
+## card that swapped two of their own units was doing worse than a free action —
+## the only thing the swap still did that movement could not was exchange two
+## OCCUPIED slots with no empty slot to route through, which is a corner case
+## rather than a card. Pointing the same effect at the enemy makes it a lever the
+## player otherwise has none of.
+##
+## What the shove buys, and why it is worth a card: an UNNAMED attack still hits
+## the slot directly across, so moving an enemy body one slot over redirects the
+## default target of every unnamed attack on that board at once. It also pulls a
+## blocker out from in front of a tower, which is the half no amount of chosen
+## targeting can do — targeting picks among the wall, never past it.
+##
+## Restricted to the unit's OWN board, deliberately. The shielding rule and the
+## two-independent-fights rule both survive untouched: the unit is still alive and
+## still on the board it was defending, so nothing is exposed that clearing that
+## board would not already have exposed. Letting the card push a unit across to
+## the enemy's other board would strip a lane of its last defender for one card,
+## which is a removal effect wearing a movement effect's text.
+##
+## The destination is auto-chosen — the leftmost empty usable slot on that board —
+## rather than being a second pick. Two reasons: one pick keeps the card a single
+## click, matching every other unit-targeted support in the file; and on a 3-slot
+## board with a living tower holding one slot there is usually exactly one empty
+## slot to move to, so a second prompt would be asking a question with one answer.
+## `usable_slots()` is what keeps a living tower's slot off the list.
+##
+## Attached energy and any Tool are properties of the `Unit` object, so moving the
+## reference carries them with no copying — which is also what the card promises.
+func _do_move_enemy(enemy: Player, target) -> void:
+	var u: Unit = target
+	if u == null or not u.is_alive():
+		_log("  No living enemy unit to move.")
+		return
+	var loc := enemy.find_unit(u)
+	if loc[0] < 0:
+		_log("  That unit is not on the enemy's boards.")
+		return
+	var b: Board = enemy.boards[loc[0]]
+	var dest := -1
+	for i in b.usable_slots():
+		if b.slots[i] == null:
+			dest = i
+			break
+	if dest < 0:
+		_log("  %s has nowhere to go on that board — it stays in slot %d."
+			% [u.card.name, loc[1] + 1])
+		return
+	b.slots[loc[1]] = null
+	b.slots[dest] = u
+	_log("  Shoves %s into slot %d. Attached energy stays with it."
+		% [u.card.name, dest + 1])
 
 
 ## Move one of your own units to any empty usable slot, on either of your boards.

@@ -12,8 +12,12 @@ extends Control
 ##   - End Turn resolves everything, then the AI takes its turn.
 ##
 ## Drag is an input method for actions that already exist, not a new rule.
-## There is deliberately no drag-to-rearrange: placement *is* targeting, and
-## repositioning is the printed effect of the Reposition support card.
+## Rearranging your own board USED to be the exception — banned because placement
+## *is* targeting and because repositioning was the printed effect of a card. Both
+## halves of that expired: chosen targeting made placement the default rather than
+## the only lever, so free movement landed (GameState.move_unit), and `Reposition`
+## was repurposed to shove an ENEMY unit within its own board instead
+## (GameState._do_move_enemy).
 
 const MENU_SCENE := "res://scenes/MainMenu.tscn"
 const TUTORIAL_SCENE := "res://scenes/Tutorial.tscn"
@@ -37,7 +41,7 @@ var _selected_unit: Unit = null
 
 ## Support targeting. When a support in hand needs a target, the board goes into
 ## a pick mode: legal targets light up and everything else is inert.
-## `_pending_two` holds the first unit of a two-unit support (Tithe, Reposition).
+## `_pending_two` holds the first unit of a two-unit support (Tithe).
 var _pending_support: CardData = null
 var _pending_two: Unit = null
 
@@ -1805,7 +1809,7 @@ func _support_needs_pick(card: CardData) -> bool:
 	return gs._support_needs_target(card)
 
 
-## Two-unit supports (Tithe, Reposition) need a second pick; the first unit is
+## Two-unit supports (Tithe) need a second pick; the first unit is
 ## held in _pending_two and excluded from the legal set.
 func _is_two_unit_support(card: CardData) -> bool:
 	for op in GameState.TWO_UNIT_OPS:

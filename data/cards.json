@@ -25,7 +25,7 @@
     },
     {
       "id": "grave_whelp",
-      "name": "Grave Whelp",
+      "name": "Osslit",
       "type": "unit",
       "faction": "hel",
       "stage": "basic",
@@ -55,7 +55,7 @@
     },
     {
       "id": "barrow_knight",
-      "name": "Barrow Knight",
+      "name": "Rimethane",
       "type": "unit",
       "faction": "hel",
       "stage": "basic",
@@ -85,7 +85,7 @@
     },
     {
       "id": "carrion_crawler",
-      "name": "Carrion Crawler",
+      "name": "Gnawgrub",
       "type": "unit",
       "faction": "hel",
       "stage": "basic",
@@ -119,7 +119,7 @@
     },
     {
       "id": "bonepicker",
-      "name": "Bonepicker",
+      "name": "Morwisp",
       "type": "unit",
       "faction": "hel",
       "stage": "basic",
@@ -154,7 +154,7 @@
     },
     {
       "id": "thornshade",
-      "name": "Thornshade",
+      "name": "Sepulling",
       "type": "unit",
       "faction": "hel",
       "stage": "basic",
@@ -188,7 +188,7 @@
     },
     {
       "id": "hollow_servant",
-      "name": "Hollow Servant",
+      "name": "Cairnlit",
       "type": "unit",
       "faction": "hel",
       "stage": "basic",
@@ -222,7 +222,7 @@
     },
     {
       "id": "charnel_colossus",
-      "name": "Charnel Colossus",
+      "name": "Gristbarrow",
       "type": "unit",
       "faction": "hel",
       "stage": "basic",
@@ -269,7 +269,7 @@
     },
     {
       "id": "gravebound_reaper",
-      "name": "Gravebound Reaper",
+      "name": "Ossgaunt",
       "type": "unit",
       "faction": "hel",
       "stage": "stage1",
@@ -307,7 +307,7 @@
     },
     {
       "id": "hels_chorus",
-      "name": "Hel's Chorus",
+      "name": "Mormire",
       "type": "unit",
       "faction": "hel",
       "stage": "stage1",
@@ -344,7 +344,7 @@
     },
     {
       "id": "mourning_bell",
-      "name": "Mourning Bell",
+      "name": "Sepulshroud",
       "type": "unit",
       "faction": "hel",
       "stage": "stage1",
@@ -417,7 +417,7 @@
     },
     {
       "id": "grave_tide",
-      "name": "Grave Tide",
+      "name": "Cairnmaw",
       "type": "unit",
       "faction": "hel",
       "stage": "stage1",
@@ -547,7 +547,7 @@
     },
     {
       "id": "grand_cacophony",
-      "name": "Grand Cacophony",
+      "name": "Mordrung",
       "type": "unit",
       "faction": "hel",
       "stage": "stage2",
@@ -817,14 +817,14 @@
       "name": "Reposition",
       "type": "support",
       "faction": "neutral",
-      "text": "Swap the slots of two of your units. They keep all attached energy.",
+      "text": "Move an enemy unit to another slot on its own board. It keeps all attached energy.",
       "effects": [
         {
-          "op": "swap_slots",
+          "op": "move_enemy",
           "n": 0
         }
       ],
-      "flavor": "Retargeting without retreating. Placement is targeting, so this is a combat trick."
+      "flavor": "An unnamed attack hits the slot across, so a body shoved sideways is a board that aims somewhere else."
     },
     {
       "id": "shore_up",
@@ -1218,7 +1218,7 @@
     },
     {
       "id": "lantern_acolyte",
-      "name": "Lantern Acolyte",
+      "name": "Lumemote",
       "type": "unit",
       "faction": "heaven",
       "stage": "basic",
@@ -1248,7 +1248,7 @@
     },
     {
       "id": "censer_bearer",
-      "name": "Censer Bearer",
+      "name": "Seraim",
       "type": "unit",
       "faction": "heaven",
       "stage": "basic",
@@ -1278,7 +1278,7 @@
     },
     {
       "id": "warden_of_the_lamp",
-      "name": "Warden of the Lamp",
+      "name": "Aurkin",
       "type": "unit",
       "faction": "heaven",
       "stage": "basic",
@@ -1308,7 +1308,7 @@
     },
     {
       "id": "bellringer_of_the_court",
-      "name": "Bellringer of the Court",
+      "name": "Belliel",
       "type": "unit",
       "faction": "heaven",
       "stage": "basic",
@@ -1343,7 +1343,7 @@
     },
     {
       "id": "cherub_of_the_open_gate",
-      "name": "Cherub of the Open Gate",
+      "name": "Clarim",
       "type": "unit",
       "faction": "heaven",
       "stage": "basic",
@@ -1373,7 +1373,7 @@
     },
     {
       "id": "arbiter_of_the_third_seal",
-      "name": "Arbiter of the Third Seal",
+      "name": "Seravigil",
       "type": "unit",
       "faction": "heaven",
       "stage": "stage1",
@@ -1403,7 +1403,7 @@
     },
     {
       "id": "hand_of_the_verdict",
-      "name": "Hand of the Verdict",
+      "name": "Lumesear",
       "type": "unit",
       "faction": "heaven",
       "stage": "stage1",
@@ -1437,7 +1437,7 @@
     },
     {
       "id": "court_of_bells",
-      "name": "Court of Bells",
+      "name": "Bellchoir",
       "type": "unit",
       "faction": "heaven",
       "stage": "stage1",
@@ -1476,7 +1476,7 @@
     },
     {
       "id": "radiant_bastion",
-      "name": "Radiant Bastion",
+      "name": "Aurmant",
       "type": "unit",
       "faction": "heaven",
       "stage": "stage1",
@@ -1506,7 +1506,7 @@
     },
     {
       "id": "seraph_of_the_final_ledger",
-      "name": "Seraph of the Final Ledger",
+      "name": "Seratribune",
       "type": "unit",
       "faction": "heaven",
       "stage": "stage2",
@@ -1550,7 +1550,7 @@
     },
     {
       "id": "empyrean_sentinel",
-      "name": "Empyrean Sentinel",
+      "name": "Aurseraph",
       "type": "unit",
       "faction": "heaven",
       "stage": "stage2",
@@ -1594,7 +1594,7 @@
     },
     {
       "id": "throne_of_the_risen_court",
-      "name": "Throne of the Risen Court",
+      "name": "Lumearch",
       "type": "unit",
       "faction": "heaven",
       "stage": "stage2",
@@ -1628,7 +1628,7 @@
     },
     {
       "id": "verdict_of_the_throne",
-      "name": "Verdict of the Throne",
+      "name": "Seraureole",
       "type": "unit",
       "faction": "heaven",
       "stage": "stage2",
@@ -1687,7 +1687,7 @@
     },
     {
       "id": "hollow_acolyte",
-      "name": "Hollow Acolyte",
+      "name": "Nullith",
       "type": "unit",
       "faction": "void",
       "stage": "basic",
@@ -1722,7 +1722,7 @@
     },
     {
       "id": "rust_crawler",
-      "name": "Rust Crawler",
+      "name": "Wanesk",
       "type": "unit",
       "faction": "void",
       "stage": "basic",
@@ -1747,7 +1747,7 @@
     },
     {
       "id": "ashen_pilgrim",
-      "name": "Ashen Pilgrim",
+      "name": "Umbrith",
       "type": "unit",
       "faction": "void",
       "stage": "basic",
@@ -1790,7 +1790,7 @@
     },
     {
       "id": "gnawing_absence",
-      "name": "Gnawing Absence",
+      "name": "Hushith",
       "type": "unit",
       "faction": "void",
       "stage": "basic",
@@ -1824,7 +1824,7 @@
     },
     {
       "id": "null_adept",
-      "name": "Null Adept",
+      "name": "Sevwane",
       "type": "unit",
       "faction": "void",
       "stage": "basic",
@@ -1854,7 +1854,7 @@
     },
     {
       "id": "sundered_wretch",
-      "name": "Sundered Wretch",
+      "name": "Scoursk",
       "type": "unit",
       "faction": "void",
       "stage": "basic",
@@ -1879,7 +1879,7 @@
     },
     {
       "id": "severance_priest",
-      "name": "Severance Priest",
+      "name": "Nullfray",
       "type": "unit",
       "faction": "void",
       "stage": "stage1",
@@ -1914,7 +1914,7 @@
     },
     {
       "id": "entropy_warden",
-      "name": "Entropy Warden",
+      "name": "Sevgaunt",
       "type": "unit",
       "faction": "void",
       "stage": "stage1",
@@ -1944,7 +1944,7 @@
     },
     {
       "id": "the_unwritten",
-      "name": "The Unwritten",
+      "name": "Hushfray",
       "type": "unit",
       "faction": "void",
       "stage": "stage1",
@@ -1988,7 +1988,7 @@
     },
     {
       "id": "famine_of_forms",
-      "name": "Famine of Forms",
+      "name": "Waneebb",
       "type": "unit",
       "faction": "void",
       "stage": "stage1",
@@ -2023,7 +2023,7 @@
     },
     {
       "id": "hungering_maw",
-      "name": "Hungering Maw",
+      "name": "Scourebb",
       "type": "unit",
       "faction": "void",
       "stage": "stage1",
@@ -2048,7 +2048,7 @@
     },
     {
       "id": "the_absence",
-      "name": "The Absence",
+      "name": "Nullnought",
       "type": "unit",
       "faction": "void",
       "stage": "stage2",
@@ -2087,7 +2087,7 @@
     },
     {
       "id": "throat_of_the_void",
-      "name": "Throat of the Void",
+      "name": "Sevnull",
       "type": "unit",
       "faction": "void",
       "stage": "stage2",
@@ -2117,7 +2117,7 @@
     },
     {
       "id": "unmaker_of_thrones",
-      "name": "Unmaker of Thrones",
+      "name": "Hushreave",
       "type": "unit",
       "faction": "void",
       "stage": "stage2",
@@ -2160,7 +2160,7 @@
     },
     {
       "id": "silence_eternal",
-      "name": "Silence Eternal",
+      "name": "Wanesunder",
       "type": "unit",
       "faction": "void",
       "stage": "stage2",
@@ -2293,7 +2293,7 @@
     },
     {
       "id": "gaia_makeshift_tower",
-      "name": "Makeshift Tower",
+      "name": "Petrisprout",
       "type": "unit",
       "faction": "gaia",
       "stage": "basic",
@@ -2322,7 +2322,7 @@
     },
     {
       "id": "gaia_living_conduit",
-      "name": "Living Conduit",
+      "name": "Verdling",
       "type": "unit",
       "faction": "gaia",
       "stage": "basic",
@@ -2358,7 +2358,7 @@
     },
     {
       "id": "gaia_deep_roots",
-      "name": "Deep Roots",
+      "name": "Verdbough",
       "type": "unit",
       "faction": "gaia",
       "stage": "stage1",
@@ -2398,7 +2398,7 @@
     },
     {
       "id": "gaia_bulwark_of_stone",
-      "name": "Bulwark of Stone",
+      "name": "Petricrag",
       "type": "unit",
       "faction": "gaia",
       "stage": "stage1",
@@ -2431,7 +2431,7 @@
     },
     {
       "id": "gaia_the_standing_stone",
-      "name": "The Standing Stone",
+      "name": "Petrimonolith",
       "type": "unit",
       "faction": "gaia",
       "stage": "stage2",
@@ -2464,7 +2464,7 @@
     },
     {
       "id": "gaia_heartwood_ancient",
-      "name": "Heartwood Ancient",
+      "name": "Verdheart",
       "type": "unit",
       "faction": "gaia",
       "stage": "stage2",
@@ -2504,7 +2504,7 @@
     },
     {
       "id": "gaia_sapling_warden",
-      "name": "Sapling Warden",
+      "name": "Bryobud",
       "type": "unit",
       "faction": "gaia",
       "stage": "basic",
@@ -2534,7 +2534,7 @@
     },
     {
       "id": "gaia_grovekeeper",
-      "name": "Grovekeeper",
+      "name": "Bryowarden",
       "type": "unit",
       "faction": "gaia",
       "stage": "stage1",
@@ -2581,7 +2581,7 @@
     },
     {
       "id": "gaia_elder_of_the_grove",
-      "name": "Elder of the Grove",
+      "name": "Bryoelder",
       "type": "unit",
       "faction": "gaia",
       "stage": "stage2",
@@ -2628,7 +2628,7 @@
     },
     {
       "id": "gaia_mossback_tortoise",
-      "name": "Mossback Tortoise",
+      "name": "Lichling",
       "type": "unit",
       "faction": "gaia",
       "stage": "basic",
@@ -2662,7 +2662,7 @@
     },
     {
       "id": "gaia_granite_colossus",
-      "name": "Granite Colossus",
+      "name": "Lichcrag",
       "type": "unit",
       "faction": "gaia",
       "stage": "stage1",
@@ -2696,7 +2696,7 @@
     },
     {
       "id": "gaia_seedbearer",
-      "name": "Seedbearer",
+      "name": "Thornspore",
       "type": "unit",
       "faction": "gaia",
       "stage": "basic",
@@ -2730,7 +2730,7 @@
     },
     {
       "id": "gaia_vernal_rite",
-      "name": "Vernal Rite",
+      "name": "Thornmant",
       "type": "unit",
       "faction": "gaia",
       "stage": "stage1",
@@ -2862,6 +2862,5559 @@
         }
       ],
       "flavor": "Hold still long enough and the roots decide for you."
+    },
+    {
+      "id": "rimelit",
+      "name": "Rimelit",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "frostbite",
+          "name": "Frostbite",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 28,
+          "text": "28 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It exhales and the grass goes white. Small mercies freeze first."
+    },
+    {
+      "id": "rimemire",
+      "name": "Rimemire",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "rimelit",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "hoarfrost",
+          "name": "Hoarfrost",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Grief that learned to keep. Nothing it touches rots -- it simply stops."
+    },
+    {
+      "id": "gristwisp",
+      "name": "Gristwisp",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "chaff",
+          "name": "Chaff",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 26,
+          "text": "26 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The dust of everything the mill has ever taken. It remembers each one."
+    },
+    {
+      "id": "gristgaunt",
+      "name": "Gristgaunt",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "gristwisp",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        }
+      ],
+      "attacks": [
+        {
+          "id": "winnow",
+          "name": "Winnow",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 44,
+          "text": "44 damage",
+          "effects": []
+        },
+        {
+          "id": "glean",
+          "name": "Glean",
+          "ability": true,
+          "consume": 1,
+          "cost": {},
+          "damage": 0,
+          "text": "Return a Hel unit from your discard to your hand",
+          "effects": [
+            {
+              "op": "return_from_discard",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "It separates the living from the dead the way a mill separates chaff."
+    },
+    {
+      "id": "hollowgrub",
+      "name": "Hollowgrub",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 2
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "burrow",
+          "name": "Burrow",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It eats the parts you were not using. You notice much later."
+    },
+    {
+      "id": "hollowmaw",
+      "name": "Hollowmaw",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 100,
+      "retreat": 2,
+      "evolves_from": "hollowgrub",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 4
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "hollow_out",
+          "name": "Hollow Out",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 52,
+          "text": "52 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A hunger with a body built around it, purely as a convenience."
+    },
+    {
+      "id": "hollowdrung",
+      "name": "Hollowdrung",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage2",
+      "hp": 130,
+      "retreat": 3,
+      "evolves_from": "hollowmaw",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 5
+        },
+        {
+          "kw": "decay",
+          "n": 10
+        }
+      ],
+      "attacks": [
+        {
+          "id": "the_long_hollow",
+          "name": "The Long Hollow",
+          "cost": {
+            "hel": 10
+          },
+          "damage": 90,
+          "text": "90 damage",
+          "effects": []
+        },
+        {
+          "id": "interment",
+          "name": "Interment",
+          "ability": true,
+          "consume": 2,
+          "cost": {},
+          "damage": 0,
+          "text": "Deal 15 damage to every enemy unit",
+          "effects": [
+            {
+              "op": "damage_enemy_board",
+              "n": 15
+            }
+          ]
+        }
+      ],
+      "flavor": "It has been digging since before there were things to bury."
+    },
+    {
+      "id": "osskin",
+      "name": "Osskin",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 2
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "splinter",
+          "name": "Splinter",
+          "cost": {
+            "hel": 5
+          },
+          "damage": 32,
+          "text": "32 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Bone remembers the shape it held. Given time, it finds it again."
+    },
+    {
+      "id": "ossshroud",
+      "name": "Ossshroud",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 105,
+      "retreat": 2,
+      "evolves_from": "osskin",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 4
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "ossuary",
+          "name": "Ossuary",
+          "cost": {
+            "hel": 7
+          },
+          "damage": 53,
+          "text": "53 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Every bone it ever wore, worn at once."
+    },
+    {
+      "id": "ossrend",
+      "name": "Ossrend",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage2",
+      "hp": 150,
+      "retreat": 3,
+      "evolves_from": "ossshroud",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 6
+        }
+      ],
+      "attacks": [
+        {
+          "id": "the_last_marrow",
+          "name": "The Last Marrow",
+          "cost": {
+            "hel": 12
+          },
+          "damage": 105,
+          "text": "105 damage",
+          "effects": []
+        },
+        {
+          "id": "exhume",
+          "name": "Exhume",
+          "ability": true,
+          "consume": 2,
+          "cost": {},
+          "damage": 0,
+          "text": "Return a Hel unit from your discard to an empty slot",
+          "effects": [
+            {
+              "op": "reanimate",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "It is not raising the dead. It is collecting them."
+    },
+    {
+      "id": "gnawling",
+      "name": "Gnawling",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 1
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "nibble",
+          "name": "Nibble",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 24,
+          "text": "24 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Too small to fear. That is the arrangement it prefers."
+    },
+    {
+      "id": "gnawmire",
+      "name": "Gnawmire",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 85,
+      "retreat": 2,
+      "evolves_from": "gnawling",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "decay",
+          "n": 10
+        }
+      ],
+      "attacks": [
+        {
+          "id": "gnash",
+          "name": "Gnash",
+          "cost": {
+            "hel": 5
+          },
+          "damage": 42,
+          "text": "42 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has been chewing on the same root for an age and is not bored."
+    },
+    {
+      "id": "morgrub",
+      "name": "Morgrub",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 60,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "swarm",
+          "name": "Swarm",
+          "cost": {
+            "hel": 5
+          },
+          "damage": 36,
+          "text": "36 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "One is nothing. There has never once been one."
+    },
+    {
+      "id": "sepulwisp",
+      "name": "Sepulwisp",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 1
+        },
+        {
+          "kw": "retribution",
+          "n": 10
+        }
+      ],
+      "attacks": [
+        {
+          "id": "keening",
+          "name": "Keening",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 28,
+          "text": "28 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It mourns whoever strikes it, immediately and at volume."
+    },
+    {
+      "id": "cairnling",
+      "name": "Cairnling",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 65,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 2
+        },
+        {
+          "kw": "retribution",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "stoneward",
+          "name": "Stoneward",
+          "cost": {
+            "hel": 5
+          },
+          "damage": 34,
+          "text": "34 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Every stone was set by someone who wanted to be remembered."
+    },
+    {
+      "id": "blighthusk",
+      "name": "Blighthusk",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "spore_burst",
+          "name": "Spore Burst",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It is not sick. It is the thing that makes sickness."
+    },
+    {
+      "id": "blightfen",
+      "name": "Blightfen",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 100,
+      "retreat": 2,
+      "evolves_from": "blighthusk",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 4
+        },
+        {
+          "kw": "decay",
+          "n": 10
+        }
+      ],
+      "attacks": [
+        {
+          "id": "miasma",
+          "name": "Miasma",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 50,
+          "text": "50 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The air above it has not moved in a long time."
+    },
+    {
+      "id": "blightknell",
+      "name": "Blightknell",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage2",
+      "hp": 140,
+      "retreat": 3,
+      "evolves_from": "blightfen",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 5
+        },
+        {
+          "kw": "decay",
+          "n": 10
+        }
+      ],
+      "attacks": [
+        {
+          "id": "the_wasting",
+          "name": "The Wasting",
+          "cost": {
+            "hel": 11
+          },
+          "damage": 95,
+          "text": "95 damage",
+          "effects": []
+        },
+        {
+          "id": "pestilence",
+          "name": "Pestilence",
+          "ability": true,
+          "consume": 2,
+          "cost": {},
+          "damage": 0,
+          "text": "Deal 15 damage to every enemy unit",
+          "effects": [
+            {
+              "op": "damage_enemy_board",
+              "n": 15
+            }
+          ]
+        }
+      ],
+      "flavor": "Everything downwind of it is already counting down."
+    },
+    {
+      "id": "tomblit",
+      "name": "Tomblit",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "dust",
+          "name": "Dust",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 28,
+          "text": "28 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Grave-dust with just enough will to drift toward you."
+    },
+    {
+      "id": "tombshroud",
+      "name": "Tombshroud",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "tomblit",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "entomb",
+          "name": "Entomb",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 47,
+          "text": "47 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has room for one more. It always has room for one more."
+    },
+    {
+      "id": "tombthane",
+      "name": "Tombthane",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage2",
+      "hp": 155,
+      "retreat": 3,
+      "evolves_from": "tombshroud",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 6
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "sealed_in_stone",
+          "name": "Sealed in Stone",
+          "cost": {
+            "hel": 11
+          },
+          "damage": 100,
+          "text": "100 damage",
+          "effects": []
+        },
+        {
+          "id": "grave_call",
+          "name": "Grave Call",
+          "ability": true,
+          "consume": 2,
+          "cost": {},
+          "damage": 0,
+          "text": "Return a Hel unit from your discard to an empty slot",
+          "effects": [
+            {
+              "op": "reanimate",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "A door that only opens inward."
+    },
+    {
+      "id": "murklit",
+      "name": "Murklit",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "seep",
+          "name": "Seep",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 26,
+          "text": "26 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Standing water that has developed opinions."
+    },
+    {
+      "id": "murkmire",
+      "name": "Murkmire",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "murklit",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "drown",
+          "name": "Drown",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 44,
+          "text": "44 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It does not pull you under. It simply rises."
+    },
+    {
+      "id": "chargrub",
+      "name": "Chargrub",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "ember",
+          "name": "Ember",
+          "cost": {
+            "hel": 5
+          },
+          "damage": 33,
+          "text": "33 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Still warm. That is the unsettling part."
+    },
+    {
+      "id": "chargaunt",
+      "name": "Chargaunt",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 105,
+      "retreat": 2,
+      "evolves_from": "chargrub",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 4
+        }
+      ],
+      "attacks": [
+        {
+          "id": "cinderfall",
+          "name": "Cinderfall",
+          "cost": {
+            "hel": 7
+          },
+          "damage": 53,
+          "text": "53 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "What is left when a pyre finishes its work and keeps going."
+    },
+    {
+      "id": "rotwisp",
+      "name": "Rotwisp",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 1
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "fester",
+          "name": "Fester",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Small, patient, and extremely thorough."
+    },
+    {
+      "id": "rotfen",
+      "name": "Rotfen",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "rotwisp",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "decay",
+          "n": 10
+        }
+      ],
+      "attacks": [
+        {
+          "id": "putrefy",
+          "name": "Putrefy",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has been working on this field for a season."
+    },
+    {
+      "id": "grimkin",
+      "name": "Grimkin",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 60,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 2
+        },
+        {
+          "kw": "retribution",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "reproach",
+          "name": "Reproach",
+          "cost": {
+            "hel": 5
+          },
+          "damage": 35,
+          "text": "35 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It takes every blow personally and returns the favour."
+    },
+    {
+      "id": "grimshroud",
+      "name": "Grimshroud",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 110,
+      "retreat": 2,
+      "evolves_from": "grimkin",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 4
+        },
+        {
+          "kw": "retribution",
+          "n": 20
+        }
+      ],
+      "attacks": [
+        {
+          "id": "recompense",
+          "name": "Recompense",
+          "cost": {
+            "hel": 7
+          },
+          "damage": 55,
+          "text": "55 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The ledger balances. It always balances."
+    },
+    {
+      "id": "ashlit",
+      "name": "Ashlit",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "scatter",
+          "name": "Scatter",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 25,
+          "text": "25 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The last thing a fire leaves behind, still moving."
+    },
+    {
+      "id": "ashloam",
+      "name": "Ashloam",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 85,
+      "retreat": 2,
+      "evolves_from": "ashlit",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "settle",
+          "name": "Settle",
+          "cost": {
+            "hel": 5
+          },
+          "damage": 43,
+          "text": "43 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It sinks into the soil and comes back as something else."
+    },
+    {
+      "id": "witherling",
+      "name": "Witherling",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "sap",
+          "name": "Sap",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Everything it leans against goes grey."
+    },
+    {
+      "id": "witherhusk",
+      "name": "Witherhusk",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 100,
+      "retreat": 2,
+      "evolves_from": "witherling",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 4
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "desiccate",
+          "name": "Desiccate",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 50,
+          "text": "50 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It drinks the moisture and leaves the shape."
+    },
+    {
+      "id": "sepulgrub",
+      "name": "Sepulgrub",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "scrape",
+          "name": "Scrape",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 27,
+          "text": "27 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It digs because digging is what there is."
+    },
+    {
+      "id": "sepulknell",
+      "name": "Sepulknell",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "sepulgrub",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "retribution",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "dirgefall",
+          "name": "Dirgefall",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 45,
+          "text": "45 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "One long note for everything it has put down."
+    },
+    {
+      "id": "cairnwisp",
+      "name": "Cairnwisp",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "totter",
+          "name": "Totter",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 25,
+          "text": "25 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A stack of two stones, technically."
+    },
+    {
+      "id": "cairnhusk",
+      "name": "Cairnhusk",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 88,
+      "retreat": 2,
+      "evolves_from": "cairnwisp",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "bulwark",
+          "name": "Bulwark",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 44,
+          "text": "44 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Now a stack of nine, and disinclined to move."
+    },
+    {
+      "id": "morlit",
+      "name": "Morlit",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 42,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "flit",
+          "name": "Flit",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 26,
+          "text": "26 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "One of the swarm, separated. It is not coping."
+    },
+    {
+      "id": "morknell",
+      "name": "Morknell",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 92,
+      "retreat": 2,
+      "evolves_from": "morlit",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "massing",
+          "name": "Massing",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 46,
+          "text": "46 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It found the others."
+    },
+    {
+      "id": "gnawhusk",
+      "name": "Gnawhusk",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 48,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "worry",
+          "name": "Worry",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has been chewing the same thing for weeks."
+    },
+    {
+      "id": "gnawloam",
+      "name": "Gnawloam",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 96,
+      "retreat": 2,
+      "evolves_from": "gnawhusk",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 4
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "hollowing",
+          "name": "Hollowing",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The root finally gave. It has moved on to the tree."
+    },
+    {
+      "id": "gristlit",
+      "name": "Gristlit",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 44,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "grind",
+          "name": "Grind",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 27,
+          "text": "27 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A single stone, turning, with nothing to turn against."
+    },
+    {
+      "id": "gristfen",
+      "name": "Gristfen",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 94,
+      "retreat": 2,
+      "evolves_from": "gristlit",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 3
+        },
+        {
+          "kw": "decay",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "mill",
+          "name": "Mill",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 47,
+          "text": "47 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It found something to turn against."
+    },
+    {
+      "id": "osswisp",
+      "name": "Osswisp",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "basic",
+      "hp": 42,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "rattle",
+          "name": "Rattle",
+          "cost": {
+            "hel": 4
+          },
+          "damage": 26,
+          "text": "26 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A handful of finger bones with somewhere to be."
+    },
+    {
+      "id": "ossloam",
+      "name": "Ossloam",
+      "type": "unit",
+      "faction": "hel",
+      "stage": "stage1",
+      "hp": 98,
+      "retreat": 2,
+      "evolves_from": "osswisp",
+      "keywords": [
+        {
+          "kw": "toll",
+          "n": 4
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "assemble",
+          "name": "Assemble",
+          "cost": {
+            "hel": 6
+          },
+          "damage": 49,
+          "text": "49 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It found the rest of itself."
+    },
+    {
+      "id": "vespermote",
+      "name": "Vespermote",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "first_light",
+          "name": "First Light",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The last light of the day, which is also the first of the reckoning."
+    },
+    {
+      "id": "vespervigil",
+      "name": "Vespervigil",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "vespermote",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 35
+        }
+      ],
+      "attacks": [
+        {
+          "id": "evensong",
+          "name": "Evensong",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 50,
+          "text": "50 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has kept watch so long that the watching has become the point."
+    },
+    {
+      "id": "solemim",
+      "name": "Solemim",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 60
+        }
+      ],
+      "attacks": [
+        {
+          "id": "intercede",
+          "name": "Intercede",
+          "cost": {
+            "heaven": 5
+          },
+          "damage": 32,
+          "text": "32 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It steps in front. That is the entire liturgy."
+    },
+    {
+      "id": "solemmant",
+      "name": "Solemmant",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 110,
+      "retreat": 2,
+      "evolves_from": "solemim",
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 80
+        }
+      ],
+      "attacks": [
+        {
+          "id": "bulwark_of_light",
+          "name": "Bulwark of Light",
+          "cost": {
+            "heaven": 7
+          },
+          "damage": 55,
+          "text": "55 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A wall that apologises to what it stops."
+    },
+    {
+      "id": "solemtribune",
+      "name": "Solemtribune",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage2",
+      "hp": 145,
+      "retreat": 3,
+      "evolves_from": "solemmant",
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 100
+        }
+      ],
+      "attacks": [
+        {
+          "id": "final_shelter",
+          "name": "Final Shelter",
+          "cost": {
+            "heaven": 11
+          },
+          "damage": 95,
+          "text": "95 damage",
+          "effects": []
+        },
+        {
+          "id": "renew",
+          "name": "Renew",
+          "ability": true,
+          "consume": 2,
+          "cost": {},
+          "damage": 0,
+          "text": "Restore this unit's Sanctuary at end of turn",
+          "effects": [
+            {
+              "op": "eot_restore_sanctuary",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "Behind it, everything is still exactly as it was."
+    },
+    {
+      "id": "halokin",
+      "name": "Halokin",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 20
+        }
+      ],
+      "attacks": [
+        {
+          "id": "mark",
+          "name": "Mark",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 28,
+          "text": "28 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It draws a circle. Whatever is inside has been decided about."
+    },
+    {
+      "id": "halosear",
+      "name": "Halosear",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "halokin",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 40
+        }
+      ],
+      "attacks": [
+        {
+          "id": "brand",
+          "name": "Brand",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 46,
+          "text": "46 damage",
+          "effects": []
+        },
+        {
+          "id": "absolve",
+          "name": "Absolve",
+          "ability": true,
+          "consume": 2,
+          "cost": {},
+          "damage": 0,
+          "text": "Restore this unit's Judgment",
+          "effects": [
+            {
+              "op": "restore_own_judgment",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "The verdict was written before the trial. The trial is a courtesy."
+    },
+    {
+      "id": "clariel",
+      "name": "Clariel",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "clarion",
+          "name": "Clarion",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A note held until every other sound gives up."
+    },
+    {
+      "id": "clarchoir",
+      "name": "Clarchoir",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 100,
+      "retreat": 2,
+      "evolves_from": "clariel",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 40
+        }
+      ],
+      "attacks": [
+        {
+          "id": "chorus",
+          "name": "Chorus",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Many voices, one verdict, no dissent recorded."
+    },
+    {
+      "id": "clararch",
+      "name": "Clararch",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage2",
+      "hp": 140,
+      "retreat": 3,
+      "evolves_from": "clarchoir",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 50
+        }
+      ],
+      "attacks": [
+        {
+          "id": "the_final_note",
+          "name": "The Final Note",
+          "cost": {
+            "heaven": 11
+          },
+          "damage": 88,
+          "text": "88 damage",
+          "effects": []
+        },
+        {
+          "id": "reconsecrate",
+          "name": "Reconsecrate",
+          "ability": true,
+          "consume": 2,
+          "cost": {},
+          "damage": 0,
+          "text": "Restore Judgment to every unit you control",
+          "effects": [
+            {
+              "op": "restore_board_judgment",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "When it stops, the silence is the sentence."
+    },
+    {
+      "id": "aurmote",
+      "name": "Aurmote",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 60
+        }
+      ],
+      "attacks": [
+        {
+          "id": "gild",
+          "name": "Gild",
+          "cost": {
+            "heaven": 5
+          },
+          "damage": 33,
+          "text": "33 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Gold does not tarnish. It simply waits out whatever is trying."
+    },
+    {
+      "id": "lumekin",
+      "name": "Lumekin",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 20
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "rekindle",
+          "name": "Rekindle",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 27,
+          "text": "27 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Snuff it and it takes the offence personally."
+    },
+    {
+      "id": "bellmote",
+      "name": "Bellmote",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "toll_the_hour",
+          "name": "Toll the Hour",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 31,
+          "text": "31 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Each ring is a name. It has not repeated one yet."
+    },
+    {
+      "id": "serakin",
+      "name": "Serakin",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 60,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 60
+        }
+      ],
+      "attacks": [
+        {
+          "id": "shieldwing",
+          "name": "Shieldwing",
+          "cost": {
+            "heaven": 5
+          },
+          "damage": 35,
+          "text": "35 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Six wings, four of them turned outward, toward you."
+    },
+    {
+      "id": "gloriamote",
+      "name": "Gloriamote",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "kindle",
+          "name": "Kindle",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A small light that has already decided about you."
+    },
+    {
+      "id": "glorialumen",
+      "name": "Glorialumen",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 100,
+      "retreat": 2,
+      "evolves_from": "gloriamote",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 40
+        }
+      ],
+      "attacks": [
+        {
+          "id": "exalt",
+          "name": "Exalt",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 50,
+          "text": "50 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It burns brighter the more there is to judge."
+    },
+    {
+      "id": "gloriathrone",
+      "name": "Gloriathrone",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage2",
+      "hp": 150,
+      "retreat": 3,
+      "evolves_from": "glorialumen",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 50
+        },
+        {
+          "kw": "sanctuary",
+          "n": 60
+        }
+      ],
+      "attacks": [
+        {
+          "id": "in_glory",
+          "name": "In Glory",
+          "cost": {
+            "heaven": 12
+          },
+          "damage": 92,
+          "text": "92 damage",
+          "effects": []
+        },
+        {
+          "id": "reaffirm",
+          "name": "Reaffirm",
+          "ability": true,
+          "consume": 2,
+          "cost": {},
+          "damage": 0,
+          "text": "Restore Judgment to every unit you control",
+          "effects": [
+            {
+              "op": "restore_board_judgment",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "The verdict, and the light to read it by."
+    },
+    {
+      "id": "sanctim",
+      "name": "Sanctim",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 60
+        }
+      ],
+      "attacks": [
+        {
+          "id": "ward",
+          "name": "Ward",
+          "cost": {
+            "heaven": 5
+          },
+          "damage": 32,
+          "text": "32 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It stands where the blow was going to land."
+    },
+    {
+      "id": "sanctcant",
+      "name": "Sanctcant",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 112,
+      "retreat": 2,
+      "evolves_from": "sanctim",
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 80
+        }
+      ],
+      "attacks": [
+        {
+          "id": "consecrate",
+          "name": "Consecrate",
+          "cost": {
+            "heaven": 7
+          },
+          "damage": 56,
+          "text": "56 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Ground it has stood on stays difficult to cross."
+    },
+    {
+      "id": "sanctthrone",
+      "name": "Sanctthrone",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage2",
+      "hp": 160,
+      "retreat": 4,
+      "evolves_from": "sanctcant",
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 100
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "inviolate",
+          "name": "Inviolate",
+          "cost": {
+            "heaven": 11
+          },
+          "damage": 98,
+          "text": "98 damage",
+          "effects": []
+        },
+        {
+          "id": "renewal",
+          "name": "Renewal",
+          "ability": true,
+          "consume": 2,
+          "cost": {},
+          "damage": 0,
+          "text": "Restore this unit's Sanctuary at end of turn",
+          "effects": [
+            {
+              "op": "eot_restore_sanctuary",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "Nothing has reached it yet. It has been a long yet."
+    },
+    {
+      "id": "psalmiel",
+      "name": "Psalmiel",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "verse",
+          "name": "Verse",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It sings one line, over and over, and means it every time."
+    },
+    {
+      "id": "psalmcant",
+      "name": "Psalmcant",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "psalmiel",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 35
+        }
+      ],
+      "attacks": [
+        {
+          "id": "refrain",
+          "name": "Refrain",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 47,
+          "text": "47 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "By the ninth repetition it stops sounding like music."
+    },
+    {
+      "id": "oratim",
+      "name": "Oratim",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 48,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 20
+        }
+      ],
+      "attacks": [
+        {
+          "id": "indict",
+          "name": "Indict",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 31,
+          "text": "31 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has read the whole file and has follow-up questions."
+    },
+    {
+      "id": "oratora",
+      "name": "Oratora",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 98,
+      "retreat": 2,
+      "evolves_from": "oratim",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 40
+        }
+      ],
+      "attacks": [
+        {
+          "id": "prosecute",
+          "name": "Prosecute",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 49,
+          "text": "49 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The case was closed before it opened its mouth."
+    },
+    {
+      "id": "lucenmote",
+      "name": "Lucenmote",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 42,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 60
+        }
+      ],
+      "attacks": [
+        {
+          "id": "glimmer",
+          "name": "Glimmer",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 28,
+          "text": "28 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Faint, and completely impossible to put out."
+    },
+    {
+      "id": "lucenlumen",
+      "name": "Lucenlumen",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 105,
+      "retreat": 2,
+      "evolves_from": "lucenmote",
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 80
+        }
+      ],
+      "attacks": [
+        {
+          "id": "radiance",
+          "name": "Radiance",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 52,
+          "text": "52 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Standing behind it is the safest place on the field."
+    },
+    {
+      "id": "matinkin",
+      "name": "Matinkin",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 52,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 15
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "dawnstrike",
+          "name": "Dawnstrike",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 33,
+          "text": "33 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "First light, and it has been waiting up for you."
+    },
+    {
+      "id": "matinora",
+      "name": "Matinora",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 102,
+      "retreat": 2,
+      "evolves_from": "matinkin",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 35
+        },
+        {
+          "kw": "rise",
+          "n": 0
+        }
+      ],
+      "attacks": [
+        {
+          "id": "sunrise",
+          "name": "Sunrise",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 51,
+          "text": "51 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It comes back every morning. That is rather the point."
+    },
+    {
+      "id": "empyriel",
+      "name": "Empyriel",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 60
+        }
+      ],
+      "attacks": [
+        {
+          "id": "aegis",
+          "name": "Aegis",
+          "cost": {
+            "heaven": 5
+          },
+          "damage": 34,
+          "text": "34 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A shield with a creature attached, roughly in that order."
+    },
+    {
+      "id": "empyrseraph",
+      "name": "Empyrseraph",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 115,
+      "retreat": 2,
+      "evolves_from": "empyriel",
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 80
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "firmament",
+          "name": "Firmament",
+          "cost": {
+            "heaven": 7
+          },
+          "damage": 57,
+          "text": "57 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The sky, holding still, on purpose."
+    },
+    {
+      "id": "cantmote",
+      "name": "Cantmote",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 42,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "hum",
+          "name": "Hum",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 26,
+          "text": "26 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A note looking for a chord."
+    },
+    {
+      "id": "cantlumen",
+      "name": "Cantlumen",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 92,
+      "retreat": 2,
+      "evolves_from": "cantmote",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 35
+        }
+      ],
+      "attacks": [
+        {
+          "id": "harmony",
+          "name": "Harmony",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 46,
+          "text": "46 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It found the chord. The chord was a sentence."
+    },
+    {
+      "id": "vesperkin",
+      "name": "Vesperkin",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 44,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "flicker",
+          "name": "Flicker",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 27,
+          "text": "27 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Dusk-light, undecided."
+    },
+    {
+      "id": "vespercant",
+      "name": "Vespercant",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 94,
+      "retreat": 2,
+      "evolves_from": "vesperkin",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 35
+        }
+      ],
+      "attacks": [
+        {
+          "id": "nightsong",
+          "name": "Nightsong",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 47,
+          "text": "47 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It made up its mind somewhere around midnight."
+    },
+    {
+      "id": "auriel",
+      "name": "Auriel",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 46,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "sheen",
+          "name": "Sheen",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 28,
+          "text": "28 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Gilt, and not yet gold."
+    },
+    {
+      "id": "aurora",
+      "name": "Aurora",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 96,
+      "retreat": 2,
+      "evolves_from": "auriel",
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 60
+        }
+      ],
+      "attacks": [
+        {
+          "id": "burnish",
+          "name": "Burnish",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Gold, now, and aware of it."
+    },
+    {
+      "id": "bellkin",
+      "name": "Bellkin",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 43,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "chime",
+          "name": "Chime",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 27,
+          "text": "27 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has not been struck yet."
+    },
+    {
+      "id": "bellthrone",
+      "name": "Bellthrone",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "bellkin",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 40
+        }
+      ],
+      "attacks": [
+        {
+          "id": "peal",
+          "name": "Peal",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 45,
+          "text": "45 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has been struck. Everyone heard."
+    },
+    {
+      "id": "clarmote",
+      "name": "Clarmote",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 41,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "shine",
+          "name": "Shine",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 26,
+          "text": "26 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Clear light with nothing yet to clarify."
+    },
+    {
+      "id": "clarseraph",
+      "name": "Clarseraph",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 93,
+      "retreat": 2,
+      "evolves_from": "clarmote",
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 60
+        }
+      ],
+      "attacks": [
+        {
+          "id": "clarity",
+          "name": "Clarity",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 46,
+          "text": "46 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Now everything in front of it is very obvious."
+    },
+    {
+      "id": "seramote",
+      "name": "Seramote",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 47,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "hover",
+          "name": "Hover",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Wings, and no rank to go with them."
+    },
+    {
+      "id": "seralumen",
+      "name": "Seralumen",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 99,
+      "retreat": 2,
+      "evolves_from": "seramote",
+      "keywords": [
+        {
+          "kw": "judgment",
+          "n": 35
+        }
+      ],
+      "attacks": [
+        {
+          "id": "ascend",
+          "name": "Ascend",
+          "cost": {
+            "heaven": 6
+          },
+          "damage": 49,
+          "text": "49 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It was promoted. The wings multiplied accordingly."
+    },
+    {
+      "id": "solemkin",
+      "name": "Solemkin",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "basic",
+      "hp": 44,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "stand_fast",
+          "name": "Stand Fast",
+          "cost": {
+            "heaven": 4
+          },
+          "damage": 27,
+          "text": "27 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has taken up a position. Nothing is attacking it yet."
+    },
+    {
+      "id": "solemthrone",
+      "name": "Solemthrone",
+      "type": "unit",
+      "faction": "heaven",
+      "stage": "stage1",
+      "hp": 106,
+      "retreat": 2,
+      "evolves_from": "solemkin",
+      "keywords": [
+        {
+          "kw": "sanctuary",
+          "n": 80
+        }
+      ],
+      "attacks": [
+        {
+          "id": "hold_the_line",
+          "name": "Hold the Line",
+          "cost": {
+            "heaven": 7
+          },
+          "damage": 53,
+          "text": "53 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Something is attacking it now. The position has not moved."
+    },
+    {
+      "id": "faneith",
+      "name": "Faneith",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "unmake",
+          "name": "Unmake",
+          "cost": {
+            "void": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It was a temple to something. The something is the part that went."
+    },
+    {
+      "id": "fanefray",
+      "name": "Fanefray",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "faneith",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 1
+        },
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "erode",
+          "name": "Erode",
+          "cost": {
+            "void": 6
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Worship without an object, running on habit alone."
+    },
+    {
+      "id": "vastsk",
+      "name": "Vastsk",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "widen",
+          "name": "Widen",
+          "cost": {
+            "void": 4
+          },
+          "damage": 31,
+          "text": "31 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The distance between two things, given an appetite."
+    },
+    {
+      "id": "vastebb",
+      "name": "Vastebb",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 100,
+      "retreat": 2,
+      "evolves_from": "vastsk",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "recede",
+          "name": "Recede",
+          "cost": {
+            "void": 6
+          },
+          "damage": 52,
+          "text": "52 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It does not approach. The space in front of it simply gets longer."
+    },
+    {
+      "id": "vastnought",
+      "name": "Vastnought",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage2",
+      "hp": 135,
+      "retreat": 3,
+      "evolves_from": "vastebb",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "the_wide_dark",
+          "name": "The Wide Dark",
+          "cost": {
+            "void": 8
+          },
+          "damage": 64,
+          "text": "64 damage",
+          "effects": []
+        },
+        {
+          "id": "engulf",
+          "name": "Engulf",
+          "ability": true,
+          "consume": 1,
+          "cost": {},
+          "damage": 0,
+          "text": "Destroy 2 energy attached to an enemy unit",
+          "effects": [
+            {
+              "op": "void_energy",
+              "n": 2
+            }
+          ]
+        }
+      ],
+      "flavor": "Everything that is not it is a rounding error."
+    },
+    {
+      "id": "scourwane",
+      "name": "Scourwane",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "abrade",
+          "name": "Abrade",
+          "cost": {
+            "void": 5
+          },
+          "damage": 33,
+          "text": "33 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Patient as weather and about as negotiable."
+    },
+    {
+      "id": "scourgaunt",
+      "name": "Scourgaunt",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "scourwane",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "strip",
+          "name": "Strip",
+          "cost": {
+            "void": 6
+          },
+          "damage": 45,
+          "text": "45 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It takes the surface first. There is rarely anything under it."
+    },
+    {
+      "id": "hushwane",
+      "name": "Hushwane",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "muffle",
+          "name": "Muffle",
+          "cost": {
+            "void": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        },
+        {
+          "id": "quiet",
+          "name": "Quiet",
+          "ability": true,
+          "consume": 1,
+          "cost": {},
+          "damage": 0,
+          "text": "Destroy 1 energy attached to an enemy unit",
+          "effects": [
+            {
+              "op": "void_energy",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "It gets between you and the sound of your own thoughts."
+    },
+    {
+      "id": "hushebb",
+      "name": "Hushebb",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "hushwane",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        },
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "attenuate",
+          "name": "Attenuate",
+          "cost": {
+            "void": 6
+          },
+          "damage": 47,
+          "text": "47 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Everything is still there. None of it reaches you."
+    },
+    {
+      "id": "umbrsk",
+      "name": "Umbrsk",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "dim",
+          "name": "Dim",
+          "cost": {
+            "void": 4
+          },
+          "damage": 26,
+          "text": "26 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Not darkness. The place light declined to go."
+    },
+    {
+      "id": "umbrfray",
+      "name": "Umbrfray",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 85,
+      "retreat": 2,
+      "evolves_from": "umbrsk",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        },
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "penumbra",
+          "name": "Penumbra",
+          "cost": {
+            "void": 6
+          },
+          "damage": 44,
+          "text": "44 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The edge of a shadow, which is the hungriest part of it."
+    },
+    {
+      "id": "umbrreave",
+      "name": "Umbrreave",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage2",
+      "hp": 125,
+      "retreat": 3,
+      "evolves_from": "umbrfray",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 2
+        },
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "total_eclipse",
+          "name": "Total Eclipse",
+          "cost": {
+            "void": 8
+          },
+          "damage": 64,
+          "text": "64 damage",
+          "effects": []
+        },
+        {
+          "id": "consume_light",
+          "name": "Consume Light",
+          "ability": true,
+          "consume": 2,
+          "cost": {},
+          "damage": 0,
+          "text": "Destroy 20% of the enemy's energy pool",
+          "effects": [
+            {
+              "op": "void_pool_pct",
+              "n": 20
+            }
+          ]
+        }
+      ],
+      "flavor": "It does not block the light. It keeps it."
+    },
+    {
+      "id": "nullwane",
+      "name": "Nullwane",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "subtract",
+          "name": "Subtract",
+          "cost": {
+            "void": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It performs one operation and has never needed another."
+    },
+    {
+      "id": "sevith",
+      "name": "Sevith",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 60,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "sunder_bond",
+          "name": "Sunder Bond",
+          "cost": {
+            "void": 5
+          },
+          "damage": 36,
+          "text": "36 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It separates a thing from what made it a thing."
+    },
+    {
+      "id": "waneith",
+      "name": "Waneith",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "dwindle",
+          "name": "Dwindle",
+          "cost": {
+            "void": 5
+          },
+          "damage": 34,
+          "text": "34 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Every night it is slightly less, and never quite gone."
+    },
+    {
+      "id": "lacunith",
+      "name": "Lacunith",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "elide",
+          "name": "Elide",
+          "cost": {
+            "void": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A gap in the record where something used to be recorded."
+    },
+    {
+      "id": "lacunlack",
+      "name": "Lacunlack",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "lacunith",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "omit",
+          "name": "Omit",
+          "cost": {
+            "void": 6
+          },
+          "damage": 47,
+          "text": "47 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It removes the word and then the space the word was in."
+    },
+    {
+      "id": "lacunabyss",
+      "name": "Lacunabyss",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage2",
+      "hp": 140,
+      "retreat": 3,
+      "evolves_from": "lacunlack",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        },
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "the_missing_page",
+          "name": "The Missing Page",
+          "cost": {
+            "void": 9
+          },
+          "damage": 78,
+          "text": "78 damage",
+          "effects": []
+        },
+        {
+          "id": "expunge",
+          "name": "Expunge",
+          "ability": true,
+          "consume": 1,
+          "cost": {},
+          "damage": 0,
+          "text": "Destroy 2 energy attached to an enemy unit",
+          "effects": [
+            {
+              "op": "void_energy",
+              "n": 2
+            }
+          ]
+        }
+      ],
+      "flavor": "You are certain there was more to this."
+    },
+    {
+      "id": "gyresk",
+      "name": "Gyresk",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 48,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "spiral",
+          "name": "Spiral",
+          "cost": {
+            "void": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It turns, and things near it start turning too."
+    },
+    {
+      "id": "gyrerift",
+      "name": "Gyrerift",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 98,
+      "retreat": 2,
+      "evolves_from": "gyresk",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "maelstrom",
+          "name": "Maelstrom",
+          "cost": {
+            "void": 6
+          },
+          "damage": 49,
+          "text": "49 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The turning has become the only thing there is."
+    },
+    {
+      "id": "gyreshear",
+      "name": "Gyreshear",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage2",
+      "hp": 130,
+      "retreat": 3,
+      "evolves_from": "gyrerift",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "event_horizon",
+          "name": "Event Horizon",
+          "cost": {
+            "void": 8
+          },
+          "damage": 64,
+          "text": "64 damage",
+          "effects": []
+        },
+        {
+          "id": "draw_down",
+          "name": "Draw Down",
+          "ability": true,
+          "consume": 2,
+          "cost": {},
+          "damage": 0,
+          "text": "Destroy 20% of the enemy's energy pool",
+          "effects": [
+            {
+              "op": "void_pool_pct",
+              "n": 20
+            }
+          ]
+        }
+      ],
+      "flavor": "Past a certain point the turning is no longer optional."
+    },
+    {
+      "id": "ebonith",
+      "name": "Ebonith",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 44,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "blacken",
+          "name": "Blacken",
+          "cost": {
+            "void": 4
+          },
+          "damage": 28,
+          "text": "28 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Not dark. Dark is an absence of light; this is a presence."
+    },
+    {
+      "id": "ebonlack",
+      "name": "Ebonlack",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 94,
+      "retreat": 2,
+      "evolves_from": "ebonith",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "smother",
+          "name": "Smother",
+          "cost": {
+            "void": 6
+          },
+          "damage": 47,
+          "text": "47 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It gets into the corners first."
+    },
+    {
+      "id": "drosssk",
+      "name": "Drosssk",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 52,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "slag",
+          "name": "Slag",
+          "cost": {
+            "void": 5
+          },
+          "damage": 32,
+          "text": "32 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "What is left when something is refined and the good part removed."
+    },
+    {
+      "id": "drossebb",
+      "name": "Drossebb",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 100,
+      "retreat": 2,
+      "evolves_from": "drosssk",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "residue",
+          "name": "Residue",
+          "cost": {
+            "void": 6
+          },
+          "damage": 50,
+          "text": "50 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It is made entirely of what other things discarded."
+    },
+    {
+      "id": "rivewane",
+      "name": "Rivewane",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 46,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "split",
+          "name": "Split",
+          "cost": {
+            "void": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It finds the seam. There is always a seam."
+    },
+    {
+      "id": "riveshear",
+      "name": "Riveshear",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 96,
+      "retreat": 2,
+      "evolves_from": "rivewane",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "cleave",
+          "name": "Cleave",
+          "cost": {
+            "void": 6
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Two things that used to be one thing."
+    },
+    {
+      "id": "pallith",
+      "name": "Pallith",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "shroud_out",
+          "name": "Shroud Out",
+          "cost": {
+            "void": 4
+          },
+          "damage": 31,
+          "text": "31 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It settles over a thing and the thing stops mattering."
+    },
+    {
+      "id": "pallgaunt",
+      "name": "Pallgaunt",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 102,
+      "retreat": 2,
+      "evolves_from": "pallith",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "obscure",
+          "name": "Obscure",
+          "cost": {
+            "void": 6
+          },
+          "damage": 51,
+          "text": "51 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "You know it is still there. You cannot say why you think so."
+    },
+    {
+      "id": "starksk",
+      "name": "Starksk",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "bare",
+          "name": "Bare",
+          "cost": {
+            "void": 5
+          },
+          "damage": 33,
+          "text": "33 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It takes away everything inessential, which is most things."
+    },
+    {
+      "id": "starkrift",
+      "name": "Starkrift",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 108,
+      "retreat": 2,
+      "evolves_from": "starksk",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "strip_bare",
+          "name": "Strip Bare",
+          "cost": {
+            "void": 7
+          },
+          "damage": 54,
+          "text": "54 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "What is left is true and almost nothing."
+    },
+    {
+      "id": "cesssk",
+      "name": "Cesssk",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 42,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "stagnate",
+          "name": "Stagnate",
+          "cost": {
+            "void": 4
+          },
+          "damage": 26,
+          "text": "26 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Still water in a place with no outlet."
+    },
+    {
+      "id": "cessebb",
+      "name": "Cessebb",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 92,
+      "retreat": 2,
+      "evolves_from": "cesssk",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "sink",
+          "name": "Sink",
+          "cost": {
+            "void": 6
+          },
+          "damage": 46,
+          "text": "46 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It found the outlet. The outlet goes down."
+    },
+    {
+      "id": "nullsk",
+      "name": "Nullsk",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 40,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "negate",
+          "name": "Negate",
+          "cost": {
+            "void": 4
+          },
+          "damage": 25,
+          "text": "25 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has not decided what to subtract from yet."
+    },
+    {
+      "id": "nulllack",
+      "name": "Nulllack",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 90,
+      "retreat": 2,
+      "evolves_from": "nullsk",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "nullify",
+          "name": "Nullify",
+          "cost": {
+            "void": 6
+          },
+          "damage": 45,
+          "text": "45 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It decided."
+    },
+    {
+      "id": "umbrwane",
+      "name": "Umbrwane",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 43,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "shade",
+          "name": "Shade",
+          "cost": {
+            "void": 4
+          },
+          "damage": 27,
+          "text": "27 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A shadow with no object casting it, which nobody has noticed."
+    },
+    {
+      "id": "umbrabyss",
+      "name": "Umbrabyss",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 93,
+      "retreat": 2,
+      "evolves_from": "umbrwane",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "deepen",
+          "name": "Deepen",
+          "cost": {
+            "void": 6
+          },
+          "damage": 46,
+          "text": "46 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "People have started noticing."
+    },
+    {
+      "id": "wanesk2",
+      "name": "Wanesk2",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "lessen",
+          "name": "Lessen",
+          "cost": {
+            "void": 4
+          },
+          "damage": 28,
+          "text": "28 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Every day slightly less of it, and it does not seem to mind."
+    },
+    {
+      "id": "waneshear",
+      "name": "Waneshear",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "wanesk2",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "diminish",
+          "name": "Diminish",
+          "cost": {
+            "void": 6
+          },
+          "damage": 47,
+          "text": "47 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has worked out how to do that to other things."
+    },
+    {
+      "id": "fanewane",
+      "name": "Fanewane",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 47,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "hollow_prayer",
+          "name": "Hollow Prayer",
+          "cost": {
+            "void": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The rite performed correctly, to nobody."
+    },
+    {
+      "id": "fanerift",
+      "name": "Fanerift",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 97,
+      "retreat": 2,
+      "evolves_from": "fanewane",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "apostasy",
+          "name": "Apostasy",
+          "cost": {
+            "void": 6
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It stopped pretending there was anyone listening."
+    },
+    {
+      "id": "vastwane",
+      "name": "Vastwane",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 49,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "stretch",
+          "name": "Stretch",
+          "cost": {
+            "void": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The distance is normal. It only feels long."
+    },
+    {
+      "id": "vastabyss",
+      "name": "Vastabyss",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 99,
+      "retreat": 2,
+      "evolves_from": "vastwane",
+      "keywords": [
+        {
+          "kw": "rift",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "expanse",
+          "name": "Expanse",
+          "cost": {
+            "void": 6
+          },
+          "damage": 49,
+          "text": "49 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The distance is no longer normal."
+    },
+    {
+      "id": "sevsk",
+      "name": "Sevsk",
+      "type": "unit",
+      "faction": "void",
+      "stage": "basic",
+      "hp": 44,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "nick",
+          "name": "Nick",
+          "cost": {
+            "void": 4
+          },
+          "damage": 27,
+          "text": "27 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A small cut in something that was supposed to be continuous."
+    },
+    {
+      "id": "sevlack",
+      "name": "Sevlack",
+      "type": "unit",
+      "faction": "void",
+      "stage": "stage1",
+      "hp": 94,
+      "retreat": 2,
+      "evolves_from": "sevsk",
+      "keywords": [
+        {
+          "kw": "siphon",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "excise",
+          "name": "Excise",
+          "cost": {
+            "void": 6
+          },
+          "damage": 47,
+          "text": "47 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The cut goes all the way through now."
+    },
+    {
+      "id": "gaia_mycelspore",
+      "name": "Mycelspore",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "bloom",
+          "name": "Bloom",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It is already everywhere. The mushroom is just the part that surfaced."
+    },
+    {
+      "id": "gaia_mycelbough",
+      "name": "Mycelbough",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 105,
+      "retreat": 2,
+      "evolves_from": "gaia_mycelspore",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "essence",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "mycorrhiza",
+          "name": "Mycorrhiza",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 50,
+          "text": "50 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has been quietly connecting the whole grove for years."
+    },
+    {
+      "id": "gaia_granling",
+      "name": "Granling",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 65,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "shale",
+          "name": "Shale",
+          "cost": {
+            "gaia": 5
+          },
+          "damage": 34,
+          "text": "34 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Small, dense, and entirely unbothered."
+    },
+    {
+      "id": "gaia_grancrag",
+      "name": "Grancrag",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 115,
+      "retreat": 2,
+      "evolves_from": "gaia_granling",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "landslide",
+          "name": "Landslide",
+          "cost": {
+            "gaia": 7
+          },
+          "damage": 54,
+          "text": "54 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It does not hurry. It has never once needed to."
+    },
+    {
+      "id": "gaia_granthane",
+      "name": "Granthane",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage2",
+      "hp": 165,
+      "retreat": 4,
+      "evolves_from": "gaia_grancrag",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 3
+        },
+        {
+          "kw": "resist",
+          "n": 10
+        }
+      ],
+      "attacks": [
+        {
+          "id": "orogeny",
+          "name": "Orogeny",
+          "cost": {
+            "gaia": 11
+          },
+          "damage": 100,
+          "text": "100 damage",
+          "effects": []
+        },
+        {
+          "id": "upthrust",
+          "name": "Upthrust",
+          "ability": true,
+          "cost": {},
+          "damage": 0,
+          "text": "This unit gains 1 Earth",
+          "effects": [
+            {
+              "op": "grow_earth",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "Mountains are just this, given enough patience."
+    },
+    {
+      "id": "gaia_rootsprout",
+      "name": "Rootsprout",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        },
+        {
+          "kw": "essence",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "tendril",
+          "name": "Tendril",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 31,
+          "text": "31 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Reaching is the only thing it does, and it does it constantly."
+    },
+    {
+      "id": "gaia_rootwarden",
+      "name": "Rootwarden",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 100,
+      "retreat": 2,
+      "evolves_from": "gaia_rootsprout",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "essence",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "entangle",
+          "name": "Entangle",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "What it holds, it holds on behalf of everything behind it."
+    },
+    {
+      "id": "gaia_thornbud",
+      "name": "Thornbud",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        },
+        {
+          "kw": "retribution",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "prick",
+          "name": "Prick",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 28,
+          "text": "28 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Defended out of all proportion to its size."
+    },
+    {
+      "id": "gaia_thorncrag",
+      "name": "Thorncrag",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "gaia_thornbud",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "retribution",
+          "n": 20
+        }
+      ],
+      "attacks": [
+        {
+          "id": "bramblewall",
+          "name": "Bramblewall",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 46,
+          "text": "46 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Walking into it is a decision you get to make exactly once."
+    },
+    {
+      "id": "gaia_thornheart",
+      "name": "Thornheart",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage2",
+      "hp": 155,
+      "retreat": 3,
+      "evolves_from": "gaia_thorncrag",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 3
+        },
+        {
+          "kw": "retribution",
+          "n": 25
+        },
+        {
+          "kw": "essence",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "the_deep_thicket",
+          "name": "The Deep Thicket",
+          "cost": {
+            "gaia": 11
+          },
+          "damage": 95,
+          "text": "95 damage",
+          "effects": []
+        },
+        {
+          "id": "seed_the_grove",
+          "name": "Seed the Grove",
+          "ability": true,
+          "consume": 1,
+          "cost": {},
+          "damage": 0,
+          "text": "Move this unit's Earth to another unit you control",
+          "effects": [
+            {
+              "op": "move_earth",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "The grove does not end. You simply stop being inside it."
+    },
+    {
+      "id": "gaia_bryospore",
+      "name": "Bryospore",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 60,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "creep",
+          "name": "Creep",
+          "cost": {
+            "gaia": 5
+          },
+          "damage": 35,
+          "text": "35 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Moss wins every argument by outlasting it."
+    },
+    {
+      "id": "gaia_petriling",
+      "name": "Petriling",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 70,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "harden",
+          "name": "Harden",
+          "cost": {
+            "gaia": 5
+          },
+          "damage": 37,
+          "text": "37 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It is becoming stone. It is in no rush about it."
+    },
+    {
+      "id": "gaia_lichbud",
+      "name": "Lichbud",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        },
+        {
+          "kw": "essence",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "crust",
+          "name": "Crust",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Two things agreeing to be one thing. It has worked so far."
+    },
+    {
+      "id": "gaia_verdspore",
+      "name": "Verdspore",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 55,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "flourish",
+          "name": "Flourish",
+          "cost": {
+            "gaia": 5
+          },
+          "damage": 33,
+          "text": "33 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Green comes back. That is the whole of its argument."
+    },
+    {
+      "id": "gaia_ambershoot",
+      "name": "Ambershoot",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 52,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "resin",
+          "name": "Resin",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 31,
+          "text": "31 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Sap that has decided to become a mineral about it."
+    },
+    {
+      "id": "gaia_amberbole",
+      "name": "Amberbole",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 108,
+      "retreat": 2,
+      "evolves_from": "gaia_ambershoot",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "essence",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "encase",
+          "name": "Encase",
+          "cost": {
+            "gaia": 7
+          },
+          "damage": 54,
+          "text": "54 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Everything it has ever caught is still in there, perfectly."
+    },
+    {
+      "id": "gaia_amberwold",
+      "name": "Amberwold",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage2",
+      "hp": 158,
+      "retreat": 3,
+      "evolves_from": "gaia_amberbole",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 3
+        },
+        {
+          "kw": "essence",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "deep_amber",
+          "name": "Deep Amber",
+          "cost": {
+            "gaia": 11
+          },
+          "damage": 98,
+          "text": "98 damage",
+          "effects": []
+        },
+        {
+          "id": "preserve",
+          "name": "Preserve",
+          "ability": true,
+          "consume": 1,
+          "cost": {},
+          "damage": 0,
+          "text": "Move this unit's Earth to another unit you control",
+          "effects": [
+            {
+              "op": "move_earth",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "Time gets in, but it does not get back out."
+    },
+    {
+      "id": "gaia_caldling",
+      "name": "Caldling",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 60,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "scoria",
+          "name": "Scoria",
+          "cost": {
+            "gaia": 5
+          },
+          "damage": 35,
+          "text": "35 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Cooled on the outside. Only on the outside."
+    },
+    {
+      "id": "gaia_caldcrag",
+      "name": "Caldcrag",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 118,
+      "retreat": 2,
+      "evolves_from": "gaia_caldling",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "basalt",
+          "name": "Basalt",
+          "cost": {
+            "gaia": 7
+          },
+          "damage": 58,
+          "text": "58 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It remembers being liquid and is in no hurry to repeat it."
+    },
+    {
+      "id": "gaia_caldthane",
+      "name": "Caldthane",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage2",
+      "hp": 168,
+      "retreat": 4,
+      "evolves_from": "gaia_caldcrag",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 3
+        },
+        {
+          "kw": "resist",
+          "n": 10
+        }
+      ],
+      "attacks": [
+        {
+          "id": "caldera",
+          "name": "Caldera",
+          "cost": {
+            "gaia": 11
+          },
+          "damage": 102,
+          "text": "102 damage",
+          "effects": []
+        },
+        {
+          "id": "upwelling",
+          "name": "Upwelling",
+          "ability": true,
+          "cost": {},
+          "damage": 0,
+          "text": "This unit gains 1 Earth",
+          "effects": [
+            {
+              "op": "grow_earth",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "flavor": "The mountain that used to be here is inside it now."
+    },
+    {
+      "id": "gaia_fernshoot",
+      "name": "Fernshoot",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 48,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "frond",
+          "name": "Frond",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Older than trees, and quietly smug about it."
+    },
+    {
+      "id": "gaia_fernbough",
+      "name": "Fernbough",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 98,
+      "retreat": 2,
+      "evolves_from": "gaia_fernshoot",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "unfurl",
+          "name": "Unfurl",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 49,
+          "text": "49 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has been doing this since before there was anything to watch."
+    },
+    {
+      "id": "gaia_sedgesprout",
+      "name": "Sedgesprout",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 50,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        },
+        {
+          "kw": "essence",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "cut_grass",
+          "name": "Cut Grass",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 31,
+          "text": "31 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Every blade is an edge. There are a great many blades."
+    },
+    {
+      "id": "gaia_sedgefen",
+      "name": "Sedgefen",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 100,
+      "retreat": 2,
+      "evolves_from": "gaia_sedgesprout",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "essence",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "marshhold",
+          "name": "Marshhold",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 50,
+          "text": "50 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The water is on its side."
+    },
+    {
+      "id": "gaia_loambud",
+      "name": "Loambud",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 58,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "furrow",
+          "name": "Furrow",
+          "cost": {
+            "gaia": 5
+          },
+          "damage": 34,
+          "text": "34 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Good soil, walking. It has opinions about where to settle."
+    },
+    {
+      "id": "gaia_loamwold",
+      "name": "Loamwold",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 112,
+      "retreat": 2,
+      "evolves_from": "gaia_loambud",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "essence",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "deep_till",
+          "name": "Deep Till",
+          "cost": {
+            "gaia": 7
+          },
+          "damage": 55,
+          "text": "55 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Everything that grows here grows because it allowed it."
+    },
+    {
+      "id": "gaia_burrbud",
+      "name": "Burrbud",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 46,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        },
+        {
+          "kw": "retribution",
+          "n": 15
+        }
+      ],
+      "attacks": [
+        {
+          "id": "catch",
+          "name": "Catch",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It attaches. That is its entire strategy and it works."
+    },
+    {
+      "id": "gaia_burrcrag",
+      "name": "Burrcrag",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 96,
+      "retreat": 2,
+      "evolves_from": "gaia_burrbud",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "retribution",
+          "n": 20
+        }
+      ],
+      "attacks": [
+        {
+          "id": "snare",
+          "name": "Snare",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "By the time you notice, you have carried it a long way."
+    },
+    {
+      "id": "gaia_tussling",
+      "name": "Tussling",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 62,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 1
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "clump",
+          "name": "Clump",
+          "cost": {
+            "gaia": 5
+          },
+          "damage": 36,
+          "text": "36 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A hummock of grass that stood up."
+    },
+    {
+      "id": "gaia_tussbole",
+      "name": "Tussbole",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 114,
+      "retreat": 2,
+      "evolves_from": "gaia_tussling",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "root_fast",
+          "name": "Root Fast",
+          "cost": {
+            "gaia": 7
+          },
+          "damage": 56,
+          "text": "56 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It has been in this exact spot for ninety years."
+    },
+    {
+      "id": "gaia_siltsprout",
+      "name": "Siltsprout",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 44,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "settle_in",
+          "name": "Settle In",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 27,
+          "text": "27 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Fine sediment, going where the water goes."
+    },
+    {
+      "id": "gaia_siltfen",
+      "name": "Siltfen",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 94,
+      "retreat": 2,
+      "evolves_from": "gaia_siltsprout",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "essence",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "silt_up",
+          "name": "Silt Up",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 47,
+          "text": "47 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The water goes where it goes, now."
+    },
+    {
+      "id": "gaia_bryoshoot",
+      "name": "Bryoshoot",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 43,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "spread",
+          "name": "Spread",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 27,
+          "text": "27 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A patch of moss on the shady side."
+    },
+    {
+      "id": "gaia_bryowold",
+      "name": "Bryowold",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 93,
+      "retreat": 2,
+      "evolves_from": "gaia_bryoshoot",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "carpet",
+          "name": "Carpet",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 46,
+          "text": "46 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The shady side is now the entire side."
+    },
+    {
+      "id": "gaia_rootbud",
+      "name": "Rootbud",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 45,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "probe",
+          "name": "Probe",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 28,
+          "text": "28 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "One root, searching, with no particular plan."
+    },
+    {
+      "id": "gaia_rootbole",
+      "name": "Rootbole",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 95,
+      "retreat": 2,
+      "evolves_from": "gaia_rootbud",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "essence",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "taproot",
+          "name": "Taproot",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 47,
+          "text": "47 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "It found water. It found a great deal of water."
+    },
+    {
+      "id": "gaia_verdshoot",
+      "name": "Verdshoot",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 47,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "bud_out",
+          "name": "Bud Out",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 29,
+          "text": "29 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "New green, with everything still ahead of it."
+    },
+    {
+      "id": "gaia_verdbole",
+      "name": "Verdbole",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 97,
+      "retreat": 2,
+      "evolves_from": "gaia_verdshoot",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        }
+      ],
+      "attacks": [
+        {
+          "id": "greenwood",
+          "name": "Greenwood",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 48,
+          "text": "48 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Everything ahead of it happened."
+    },
+    {
+      "id": "gaia_petribud",
+      "name": "Petribud",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 49,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "grit",
+          "name": "Grit",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 30,
+          "text": "30 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Soft, but there is something hard under the softness."
+    },
+    {
+      "id": "gaia_petriwold",
+      "name": "Petriwold",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 99,
+      "retreat": 2,
+      "evolves_from": "gaia_petribud",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "resist",
+          "n": 5
+        }
+      ],
+      "attacks": [
+        {
+          "id": "stonewake",
+          "name": "Stonewake",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 49,
+          "text": "49 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "The softness has finished being relevant."
+    },
+    {
+      "id": "gaia_lichshoot",
+      "name": "Lichshoot",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 51,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "encrust",
+          "name": "Encrust",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 31,
+          "text": "31 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Two organisms, still negotiating."
+    },
+    {
+      "id": "gaia_lichfen",
+      "name": "Lichfen",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 101,
+      "retreat": 2,
+      "evolves_from": "gaia_lichshoot",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "essence",
+          "n": 1
+        }
+      ],
+      "attacks": [
+        {
+          "id": "symbiosis",
+          "name": "Symbiosis",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 50,
+          "text": "50 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "Negotiations concluded. Both parties are pleased."
+    },
+    {
+      "id": "gaia_thornshoot",
+      "name": "Thornshoot",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "basic",
+      "hp": 46,
+      "retreat": 1,
+      "evolves_from": null,
+      "keywords": [],
+      "attacks": [
+        {
+          "id": "scratch",
+          "name": "Scratch",
+          "cost": {
+            "gaia": 4
+          },
+          "damage": 28,
+          "text": "28 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "One thorn. It is doing its best."
+    },
+    {
+      "id": "gaia_thornwold",
+      "name": "Thornwold",
+      "type": "unit",
+      "faction": "gaia",
+      "stage": "stage1",
+      "hp": 98,
+      "retreat": 2,
+      "evolves_from": "gaia_thornshoot",
+      "keywords": [
+        {
+          "kw": "earth",
+          "n": 2
+        },
+        {
+          "kw": "retribution",
+          "n": 20
+        }
+      ],
+      "attacks": [
+        {
+          "id": "thicketfall",
+          "name": "Thicketfall",
+          "cost": {
+            "gaia": 6
+          },
+          "damage": 49,
+          "text": "49 damage",
+          "effects": []
+        }
+      ],
+      "flavor": "A great many thorns, all doing their best."
     }
   ]
 }

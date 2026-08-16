@@ -296,12 +296,25 @@ Stage 2 you're about to lose while writing off the investment.
 ### Board
 
 **Reposition** — Support
-> Swap the slots of two of your units. They keep all attached energy.
+> Move an enemy unit to another slot on its own board. It keeps all attached energy.
 
-Retargeting without retreating. Since placement *is* targeting, this is a real combat
-trick — move your big attacker across from their tower, or move a dying unit out of the
-tower's line of fire. No card advantage at all, pure positioning, which makes it the
-cheapest thing in the file to print safely.
+**Repurposed.** This printed *"swap the slots of two of your units"* until free unit
+movement landed — once a player could rearrange their own board for nothing, a card doing
+the same thing was worse than a free action, and the only case it still covered (exchanging
+two occupied slots with no empty slot to route through) is a corner case rather than a card.
+
+Pointed at the enemy it is a lever the player otherwise has none of. An **unnamed** attack
+still hits the slot directly across, so shoving an enemy body one slot over redirects the
+default target of every unnamed attack on that board at once — and it can pull a blocker
+out from in front of a tower, which is the half chosen targeting can never do, since
+naming a target picks *among* the wall and never past it.
+
+It stays inside the shielding rules by construction: the unit never leaves the board it
+was defending, so nothing is exposed that clearing that board would not already expose.
+The destination is the leftmost empty usable slot rather than a second pick — on a 3-slot
+board with a living tower there is usually exactly one empty slot, so a second prompt would
+be asking a question with one answer. No card advantage at all, pure positioning, which
+makes it the cheapest thing in the file to print safely.
 
 ---
 
@@ -800,7 +813,7 @@ card *and* energy, and buys about one band step per energy.
 | Withdraw | — | Support | Extracts a unit with no attached energy |
 | Ground Give | — | Support | Extracts a unit, energy written off |
 | Rally the Line | — | Support | Removes the retreat lock |
-| Reposition | — | Support | Retargets two units |
+| Reposition | — | Support | Shoves an enemy unit within its board |
 | Hold the Slot | — | Support | Survives one turn |
 | Mend | — | Support | +10 HP |
 | Shore Up | — | Support | +20 HP — the baseline |

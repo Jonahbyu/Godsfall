@@ -105,8 +105,8 @@ func _reset(hand: Array, board: Array = []) -> void:
 	## constant for it.
 	for p in gs.players:
 		for b in p.boards:
-			b.tower_hp = 50
-			b.tower_max_hp = 50
+			b.tower_hp = 75
+			b.tower_max_hp = 75
 			b.tower_mods.clear()
 			b.tower_damage_bonus = 0
 			b.earth_max_hp_bonus = 0
@@ -169,28 +169,33 @@ func _test_targeted_support() -> void:
 	_ok("cancel clears pick mode", combat._pending_support == null)
 
 
-# ---- Tithe and Reposition need two picks
+# ---- Tithe needs two picks
+## This used to drive `Reposition`, which was a two-unit card until free movement
+## made "swap two of your own units" redundant and it was repurposed into a
+## single-pick enemy shove. `Tithe` is now the only card on TWO_UNIT_OPS, and it
+## exercises the same two-pick UI path — hold the first unit, reject it as the
+## second, spend the card on the second.
 func _test_two_unit_support() -> void:
 	print("Two-unit support:")
-	_reset(["reposition"], [["barrow_knight", 0, 0], ["grave_whelp", 0, 1]])
+	_reset(["tithe"], [["barrow_knight", 0, 0], ["grave_whelp", 0, 1]])
 	var a = _unit_at(0, 0)
 	var b = _unit_at(0, 1)
 	a.attached = 3
 
-	combat._on_hand_pressed(0, _card("reposition"))
+	combat._on_hand_pressed(0, _card("tithe"))
 	await process_frame
-	_ok("Reposition needs a pick", combat._pending_support != null)
+	_ok("Tithe needs a pick", combat._pending_support != null)
 
 	combat._pick_support_target(a)
 	await process_frame
-	_ok("first unit held, card not yet spent", combat._pending_two == a and you.hand.has("reposition"))
+	_ok("first unit held, card not yet spent", combat._pending_two == a and you.hand.has("tithe"))
 	_ok("the held unit is no longer a legal second pick", not combat._is_legal_support_target(a))
 
 	combat._pick_support_target(b)
 	await process_frame
-	_ok("units swapped slots", _unit_at(0, 0) == b and _unit_at(0, 1) == a)
-	_ok("attached energy moved with the unit", _unit_at(0, 1).attached == 3)
-	_ok("card was spent", not you.hand.has("reposition"))
+	_ok("attached energy moved to the second unit", b.attached == 3 and a.attached == 0)
+	_ok("both units stayed in their slots", _unit_at(0, 0) == a and _unit_at(0, 1) == b)
+	_ok("card was spent", not you.hand.has("tithe"))
 
 
 # ---- a Tool attaches by click and by drop
@@ -242,7 +247,7 @@ func _test_tower_support() -> void:
 
 	combat._pick_tower_target(0)
 	await process_frame
-	_ok("max HP raised", you.boards[0].tower_max_hp == 70)
+	_ok("max HP raised", you.boards[0].tower_max_hp == 95)
 	_ok("modification recorded", you.boards[0].tower_mods.size() == 1)
 
 	## Toppling Blow reverses the ownership test.
@@ -254,7 +259,7 @@ func _test_tower_support() -> void:
 	_ok("not your own", not combat._tower_is_target(you.boards[1], 1, false))
 	combat._pick_tower_target(0)
 	await process_frame
-	_ok("enemy tower damaged", gs.players[1].boards[0].tower_hp == 25)
+	_ok("enemy tower damaged", gs.players[1].boards[0].tower_hp == 50)
 
 
 # ---- the retreat button in the action panel
