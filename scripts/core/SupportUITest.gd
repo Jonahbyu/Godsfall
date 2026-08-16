@@ -2,7 +2,10 @@ extends SceneTree
 
 ## Total assertions this harness is expected to run; see the check at
 ## the end of the run. Update deliberately when assertions change.
-const EXPECTED_ASSERTIONS := 43
+## 43 -> 55: twelve new checks in _test_support_drop covering the single-target
+## support drop path, plus the pre-existing shore_up assertion flipping from
+## "not droppable" to "droppable" (same count, opposite sense).
+const EXPECTED_ASSERTIONS := 55
 
 ## Drives the real Combat screen through the support flows the rules harness
 ## cannot see: targeting mode, the two-unit pick, tower targeting, the Tool
@@ -50,6 +53,7 @@ func _initialize() -> void:
 	await _test_targeted_support()
 	await _test_two_unit_support()
 	await _test_tool_attach()
+	await _test_support_drop()
 	await _test_tower_support()
 	await _test_retreat_button()
 	await _test_picker()
@@ -227,12 +231,103 @@ func _test_tool_attach() -> void:
 	await process_frame
 	_ok("Tool attached by drop", u3.tool != null and u3.tool.id == "bone_splint")
 
-	## A non-Tool support is click-only, never droppable.
+	## A single-target one-shot support IS droppable now — see
+	## _test_support_drop below for the full set of cases.
 	_reset(["shore_up"], [["barrow_knight", 0, 0]])
 	var u4 = _unit_at(0, 0)
 	u4.hp = 10
-	_ok("a one-shot support is not droppable",
-		not combat._can_drop_on_unit({ "kind": "hand_card", "hand_index": 0, "card_id": "shore_up" }, u4))
+	_ok("a single-target one-shot support is droppable",
+		combat._can_drop_on_unit({ "kind": "hand_card", "hand_index": 0, "card_id": "shore_up" }, u4))
+
+
+# ---- single-target supports resolve by drop, and only those
+## Dragging a card onto the thing it affects is the most direct statement of
+## intent available. The set of cards this is legal for is exactly the set one
+## drop can express: a support whose whole target is ONE unit. Tower support and
+## two-unit cards stay click-only.
+func _test_support_drop() -> void:
+	print("Support by drop:")
+
+	## 1. A friendly single-target heal drops and heals.
+	_reset(["shore_up"], [["barrow_knight", 0, 0]])
+	var u = _unit_at(0, 0)
+	u.hp = 10
+	var pay := { "kind": "hand_card", "hand_index": 0, "card_id": "shore_up" }
+	_ok("heal is droppable on a damaged friendly unit", combat._can_drop_on_unit(pay, u))
+	combat._drop_on_unit(pay, u)
+	await process_frame
+	_ok("dropping the heal healed the unit", u.hp == 30)
+	_ok("dropped heal left hand", not you.hand.has("shore_up"))
+
+	## 2. Tower support stays click-only — a tower is not a unit.
+	_reset(["reinforced_base"], [["barrow_knight", 0, 0]])
+	_ok("tower support is not droppable on a unit",
+		not combat._can_drop_on_unit(
+			{ "kind": "hand_card", "hand_index": 0, "card_id": "reinforced_base" },
+			_unit_at(0, 0)))
+
+	## Toppling Blow names a structure too, through damage_tower rather than the
+	## tower_support type, so it needs its own check.
+	_reset(["toppling_blow"], [["barrow_knight", 0, 0]])
+	_ok("damage_tower is not droppable on a unit",
+		not combat._can_drop_on_unit(
+			{ "kind": "hand_card", "hand_index": 0, "card_id": "toppling_blow" },
+			_unit_at(0, 0)))
+
+	## 3. A two-unit support stays click-only — one drop cannot express two picks.
+	_reset(["tithe"], [["barrow_knight", 0, 0], ["grave_whelp", 0, 1]])
+	_unit_at(0, 0).attached = 3
+	_ok("a two-unit support is not droppable",
+		not combat._can_drop_on_unit(
+			{ "kind": "hand_card", "hand_index": 0, "card_id": "tithe" },
+			_unit_at(0, 0)))
+
+	## 4. A support needing no target at all is not droppable — nothing to drop onto.
+	_reset(["gravekeepers_ledger"], [["barrow_knight", 0, 0]])
+	you.deck = ["grave_whelp", "grave_whelp", "barrow_knight"]
+	_ok("an untargeted support is not droppable",
+		not combat._can_drop_on_unit(
+			{ "kind": "hand_card", "hand_index": 0, "card_id": "gravekeepers_ledger" },
+			_unit_at(0, 0)))
+
+	## 5. An ENEMY-targeting support drops on an enemy unit. This is the case most
+	## likely to be wrong, since it depends on the candidate set covering both
+	## directions rather than only friendly bodies.
+	_reset(["reposition"], [["barrow_knight", 0, 0]])
+	var foe = gs.players[1]
+	for bi in foe.boards.size():
+		for si in Board.SLOT_COUNT:
+			foe.boards[bi].slots[si] = null
+	var evictim = Unit.new(_card("grave_whelp"))
+	foe.boards[0].place(evictim, 0)
+	combat._refresh()
+	await process_frame
+	var epay := { "kind": "hand_card", "hand_index": 0, "card_id": "reposition" }
+	_ok("an enemy-targeting support is droppable on an enemy unit",
+		combat._can_drop_on_unit(epay, evictim))
+	_ok("the same support is NOT droppable on your own unit",
+		not combat._can_drop_on_unit(epay, _unit_at(0, 0)))
+	combat._drop_on_unit(epay, evictim)
+	await process_frame
+	_ok("dropping the enemy support spent the card", not you.hand.has("reposition"))
+
+	## 6. The drop path and the click path must not disagree about legality.
+	## Same card, same unit, both predicates — for a legal target and for an
+	## illegal one. A second source of truth for "what can this hit" would drift.
+	_reset(["mend"], [["barrow_knight", 0, 0], ["grave_whelp", 0, 1]])
+	var hurt = _unit_at(0, 0)
+	var whole = _unit_at(0, 1)
+	hurt.hp = 10
+	var mpay := { "kind": "hand_card", "hand_index": 0, "card_id": "mend" }
+	combat._pending_support = _card("mend")
+	combat._selected_hand = 0
+	_ok("drop and click agree the hurt unit is legal",
+		combat._can_drop_on_unit(mpay, hurt) and combat._is_legal_support_target(hurt))
+	_ok("drop and click agree the undamaged unit is not",
+		combat._can_drop_on_unit(mpay, whole) == combat._is_legal_support_target(whole))
+	combat._clear_support_pick()
+	combat._refresh()
+	await process_frame
 
 
 # ---- tower support targets your tower; Toppling Blow targets theirs

@@ -559,7 +559,9 @@ func _build_ui() -> void:
 	top.add_child(back)
 
 	_turn_lbl = Palette.label("", Palette.TYPE_BODY if _compact else Palette.TYPE_SUBHEAD, Palette.TEXT)
-	_hint_lbl = Palette.label("", Palette.TYPE_SMALL if _compact else Palette.TYPE_BODY, Palette.GOLD)
+	## Built dim rather than gold: the hint is ordinary chatter most of the time,
+	## which is what lets GOLD mean "a card is mid-use" in _refresh().
+	_hint_lbl = Palette.label("", Palette.TYPE_SMALL if _compact else Palette.TYPE_BODY, Palette.TEXT_DIM)
 
 	if _compact:
 		## A label only wraps if something bounds its width, and in an HBox
@@ -905,16 +907,31 @@ func _refresh() -> void:
 	_refresh_pool_meter(you)
 	_refresh_global_lock(you)
 
+	## `add_theme_color_override` persists, so the pick-mode gold below has to be
+	## undone here rather than in every sibling branch — one reset before the
+	## chain is the only version no future branch can escape.
+	_hint_lbl.add_theme_color_override("font_color",
+		Palette.GOLD if _pending_support != null else Palette.TEXT_DIM)
+
 	if gs.in_setup():
 		if you.mulligan_used:
 			_hint_lbl.text = "Place Basics on your empty slots, then press Ready."
 		else:
 			_hint_lbl.text = "Place Basics, or Mulligan for a fresh hand. Then press Ready."
 	elif _pending_support != null:
+		## The label is at the top of the screen and the eye is on the board, so it
+		## says the card is IN USE rather than merely naming it, and repeats what
+		## the card does — the player is about to commit it.
 		if _pending_two != null:
-			_hint_lbl.text = "%s — now pick the second unit.  (Esc cancels)" % _pending_support.name
+			_hint_lbl.text = "USING %s — now pick the second unit.  (Esc cancels)" % _pending_support.name.to_upper()
+		elif _compact or _pending_support.text.is_empty():
+			## The phone gives the hint its own full-width row so it can wrap, but
+			## the effect text would still push the row past the 540-unit viewport.
+			_hint_lbl.text = "USING %s — pick a target.  (Esc cancels)" % _pending_support.name.to_upper()
 		else:
-			_hint_lbl.text = "%s — pick a target.  (Esc cancels)" % _pending_support.name
+			_hint_lbl.text = "USING %s: %s — pick a target.  (Esc cancels)" % [
+				_pending_support.name.to_upper(), _pending_support.text
+			]
 	elif _drag_card != null:
 		if _drag_card.is_unit():
 			_hint_lbl.text = "Drop on an empty slot to deploy, or on its base form to evolve."
@@ -1366,6 +1383,13 @@ func _rebuild_hand(p: Player) -> void:
 		view.selected = (i == _selected_hand)
 		view.dimmed = not playable
 
+		## The card driving pick mode is mid-ACTION, not merely selected, and the
+		## hint saying so is at the top of the screen while the eye is on the
+		## board. Gold is the same colour ringing its legal targets, so the card
+		## and the things it may be played on read as one gesture.
+		if _pending_support != null and i == _selected_hand:
+			view.highlight = Palette.GOLD
+
 		## A lesson step can point at a card TYPE rather than a hand position,
 		## since the position shifts as cards are played.
 		if _tut_hand_highlight(card):
@@ -1379,9 +1403,10 @@ func _rebuild_hand(p: Player) -> void:
 		if playable:
 			view.pressed.connect(func(): _on_hand_pressed(idx, card))
 			## Only cards that can actually be played are draggable, so a drag
-			## can never start a move the rules would reject on drop. Supports
-			## other than Tools are click-only — see _can_drop_on_unit.
-			if not (card.is_support_like() and not card.is_tool()):
+			## can never start a move the rules would reject on drop. A support
+			## is draggable only when one drop can express its whole target —
+			## see _support_droppable.
+			if (not card.is_support_like()) or _support_droppable(card):
 				view.drag_payload = {
 					"kind": "hand_card", "hand_index": idx, "card_id": card.id,
 				}
@@ -1846,20 +1871,44 @@ func _is_two_unit_support(card: CardData) -> bool:
 	return false
 
 
+## True when a support's entire target is ONE unit, so a single drop can express
+## it. Everything excluded here genuinely cannot be dropped: tower support and
+## `damage_tower` name a structure rather than a body, a two-unit card needs a
+## second pick a drop has no way to supply, and a card with no target at all has
+## nothing to be dropped onto — it resolves on the click.
+func _support_droppable(card: CardData) -> bool:
+	if card.is_tower_support() or card.has_effect("damage_tower"):
+		return false
+	if _is_two_unit_support(card):
+		return false
+	if card.is_tool():
+		return true
+	return gs._support_needs_target(card)
+
+
+## The legality predicate both input styles share. `_is_legal_support_target`
+## reads `_pending_support`, which a drag deliberately never sets, so this takes
+## the card explicitly and both call it.
+func _support_target_legal(card: CardData, u: Unit) -> bool:
+	if not u.is_alive():
+		return false
+	var p: Player = gs.players[GameState.P1]
+	if card.is_tool():
+		return gs._tool_candidates(p, card).has(u)
+	return gs._support_unit_candidates(p, card).has(u)
+
+
 func _is_legal_support_target(u: Unit) -> bool:
 	if _pending_support == null or not u.is_alive():
 		return false
 	var p: Player = gs.players[GameState.P1]
-
-	if _pending_support.is_tool():
-		return gs._tool_candidates(p, _pending_support).has(u)
 
 	if _is_two_unit_support(_pending_support):
 		if _pending_two == null:
 			return p.all_units().has(u)
 		return u != _pending_two and p.all_units().has(u)
 
-	return gs._support_unit_candidates(p, _pending_support).has(u)
+	return _support_target_legal(_pending_support, u)
 
 
 func _pick_support_target(u: Unit) -> void:
@@ -2033,13 +2082,13 @@ func _can_drop_on_unit(data: Variant, u: Unit) -> bool:
 	var c := _payload_card(data)
 	if c == null:
 		return false
-	## A Tool dropped on a legal unit attaches to it.
-	if c.is_tool():
-		return gs.can_play_support(gs.players[GameState.P1], c, u)
-	## Other supports are click-targeted, not dragged — they can need two picks
-	## or a tower, which a single drop can't express.
+	## A support whose whole target is one unit can be dropped straight on it.
+	## The legality test is the click path's own predicate, so the two input
+	## styles cannot disagree about what a card may hit.
 	if c.is_support_like():
-		return false
+		if not _support_droppable(c):
+			return false
+		return _support_target_legal(c, u)
 	## Energy dropped on a unit charges it; a matching evolution evolves it.
 	if c.is_energy():
 		return not gs.players[GameState.P1].energy_played_this_turn
@@ -2056,8 +2105,15 @@ func _drop_on_unit(data: Variant, u: Unit) -> void:
 		return
 
 	_selected_hand = -1
-	if c.is_tool():
+	if c.is_support_like():
+		## Sampled either side of the call for the same reason the click path
+		## does it: `unit_healed` is one of the few predicates GameState holds no
+		## standing record of, since a heal leaves only a changed HP behind. A
+		## player who heals by dragging must still complete the tutorial step.
+		var hp_before := u.hp
 		gs.play_support(gs.players[GameState.P1], i, u)
+		if u.hp > hp_before:
+			Tutorial.note("healed")
 	elif c.is_unit():
 		gs.evolve(gs.players[GameState.P1], i, u)
 	else:
