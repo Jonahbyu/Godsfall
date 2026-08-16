@@ -2,7 +2,8 @@ extends SceneTree
 
 ## Total assertions this harness is expected to run; see the check at
 ## the end of the run. Update deliberately when assertions change.
-const EXPECTED_ASSERTIONS := 126
+## +20: free unit movement (2026-08-15)
+const EXPECTED_ASSERTIONS := 146
 
 ## Headless rules harness:
 ##   godot --headless --script res://scripts/core/RulesTest.gd
@@ -66,6 +67,7 @@ func _run(db) -> void:
 	_test_attack_lock(db)
 	_test_setup(db)
 	_test_structure_growth(db)
+	_test_move_unit(db)
 	_test_full_game(db)
 	## A harness that errors out mid-run still reports "0 failed", because an
 	## assertion that never RUNS cannot fail — that is how the Gaia harness passed
@@ -143,14 +145,19 @@ func _test_attach_and_queue(db) -> void:
 
 	p.pool = 20
 	var gnaw = u.card.attacks[0]
+	## Read the printed cost rather than hardcoding it. The rule under test is
+	## "queueing pulls exactly the shortfall, never more" — that is independent of
+	## what any particular card happens to cost, and hardcoding the number makes
+	## the assertion fail on a re-pricing pass that did not touch the mechanic.
+	var cost: int = u.attack_cost(gnaw)
 	gs.queue_attack(p, u, gnaw)
-	_check("1-cost attack pulls exactly 1 from a 20 pool", p.pool, 19)
-	_check("1 energy now attached", u.attached, 1)
+	_check("attack pulls exactly its cost from a 20 pool", p.pool, 20 - cost)
+	_check("that much energy now attached", u.attached, cost)
 
 	## attached energy makes the attack free next time
 	u.clear_queue()
 	gs.queue_attack(p, u, gnaw)
-	_check("re-queue costs nothing (already attached)", p.pool, 19)
+	_check("re-queue costs nothing (already attached)", p.pool, 20 - cost)
 
 
 # ---- across -> leftmost living unit -> tower -> throne
@@ -158,6 +165,13 @@ func _test_targeting(db) -> void:
 	print("Targeting (across -> leftmost survivor -> tower -> throne):")
 	var GS = load("res://scripts/core/GameState.gd")
 	var UnitC = load("res://scripts/core/Unit.gd")
+
+	## Cleave's printed damage, read off the card. These tests are about the
+	## targeting CHAIN — which thing gets hit — so the damage number is incidental
+	## and hardcoding it makes them fail on any re-pricing pass that never touched
+	## targeting. `cleave` is the damage, `pool5` a pool that always affords it.
+	var cleave: int = db.get_card("barrow_knight").attacks[0].damage
+	var pool5: int = 99
 
 	## 1) hits the unit across
 	var gs = _game(GS)
@@ -167,10 +181,10 @@ func _test_targeting(db) -> void:
 	me.boards[0].place(att, 0)
 	var def = UnitC.new(db.get_card("thornshade"))        ## 50 HP, Retribution 10
 	foe.boards[0].place(def, 0)
-	me.pool = 5
+	me.pool = pool5
 	gs.queue_attack(me, att, att.card.attacks[0])
 	gs._resolve_attacks(me)
-	_check("defender took 25", def.hp, 25)
+	_check("defender took Cleave", def.hp, 50 - cleave)
 
 	## 2) empty slot across -> tower
 	var gs2 = _game(GS)
@@ -178,10 +192,10 @@ func _test_targeting(db) -> void:
 	var foe2 = gs2.players[1]
 	var att2 = UnitC.new(db.get_card("barrow_knight"))
 	me2.boards[0].place(att2, 0)
-	me2.pool = 5
+	me2.pool = pool5
 	gs2.queue_attack(me2, att2, att2.card.attacks[0])
 	gs2._resolve_attacks(me2)
-	_check("empty slot -> tower takes 25", foe2.boards[0].tower_hp, 25)
+	_check("empty slot -> tower takes Cleave", foe2.boards[0].tower_hp, 75 - cleave)
 
 	## 3) dead tower -> throne
 	var gs3 = _game(GS)
@@ -190,10 +204,10 @@ func _test_targeting(db) -> void:
 	foe3.boards[0].tower_hp = 0
 	var att3 = UnitC.new(db.get_card("barrow_knight"))
 	me3.boards[0].place(att3, 0)
-	me3.pool = 5
+	me3.pool = pool5
 	gs3.queue_attack(me3, att3, att3.card.attacks[0])
 	gs3._resolve_attacks(me3)
-	_check("dead tower -> throne takes 25", foe3.throne_hp, 75)
+	_check("dead tower -> throne takes Cleave", foe3.throne_hp, 150 - cleave)
 
 	## 4) empty slot across, but a unit lives elsewhere on that board ->
 	## redirect to the leftmost survivor, NOT the tower.
@@ -204,11 +218,12 @@ func _test_targeting(db) -> void:
 	me4.boards[0].place(att4, 1)                          ## attacks slot 1
 	var surv = UnitC.new(db.get_card("grave_whelp"))      ## 40 HP
 	foe4.boards[0].place(surv, 0)                         ## but the survivor is in slot 0
-	me4.pool = 5
+	me4.pool = pool5
 	gs4.queue_attack(me4, att4, att4.card.attacks[0])
 	gs4._resolve_attacks(me4)
-	_check("redirects to the leftmost survivor", surv.hp, 15)
-	_check("tower was shielded", foe4.boards[0].tower_hp, 50)
+	_check("redirects to the leftmost survivor",
+		surv.hp, max(0, surv.card.max_hp - cleave))
+	_check("tower was shielded", foe4.boards[0].tower_hp, 75)
 
 	## 5) shielding never crosses boards: a crowded board 1 does not protect
 	## board 0's tower.
@@ -218,10 +233,10 @@ func _test_targeting(db) -> void:
 	var att5 = UnitC.new(db.get_card("barrow_knight"))
 	me5.boards[0].place(att5, 0)
 	foe5.boards[1].place(UnitC.new(db.get_card("grave_whelp")), 0)   ## other board
-	me5.pool = 5
+	me5.pool = pool5
 	gs5.queue_attack(me5, att5, att5.card.attacks[0])
 	gs5._resolve_attacks(me5)
-	_check("other board shields nothing", foe5.boards[0].tower_hp, 25)
+	_check("other board shields nothing", foe5.boards[0].tower_hp, 75 - cleave)
 
 	## 6) no overkill: two attacks, the first kills, the second must redirect
 	## to the other living unit rather than hitting the corpse or the tower.
@@ -237,14 +252,15 @@ func _test_targeting(db) -> void:
 	var other = UnitC.new(db.get_card("grave_whelp"))     ## 40 HP
 	foe6.boards[0].place(victim, 0)
 	foe6.boards[0].place(other, 1)
-	me6.pool = 10
+	me6.pool = pool5
 	gs6.queue_attack(me6, a6a, a6a.card.attacks[0])
 	gs6.queue_attack(me6, a6b, a6b.card.attacks[0])
 	gs6._resolve_attacks(me6)
 	_check("first attack killed its target", victim.is_alive(), false)
 	_check("no overkill — corpse took no extra damage", victim.hp <= 0, true)
-	_check("second attack hit the other unit", other.hp, 15)
-	_check("tower still shielded by the survivor", foe6.boards[0].tower_hp, 50)
+	_check("second attack hit the other unit",
+		other.hp, max(0, other.card.max_hp - cleave))
+	_check("tower still shielded by the survivor", foe6.boards[0].tower_hp, 75)
 
 	## 7) clearing the board opens it *within the same resolution*: the enemy
 	## board holds one nearly-dead unit and my board 0 has two attackers, so
@@ -260,12 +276,13 @@ func _test_targeting(db) -> void:
 	var lone = UnitC.new(db.get_card("grave_whelp"))
 	lone.hp = 20                                          ## dies to the first Cleave
 	foe7.boards[0].place(lone, 0)
-	me7.pool = 10
+	me7.pool = pool5
 	gs7.queue_attack(me7, a7a, a7a.card.attacks[0])
 	gs7.queue_attack(me7, a7b, a7b.card.attacks[0])
 	gs7._resolve_attacks(me7)
 	_check("the lone defender died", lone.is_alive(), false)
-	_check("board now clear -> second attack reached the tower", foe7.boards[0].tower_hp, 25)
+	_check("board now clear -> second attack reached the tower",
+		foe7.boards[0].tower_hp, 75 - cleave)
 
 
 # ---- towers: silent in round 1, then full damage to units and half to structures
@@ -295,8 +312,8 @@ func _test_tower_fire(db) -> void:
 	foe.boards[1].tower_hp = 0
 	gs._resolve_towers(me)
 	_check("unit took the full 11", wall.hp, 79)
-	_check("shielded enemy tower untouched", foe.boards[0].tower_hp, 50)
-	_check("shielded throne untouched", foe.throne_hp, 100)
+	_check("shielded enemy tower untouched", foe.boards[0].tower_hp, 75)
+	_check("shielded throne untouched", foe.throne_hp, 150)
 
 	## 2) empty board, enemy tower alive -> half into that tower.
 	var gs2 = _game(GS)
@@ -306,8 +323,8 @@ func _test_tower_fire(db) -> void:
 	me2.boards[1].tower_hp = 0
 	foe2.boards[1].tower_hp = 0
 	gs2._resolve_towers(me2)
-	_check("empty board -> tower chipped for 5", foe2.boards[0].tower_hp, 45)
-	_check("throne still shielded by the live tower", foe2.throne_hp, 100)
+	_check("empty board -> tower chipped for 5", foe2.boards[0].tower_hp, 70)
+	_check("throne still shielded by the live tower", foe2.throne_hp, 150)
 
 	## 3) empty board and a dead tower -> half into the throne.
 	var gs3 = _game(GS)
@@ -318,7 +335,7 @@ func _test_tower_fire(db) -> void:
 	foe3.boards[0].tower_hp = 0        ## the target tower is dead -> throne exposed
 	foe3.boards[1].tower_hp = 0
 	gs3._resolve_towers(me3)
-	_check("empty board + dead tower -> throne chipped for 11", foe3.throne_hp, 89)
+	_check("empty board + dead tower -> throne chipped for 11", foe3.throne_hp, 139)
 
 	## 4) round 1 is silent — towers deal nothing at all, to units or structures.
 	## This is the grace round, not a floored-to-zero chip: nothing is touched.
@@ -330,9 +347,9 @@ func _test_tower_fire(db) -> void:
 	foe4.boards[1].place(early, 0)     ## a unit to shoot at, on the other board
 	me4.boards[1].tower_hp = 0
 	gs4._resolve_towers(me4)
-	_check("round 1: enemy tower untouched", foe4.boards[0].tower_hp, 50)
+	_check("round 1: enemy tower untouched", foe4.boards[0].tower_hp, 75)
 	_check("round 1: enemy unit untouched", early.hp, 90)
-	_check("round 1: enemy throne untouched", foe4.throne_hp, 100)
+	_check("round 1: enemy throne untouched", foe4.throne_hp, 150)
 
 	## 4b) the min-1 floor still applies to any odd damage that halves below 1.
 	## Crossfire is the smallest source in the game: a single Murder Holes fires 5,
@@ -342,7 +359,7 @@ func _test_tower_fire(db) -> void:
 	var foe4b = gs4b.players[1]
 	foe4b.boards[1].tower_hp = 0
 	gs4b._tower_strike(gs4b.players[0], foe4b, 1, 1, "floor probe")
-	_check("a 1-damage strike floors at 1 against a structure", foe4b.throne_hp, 99)
+	_check("a 1-damage strike floors at 1 against a structure", foe4b.throne_hp, 149)
 
 	## 5) a unit anywhere on the board shields it, not just the facing slot.
 	var gs5 = _game(GS)
@@ -355,7 +372,7 @@ func _test_tower_fire(db) -> void:
 	foe5.boards[0].place(off, 1)                           ## NOT the facing slot
 	gs5._resolve_towers(me5)
 	_check("leftmost survivor took the full 11", off.hp, 79)
-	_check("tower shielded by an off-slot unit", foe5.boards[0].tower_hp, 50)
+	_check("tower shielded by an off-slot unit", foe5.boards[0].tower_hp, 75)
 
 
 # ---- Retribution hits back at the attacker
@@ -562,15 +579,16 @@ func _test_attack_lock(db) -> void:
 	_check("nothing re-fires until a new attack is chosen", u.queued_attack, null)
 
 
-# ---- setup: guaranteed Basic, mulligan, and free Basic deployment
+# ---- setup: guaranteed Basics, mulligan, and free Basic deployment
 func _test_setup(db) -> void:
-	print("Setup (guaranteed Basic, mulligan, free deployment):")
+	print("Setup (guaranteed Basics, mulligan, free deployment):")
 	var GS = load("res://scripts/core/GameState.gd")
+	var PlayerC = load("res://scripts/core/Player.gd")
 	var store = load("res://scripts/core/DeckStore.gd").new()
 	store.use_sandbox_path("rules_setup")
 	store.seed_samples()
 
-	## 1) the opening deal guarantees a Basic, on BOTH sides. Run it over every
+	## 1) the opening deal guarantees TWO Basics, on BOTH sides. Run it over every
 	## sample deck rather than one, since the guarantee is a property of the deal
 	## and must not depend on which list happens to be first.
 	var deals_ok := true
@@ -578,9 +596,11 @@ func _test_setup(db) -> void:
 		var g = GS.new(store.list_at(i), store.list_at(i))
 		for pi in 2:
 			var p = g.players[pi]
-			if p.hand.size() != 6 or not p.has_basic_in_hand():
+			if p.hand.size() != PlayerC.HAND_SIZE_START:
 				deals_ok = false
-	_check("every sample deck opens 6 with a Basic, both seats", deals_ok, true)
+			if p.basics_in_hand() < PlayerC.OPENING_BASICS:
+				deals_ok = false
+	_check("every sample deck opens 8 with 2 Basics, both seats", deals_ok, true)
 
 	## 2) a game starts in setup, and main-phase actions are illegal there.
 	var gs = GS.new(store.list_at(0), store.list_at(0))
@@ -596,8 +616,9 @@ func _test_setup(db) -> void:
 	## 3) the mulligan replaces the hand, once, and only before deploying.
 	var before: Array = p0.hand.duplicate()
 	_check("mulligan is available", gs.mulligan(p0), true)
-	_check("hand is still 6", p0.hand.size(), 6)
-	_check("still guaranteed a Basic", p0.has_basic_in_hand(), true)
+	_check("hand is still 8", p0.hand.size(), PlayerC.HAND_SIZE_START)
+	_check("still guaranteed 2 Basics",
+		p0.basics_in_hand() >= PlayerC.OPENING_BASICS, true)
 	_check("mulligan is spent", p0.mulligan_used, true)
 	_check("a second mulligan is refused", gs.mulligan(p0), false)
 	## The old hand went back to the deck rather than to the discard — a mulligan
@@ -650,26 +671,80 @@ func _test_structure_growth(_db) -> void:
 	var p0 = gs.players[0]
 	var p1 = gs.players[1]
 
-	_check("throne starts at 100", p0.throne_max_hp, 100)
-	_check("tower starts at 50", p0.boards[0].tower_max_hp, 50)
+	_check("throne starts at 150", p0.throne_max_hp, 150)
+	_check("tower starts at 75", p0.boards[0].tower_max_hp, 75)
 
 	## P1 ends their turn: the round is not complete, so nothing grows.
 	gs.active = 0
 	gs.end_turn()
-	_check("no growth after the first player's turn", p0.throne_max_hp, 100)
-	_check("tower likewise ungrown", p0.boards[0].tower_max_hp, 50)
+	_check("no growth after the first player's turn", p0.throne_max_hp, 150)
+	_check("tower likewise ungrown", p0.boards[0].tower_max_hp, 75)
 
 	## P2 ends theirs: the round is complete and BOTH players' structures grow once.
 	gs.end_turn()
-	_check("throne +5 after a full round", p0.throne_max_hp, 105)
-	_check("both players grow together", p1.throne_max_hp, 105)
-	_check("tower +5 after a full round", p0.boards[0].tower_max_hp, 55)
+	_check("throne +5 after a full round", p0.throne_max_hp, 155)
+	_check("both players grow together", p1.throne_max_hp, 155)
+	_check("tower +5 after a full round", p0.boards[0].tower_max_hp, 80)
 
 	## A second full round adds exactly 5 more, not 10.
 	gs.end_turn()
 	gs.end_turn()
-	_check("two rounds is +10 total, not +20", p0.throne_max_hp, 110)
-	_check("tower after two rounds", p0.boards[0].tower_max_hp, 60)
+	_check("two rounds is +10 total, not +20", p0.throne_max_hp, 160)
+	_check("tower after two rounds", p0.boards[0].tower_max_hp, 85)
+
+
+# ---- free repositioning: a unit may move to any empty usable slot on either
+#      of its owner's boards
+func _test_move_unit(db) -> void:
+	print("Free unit movement (any empty usable slot, either own board):")
+	var GS = load("res://scripts/core/GameState.gd")
+	var UnitC = load("res://scripts/core/Unit.gd")
+	var gs = _game(GS)
+	var p = gs.players[0]
+
+	## 1) within the same board
+	var u = UnitC.new(db.get_card("grave_whelp"))
+	p.boards[0].place(u, 0)
+	_check("move to an empty slot on the same board", gs.move_unit(p, u, 0, 1), true)
+	_check("old slot is now empty", p.boards[0].slots[0], null)
+	_check("new slot holds the unit", p.boards[0].slots[1], u)
+
+	## 2) across to the player's OTHER board. Lanes are independent fights, so
+	## crossing is legal and is much of the point of the rule.
+	_check("move across to the other board", gs.move_unit(p, u, 1, 0), true)
+	_check("vacated board 0 slot 1", p.boards[0].slots[1], null)
+	_check("board 1 slot 0 holds the unit", p.boards[1].slots[0], u)
+
+	## 3) attached energy rides along untouched — movement is not a retreat.
+	u.attached = 4
+	_check("move with energy attached", gs.move_unit(p, u, 1, 1), true)
+	_check("attached energy rode along", u.attached, 4)
+
+	## 4) an occupied destination is refused, and the mover does not budge
+	var other = UnitC.new(db.get_card("bonepicker"))
+	p.boards[1].place(other, 0)
+	_check("occupied destination refused", gs.move_unit(p, u, 1, 0), false)
+	_check("mover stayed put", p.boards[1].slots[1], u)
+	_check("occupant untouched", p.boards[1].slots[0], other)
+
+	## 5) the tower slot is refused while that tower lives
+	_check("tower alive", p.boards[1].tower_alive(), true)
+	_check("tower slot refused", gs.move_unit(p, u, 1, Board.TOWER_SLOT), false)
+	_check("still in its own slot", p.boards[1].slots[1], u)
+
+	## 6) moving to its own current slot is a no-op, not a success
+	_check("move to own slot refused", gs.move_unit(p, u, 1, 1), false)
+
+	## 7) illegal requests: off-board index, a unit that is not ours, and null
+	_check("out-of-range board refused", gs.move_unit(p, u, 5, 0), false)
+	var stranger = UnitC.new(db.get_card("grave_whelp"))
+	_check("a unit not on our boards refused", gs.move_unit(p, stranger, 0, 0), false)
+	_check("null unit refused", gs.move_unit(p, null, 0, 0), false)
+
+	## 8) a dead unit cannot move
+	u.hp = 0
+	_check("dead unit refused", gs.move_unit(p, u, 0, 0), false)
+	_check("corpse left in its slot", p.boards[1].slots[1], u)
 
 
 # ---- full AI vs AI game

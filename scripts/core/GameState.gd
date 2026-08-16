@@ -1215,6 +1215,55 @@ func _do_swap_slots(p: Player, target) -> void:
 	_log("  Swaps %s and %s. Attached energy stays with each unit." % [a.card.name, b.card.name])
 
 
+## Move one of your own units to any empty usable slot, on either of your boards.
+## Free, unlimited per turn.
+##
+## This REVERSES the ban on free repositioning that stood from the first
+## prototype, and it is worth recording why that ban expired rather than why it
+## was wrong. It rested entirely on "placement *is* targeting": if the slot a
+## unit stood in was the only thing deciding what it hit and what hit it, then
+## handing out free movement would have been handing out free targeting, and it
+## would also have made `Reposition` — a support card whose whole printed effect
+## is moving a unit — worthless. Chosen targeting retired the premise. An attack
+## may now name any living enemy unit on the board it faces, so placement is the
+## DEFAULT and the FALLBACK rather than the only lever.
+##
+## Movement still costs the player real decisions, which is why it needs no card
+## and no energy to be interesting:
+##   - which of your units eats the tower shot (towers hit the leftmost living)
+##   - which one shields the tower and throne behind it, per board
+##   - which slot an UNNAMED enemy attack faces, since that is still slot-across
+##   - and moving off a board can leave it clear, which is what opens it up
+##
+## It is emphatically NOT a retreat. Nothing is paid, no death effect fires, no
+## `Toll` and no `Rise`, attached energy and any Tool ride along untouched, the
+## unit is not locked, and it never leaves the board — so none of retreat's
+## reasoning applies here and neither do its costs.
+##
+## Deliberately NO phase or turn gating. The UI gates movement with its own
+## `_my_turn()` check, exactly as charging does, and the headless harnesses need
+## to call this primitive directly without a phase dance first. That absence is
+## the design, not an oversight — do not "fix" it by adding `in_setup()` here.
+func move_unit(p: Player, u: Unit, to_board: int, to_slot: int) -> bool:
+	if u == null or not u.is_alive():
+		return false
+	if to_board < 0 or to_board >= p.boards.size():
+		return false
+	var from := p.find_unit(u)
+	if from[0] < 0:
+		return false                            ## not on this player's boards
+	if from[0] == to_board and from[1] == to_slot:
+		return false                            ## a no-op is not a success
+	var dest: Board = p.boards[to_board]
+	if not dest.is_slot_playable(to_slot):
+		return false                            ## occupied, or a living tower's slot
+	p.boards[from[0]].slots[from[1]] = null
+	dest.slots[to_slot] = u
+	_log("%s moves %s to board %d slot %d." % [p.display_name, u.card.name, to_board + 1, to_slot + 1])
+	state_changed.emit()
+	return true
+
+
 ## Toppling Blow. Restricted to towers so it can never become a throne-burn
 ## plan — throne damage must come from units.
 func _do_damage_tower(p: Player, enemy: Player, n: int, target) -> void:
