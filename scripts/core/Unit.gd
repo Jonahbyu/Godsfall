@@ -81,6 +81,52 @@ var decay_taken_this_turn: int = 0
 var evolution_path: Array = []   ## Array[String] card ids
 
 
+## ------------------------------------------------------- keyword modifiers
+##
+## Keyword values a card has RAISED on this unit, as {keyword: amount}. A printed
+## `Toll 2` under a "+2 Toll" support reads 4, and every rule that consumes Toll
+## reads the modified value rather than the print.
+##
+## This exists because the engine was inconsistent about it. `rift()` and
+## `earth()` already accepted Tool grants and card effects, while `toll()`,
+## `siphon()`, `decay()`, `judgment()`, `essence()` and `resist()` returned
+## `card.kw(...)` flat — so "a support that boosts Toll by 2" had no path while
+## the identical card for Rift already worked. That asymmetry was an accident of
+## which keyword happened to need a Tool when it shipped, not a design decision.
+##
+## Modifiers STACK WITHOUT LIMIT, deliberately. Two "+2 Toll" effects make Toll 6.
+## The bound on Tools is one-per-unit; a board-wide support has no such bound and
+## is not given an artificial one.
+##
+## This is history, not print, so like `earth_grown` it resets on Rise and on
+## evolution — Rise restores the card, not the history.
+var kw_mods: Dictionary = {}
+
+
+## The live value of `kw` on this unit: printed, plus anything raised on it.
+##
+## Floored at 0 so a reducing effect can never make a keyword negative — every
+## keyword in the game reads as "N of something", and a negative N has no meaning
+## the rules define.
+func kw_value(kw_name: String) -> int:
+	var n: int = card.kw(kw_name) + int(kw_mods.get(kw_name, 0))
+	return maxi(0, n)
+
+
+## Raise `kw` on this unit by `n`. Negative lowers it; the floor is applied on
+## read rather than here, so a -5 followed by a +5 returns to the printed value
+## instead of being clamped away in between.
+func add_kw_mod(kw_name: String, n: int) -> void:
+	kw_mods[kw_name] = int(kw_mods.get(kw_name, 0)) + n
+
+
+## True when this unit's `kw` differs from its printed value — the board renderer
+## uses this to mark a modified keyword so the player can see it (CLAUDE.md's rule
+## that per-unit state the engine tracks has to be visible per-unit).
+func kw_is_modified(kw_name: String) -> bool:
+	return int(kw_mods.get(kw_name, 0)) != 0
+
+
 func _init(c: CardData) -> void:
 	card = c
 	hp = c.max_hp
@@ -106,25 +152,26 @@ func is_alive() -> bool:
 	return hp > 0
 
 
-## Toll is the *printed* value — buffs and damage never change it.
+## Toll: printed, plus any modifier a card has raised on this unit. Damage and
+## debuffs still never move it — only an effect that explicitly says it does.
 func toll() -> int:
-	return card.kw("toll")
+	return kw_value("toll")
 
 
 func decay() -> int:
-	return card.kw("decay")
+	return kw_value("decay")
 
 
 func retribution() -> int:
-	return card.kw("retribution")
+	return kw_value("retribution")
 
 
 ## --------------------------------------------------------------- Void keywords
 ##
 ## `Siphon N` — attached energy this unit's line MOVES from an enemy unit onto
-## itself. Printed, never recalculated, same as Toll and Judgment.
+## itself. Printed, plus any modifier raised on this unit.
 func siphon() -> int:
-	return card.kw("siphon")
+	return kw_value("siphon")
 
 
 ## `Rift N` — bonus damage per point of Gap. Printed value plus any granted by a
@@ -132,7 +179,7 @@ func siphon() -> int:
 ## in exactly the way an aura is not. Stacking is intentional and bounded: one
 ## Tool per unit, so the most any body can hold is printed + 1.
 func rift() -> int:
-	var n: int = card.kw("rift")
+	var n: int = kw_value("rift")
 	if tool != null and tool.has_effect("grant_rift"):
 		n += tool.effect_value("grant_rift", 0)
 	return n
@@ -149,7 +196,7 @@ func has_rift() -> bool:
 ## summed on GameState, because a Unit has no reference to the player whose other
 ## units it must count — the same reason Rift reads the Gap from there.
 func earth() -> int:
-	var n: int = card.kw("earth") + earth_grown
+	var n: int = kw_value("earth") + earth_grown
 	## Verdant Anchor grants Earth the same way Event Horizon grants Rift — a Tool
 	## is a permanent modification to the body, which is exactly what the aura
 	## reads. Bounded by one-Tool-per-unit.
@@ -168,7 +215,7 @@ func earth() -> int:
 ## `Essence N` — pool energy the owner may pay when this unit dies to move its
 ## Earth and attached energy to the nearest friendly unit on the same board.
 func essence() -> int:
-	return card.kw("essence")
+	return kw_value("essence")
 
 
 func has_essence() -> bool:
@@ -178,7 +225,7 @@ func has_essence() -> bool:
 ## `Resist X` — flat reduction on each incoming instance of damage. Shared
 ## keyword; any faction may print it.
 func resist() -> int:
-	return card.kw("resist")
+	return kw_value("resist")
 
 
 func has_rise() -> bool:
@@ -187,7 +234,7 @@ func has_rise() -> bool:
 
 ## The printed Judgment value. Like Toll, buffs and damage never change it.
 func judgment() -> int:
-	return card.kw("judgment")
+	return kw_value("judgment")
 
 
 func has_judgment() -> bool:
@@ -348,6 +395,9 @@ func make_risen() -> Unit:
 	## A risen Makeshift Tower comes back at its printed size, not the size it
 	## had grown to — same rule, same reason.
 	u.hp_grown = 0
+	## Keyword modifiers are history too — a "+2 Toll" support raised the body
+	## that died, not the card. A risen unit comes back at its printed values.
+	u.kw_mods = {}
 	## A returned body is a fresh printed card: Judgment and Sanctuary are restored.
 	## This is the stacked-reprieve combo Heaven's Rise cards are built on.
 	u.judgment_spent = false
@@ -367,6 +417,7 @@ func evolve_into(new_card: CardData) -> void:
 	card = new_card
 	hp_grown = 0                             ## new printed card, new size
 	earth_grown = 0                          ## new printed card, new Earth
+	kw_mods = {}                             ## new printed card, new keyword values
 	hp = max(1, new_card.max_hp - missing)
 	lost_rise = false                        ## new printed card, new keywords
 	judgment_spent = false                   ## new printed card, new charge

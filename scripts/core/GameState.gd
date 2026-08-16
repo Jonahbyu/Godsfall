@@ -964,6 +964,37 @@ func _resolve_support_effects(p: Player, card: CardData, target) -> void:
 		var healed: int = heal_unit(p, ht, card.effect_value("heal", 0))
 		_log("  Heals %s for %d (%d/%d)." % [ht.card.name, healed, ht.hp, effective_max_hp(p, ht)])
 
+	## ------------------------------------------------------- keyword buffs
+	##
+	## `buff_keyword_all` — raise a keyword on every unit you control.
+	## `buff_keyword` — raise it on one chosen unit.
+	##
+	## Both read the keyword's NAME from the effect, so one op serves every
+	## keyword in the game rather than needing a `grant_toll`, `grant_siphon`,
+	## `grant_decay` and so on. That generality is the point: the engine had
+	## `grant_rift` and `grant_earth` but nothing for Toll or Siphon, which made
+	## "a support that boosts Toll by 2" impossible while the identical Rift card
+	## already worked.
+	##
+	## Effects stack without limit, deliberately — two +2 Toll cards make Toll 6.
+	if card.has_effect("buff_keyword_all"):
+		var bk: String = card.effect_text("buff_keyword_all", "kw")
+		var bn: int = card.effect_value("buff_keyword_all", 0)
+		if bk != "":
+			for unit_any2 in p.all_units():
+				var bu: Unit = unit_any2
+				bu.add_kw_mod(bk, bn)
+			_log("  %s %+d to every unit you control." % [bk.capitalize(), bn])
+
+	if card.has_effect("buff_keyword") and target != null:
+		var sk: String = card.effect_text("buff_keyword", "kw")
+		var sn: int = card.effect_value("buff_keyword", 0)
+		if sk != "":
+			var su: Unit = target
+			su.add_kw_mod(sk, sn)
+			_log("  %s gains %s %+d (now %d)."
+				% [su.card.name, sk.capitalize(), sn, su.kw_value(sk)])
+
 	if card.has_effect("heal_all"):
 		var n3 := card.effect_value("heal_all", 0)
 		for unit_any in p.all_units():

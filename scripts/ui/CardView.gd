@@ -696,6 +696,17 @@ func _live_keyword_line() -> String:
 			## Show what is left in the pool, not what was printed.
 			p = "Sanctuary" if unit.sanctuary_pool <= 0 else "Sanctuary %d" % unit.sanctuary_pool
 
+		## A keyword a card has RAISED on this body shows its live value, not its
+		## print. Same rule as the spent-Judgment fix: state the rules engine
+		## tracks per-unit has to be visible per-unit, or a mechanic is correct
+		## and invisible — which to a player is indistinguishable from broken.
+		var kw_name := lower.split(" ")[0]
+		if unit.kw_is_modified(kw_name):
+			var live: int = unit.kw_value(kw_name)
+			if live <= 0:
+				continue
+			p = "%s %d" % [p.split(" ")[0], live]
+
 		kept.append(p)
 	return ", ".join(kept)
 

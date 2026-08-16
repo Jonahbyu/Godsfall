@@ -166,6 +166,18 @@ func effect_value(op: String, fallback: int = 0) -> int:
 	return fallback
 
 
+## A STRING field on an effect, for ops whose payload is not a number.
+##
+## `buff_keyword` needs to name which keyword it raises — {"op": "buff_keyword",
+## "kw": "toll", "n": 2} — so one op serves every keyword rather than the engine
+## needing a separate `grant_*` op per keyword.
+func effect_text(op: String, field: String, fallback: String = "") -> String:
+	for e in effects:
+		if e.get("op", "") == op:
+			return str(e.get(field, fallback))
+	return fallback
+
+
 ## "Free" or "2 energy" — the printed cost line on a support card.
 func cost_string() -> String:
 	return "Free" if cost <= 0 else "%d energy" % cost
