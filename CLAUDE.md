@@ -765,27 +765,34 @@ damage. Multi-faction should be common and manageable, not strictly superior.
 
 ### The colorless split
 
-**A generic attack prints part of its cost as colorless; an identity attack does
-not.** The colored half is the card's faction requirement, and it is the real
-design decision — it is what stays gated when multi-color enforcement is built.
+**Most attacks print part of their cost as colorless.** The colored half is the
+card's faction requirement — what stays gated once multi-color enforcement is
+built — and the colorless half is payable with any energy.
 
 | Split | Applies to |
 |---|---|
-| Pure colored | any line on a card carrying a **signature keyword** |
-| Pure colored | total cost ≤ 3 |
-| `N-1` + 1 colorless | total cost 4–5 |
+| Pure colored | total cost ≤ 2 — the round-1 openers |
+| `N-1` + 1 colorless | total cost 3–5 |
 | Half and half | total cost 6+ |
 
 `tools/split_colorless.py` holds the rule (`--dry-run`, then `--apply`) and
-**total cost never moves when it runs**, so it changes no balance number.
+**total cost never moves when it runs**, so it changes no balance number. It
+currently splits **172 of 230 lines**, leaving 58 pure: 22 cheap openers and 36
+that already printed colorless. Coverage is ~90% in every faction.
 
-**Signature-keyword lines stay pure on purpose**: the colored requirement *is*
-the identity, and a splashable `Toll` or `Siphon` at half the colored cost would
-let any deck rent a faction's mechanic. That check reads the **card's** keywords,
-not the attack's own text — Toll lives on `grave_whelp` while its attack "Gnaw"
-never mentions it, so an attack-level reading finds 7 signature lines where the
-rule means 195. It currently leaves **195 of 230 lines pure and splits 35**,
-which is nearly all vanilla bodies: the cards with no identity to dilute.
+**Cost is the only input, and a keyword carve-out was tried first and
+abandoned.** The original rule kept any line on a card carrying a signature
+keyword at a pure colored cost, reasoning that a splashable `Toll` or `Siphon`
+would let any deck rent a faction's mechanic. The card pool disproved it: those
+keywords are the **baseline, not a scarce identity** — Toll appears on 47 attack
+lines, Earth on 46, Judgment on 30 — so the rule protected 194 of 230 lines and
+left Heaven with 7 mixed costs out of 57, every `Judgment` Basic printing a pure
+`{"heaven": 4}`.
+
+The correction generalises: **a keyword on most of a faction's cards is not what
+distinguishes a deck; the faction's energy is.** Identity gating therefore lives
+in the *size* of the colored half — a 6-cost line still demands 3 of its own
+colour — rather than in refusing to print colorless at all.
 
 A cost that **already prints colorless** was authored deliberately and is left
 alone rather than re-derived.
@@ -2900,18 +2907,22 @@ even if the rule text later changes. Keep entries to one or two lines.
 
 - **Cards are free to play; energy only buys attacks.** The constraint is acting, not
   deploying. This is the game's core identity.
-- **Generic attacks print part of their cost as colorless; signature lines stay pure.**
-  The colored half is what stays gated to the faction once multi-color enforcement is
-  built, so it is the real decision — a `{"hel": 4}` becoming `{"hel": 2, "colorless": 2}`
-  means "any deck splashing 2 Hel may run this." The signature check reads the **card's**
-  keywords rather than the attack's own text, and that distinction was worth the whole
-  exercise: `Toll` lives on `grave_whelp` while its attack "Gnaw" never mentions it, so an
-  attack-level check found **7** signature lines where the rule means **195**. Applying
-  that version would have diluted the colored requirement on nearly every Toll, Decay,
-  Rise, Earth and Judgment body in the game — and **no harness could have caught it**,
-  because the script preserves total cost and every balance assertion would still pass.
-  **The general shape: a check that reads the wrong level of the data fails silently when
-  its output is invariant-preserving**, so the invariant is not the thing to verify.
+- **Most attacks print a colorless half, and cost is the only thing that decides it.**
+  A `{"hel": 4}` becoming `{"hel": 2, "colorless": 2}` means "any deck splashing 2 Hel may
+  run this", which is what makes multi-faction decks buildable. **Two wrong rules were
+  written before this one, and both are worth keeping.** The first protected lines whose
+  *attack text* named a signature keyword, which found 7 lines where it meant 195 —
+  `Toll` lives on `grave_whelp` while its attack "Gnaw" never mentions it, so the check was
+  reading the wrong level of the data. The second read the card's keywords correctly and
+  was still wrong, because **those keywords are the baseline rather than a scarce
+  identity**: Toll is on 47 attack lines, Earth on 46, Judgment on 30, so protecting them
+  left 194 of 230 lines pure and every `Judgment` Basic printing a pure `{"heaven": 4}`.
+  A keyword on most of a faction's cards is not what distinguishes a deck; the faction's
+  *energy* is — so identity gating lives in the **size** of the colored half, not in
+  refusing to print colorless.
+  **The general shape: a rule whose output preserves an invariant cannot be checked by
+  testing the invariant.** Total cost never moves, so every harness passed under all three
+  rules; the only thing that exposed the second one was looking at the actual cards.
 - **Every keyword value is modifiable at runtime, and modifiers stack without limit.**
   The engine was inconsistent about this: `rift()` and `earth()` already accepted Tool
   grants and card effects, while `toll()`, `siphon()`, `decay()`, `judgment()`, `essence()`
