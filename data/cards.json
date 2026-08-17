@@ -257,8 +257,8 @@
      "id": "crush",
      "name": "Crush",
      "cost": {
-      "hel": 3,
-      "colorless": 0
+      "hel": 2,
+      "colorless": 1
      },
      "damage": 38,
      "text": "38 damage",
@@ -291,8 +291,8 @@
      "id": "final_verdict",
      "name": "Final Verdict",
      "cost": {
-      "hel": 6,
-      "colorless": 0
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 75,
      "text": "75 damage; this unit dies at end of turn",
@@ -366,8 +366,8 @@
      "id": "toll_the_bell",
      "name": "Toll the Bell",
      "cost": {
-      "hel": 3,
-      "colorless": 0
+      "hel": 2,
+      "colorless": 1
      },
      "damage": 38,
      "text": "38 damage; gain 2 energy if a friendly unit died this turn",
@@ -405,8 +405,8 @@
      "id": "gnaw_the_world",
      "name": "Gnaw the World",
      "cost": {
-      "hel": 5,
-      "colorless": 0
+      "hel": 4,
+      "colorless": 1
      },
      "damage": 60,
      "text": "60 damage",
@@ -439,8 +439,8 @@
      "id": "surge_of_the_drowned",
      "name": "Surge of the Drowned",
      "cost": {
-      "hel": 7,
-      "colorless": 0
+      "hel": 4,
+      "colorless": 3
      },
      "damage": 40,
      "text": "40 to the opposing unit and 40 to the enemy tower",
@@ -487,8 +487,8 @@
      "id": "the_last_toll",
      "name": "THE LAST TOLL",
      "cost": {
-      "hel": 20,
-      "colorless": 0
+      "hel": 10,
+      "colorless": 10
      },
      "damage": 0,
      "text": "Destroy every unit on both boards. Deal 15 to the enemy throne per unit destroyed. Your Tolls trigger as normal.",
@@ -526,8 +526,8 @@
      "id": "endless_hunger",
      "name": "Endless Hunger",
      "cost": {
-      "hel": 14,
-      "colorless": 0
+      "hel": 7,
+      "colorless": 7
      },
      "damage": 40,
      "text": "40 to the opposing unit, 40 to the enemy tower; gain 5 energy",
@@ -565,8 +565,8 @@
      "id": "requiem",
      "name": "Requiem",
      "cost": {
-      "hel": 9,
-      "colorless": 0
+      "hel": 5,
+      "colorless": 4
      },
      "damage": 45,
      "text": "45 damage; end-of-turn effects trigger three times this turn",
@@ -1391,8 +1391,8 @@
      "id": "weigh_the_soul",
      "name": "Weigh the Soul",
      "cost": {
-      "heaven": 3,
-      "colorless": 0
+      "heaven": 2,
+      "colorless": 1
      },
      "damage": 25,
      "text": "25 damage",
@@ -1494,8 +1494,8 @@
      "id": "pillar_of_light",
      "name": "Pillar of Light",
      "cost": {
-      "heaven": 5,
-      "colorless": 0
+      "heaven": 4,
+      "colorless": 1
      },
      "damage": 65,
      "text": "65 damage",
@@ -1538,8 +1538,8 @@
      "id": "final_accounting",
      "name": "Final Accounting",
      "cost": {
-      "heaven": 5,
-      "colorless": 0
+      "heaven": 4,
+      "colorless": 1
      },
      "damage": 42,
      "text": "42 damage",
@@ -1582,8 +1582,8 @@
      "id": "judgment_of_light",
      "name": "Judgment of Light",
      "cost": {
-      "heaven": 6,
-      "colorless": 0
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 75,
      "text": "75 damage",
@@ -1616,8 +1616,8 @@
      "id": "second_sentence",
      "name": "Second Sentence",
      "cost": {
-      "heaven": 4,
-      "colorless": 0
+      "heaven": 3,
+      "colorless": 1
      },
      "damage": 33,
      "text": "33 damage",
@@ -1660,8 +1660,8 @@
      "id": "final_reckoning",
      "name": "Final Reckoning",
      "cost": {
-      "heaven": 5,
-      "colorless": 0
+      "heaven": 4,
+      "colorless": 1
      },
      "damage": 42,
      "text": "42 damage",
@@ -1803,8 +1803,8 @@
      "id": "unmake",
      "name": "Unmake",
      "cost": {
-      "void": 3,
-      "colorless": 0
+      "void": 2,
+      "colorless": 1
      },
      "damage": 12,
      "text": "12 damage; Void 1. Deal 15 more for each energy destroyed this way.",
@@ -1867,8 +1867,8 @@
      "id": "collapse_inward",
      "name": "Collapse Inward",
      "cost": {
-      "void": 3,
-      "colorless": 0
+      "void": 2,
+      "colorless": 1
      },
      "damage": 36,
      "text": "36 damage",
@@ -1897,8 +1897,8 @@
      "id": "sever",
      "name": "Sever",
      "cost": {
-      "void": 3,
-      "colorless": 0
+      "void": 2,
+      "colorless": 1
      },
      "damage": 25,
      "text": "25 damage; Siphon 1",
@@ -1932,8 +1932,8 @@
      "id": "erode",
      "name": "Erode",
      "cost": {
-      "void": 3,
-      "colorless": 0
+      "void": 2,
+      "colorless": 1
      },
      "damage": 22,
      "text": "22 damage",
@@ -2006,8 +2006,8 @@
      "id": "starve",
      "name": "Starve",
      "cost": {
-      "void": 4,
-      "colorless": 0
+      "void": 3,
+      "colorless": 1
      },
      "damage": 28,
      "text": "28 damage; Siphon 2",
@@ -2070,8 +2070,8 @@
      "id": "widening",
      "name": "The Widening",
      "cost": {
-      "void": 5,
-      "colorless": 0
+      "void": 4,
+      "colorless": 1
      },
      "damage": 34,
      "text": "34 damage; Siphon 2",
@@ -2105,8 +2105,8 @@
      "id": "swallow",
      "name": "Swallow",
      "cost": {
-      "void": 6,
-      "colorless": 0
+      "void": 3,
+      "colorless": 3
      },
      "damage": 44,
      "text": "44 damage",
@@ -2388,8 +2388,8 @@
      "id": "roots_upheaval",
      "name": "Upheaval",
      "cost": {
-      "gaia": 3,
-      "colorless": 0
+      "gaia": 2,
+      "colorless": 1
      },
      "damage": 26,
      "text": "26 damage"
@@ -2494,8 +2494,8 @@
      "id": "heartwood_world_root",
      "name": "World-Root",
      "cost": {
-      "gaia": 5,
-      "colorless": 0
+      "gaia": 4,
+      "colorless": 1
      },
      "damage": 45,
      "text": "45 damage"
@@ -2618,8 +2618,8 @@
      "id": "elder_overgrowth",
      "name": "Overgrowth",
      "cost": {
-      "gaia": 4,
-      "colorless": 0
+      "gaia": 3,
+      "colorless": 1
      },
      "damage": 36,
      "text": "36 damage"
@@ -2686,8 +2686,8 @@
      "id": "granite_tremor",
      "name": "Tremor",
      "cost": {
-      "gaia": 3,
-      "colorless": 0
+      "gaia": 2,
+      "colorless": 1
      },
      "damage": 24,
      "text": "24 damage"
@@ -2771,8 +2771,8 @@
      "id": "vernal_flourish",
      "name": "Flourish",
      "cost": {
-      "gaia": 3,
-      "colorless": 0
+      "gaia": 2,
+      "colorless": 1
      },
      "damage": 25,
      "text": "25 damage"
@@ -2883,7 +2883,8 @@
      "id": "frostbite",
      "name": "Frostbite",
      "cost": {
-      "hel": 4
+      "hel": 3,
+      "colorless": 1
      },
      "damage": 28,
      "text": "28 damage",
@@ -2916,7 +2917,8 @@
      "id": "hoarfrost",
      "name": "Hoarfrost",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 48,
      "text": "48 damage",
@@ -2945,7 +2947,8 @@
      "id": "chaff",
      "name": "Chaff",
      "cost": {
-      "hel": 4
+      "hel": 3,
+      "colorless": 1
      },
      "damage": 26,
      "text": "26 damage",
@@ -2974,7 +2977,8 @@
      "id": "winnow",
      "name": "Winnow",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 44,
      "text": "44 damage",
@@ -3022,7 +3026,8 @@
      "id": "burrow",
      "name": "Burrow",
      "cost": {
-      "hel": 4
+      "hel": 3,
+      "colorless": 1
      },
      "damage": 30,
      "text": "30 damage",
@@ -3055,7 +3060,8 @@
      "id": "hollow_out",
      "name": "Hollow Out",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 52,
      "text": "52 damage",
@@ -3088,7 +3094,8 @@
      "id": "the_long_hollow",
      "name": "The Long Hollow",
      "cost": {
-      "hel": 10
+      "hel": 5,
+      "colorless": 5
      },
      "damage": 90,
      "text": "90 damage",
@@ -3136,7 +3143,8 @@
      "id": "splinter",
      "name": "Splinter",
      "cost": {
-      "hel": 5
+      "hel": 4,
+      "colorless": 1
      },
      "damage": 32,
      "text": "32 damage",
@@ -3169,7 +3177,8 @@
      "id": "ossuary",
      "name": "Ossuary",
      "cost": {
-      "hel": 7
+      "hel": 4,
+      "colorless": 3
      },
      "damage": 53,
      "text": "53 damage",
@@ -3198,7 +3207,8 @@
      "id": "the_last_marrow",
      "name": "The Last Marrow",
      "cost": {
-      "hel": 12
+      "hel": 6,
+      "colorless": 6
      },
      "damage": 105,
      "text": "105 damage",
@@ -3246,7 +3256,8 @@
      "id": "nibble",
      "name": "Nibble",
      "cost": {
-      "hel": 4
+      "hel": 3,
+      "colorless": 1
      },
      "damage": 24,
      "text": "24 damage",
@@ -3279,7 +3290,8 @@
      "id": "gnash",
      "name": "Gnash",
      "cost": {
-      "hel": 5
+      "hel": 4,
+      "colorless": 1
      },
      "damage": 42,
      "text": "42 damage",
@@ -3308,7 +3320,8 @@
      "id": "swarm",
      "name": "Swarm",
      "cost": {
-      "hel": 5
+      "hel": 4,
+      "colorless": 1
      },
      "damage": 36,
      "text": "36 damage",
@@ -3341,7 +3354,8 @@
      "id": "keening",
      "name": "Keening",
      "cost": {
-      "hel": 4
+      "hel": 3,
+      "colorless": 1
      },
      "damage": 28,
      "text": "28 damage",
@@ -3374,7 +3388,8 @@
      "id": "stoneward",
      "name": "Stoneward",
      "cost": {
-      "hel": 5
+      "hel": 4,
+      "colorless": 1
      },
      "damage": 34,
      "text": "34 damage",
@@ -3403,7 +3418,8 @@
      "id": "spore_burst",
      "name": "Spore Burst",
      "cost": {
-      "hel": 4
+      "hel": 3,
+      "colorless": 1
      },
      "damage": 30,
      "text": "30 damage",
@@ -3436,7 +3452,8 @@
      "id": "miasma",
      "name": "Miasma",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 50,
      "text": "50 damage",
@@ -3469,7 +3486,8 @@
      "id": "the_wasting",
      "name": "The Wasting",
      "cost": {
-      "hel": 11
+      "hel": 6,
+      "colorless": 5
      },
      "damage": 95,
      "text": "95 damage",
@@ -3542,7 +3560,8 @@
      "id": "entomb",
      "name": "Entomb",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 47,
      "text": "47 damage",
@@ -3575,7 +3594,8 @@
      "id": "sealed_in_stone",
      "name": "Sealed in Stone",
      "cost": {
-      "hel": 11
+      "hel": 6,
+      "colorless": 5
      },
      "damage": 100,
      "text": "100 damage",
@@ -3648,7 +3668,8 @@
      "id": "drown",
      "name": "Drown",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 44,
      "text": "44 damage",
@@ -3677,7 +3698,8 @@
      "id": "ember",
      "name": "Ember",
      "cost": {
-      "hel": 5
+      "hel": 4,
+      "colorless": 1
      },
      "damage": 33,
      "text": "33 damage",
@@ -3706,7 +3728,8 @@
      "id": "cinderfall",
      "name": "Cinderfall",
      "cost": {
-      "hel": 7
+      "hel": 4,
+      "colorless": 3
      },
      "damage": 53,
      "text": "53 damage",
@@ -3739,7 +3762,8 @@
      "id": "fester",
      "name": "Fester",
      "cost": {
-      "hel": 4
+      "hel": 3,
+      "colorless": 1
      },
      "damage": 29,
      "text": "29 damage",
@@ -3772,7 +3796,8 @@
      "id": "putrefy",
      "name": "Putrefy",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 48,
      "text": "48 damage",
@@ -3805,7 +3830,8 @@
      "id": "reproach",
      "name": "Reproach",
      "cost": {
-      "hel": 5
+      "hel": 4,
+      "colorless": 1
      },
      "damage": 35,
      "text": "35 damage",
@@ -3838,7 +3864,8 @@
      "id": "recompense",
      "name": "Recompense",
      "cost": {
-      "hel": 7
+      "hel": 4,
+      "colorless": 3
      },
      "damage": 55,
      "text": "55 damage",
@@ -3896,7 +3923,8 @@
      "id": "settle",
      "name": "Settle",
      "cost": {
-      "hel": 5
+      "hel": 4,
+      "colorless": 1
      },
      "damage": 43,
      "text": "43 damage",
@@ -3954,7 +3982,8 @@
      "id": "desiccate",
      "name": "Desiccate",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 50,
      "text": "50 damage",
@@ -4012,7 +4041,8 @@
      "id": "dirgefall",
      "name": "Dirgefall",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 45,
      "text": "45 damage",
@@ -4070,7 +4100,8 @@
      "id": "bulwark",
      "name": "Bulwark",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 44,
      "text": "44 damage",
@@ -4128,7 +4159,8 @@
      "id": "massing",
      "name": "Massing",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 46,
      "text": "46 damage",
@@ -4186,7 +4218,8 @@
      "id": "hollowing",
      "name": "Hollowing",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 48,
      "text": "48 damage",
@@ -4244,7 +4277,8 @@
      "id": "mill",
      "name": "Mill",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 47,
      "text": "47 damage",
@@ -4302,7 +4336,8 @@
      "id": "assemble",
      "name": "Assemble",
      "cost": {
-      "hel": 6
+      "hel": 3,
+      "colorless": 3
      },
      "damage": 49,
      "text": "49 damage",
@@ -4331,7 +4366,8 @@
      "id": "first_light",
      "name": "First Light",
      "cost": {
-      "heaven": 4
+      "heaven": 3,
+      "colorless": 1
      },
      "damage": 30,
      "text": "30 damage",
@@ -4360,7 +4396,8 @@
      "id": "evensong",
      "name": "Evensong",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 50,
      "text": "50 damage",
@@ -4389,7 +4426,8 @@
      "id": "intercede",
      "name": "Intercede",
      "cost": {
-      "heaven": 5
+      "heaven": 4,
+      "colorless": 1
      },
      "damage": 32,
      "text": "32 damage",
@@ -4418,7 +4456,8 @@
      "id": "bulwark_of_light",
      "name": "Bulwark of Light",
      "cost": {
-      "heaven": 7
+      "heaven": 4,
+      "colorless": 3
      },
      "damage": 55,
      "text": "55 damage",
@@ -4447,7 +4486,8 @@
      "id": "final_shelter",
      "name": "Final Shelter",
      "cost": {
-      "heaven": 11
+      "heaven": 6,
+      "colorless": 5
      },
      "damage": 95,
      "text": "95 damage",
@@ -4491,7 +4531,8 @@
      "id": "mark",
      "name": "Mark",
      "cost": {
-      "heaven": 4
+      "heaven": 3,
+      "colorless": 1
      },
      "damage": 28,
      "text": "28 damage",
@@ -4520,7 +4561,8 @@
      "id": "brand",
      "name": "Brand",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 46,
      "text": "46 damage",
@@ -4564,7 +4606,8 @@
      "id": "clarion",
      "name": "Clarion",
      "cost": {
-      "heaven": 4
+      "heaven": 3,
+      "colorless": 1
      },
      "damage": 29,
      "text": "29 damage",
@@ -4593,7 +4636,8 @@
      "id": "chorus",
      "name": "Chorus",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 48,
      "text": "48 damage",
@@ -4622,7 +4666,8 @@
      "id": "the_final_note",
      "name": "The Final Note",
      "cost": {
-      "heaven": 11
+      "heaven": 6,
+      "colorless": 5
      },
      "damage": 88,
      "text": "88 damage",
@@ -4666,7 +4711,8 @@
      "id": "gild",
      "name": "Gild",
      "cost": {
-      "heaven": 5
+      "heaven": 4,
+      "colorless": 1
      },
      "damage": 33,
      "text": "33 damage",
@@ -4699,7 +4745,8 @@
      "id": "rekindle",
      "name": "Rekindle",
      "cost": {
-      "heaven": 4
+      "heaven": 3,
+      "colorless": 1
      },
      "damage": 27,
      "text": "27 damage",
@@ -4728,7 +4775,8 @@
      "id": "toll_the_hour",
      "name": "Toll the Hour",
      "cost": {
-      "heaven": 4
+      "heaven": 3,
+      "colorless": 1
      },
      "damage": 31,
      "text": "31 damage",
@@ -4757,7 +4805,8 @@
      "id": "shieldwing",
      "name": "Shieldwing",
      "cost": {
-      "heaven": 5
+      "heaven": 4,
+      "colorless": 1
      },
      "damage": 35,
      "text": "35 damage",
@@ -4786,7 +4835,8 @@
      "id": "kindle",
      "name": "Kindle",
      "cost": {
-      "heaven": 4
+      "heaven": 3,
+      "colorless": 1
      },
      "damage": 30,
      "text": "30 damage",
@@ -4815,7 +4865,8 @@
      "id": "exalt",
      "name": "Exalt",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 50,
      "text": "50 damage",
@@ -4848,7 +4899,8 @@
      "id": "in_glory",
      "name": "In Glory",
      "cost": {
-      "heaven": 12
+      "heaven": 6,
+      "colorless": 6
      },
      "damage": 92,
      "text": "92 damage",
@@ -4892,7 +4944,8 @@
      "id": "ward",
      "name": "Ward",
      "cost": {
-      "heaven": 5
+      "heaven": 4,
+      "colorless": 1
      },
      "damage": 32,
      "text": "32 damage",
@@ -4921,7 +4974,8 @@
      "id": "consecrate",
      "name": "Consecrate",
      "cost": {
-      "heaven": 7
+      "heaven": 4,
+      "colorless": 3
      },
      "damage": 56,
      "text": "56 damage",
@@ -4954,7 +5008,8 @@
      "id": "inviolate",
      "name": "Inviolate",
      "cost": {
-      "heaven": 11
+      "heaven": 6,
+      "colorless": 5
      },
      "damage": 98,
      "text": "98 damage",
@@ -4998,7 +5053,8 @@
      "id": "verse",
      "name": "Verse",
      "cost": {
-      "heaven": 4
+      "heaven": 3,
+      "colorless": 1
      },
      "damage": 29,
      "text": "29 damage",
@@ -5027,7 +5083,8 @@
      "id": "refrain",
      "name": "Refrain",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 47,
      "text": "47 damage",
@@ -5056,7 +5113,8 @@
      "id": "indict",
      "name": "Indict",
      "cost": {
-      "heaven": 4
+      "heaven": 3,
+      "colorless": 1
      },
      "damage": 31,
      "text": "31 damage",
@@ -5085,7 +5143,8 @@
      "id": "prosecute",
      "name": "Prosecute",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 49,
      "text": "49 damage",
@@ -5114,7 +5173,8 @@
      "id": "glimmer",
      "name": "Glimmer",
      "cost": {
-      "heaven": 4
+      "heaven": 3,
+      "colorless": 1
      },
      "damage": 28,
      "text": "28 damage",
@@ -5143,7 +5203,8 @@
      "id": "radiance",
      "name": "Radiance",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 52,
      "text": "52 damage",
@@ -5176,7 +5237,8 @@
      "id": "dawnstrike",
      "name": "Dawnstrike",
      "cost": {
-      "heaven": 4
+      "heaven": 3,
+      "colorless": 1
      },
      "damage": 33,
      "text": "33 damage",
@@ -5209,7 +5271,8 @@
      "id": "sunrise",
      "name": "Sunrise",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 51,
      "text": "51 damage",
@@ -5238,7 +5301,8 @@
      "id": "aegis",
      "name": "Aegis",
      "cost": {
-      "heaven": 5
+      "heaven": 4,
+      "colorless": 1
      },
      "damage": 34,
      "text": "34 damage",
@@ -5271,7 +5335,8 @@
      "id": "firmament",
      "name": "Firmament",
      "cost": {
-      "heaven": 7
+      "heaven": 4,
+      "colorless": 3
      },
      "damage": 57,
      "text": "57 damage",
@@ -5325,7 +5390,8 @@
      "id": "harmony",
      "name": "Harmony",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 46,
      "text": "46 damage",
@@ -5379,7 +5445,8 @@
      "id": "nightsong",
      "name": "Nightsong",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 47,
      "text": "47 damage",
@@ -5433,7 +5500,8 @@
      "id": "burnish",
      "name": "Burnish",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 48,
      "text": "48 damage",
@@ -5487,7 +5555,8 @@
      "id": "peal",
      "name": "Peal",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 45,
      "text": "45 damage",
@@ -5541,7 +5610,8 @@
      "id": "clarity",
      "name": "Clarity",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 46,
      "text": "46 damage",
@@ -5595,7 +5665,8 @@
      "id": "ascend",
      "name": "Ascend",
      "cost": {
-      "heaven": 6
+      "heaven": 3,
+      "colorless": 3
      },
      "damage": 49,
      "text": "49 damage",
@@ -5649,7 +5720,8 @@
      "id": "hold_the_line",
      "name": "Hold the Line",
      "cost": {
-      "heaven": 7
+      "heaven": 4,
+      "colorless": 3
      },
      "damage": 53,
      "text": "53 damage",
@@ -5678,7 +5750,8 @@
      "id": "unmake",
      "name": "Unmake",
      "cost": {
-      "void": 4
+      "void": 3,
+      "colorless": 1
      },
      "damage": 29,
      "text": "29 damage",
@@ -5711,7 +5784,8 @@
      "id": "erode",
      "name": "Erode",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 48,
      "text": "48 damage",
@@ -5740,7 +5814,8 @@
      "id": "widen",
      "name": "Widen",
      "cost": {
-      "void": 4
+      "void": 3,
+      "colorless": 1
      },
      "damage": 31,
      "text": "31 damage",
@@ -5769,7 +5844,8 @@
      "id": "recede",
      "name": "Recede",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 52,
      "text": "52 damage",
@@ -5798,7 +5874,8 @@
      "id": "the_wide_dark",
      "name": "The Wide Dark",
      "cost": {
-      "void": 8
+      "void": 4,
+      "colorless": 4
      },
      "damage": 64,
      "text": "64 damage",
@@ -5842,7 +5919,8 @@
      "id": "abrade",
      "name": "Abrade",
      "cost": {
-      "void": 5
+      "void": 4,
+      "colorless": 1
      },
      "damage": 33,
      "text": "33 damage",
@@ -5871,7 +5949,8 @@
      "id": "strip",
      "name": "Strip",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 45,
      "text": "45 damage",
@@ -5900,7 +5979,8 @@
      "id": "muffle",
      "name": "Muffle",
      "cost": {
-      "void": 4
+      "void": 3,
+      "colorless": 1
      },
      "damage": 29,
      "text": "29 damage",
@@ -5948,7 +6028,8 @@
      "id": "attenuate",
      "name": "Attenuate",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 47,
      "text": "47 damage",
@@ -5977,7 +6058,8 @@
      "id": "dim",
      "name": "Dim",
      "cost": {
-      "void": 4
+      "void": 3,
+      "colorless": 1
      },
      "damage": 26,
      "text": "26 damage",
@@ -6010,7 +6092,8 @@
      "id": "penumbra",
      "name": "Penumbra",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 44,
      "text": "44 damage",
@@ -6043,7 +6126,8 @@
      "id": "total_eclipse",
      "name": "Total Eclipse",
      "cost": {
-      "void": 8
+      "void": 4,
+      "colorless": 4
      },
      "damage": 64,
      "text": "64 damage",
@@ -6087,7 +6171,8 @@
      "id": "subtract",
      "name": "Subtract",
      "cost": {
-      "void": 4
+      "void": 3,
+      "colorless": 1
      },
      "damage": 30,
      "text": "30 damage",
@@ -6116,7 +6201,8 @@
      "id": "sunder_bond",
      "name": "Sunder Bond",
      "cost": {
-      "void": 5
+      "void": 4,
+      "colorless": 1
      },
      "damage": 36,
      "text": "36 damage",
@@ -6145,7 +6231,8 @@
      "id": "dwindle",
      "name": "Dwindle",
      "cost": {
-      "void": 5
+      "void": 4,
+      "colorless": 1
      },
      "damage": 34,
      "text": "34 damage",
@@ -6174,7 +6261,8 @@
      "id": "elide",
      "name": "Elide",
      "cost": {
-      "void": 4
+      "void": 3,
+      "colorless": 1
      },
      "damage": 29,
      "text": "29 damage",
@@ -6203,7 +6291,8 @@
      "id": "omit",
      "name": "Omit",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 47,
      "text": "47 damage",
@@ -6236,7 +6325,8 @@
      "id": "the_missing_page",
      "name": "The Missing Page",
      "cost": {
-      "void": 9
+      "void": 5,
+      "colorless": 4
      },
      "damage": 78,
      "text": "78 damage",
@@ -6280,7 +6370,8 @@
      "id": "spiral",
      "name": "Spiral",
      "cost": {
-      "void": 4
+      "void": 3,
+      "colorless": 1
      },
      "damage": 30,
      "text": "30 damage",
@@ -6309,7 +6400,8 @@
      "id": "maelstrom",
      "name": "Maelstrom",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 49,
      "text": "49 damage",
@@ -6338,7 +6430,8 @@
      "id": "event_horizon",
      "name": "Event Horizon",
      "cost": {
-      "void": 8
+      "void": 4,
+      "colorless": 4
      },
      "damage": 64,
      "text": "64 damage",
@@ -6382,7 +6475,8 @@
      "id": "blacken",
      "name": "Blacken",
      "cost": {
-      "void": 4
+      "void": 3,
+      "colorless": 1
      },
      "damage": 28,
      "text": "28 damage",
@@ -6411,7 +6505,8 @@
      "id": "smother",
      "name": "Smother",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 47,
      "text": "47 damage",
@@ -6465,7 +6560,8 @@
      "id": "residue",
      "name": "Residue",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 50,
      "text": "50 damage",
@@ -6494,7 +6590,8 @@
      "id": "split",
      "name": "Split",
      "cost": {
-      "void": 4
+      "void": 3,
+      "colorless": 1
      },
      "damage": 29,
      "text": "29 damage",
@@ -6523,7 +6620,8 @@
      "id": "cleave",
      "name": "Cleave",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 48,
      "text": "48 damage",
@@ -6552,7 +6650,8 @@
      "id": "shroud_out",
      "name": "Shroud Out",
      "cost": {
-      "void": 4
+      "void": 3,
+      "colorless": 1
      },
      "damage": 31,
      "text": "31 damage",
@@ -6581,7 +6680,8 @@
      "id": "obscure",
      "name": "Obscure",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 51,
      "text": "51 damage",
@@ -6610,7 +6710,8 @@
      "id": "bare",
      "name": "Bare",
      "cost": {
-      "void": 5
+      "void": 4,
+      "colorless": 1
      },
      "damage": 33,
      "text": "33 damage",
@@ -6639,7 +6740,8 @@
      "id": "strip_bare",
      "name": "Strip Bare",
      "cost": {
-      "void": 7
+      "void": 4,
+      "colorless": 3
      },
      "damage": 54,
      "text": "54 damage",
@@ -6693,7 +6795,8 @@
      "id": "sink",
      "name": "Sink",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 46,
      "text": "46 damage",
@@ -6747,7 +6850,8 @@
      "id": "nullify",
      "name": "Nullify",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 45,
      "text": "45 damage",
@@ -6801,7 +6905,8 @@
      "id": "deepen",
      "name": "Deepen",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 46,
      "text": "46 damage",
@@ -6855,7 +6960,8 @@
      "id": "diminish",
      "name": "Diminish",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 47,
      "text": "47 damage",
@@ -6909,7 +7015,8 @@
      "id": "apostasy",
      "name": "Apostasy",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 48,
      "text": "48 damage",
@@ -6963,7 +7070,8 @@
      "id": "expanse",
      "name": "Expanse",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 49,
      "text": "49 damage",
@@ -7017,7 +7125,8 @@
      "id": "excise",
      "name": "Excise",
      "cost": {
-      "void": 6
+      "void": 3,
+      "colorless": 3
      },
      "damage": 47,
      "text": "47 damage",
@@ -7046,7 +7155,8 @@
      "id": "bloom",
      "name": "Bloom",
      "cost": {
-      "gaia": 4
+      "gaia": 3,
+      "colorless": 1
      },
      "damage": 30,
      "text": "30 damage",
@@ -7079,7 +7189,8 @@
      "id": "mycorrhiza",
      "name": "Mycorrhiza",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 50,
      "text": "50 damage",
@@ -7112,7 +7223,8 @@
      "id": "shale",
      "name": "Shale",
      "cost": {
-      "gaia": 5
+      "gaia": 4,
+      "colorless": 1
      },
      "damage": 34,
      "text": "34 damage",
@@ -7145,7 +7257,8 @@
      "id": "landslide",
      "name": "Landslide",
      "cost": {
-      "gaia": 7
+      "gaia": 4,
+      "colorless": 3
      },
      "damage": 54,
      "text": "54 damage",
@@ -7178,7 +7291,8 @@
      "id": "orogeny",
      "name": "Orogeny",
      "cost": {
-      "gaia": 11
+      "gaia": 6,
+      "colorless": 5
      },
      "damage": 100,
      "text": "100 damage",
@@ -7225,7 +7339,8 @@
      "id": "tendril",
      "name": "Tendril",
      "cost": {
-      "gaia": 4
+      "gaia": 3,
+      "colorless": 1
      },
      "damage": 31,
      "text": "31 damage",
@@ -7258,7 +7373,8 @@
      "id": "entangle",
      "name": "Entangle",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 48,
      "text": "48 damage",
@@ -7291,7 +7407,8 @@
      "id": "prick",
      "name": "Prick",
      "cost": {
-      "gaia": 4
+      "gaia": 3,
+      "colorless": 1
      },
      "damage": 28,
      "text": "28 damage",
@@ -7324,7 +7441,8 @@
      "id": "bramblewall",
      "name": "Bramblewall",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 46,
      "text": "46 damage",
@@ -7361,7 +7479,8 @@
      "id": "the_deep_thicket",
      "name": "The Deep Thicket",
      "cost": {
-      "gaia": 11
+      "gaia": 6,
+      "colorless": 5
      },
      "damage": 95,
      "text": "95 damage",
@@ -7405,7 +7524,8 @@
      "id": "creep",
      "name": "Creep",
      "cost": {
-      "gaia": 5
+      "gaia": 4,
+      "colorless": 1
      },
      "damage": 35,
      "text": "35 damage",
@@ -7438,7 +7558,8 @@
      "id": "harden",
      "name": "Harden",
      "cost": {
-      "gaia": 5
+      "gaia": 4,
+      "colorless": 1
      },
      "damage": 37,
      "text": "37 damage",
@@ -7471,7 +7592,8 @@
      "id": "crust",
      "name": "Crust",
      "cost": {
-      "gaia": 4
+      "gaia": 3,
+      "colorless": 1
      },
      "damage": 30,
      "text": "30 damage",
@@ -7500,7 +7622,8 @@
      "id": "flourish",
      "name": "Flourish",
      "cost": {
-      "gaia": 5
+      "gaia": 4,
+      "colorless": 1
      },
      "damage": 33,
      "text": "33 damage",
@@ -7529,7 +7652,8 @@
      "id": "resin",
      "name": "Resin",
      "cost": {
-      "gaia": 4
+      "gaia": 3,
+      "colorless": 1
      },
      "damage": 31,
      "text": "31 damage",
@@ -7562,7 +7686,8 @@
      "id": "encase",
      "name": "Encase",
      "cost": {
-      "gaia": 7
+      "gaia": 4,
+      "colorless": 3
      },
      "damage": 54,
      "text": "54 damage",
@@ -7595,7 +7720,8 @@
      "id": "deep_amber",
      "name": "Deep Amber",
      "cost": {
-      "gaia": 11
+      "gaia": 6,
+      "colorless": 5
      },
      "damage": 98,
      "text": "98 damage",
@@ -7643,7 +7769,8 @@
      "id": "scoria",
      "name": "Scoria",
      "cost": {
-      "gaia": 5
+      "gaia": 4,
+      "colorless": 1
      },
      "damage": 35,
      "text": "35 damage",
@@ -7676,7 +7803,8 @@
      "id": "basalt",
      "name": "Basalt",
      "cost": {
-      "gaia": 7
+      "gaia": 4,
+      "colorless": 3
      },
      "damage": 58,
      "text": "58 damage",
@@ -7709,7 +7837,8 @@
      "id": "caldera",
      "name": "Caldera",
      "cost": {
-      "gaia": 11
+      "gaia": 6,
+      "colorless": 5
      },
      "damage": 102,
      "text": "102 damage",
@@ -7752,7 +7881,8 @@
      "id": "frond",
      "name": "Frond",
      "cost": {
-      "gaia": 4
+      "gaia": 3,
+      "colorless": 1
      },
      "damage": 30,
      "text": "30 damage",
@@ -7781,7 +7911,8 @@
      "id": "unfurl",
      "name": "Unfurl",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 49,
      "text": "49 damage",
@@ -7814,7 +7945,8 @@
      "id": "cut_grass",
      "name": "Cut Grass",
      "cost": {
-      "gaia": 4
+      "gaia": 3,
+      "colorless": 1
      },
      "damage": 31,
      "text": "31 damage",
@@ -7847,7 +7979,8 @@
      "id": "marshhold",
      "name": "Marshhold",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 50,
      "text": "50 damage",
@@ -7876,7 +8009,8 @@
      "id": "furrow",
      "name": "Furrow",
      "cost": {
-      "gaia": 5
+      "gaia": 4,
+      "colorless": 1
      },
      "damage": 34,
      "text": "34 damage",
@@ -7909,7 +8043,8 @@
      "id": "deep_till",
      "name": "Deep Till",
      "cost": {
-      "gaia": 7
+      "gaia": 4,
+      "colorless": 3
      },
      "damage": 55,
      "text": "55 damage",
@@ -7942,7 +8077,8 @@
      "id": "catch",
      "name": "Catch",
      "cost": {
-      "gaia": 4
+      "gaia": 3,
+      "colorless": 1
      },
      "damage": 29,
      "text": "29 damage",
@@ -7975,7 +8111,8 @@
      "id": "snare",
      "name": "Snare",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 48,
      "text": "48 damage",
@@ -8008,7 +8145,8 @@
      "id": "clump",
      "name": "Clump",
      "cost": {
-      "gaia": 5
+      "gaia": 4,
+      "colorless": 1
      },
      "damage": 36,
      "text": "36 damage",
@@ -8041,7 +8179,8 @@
      "id": "root_fast",
      "name": "Root Fast",
      "cost": {
-      "gaia": 7
+      "gaia": 4,
+      "colorless": 3
      },
      "damage": 56,
      "text": "56 damage",
@@ -8099,7 +8238,8 @@
      "id": "silt_up",
      "name": "Silt Up",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 47,
      "text": "47 damage",
@@ -8153,7 +8293,8 @@
      "id": "carpet",
      "name": "Carpet",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 46,
      "text": "46 damage",
@@ -8211,7 +8352,8 @@
      "id": "taproot",
      "name": "Taproot",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 47,
      "text": "47 damage",
@@ -8265,7 +8407,8 @@
      "id": "greenwood",
      "name": "Greenwood",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 48,
      "text": "48 damage",
@@ -8323,7 +8466,8 @@
      "id": "stonewake",
      "name": "Stonewake",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 49,
      "text": "49 damage",
@@ -8381,7 +8525,8 @@
      "id": "symbiosis",
      "name": "Symbiosis",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 50,
      "text": "50 damage",
@@ -8439,7 +8584,8 @@
      "id": "thicketfall",
      "name": "Thicketfall",
      "cost": {
-      "gaia": 6
+      "gaia": 3,
+      "colorless": 3
      },
      "damage": 49,
      "text": "49 damage",

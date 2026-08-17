@@ -8,16 +8,14 @@ much of each cost stays *gated to the faction* when multi-color enforcement is
 built. A cost of {"hel": 4} becoming {"hel": 2, "colorless": 2} means "any deck
 splashing 2 Hel can run this", which is a real deckbuilding statement.
 
-Lines that carry a faction's signature keyword stay pure: the colored
-requirement is the identity, and diluting it would make Toll/Siphon/Earth
-splashable at half price.
-
 The split rule (decided in conversation 2026-08-16):
 
-    total <= 3          pure colored
-    signature keyword   pure colored
-    total 4-5           N-1 colored + 1 colorless
+    total <= 2          pure colored -- the round-1 openers
+    total 3-5           N-1 colored + 1 colorless
     total 6+            ceil(N/2) colored + floor(N/2) colorless
+
+Cost is the only input. Keyword-based protection was tried first and abandoned;
+see split() for why.
 """
 import argparse
 import json
@@ -26,39 +24,35 @@ import pathlib
 
 CARDS = pathlib.Path(__file__).resolve().parent.parent / "data" / "cards.json"
 
-# A line whose effects or text name one of these keeps a pure colored cost.
+# Keeping a keyword pure was tried and abandoned -- see the note in split().
+# Kept only as the list of what "signature" would have meant.
 SIGNATURE_OPS = (
     "toll", "decay", "siphon", "void", "rift", "earth",
     "essence", "judgment", "sanctuary", "resist", "rise",
 )
 
 
-def is_signature(card, atk):
-    """True when this CARD carries a signature keyword, or the line names one.
-
-    Read at the CARD level, not the attack level. A signature keyword lives in
-    the card's `keywords` array -- `grave_whelp` carries Toll and its attack
-    "Gnaw" says nothing about Toll -- so inspecting only the attack's own
-    effects and text found 7 lines where the rule means 188. That version would
-    have diluted the colored requirement on nearly every Toll, Decay, Rise,
-    Earth and Judgment body in the game, and no harness could have caught it
-    because total cost never moves.
-    """
-    kws = {str(k.get("kw", "")).lower() for k in (card.get("keywords") or [])}
-    if kws & set(SIGNATURE_OPS):
-        return True
-    for e in atk.get("effects") or []:
-        op = str(e.get("op", "")).lower()
-        if any(sig in op for sig in SIGNATURE_OPS):
-            return True
-    text = str(atk.get("text", "")).lower()
-    return any(sig in text for sig in SIGNATURE_OPS)
-
-
 def split(total):
-    """(colored, colorless) for a given total cost."""
-    if total <= 3:
-        return total, 0
+    """(colored, colorless) for a given total cost.
+
+    Cost is the ONLY input. An earlier version kept any line on a card carrying a
+    signature keyword at a pure colored cost, on the theory that the colored
+    requirement is the faction's identity and a splashable Toll or Siphon would
+    let any deck rent a mechanic.
+
+    That was wrong, and the data says why: those keywords are the BASELINE, not a
+    scarce identity. Toll is on 47 attack lines, Earth on 46, Judgment on 30 --
+    so "protect the signature" protected 194 of 230 lines and left Heaven with 7
+    mixed costs out of 57. Every Judgment Basic in the game printed a pure
+    `{"heaven": 4}`, which is the opposite of a card pool built for splashing.
+
+    A keyword that appears on most of a faction's cards is not what distinguishes
+    a deck; the faction's ENERGY is. Gating identity therefore belongs in the
+    colored half's SIZE -- a 6-cost line still demands 3 of its own colour, which
+    is a real requirement -- rather than in refusing to print colorless at all.
+    """
+    if total <= 2:
+        return total, 0          # round-1 openers stay pure; 1 colorless of 2 is noise
     if total <= 5:
         return total - 1, 1
     return math.ceil(total / 2), total // 2
@@ -88,10 +82,6 @@ def main():
                 continue
             key = colors[0]
             total = int(cost[key]) + int(cost.get("colorless", 0) or 0)
-
-            if is_signature(card, atk):
-                kept += 1
-                continue
 
             ## A cost that ALREADY prints colorless was authored deliberately;
             ## leave it exactly as it is. Re-deriving it collapsed
