@@ -9,7 +9,7 @@ extends SceneTree
 ## Total assertions this harness is expected to run. Checked at the end, because
 ## a crash mid-file produces "0 failed" and exit 0 — the assertions after the
 ## crash simply never run, and silence reads identically to success.
-const EXPECTED_ASSERTIONS := 27
+const EXPECTED_ASSERTIONS := 39
 
 const CardDataS = preload("res://scripts/core/CardData.gd")
 const UnitS = preload("res://scripts/core/Unit.gd")
@@ -62,6 +62,7 @@ func _initialize() -> void:
 	_test_storm_instance()
 	_test_charge_growth()
 	_test_charge_kill_vs_judgment()
+	_test_discharge()
 
 	print("%d passed, %d failed" % [_pass, _fail])
 	if _pass + _fail != EXPECTED_ASSERTIONS:
@@ -111,8 +112,13 @@ func _test_charge_persistence() -> void:
 
 # ------------------------------------------------------------------ helpers
 
+## A game already past SETUP. use_ability() and queue_attack() are both gated on
+## the phase, and a fresh GameState starts in SETUP -- so a harness that skips
+## this silently gets "false" back from every ability and reads as a broken op.
 func _new_game():
-	return load("res://scripts/core/GameState.gd").new([], [])
+	var gs = load("res://scripts/core/GameState.gd").new([], [])
+	gs.skip_setup()
+	return gs
 
 
 func _place(gs, side: int, bi: int, si: int, u: Unit) -> void:
@@ -274,3 +280,79 @@ func _test_charge_kill_vs_judgment() -> void:
 	_swing(gs, k)
 	_check("Judgment saved the body, so it lives", j.hp, 20)
 	_check("a Judgment save is not a kill - no bonus", k.charge, 3)
+
+
+## A Tempest unit with a banking attack AND a discharge ability.
+func _place_discharger(gs, rate: int, mode: String, n: int = 1,
+		dmg: int = 20, extra: Array = []) -> Unit:
+	var fx: Array = [{"op": mode}]
+	if n > 1:
+		fx = [{"op": mode, "n": n}]
+	for e in extra:
+		fx.append(e)
+	var lines: Array = [
+		_attack_line(dmg, [{"op": "charge_on_damage", "n": rate}]),
+		{"id": "disc", "name": "Discharge", "damage": 0, "ability": true,
+		 "effects": fx},
+	]
+	var a := _make("dis", "tempest", 100, {"charge": rate}, lines)
+	_place(gs, 0, 0, 0, a)
+	return a
+
+
+func _discharge(gs, a: Unit, target = null) -> bool:
+	return gs.use_ability(gs.players[0], a, a.card.attacks[1], target)
+
+
+func _test_discharge() -> void:
+	## The baseline: the next attack carries the counter AND strikes a second
+	## unit on that board for the counter.
+	var gs = _new_game()
+	var a := _place_discharger(gs, 5, "discharge")
+	a.add_charge(20)
+	var d1 := _place_defender(gs, 500)
+	var d2 := _make("def2", "hel", 500, {}, [])
+	_place(gs, 1, 0, 1, d2)
+	_discharge(gs, a)
+	_check("discharge spends the whole counter", a.charge, 0)
+	_check("and arms the next attack with it", a.pending_discharge, 20)
+	_swing(gs, a)
+	_check("the armed attack carries the counter", 500 - d1.hp, 40)
+	_check("and a second unit is struck for it", 500 - d2.hp, 20)
+	## Discharge damage NEVER grows Charge -- a spend is a spend. The swing banks
+	## its own two instances (main + second target) at rate 5.
+	_check("the discharge itself never refunds the counter", a.charge, 10)
+	_check("and the arming is cleared", a.pending_discharge, 0)
+
+	## discharge_single multiplies into one target and does NOT hit a second.
+	var gs2 = _new_game()
+	var b := _place_discharger(gs2, 5, "discharge_single", 2)
+	b.add_charge(15)
+	var e1 := _place_defender(gs2, 500)
+	var e2 := _make("e2", "hel", 500, {}, [])
+	_place(gs2, 1, 0, 1, e2)
+	_discharge(gs2, b)
+	_swing(gs2, b)
+	_check("discharge_single deals 2x the counter", 500 - e1.hp, 50)
+	_check("and never touches a second unit", e2.hp, 500)
+
+	## discharge_heal spends the counter as healing.
+	var gs3 = _new_game()
+	var h := _place_discharger(gs3, 5, "discharge_heal")
+	h.add_charge(25)
+	var ally := _make("ally", "tempest", 96, {}, [])
+	ally.hp = 40
+	_place(gs3, 0, 0, 1, ally)
+	_discharge(gs3, h, ally)
+	_check("discharge_heal restores the counter as HP", ally.hp, 65)
+	_check("and still spends it", h.charge, 0)
+
+	## charge_transfer moves the counter to another body.
+	var gs4 = _new_game()
+	var sx := _place_discharger(gs4, 4, "charge_transfer")
+	sx.add_charge(18)
+	var heir := _make("heir", "tempest", 96, {"charge": 4}, [])
+	_place(gs4, 0, 0, 1, heir)
+	_discharge(gs4, sx, heir)
+	_check("transfer empties the source", sx.charge, 0)
+	_check("and fills the destination", heir.charge, 18)

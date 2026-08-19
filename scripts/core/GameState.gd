@@ -1852,6 +1852,62 @@ func _execute_attack(p: Player, enemy: Player, u: Unit, bi: int, si: int) -> voi
 ## them deal lane damage, so the board-position path is simply skipped for them.
 func _resolve_line_effects(p: Player, enemy: Player, u: Unit, atk: AttackData,
 		target = null, bi: int = -1, si: int = -1) -> void:
+	## ------------------------------------------------------- Tempest Discharge
+	##
+	## Spend the whole banked counter. Free and once per turn, so Discharge is an
+	## ability by definition — on an attack it would charge pool energy for a
+	## counter the unit already earned by swinging.
+	##
+	## The damage modes ARM the unit's next attack rather than dealing damage
+	## here, because the counter is a bonus ON an attack: resolving it immediately
+	## would let a discharge fire with no attack behind it and skip the targeting
+	## chain entirely.
+	for mode in ["discharge", "discharge_single", "discharge_sweep"]:
+		if atk.has_effect(mode):
+			var held: int = u.spend_charge()
+			if held > 0:
+				u.pending_discharge = held
+				u.pending_discharge_mult = maxi(1, atk.effect_value(mode, 1))
+				u.pending_discharge_mode = mode
+				_log("%s discharges %d." % [u.card.name, held])
+			return
+
+	## Spend it as healing instead. Flat, like every heal in the game — a heal
+	## that scales with its target cannot be priced (CLAUDE.md).
+	if atk.has_effect("discharge_heal"):
+		var healed: int = u.spend_charge()
+		var tgt: Unit = target if target is Unit else u
+		if healed > 0 and tgt != null:
+			var ceiling: int = effective_max_hp(p, tgt)
+			tgt.hp = mini(ceiling, tgt.hp + healed)
+			_log("%s discharges %d as healing onto %s." % [
+				u.card.name, healed, tgt.card.name])
+		return
+
+	## Move the counter to another body rather than spending it. The faction's
+	## only answer to its own failure case — the investment dying with the unit —
+	## and it costs the turn's ability rather than energy.
+	if atk.has_effect("charge_transfer"):
+		var moved: int = u.spend_charge()
+		if moved <= 0:
+			return
+		var heir: Unit = target if target is Unit else null
+		if heir == null or heir == u or not heir.is_alive():
+			heir = _nearest_living_ally(p, u)
+		if heir != null and heir != u:
+			heir.add_charge(moved)
+			_log("%s passes %d charge to %s." % [u.card.name, moved, heir.card.name])
+		else:
+			## No legal heir: the transfer fizzles and the counter stays put,
+			## rather than the unit paying its ability to delete its own bank.
+			u.add_charge(moved)
+		return
+
+	## Raise the global weather. Also reachable from a support (see below).
+	if atk.has_effect("storm_raise"):
+		raise_storm(atk.effect_value("storm_raise", 1))
+		return
+
 	## Non-damage / special lines
 	if atk.has_effect("last_toll"):
 		_do_last_toll(p, enemy, atk)
@@ -2111,6 +2167,15 @@ func _deliver_attack_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int,
 		dmg: int, atk: AttackData) -> void:
 	var stoked_ok: bool = u != null and _stoke_meets_threshold(u, atk)
 
+	## Tempest: a discharge armed earlier this turn rides this attack out. Added
+	## to the attack's own damage so it passes through Sanctuary, Resist and the
+	## targeting chain exactly as printed damage does — a discharge is a bigger
+	## swing, not a new damage source that dodges the rules.
+	var disc: int = 0
+	if u != null and u.pending_discharge > 0:
+		disc = u.pending_discharge * maxi(1, u.pending_discharge_mult)
+		dmg += disc
+
 	## Forge: hit BOTH enemy boards. Breaks the per-board rule that makes the two
 	## lanes independent fights, so it is reserved for a Stage 2 behind a
 	## threshold. Each board still resolves its own shielding chain — this widens
@@ -2165,6 +2230,25 @@ func _deliver_attack_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int,
 				_record_damage(p, u.card.id, "throne", d)
 				_log("  Stoked: %s also scorches the throne for %d." % [atk.name, d])
 				_check_throne(enemy)
+
+	## The baseline discharge also strikes a SECOND living unit on that board, for
+	## the counter (not the multiplied total). `discharge_single` deliberately does
+	## not, and `discharge_sweep` spread itself across the board instead.
+	if disc > 0 and u.pending_discharge_mode == "discharge" and not finished:
+		var eb3: Board = enemy.boards[bi] if bi >= 0 else null
+		if eb3 != null:
+			for s2 in Board.SLOT_COUNT:
+				var v: Unit = eb3.slots[s2]
+				if v != null and v.is_alive() and s2 != si:
+					_deal_lane_damage(p, enemy, u, bi, s2, u.pending_discharge, atk)
+					break
+
+	## The arming is one-shot: cleared whether or not it found a target, so a
+	## discharge can never ride two attacks.
+	if u != null and u.pending_discharge > 0:
+		u.pending_discharge = 0
+		u.pending_discharge_mult = 1
+		u.pending_discharge_mode = ""
 
 	## Tempest `Storm`: every attack carries ONE additional instance of the global
 	## counter — 2N from a Tempest body. It resolves as its own instance through
@@ -2524,6 +2608,30 @@ func _cleanup_dead(p: Player) -> void:
 	## actually died — this runs constantly and the aura is otherwise unchanged.
 	if any_died:
 		refresh_aura(p)
+
+
+## The nearest living friendly unit to `u`, searched on its own board first.
+##
+## Reuses `_nearest_living_on_board` so the nearest-then-leftmost rule is stated
+## once — Gaia's Essence already needed it. Unlike Essence this MAY cross to the
+## other board as a fallback: Essence is a funeral on the lane it defended, while
+## a Charge relay is a deliberate hand-off and refusing to cross would make it
+## fizzle exactly when the board it stands on has been cleared.
+func _nearest_living_ally(p: Player, u: Unit) -> Unit:
+	var pos: Array = _find_unit_position(p, u)
+	var bi: int = pos[0]
+	var si: int = pos[1]
+	if bi >= 0:
+		var same: Unit = _nearest_living_on_board(p.boards[bi], si)
+		if same != null and same != u:
+			return same
+	for b2 in p.boards.size():
+		if b2 == bi:
+			continue
+		var other: Unit = _nearest_living_on_board(p.boards[b2], 0)
+		if other != null and other != u:
+			return other
+	return null
 
 
 ## The nearest living friendly unit to slot `si` on board `b`, or null.
