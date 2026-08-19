@@ -1,6 +1,7 @@
 # Tempest — Faction Design
 
-**Status:** built 2026-08-17. 20 cards, both keywords implemented, one sample deck.
+**Status:** built 2026-08-17. **66 cards, 59 units, 20 chains** — full parity with the
+other five colours. Both keywords implemented; five sample decks.
 **Sentence:** *pressure builds until it breaks.*
 
 Design spec: `docs/specs/2026-08-17-tempest-faction-design.md`.
@@ -154,7 +155,12 @@ generator.
 
 ## The Card Set
 
-`tools/add_tempest_faction.py` — 16 units in 6 chains, 3 supports, 1 energy card.
+Two generators: `tools/add_tempest_faction.py` (the 6 launch chains) and
+`tools/add_tempest_expansion.py` (14 more, in three power tiers). **59 units, 20 chains,
+6 supports, 1 energy card**, at **74% signature density** — the built colours run 73–100%,
+and the ~26% that print no `Charge` are the Storm chains and the vanillas.
+
+The launch chains, each owning one op:
 
 | Chain | Idea | Owns |
 |---|---|---|
@@ -180,10 +186,18 @@ identity is on its bodies, unlike Forge whose aggression lives in its support su
 - **Updraft** (1) — a unit you control gains 15 Charge.
 - **Earthing Rod** (Tool) — this unit grows 2 extra Charge per point of Storm.
 
-### The sample deck
+### The sample decks
 
-**Gathering Weather**, 60 cards, 17 energy. The banker, baseline and weather-maker chains
-complete, plus the relay. Foehn is what makes the rest work.
+Five, each on a different way to spend a counter — which is what the expansion bought:
+at 16 units there was one Tempest deck, at 59 there are five plans.
+
+| Deck | Idea |
+|---|---|
+| **Gathering Weather** | The starter. Banker, baseline and weather-maker, plus the relay. |
+| **Levin Line** | Aggro. Cheap Charge bodies that discharge early rather than banking. |
+| **The Long Bank** | Bank as long as possible, then spend it all into one body. |
+| **Broken Rank** | Sweep. Every discharge splits across the board; wants a wide enemy. |
+| **Storm Front** | Barely uses Charge. Every body raises Storm or scales off it. |
 
 ---
 

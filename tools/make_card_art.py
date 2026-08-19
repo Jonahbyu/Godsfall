@@ -2027,6 +2027,8 @@ def _register_bestiary():
     forge_art2.register(sys.modules[__name__])
     import tempest_art
     tempest_art.register(sys.modules[__name__])
+    import tempest_art2
+    tempest_art2.register(sys.modules[__name__])
 
 
 def main():

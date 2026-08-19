@@ -245,6 +245,25 @@ func sample_decks() -> Array:
 			"name": "Gathering Weather",
 			"cards": _gathering_weather(),
 		},
+		## The expansion's four, each anchored on a different way to spend a
+		## counter — the roster is large enough that these are four plans rather
+		## than one deck in four ratios.
+		{
+			"name": "Levin Line",
+			"cards": _levin_line(),
+		},
+		{
+			"name": "The Long Bank",
+			"cards": _the_long_bank(),
+		},
+		{
+			"name": "Broken Rank",
+			"cards": _broken_rank(),
+		},
+		{
+			"name": "Storm Front",
+			"cards": _storm_front(),
+		},
 	]
 
 
@@ -1727,4 +1746,100 @@ func _gathering_weather() -> Dictionary:
 		## A banking deck loses to its bodies dying, so the neutral slot is heal.
 		"shore_up": 3,
 		"tempest_energy": 17,
+	}
+
+
+## Aggro Tempest. Cheap Charge bodies that discharge early and often rather than
+## banking — the counter is spent as soon as it beats a body, not held.
+func _levin_line() -> Dictionary:
+	return {
+		"tempest_levinskirl": 4,
+		"tempest_levinsquall": 3,
+		"tempest_levintempest": 2,
+		"tempest_zephyrwisp": 4,
+		"tempest_zephyrrush": 3,
+		"tempest_aeolskirl": 3,
+		"tempest_aeolrush": 2,
+		## Storm early is what doubles the banking rate, so the cheap raisers run
+		## alongside the bodies rather than instead of them.
+		"tempest_squallwisp": 4,
+		"tempest_squallgale": 3,
+		"tempest_front_line": 3,
+		"tempest_standing_front": 3,
+		"tempest_updraft": 3,
+		"shore_up": 4,
+		"tempest_energy": 19,
+	}
+
+
+## The opposite plan: bank as long as possible, then spend it all into one body.
+## `Roke` and `Nimb` both discharge at twice the counter, and Nimb's Stage 2 may
+## reach a tower past a living wall — which is how a slow deck actually closes.
+func _the_long_bank() -> Dictionary:
+	return {
+		"tempest_rokewhorl": 4,
+		"tempest_rokeshear": 3,
+		"tempest_rokemaelstrom": 2,
+		"tempest_nimbwhorl": 4,
+		"tempest_nimbsquall": 3,
+		"tempest_nimbmaelstrom": 2,
+		## Resist bodies, because a banking deck loses when its counter dies.
+		"tempest_murkmote": 3,
+		"tempest_murkshear": 2,
+		"tempest_baromote": 3,
+		"tempest_baroshear": 2,
+		"tempest_barothunderhead": 2,
+		"tempest_bank_the_gale": 4,
+		"tempest_conductor": 2,
+		"shore_up": 3,
+		"tempest_energy": 21,
+	}
+
+
+## The sweep deck. Every discharge splits across the enemy board, and `Bora` and
+## `Sleet` both grow extra on a kill — so a wide enemy board feeds it rather than
+## walling it. The one Tempest list that wants the opponent to go wide.
+func _broken_rank() -> Dictionary:
+	return {
+		"tempest_borawhorl": 4,
+		"tempest_borashear": 3,
+		"tempest_boramaelstrom": 2,
+		"tempest_sleetskirl": 4,
+		"tempest_sleetsquall": 3,
+		"tempest_sleetdeluge": 2,
+		"tempest_skirlwisp": 4,
+		"tempest_skirlsquall": 3,
+		"tempest_squamewisp": 3,
+		"tempest_squamesquall": 2,
+		"tempest_front_line": 3,
+		"tempest_standing_front": 2,
+		"tempest_updraft": 2,
+		"shore_up": 3,
+		"tempest_energy": 20,
+	}
+
+
+## The Storm deck, and the one that barely uses Charge at all. Every body raises
+## the global counter or scales off it, so the damage comes from the weather
+## rather than from any one unit — which also arms the opponent, and is the
+## clearest test of whether the symmetric-ramp bet holds.
+func _storm_front() -> Dictionary:
+	return {
+		"tempest_foehnsile": 4,
+		"tempest_foehnshear": 3,
+		"tempest_foehnthunderhead": 2,
+		"tempest_baromote": 4,
+		"tempest_baroshear": 3,
+		"tempest_barothunderhead": 2,
+		"tempest_anvilwhorl": 4,
+		"tempest_anvilthunderhead": 2,
+		"tempest_squallwisp": 3,
+		"tempest_squallgale": 2,
+		## The one Charge chain here: Thrum's ability raises Storm AND relays a
+		## counter, so it is the bridge between the two halves of the faction.
+		"tempest_thrumwisp": 3,
+		"tempest_thrumrush": 2,
+		"tempest_standing_front": 3,
+		"tempest_conductor": 2,
+		"tempest_energy": 21,
 	}

@@ -2307,7 +2307,7 @@ with no console errors.
 Implemented: main menu, deck select, deck builder, combat vs. a heuristic AI, **both
 factions in full** — 15 Hel units and 13 Heaven units, each with its own energy card — the
 38 neutral supports, and the full turn/energy/combat rule set. Card data is data-driven
-from `data/cards.json` (**375 cards**: 61 Hel, 59 Heaven, 66 Void, 63 Gaia, 63 Forge, 20 Tempest, 43 neutral).
+from `data/cards.json` (**421 cards**: 61 Hel, 59 Heaven, 66 Void, 63 Gaia, 63 Forge, 66 Tempest, 43 neutral).
 
 **Heaven is built — two factions now exist.** 13 units, an energy card, and one Tool,
 implementing the `Judgment` and `Sanctuary` keywords and the within-attack damage
@@ -4702,6 +4702,29 @@ even if the rule text later changes. Keep entries to one or two lines.
   prints none (a faction where every card has the keyword is the sameness failure the
   bestiary waves documented), while a body that *does* print Charge must have something that
   grows it and something that spends it, or the counter is dead data.
+
+- **Tempest went from a 20-card launch set to full parity (66 cards, 59 units) the same
+  day, and the expansion is where the AI gaps surfaced.** The launch set proved the engine
+  but was a third of a faction — 16 units against 48–60 everywhere else, and `Gathering
+  Weather` used 11 of them, so there was one Tempest deck rather than a colour to build in.
+  The expansion adds 14 chains in three power tiers (vanilla / staple / build-around),
+  landing at **74% signature density** against the 73–100% the built colours measure — which
+  means roughly a fifth of the bodies print no `Charge`, deliberately, because a faction
+  where every card carries the keyword is the sameness failure the bestiary waves recorded.
+  **Two more silent-reachability bugs, both the same shape as the support-dispatcher one.**
+  `_score_support` had no case for `storm_raise` or `charge_on_damage`, so both Tempest
+  supports scored 0 and the AI **held them forever** — `Broken Rank` ran five Storm raisers
+  and peaked at **Storm 0** across three games. Teaching the AI to score them moved three of
+  the four new decks by a full game or more. **Op-reachability is a third question**,
+  distinct from "the op resolves" and "a card prints it", and it is only answerable by
+  playing: `ForgeTest` already recorded this and it recurred anyway.
+  **`Storm Front` is the number to watch.** Built purely on raising the global counter, it
+  won **3/3 in a mean of 5 turns at peak Storm 29** — the fastest clock measured this
+  session, and a deck that arms its opponent as much as itself. That is the strongest
+  evidence yet that **bet #1 is wrong and the 2N Tempest bonus is too large**, which is the
+  dial `tempest.md` already names. `Broken Rank` (the sweep list) is 0/3 at the other end.
+  Three games a deck is noise and the AI has no Charge-timing heuristic beyond a floor, so
+  neither number is a balance reading — but the spread is wide enough to measure properly.
 
 - **A 5-round, 5,000,000-game balance sweep (2026-08-17) produced three rule changes, and
   the method matters as much as the changes.** Each round played 1M games — every one of

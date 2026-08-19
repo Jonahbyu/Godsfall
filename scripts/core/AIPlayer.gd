@@ -486,6 +486,43 @@ func _score_support(p: Player, c: CardData) -> Dictionary:
 			denied = float(min(c.effect_value("siphon_support", 1), richest.attached))
 		return { "score": 4.0 + denied, "target": richest }
 
+	## ------------------------------------------------------------- Tempest
+	##
+	## Both Tempest supports scored 0 and were therefore HELD FOREVER, which is
+	## the same silent failure as the ops not being wired into the support
+	## dispatcher at all: the card resolves correctly and nothing ever plays it.
+	## Measured before the fix -- `Broken Rank` ran five Storm raisers and peaked
+	## at Storm 0 across three games.
+	##
+	## Storm is nearly always worth raising for a Tempest deck (it doubles this
+	## side's banking rate and every Tempest body's damage), but it arms the
+	## opponent too, so it is worth less when they hold more board than we do.
+	if c.has_effect("storm_raise"):
+		var mine_n := 0
+		for m in p.all_units():
+			if m.is_alive():
+				mine_n += 1
+		var theirs_n := 0
+		for tu in gs.opponent_of(gs.active).all_units():
+			if tu.is_alive():
+				theirs_n += 1
+		if mine_n == 0:
+			return {}                      ## nothing of ours to benefit yet
+		return { "score": 9.0 if mine_n >= theirs_n else 4.0, "target": null }
+
+	## Banking a counter straight onto a body is worth most on the unit already
+	## holding the most: a counter is worth more concentrated than spread, and the
+	## biggest one is the likeliest to be discharged this game.
+	if c.has_effect("charge_on_damage"):
+		var bestu: Unit = null
+		for m in p.all_units():
+			if m.is_alive() and m.card.has_kw("charge"):
+				if bestu == null or m.charge > bestu.charge:
+					bestu = m
+		if bestu == null:
+			return {}
+		return { "score": 10.0, "target": bestu }
+
 	## Gap damage is reach, so it is worth playing only when the Gap is real, and
 	## it is worth most when it finishes something.
 	if c.has_effect("gap_damage"):

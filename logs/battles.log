@@ -6321,3 +6321,200 @@ Damage by card (unit / tower / throne, total):
     Nullith                         45  (30 / 15 / 0 over 3 hits)
     Waneebb                         28  (28 / 0 / 0 over 1 hits)
     Nullfray                        20  (20 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:18:51  [RulesTest]
+Wasting Fen  vs  Cacophony Ramp
+Result: Wasting Fen wins on round 6
+------------------------------------------------------------------------
+Wasting Fen (You)
+  throne 175 / 175
+  tower 1: 100 / 100
+  tower 2: 68 / 100
+  tower fire dealt: 91
+Cacophony Ramp (Opponent)
+  throne 0 / 175
+  tower 1: DESTROYED (max was 95)
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 93
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Wasting Fen
+    Hollowmaw                      305  (106 / 121 / 78 over 7 hits)
+    Blighthusk                      90  (30 / 30 / 30 over 3 hits)
+    Gnawling                        24  (0 / 0 / 24 over 1 hits)
+  Cacophony Ramp
+    Nithogg, Root-Gnawer            87  (87 / 0 / 0 over 2 hits)
+    Sepulling                       22  (22 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:18:54  [SupportTest]
+Reaffirmation  vs  Bedrock
+Result: Bedrock wins on round 9
+------------------------------------------------------------------------
+Reaffirmation (You)
+  throne 0 / 190
+  tower 1: 78 / 115
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 191
+Bedrock (Opponent)
+  throne 190 / 190
+  tower 1: 145 / 145
+  tower 2: 130 / 130
+  tower fire dealt: 406
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Reaffirmation
+    Oratim                         130  (130 / 0 / 0 over 5 hits)
+    Halosear                        41  (41 / 0 / 0 over 1 hits)
+    Clariel                         38  (38 / 0 / 0 over 2 hits)
+    Gloriamote                      20  (20 / 0 / 0 over 1 hits)
+  Bedrock
+    Petriling                      373  (144 / 84 / 145 over 11 hits)
+    Tussling                       116  (116 / 0 / 0 over 3 hits)
+    Granthane                       98  (98 / 0 / 0 over 4 hits)
+    Caldcrag                        45  (45 / 0 / 0 over 3 hits)
+    Granling                        23  (23 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T21:09:54  [RulesTest]
+Scrap Line  vs  Second Wind
+Result: Second Wind wins on round 15
+------------------------------------------------------------------------
+Scrap Line (You)
+  throne 0 / 220
+  tower 1: DESTROYED (max was 120)
+  tower 2: 62 / 145
+  tower fire dealt: 590
+Second Wind (Opponent)
+  throne 70 / 220
+  tower 1: 145 / 145
+  tower 2: DESTROYED (max was 125)
+  tower fire dealt: 606
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Scrap Line
+    Embash                         134  (134 / 0 / 0 over 7 hits)
+    Gnawgrub                       117  (102 / 15 / 0 over 8 hits)
+    Osslit                         110  (110 / 0 / 0 over 11 hits)
+    Slagash                         86  (86 / 0 / 0 over 3 hits)
+    Morwisp                         20  (20 / 0 / 0 over 2 hits)
+  Second Wind
+    Tapwright                      201  (65 / 63 / 73 over 11 hits)
+    Cokewrightforge                 54  (54 / 0 / 0 over 2 hits)
+    Bellowmaul                      48  (48 / 0 / 0 over 3 hits)
+    Cokewrightslag                  44  (44 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-18T21:09:57  [SupportTest]
+Starve  vs  Widening Dark
+Result: Widening Dark wins on round 10
+------------------------------------------------------------------------
+Starve (You)
+  throne 0 / 195
+  tower 1: 20 / 120
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 235
+Widening Dark (Opponent)
+  throne 195 / 195
+  tower 1: 2 / 120
+  tower 2: 100 / 120
+  tower fire dealt: 375
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Starve
+    Umbrith                         84  (72 / 12 / 0 over 7 hits)
+    Hushfray                        66  (66 / 0 / 0 over 5 hits)
+    Hushith                         58  (22 / 36 / 0 over 4 hits)
+    Wanesk                          41  (41 / 0 / 0 over 2 hits)
+    Nullith                         30  (30 / 0 / 0 over 2 hits)
+  Widening Dark
+    Vastebb                        277  (119 / 74 / 84 over 8 hits)
+    Vastsk                         119  (73 / 0 / 46 over 3 hits)
+    Rivewane                        73  (0 / 73 / 0 over 1 hits)
+    Riveshear                       40  (40 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T21:16:22  [RulesTest]
+Cacophony Ramp  vs  Barrow Wall
+Result: Cacophony Ramp wins on round 7
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 180 / 180
+  tower 1: 105 / 105
+  tower 2: 105 / 105
+  tower fire dealt: 134
+Barrow Wall (Opponent)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 120)
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 157
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Nithogg, Root-Gnawer           296  (143 / 91 / 62 over 8 hits)
+    Sepulling                       79  (35 / 22 / 22 over 4 hits)
+    Gnawgrub                        60  (45 / 15 / 0 over 4 hits)
+    Morwisp                         50  (10 / 20 / 20 over 5 hits)
+  Barrow Wall
+    Gristbarrow                     62  (62 / 0 / 0 over 2 hits)
+    Cairnlit                        60  (60 / 0 / 0 over 5 hits)
+    Sepulling                       44  (44 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-18T21:16:47  [RulesTest]
+Scrap Line  vs  Cacophony Ramp
+Result: Scrap Line wins on round 13
+------------------------------------------------------------------------
+Scrap Line (You)
+  throne 210 / 210
+  tower 1: DESTROYED (max was 115)
+  tower 2: 76 / 135
+  tower fire dealt: 348
+Cacophony Ramp (Opponent)
+  throne 0 / 210
+  tower 1: DESTROYED (max was 125)
+  tower 2: DESTROYED (max was 115)
+  tower fire dealt: 303
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Scrap Line
+    Embash                         132  (70 / 40 / 22 over 7 hits)
+    Gnawgrub                        75  (30 / 15 / 30 over 5 hits)
+    Embkiln                         69  (40 / 0 / 29 over 2 hits)
+    Osslit                          36  (12 / 12 / 12 over 3 hits)
+    Gristgnash                      26  (26 / 0 / 0 over 1 hits)
+  Cacophony Ramp
+    Gristbarrow                     66  (66 / 0 / 0 over 3 hits)
+    Gnawgrub                        45  (30 / 15 / 0 over 3 hits)
+    Sepulling                       27  (27 / 0 / 0 over 1 hits)
+    Morwisp                         10  (10 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T21:16:50  [SupportTest]
+Total Eclipse  vs  Thicket
+Result: Thicket wins on round 8
+------------------------------------------------------------------------
+Total Eclipse (You)
+  throne 0 / 185
+  tower 1: DESTROYED (max was 110)
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 242
+Thicket (Opponent)
+  throne 185 / 185
+  tower 1: 104 / 114
+  tower 2: 114 / 114
+  tower fire dealt: 267
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Total Eclipse
+    Pallgaunt                      147  (147 / 0 / 0 over 3 hits)
+    Sevith                          36  (36 / 0 / 0 over 1 hits)
+    Lacunith                        15  (15 / 0 / 0 over 1 hits)
+  Thicket
+    Rootsprout                     151  (26 / 40 / 85 over 7 hits)
+    Rootwarden                      91  (41 / 50 / 0 over 2 hits)
+    Thornbud                        89  (0 / 30 / 59 over 3 hits)
+    Sedgesprout                     64  (64 / 0 / 0 over 2 hits)
+    Burrbud                         31  (31 / 0 / 0 over 1 hits)
+    Lichbud                         14  (0 / 14 / 0 over 1 hits)

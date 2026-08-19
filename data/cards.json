@@ -11576,6 +11576,1947 @@
     }
    ],
    "flavor": "Something has to take the strike. Better it be a thing you chose."
+  },
+  {
+   "id": "tempest_zephyrwisp",
+   "name": "Zephyrwisp",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 44,
+   "retreat": 1,
+   "flavor": "The first air to move all morning. It moves nothing else.",
+   "attacks": [
+    {
+     "id": "zeph_brush",
+     "name": "Brush",
+     "damage": 22,
+     "text": "22 damage.",
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_zephyrrush",
+   "name": "Zephyrrush",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 88,
+   "retreat": 2,
+   "evolves_from": "tempest_zephyrwisp",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 6
+    }
+   ],
+   "flavor": "It has picked up enough on the way to be worth standing out of.",
+   "attacks": [
+    {
+     "id": "zeph_scour",
+     "name": "Scour",
+     "damage": 34,
+     "text": "34 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 6
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "zeph_loose",
+     "name": "Loose",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals the counter as bonus damage and strikes a second unit on that board for the counter.",
+     "effects": [
+      {
+       "op": "discharge"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_haarmote",
+   "name": "Haarmote",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 48,
+   "retreat": 1,
+   "flavor": "Sea fog. It arrives without having been seen to travel.",
+   "attacks": [
+    {
+     "id": "haar_creep",
+     "name": "Creep",
+     "damage": 21,
+     "text": "21 damage.",
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_haarshear",
+   "name": "Haarshear",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 94,
+   "retreat": 2,
+   "evolves_from": "tempest_haarmote",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 6
+    },
+    {
+     "kw": "resist",
+     "n": 5
+    }
+   ],
+   "flavor": "Thick enough now that the lane in front of it is a rumour.",
+   "attacks": [
+    {
+     "id": "haar_blind",
+     "name": "Blind",
+     "damage": 33,
+     "text": "33 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 6
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "haar_settle",
+     "name": "Settle",
+     "damage": 0,
+     "text": "Discharge: heal a unit you control for the counter.",
+     "effects": [
+      {
+       "op": "discharge_heal"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_squamewisp",
+   "name": "Squamewisp",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 52,
+   "retreat": 1,
+   "flavor": "Scales of cloud, thin enough to read the sun through.",
+   "attacks": [
+    {
+     "id": "squa_flick",
+     "name": "Flick",
+     "damage": 23,
+     "text": "23 damage.",
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_squamesquall",
+   "name": "Squamesquall",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 100,
+   "retreat": 2,
+   "evolves_from": "tempest_squamewisp",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 7
+    }
+   ],
+   "flavor": "Layer on layer, and every one of them moving.",
+   "attacks": [
+    {
+     "id": "squa_lash",
+     "name": "Lash",
+     "damage": 37,
+     "text": "37 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "tempest": 4,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "squa_shed",
+     "name": "Shed",
+     "damage": 0,
+     "text": "Discharge: split the counter as evenly as possible among every living unit on one enemy board.",
+     "effects": [
+      {
+       "op": "discharge_sweep"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_virgamote",
+   "name": "Virgamote",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 46,
+   "retreat": 1,
+   "flavor": "Rain that never lands. It is falling all the same.",
+   "attacks": [
+    {
+     "id": "virg_trail",
+     "name": "Trail",
+     "damage": 22,
+     "text": "22 damage.",
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_virgagale",
+   "name": "Virgagale",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 90,
+   "retreat": 2,
+   "evolves_from": "tempest_virgamote",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 6
+    }
+   ],
+   "flavor": "It found the ground eventually. It always does.",
+   "attacks": [
+    {
+     "id": "virg_reach",
+     "name": "Reach",
+     "damage": 35,
+     "text": "35 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 6
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "virg_arrive",
+     "name": "Arrive",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals twice the counter to a single target.",
+     "effects": [
+      {
+       "op": "discharge_single",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_aeolskirl",
+   "name": "Aeolskirl",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 50,
+   "retreat": 1,
+   "flavor": "A note off a ridge, held far longer than a breath could hold it.",
+   "attacks": [
+    {
+     "id": "aeol_thrum",
+     "name": "Thrum",
+     "damage": 24,
+     "text": "24 damage.",
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_aeolrush",
+   "name": "Aeolrush",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 96,
+   "retreat": 2,
+   "evolves_from": "tempest_aeolskirl",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 6
+    }
+   ],
+   "flavor": "The note has become a pressure you can feel in the teeth.",
+   "attacks": [
+    {
+     "id": "aeol_keen",
+     "name": "Keen",
+     "damage": 36,
+     "text": "36 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 6
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "aeol_swell",
+     "name": "Swell",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals the counter as bonus damage and strikes a second unit on that board for the counter.",
+     "effects": [
+      {
+       "op": "discharge"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_levinskirl",
+   "name": "Levinskirl",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 52,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 4
+    }
+   ],
+   "flavor": "Old word for lightning. It has not needed a newer one.",
+   "attacks": [
+    {
+     "id": "levi_spark",
+     "name": "Spark",
+     "damage": 19,
+     "text": "19 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 4
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "levi_snap",
+     "name": "Snap",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals the counter as bonus damage and strikes a second unit on that board for the counter.",
+     "effects": [
+      {
+       "op": "discharge"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_levinsquall",
+   "name": "Levinsquall",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 98,
+   "retreat": 2,
+   "evolves_from": "tempest_levinskirl",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 7
+    }
+   ],
+   "flavor": "Forked, and both ends land.",
+   "attacks": [
+    {
+     "id": "levi_strike",
+     "name": "Strike",
+     "damage": 38,
+     "text": "38 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "tempest": 4,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "levi_fork",
+     "name": "Fork",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals the counter as bonus damage and strikes a second unit on that board for the counter.",
+     "effects": [
+      {
+       "op": "discharge"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_levintempest",
+   "name": "Levintempest",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 148,
+   "retreat": 3,
+   "evolves_from": "tempest_levinsquall",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 10
+    }
+   ],
+   "flavor": "The sky came apart along a seam nobody knew was there.",
+   "attacks": [
+    {
+     "id": "levi_shatter",
+     "name": "Shatter",
+     "damage": 70,
+     "text": "70 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 10
+      }
+     ],
+     "cost": {
+      "tempest": 6,
+      "colorless": 5
+     }
+    },
+    {
+     "id": "levi_split",
+     "name": "Split the Sky",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals the counter as bonus damage and strikes a second unit on that board for the counter.",
+     "effects": [
+      {
+       "op": "discharge"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_rokewhorl",
+   "name": "Rokewhorl",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 58,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 3
+    }
+   ],
+   "flavor": "It says nothing and it is not empty.",
+   "attacks": [
+    {
+     "id": "roke_muffle",
+     "name": "Muffle",
+     "damage": 17,
+     "text": "17 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 3
+      }
+     ],
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "roke_bank",
+     "name": "Bank",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals twice the counter to a single target.",
+     "effects": [
+      {
+       "op": "discharge_single",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_rokeshear",
+   "name": "Rokeshear",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 106,
+   "retreat": 2,
+   "evolves_from": "tempest_rokewhorl",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 6
+    }
+   ],
+   "flavor": "Still saying nothing. It has grown considerably.",
+   "attacks": [
+    {
+     "id": "roke_press",
+     "name": "Press",
+     "damage": 34,
+     "text": "34 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 6
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "roke_hold",
+     "name": "Hold",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals twice the counter to a single target.",
+     "effects": [
+      {
+       "op": "discharge_single",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_rokemaelstrom",
+   "name": "Rokemaelstrom",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 158,
+   "retreat": 3,
+   "evolves_from": "tempest_rokeshear",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 10
+    }
+   ],
+   "flavor": "Everything it declined to say, at once.",
+   "attacks": [
+    {
+     "id": "roke_burst",
+     "name": "Burst",
+     "damage": 66,
+     "text": "66 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 10
+      }
+     ],
+     "cost": {
+      "tempest": 5,
+      "colorless": 5
+     }
+    },
+    {
+     "id": "roke_break",
+     "name": "Break",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals twice the counter to a single target.",
+     "effects": [
+      {
+       "op": "discharge_single",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_skirlwisp",
+   "name": "Skirlwisp",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 46,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 4
+    }
+   ],
+   "flavor": "A thin sound and a thinner edge.",
+   "attacks": [
+    {
+     "id": "skir_cut",
+     "name": "Cut",
+     "damage": 20,
+     "text": "20 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 4
+      },
+      {
+       "op": "charge_on_kill",
+       "n": 8
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "skir_scatter",
+     "name": "Scatter",
+     "damage": 0,
+     "text": "Discharge: split the counter as evenly as possible among every living unit on one enemy board.",
+     "effects": [
+      {
+       "op": "discharge_sweep"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_skirlsquall",
+   "name": "Skirlsquall",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 92,
+   "retreat": 2,
+   "evolves_from": "tempest_skirlwisp",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 7
+    }
+   ],
+   "flavor": "It takes the smallest thing first and grows on the taking.",
+   "attacks": [
+    {
+     "id": "skir_flense",
+     "name": "Flense",
+     "damage": 36,
+     "text": "36 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 7
+      },
+      {
+       "op": "charge_on_kill",
+       "n": 14
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "skir_strew",
+     "name": "Strew",
+     "damage": 0,
+     "text": "Discharge: split the counter as evenly as possible among every living unit on one enemy board.",
+     "effects": [
+      {
+       "op": "discharge_sweep"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_galewhorl",
+   "name": "Galewhorl",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 54,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 4
+    }
+   ],
+   "flavor": "It does not stop so much as become somewhere else's problem.",
+   "attacks": [
+    {
+     "id": "gale_shove",
+     "name": "Shove",
+     "damage": 20,
+     "text": "20 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 4
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "gale_pass",
+     "name": "Pass the Charge",
+     "damage": 0,
+     "text": "Move this unit's counter to another unit you control.",
+     "effects": [
+      {
+       "op": "charge_transfer"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_galerush",
+   "name": "Galerush",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 102,
+   "retreat": 2,
+   "evolves_from": "tempest_galewhorl",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 7
+    }
+   ],
+   "flavor": "Nothing is lost. It is merely elsewhere, and faster.",
+   "attacks": [
+    {
+     "id": "gale_drive",
+     "name": "Drive",
+     "damage": 38,
+     "text": "38 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "tempest": 4,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "gale_relay",
+     "name": "Relay",
+     "damage": 0,
+     "text": "Move this unit's counter to another unit you control, then draw a card.",
+     "effects": [
+      {
+       "op": "charge_transfer"
+      },
+      {
+       "op": "draw",
+       "n": 1
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_murkmote",
+   "name": "Murkmote",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 56,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 3
+    },
+    {
+     "kw": "resist",
+     "n": 5
+    }
+   ],
+   "flavor": "Weather thick enough to stand behind.",
+   "attacks": [
+    {
+     "id": "murk_dim",
+     "name": "Dim",
+     "damage": 18,
+     "text": "18 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 3
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "murk_shelter",
+     "name": "Shelter",
+     "damage": 0,
+     "text": "Discharge: heal a unit you control for the counter.",
+     "effects": [
+      {
+       "op": "discharge_heal"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_murkshear",
+   "name": "Murkshear",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 110,
+   "retreat": 2,
+   "evolves_from": "tempest_murkmote",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 6
+    },
+    {
+     "kw": "resist",
+     "n": 5
+    }
+   ],
+   "flavor": "It has not cleared in three days and shows no intention.",
+   "attacks": [
+    {
+     "id": "murk_smother",
+     "name": "Smother",
+     "damage": 32,
+     "text": "32 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 6
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "murk_becalm",
+     "name": "Becalm",
+     "damage": 0,
+     "text": "Discharge: heal a unit you control for the counter.",
+     "effects": [
+      {
+       "op": "discharge_heal"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_sleetskirl",
+   "name": "Sleetskirl",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 50,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 4
+    }
+   ],
+   "flavor": "Neither one thing nor the other, and worse than both.",
+   "attacks": [
+    {
+     "id": "slee_pelt",
+     "name": "Pelt",
+     "damage": 21,
+     "text": "21 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 4
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "slee_gather",
+     "name": "Gather",
+     "damage": 0,
+     "text": "Discharge: split the counter as evenly as possible among every living unit on one enemy board.",
+     "effects": [
+      {
+       "op": "discharge_sweep"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_sleetsquall",
+   "name": "Sleetsquall",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 96,
+   "retreat": 2,
+   "evolves_from": "tempest_sleetskirl",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 7
+    }
+   ],
+   "flavor": "It has committed. It is hail now.",
+   "attacks": [
+    {
+     "id": "slee_rake",
+     "name": "Rake",
+     "damage": 37,
+     "text": "37 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "tempest": 4,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "slee_hail",
+     "name": "Hail",
+     "damage": 0,
+     "text": "Discharge: split the counter as evenly as possible among every living unit on one enemy board.",
+     "effects": [
+      {
+       "op": "discharge_sweep"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_sleetdeluge",
+   "name": "Sleetdeluge",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 152,
+   "retreat": 3,
+   "evolves_from": "tempest_sleetsquall",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 10
+    }
+   ],
+   "flavor": "A field is what is left when everything standing in it is not.",
+   "attacks": [
+    {
+     "id": "slee_batter",
+     "name": "Batter",
+     "damage": 64,
+     "text": "64 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 10
+      },
+      {
+       "op": "charge_on_kill",
+       "n": 20
+      }
+     ],
+     "cost": {
+      "tempest": 5,
+      "colorless": 5
+     }
+    },
+    {
+     "id": "slee_flatten",
+     "name": "Flatten",
+     "damage": 0,
+     "text": "Discharge: split the counter as evenly as possible among every living unit on one enemy board.",
+     "effects": [
+      {
+       "op": "discharge_sweep"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_baromote",
+   "name": "Baromote",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 48,
+   "retreat": 1,
+   "flavor": "The needle fell overnight and nobody slept well.",
+   "attacks": [
+    {
+     "id": "baro_drop",
+     "name": "Pressure Drop",
+     "damage": 0,
+     "text": "Raise Storm by 1.",
+     "effects": [
+      {
+       "op": "storm_raise",
+       "n": 1
+      }
+     ],
+     "ability": true
+    },
+    {
+     "id": "baro_lean",
+     "name": "Lean",
+     "damage": 22,
+     "text": "22 damage.",
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_baroshear",
+   "name": "Baroshear",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 92,
+   "retreat": 2,
+   "evolves_from": "tempest_baromote",
+   "flavor": "Low, and going lower, and the birds have gone quiet.",
+   "attacks": [
+    {
+     "id": "baro_trough",
+     "name": "Trough",
+     "damage": 0,
+     "text": "Raise Storm by 2.",
+     "effects": [
+      {
+       "op": "storm_raise",
+       "n": 2
+      }
+     ],
+     "ability": true
+    },
+    {
+     "id": "baro_press",
+     "name": "Press",
+     "damage": 40,
+     "text": "40 damage, and 2 more per point of Storm.",
+     "effects": [
+      {
+       "op": "storm_scale_damage",
+       "n": 2
+      }
+     ],
+     "cost": {
+      "tempest": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_barothunderhead",
+   "name": "Barothunderhead",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 144,
+   "retreat": 3,
+   "evolves_from": "tempest_baroshear",
+   "flavor": "There is no lower for it to go. That is the problem.",
+   "attacks": [
+    {
+     "id": "baro_collapse",
+     "name": "Collapse",
+     "damage": 0,
+     "text": "Raise Storm by 3.",
+     "effects": [
+      {
+       "op": "storm_raise",
+       "n": 3
+      }
+     ],
+     "ability": true
+    },
+    {
+     "id": "baro_bottom",
+     "name": "Bottom Out",
+     "damage": 58,
+     "text": "58 damage, and 4 more per point of Storm.",
+     "effects": [
+      {
+       "op": "storm_scale_damage",
+       "n": 4
+      }
+     ],
+     "cost": {
+      "tempest": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_squallwisp",
+   "name": "Squallwisp",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 44,
+   "retreat": 1,
+   "flavor": "Twenty minutes of violence and then blue sky, every time.",
+   "attacks": [
+    {
+     "id": "sqal_rise",
+     "name": "Rising Air",
+     "damage": 0,
+     "text": "Raise Storm by 1.",
+     "effects": [
+      {
+       "op": "storm_raise",
+       "n": 1
+      }
+     ],
+     "ability": true
+    },
+    {
+     "id": "sqal_slap",
+     "name": "Slap",
+     "damage": 23,
+     "text": "23 damage.",
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_squallgale",
+   "name": "Squallgale",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 86,
+   "retreat": 2,
+   "evolves_from": "tempest_squallwisp",
+   "flavor": "Not one storm but a rank of them, arriving in order.",
+   "attacks": [
+    {
+     "id": "sqal_line",
+     "name": "Squall Line",
+     "damage": 0,
+     "text": "Raise Storm by 2.",
+     "effects": [
+      {
+       "op": "storm_raise",
+       "n": 2
+      }
+     ],
+     "ability": true
+    },
+    {
+     "id": "sqal_sweep",
+     "name": "Sweep",
+     "damage": 42,
+     "text": "42 damage, and 2 more per point of Storm.",
+     "effects": [
+      {
+       "op": "storm_scale_damage",
+       "n": 2
+      }
+     ],
+     "cost": {
+      "tempest": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_anvilwhorl",
+   "name": "Anvilwhorl",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 56,
+   "retreat": 1,
+   "flavor": "It is not tall yet. It is getting there in a hurry.",
+   "attacks": [
+    {
+     "id": "anvi_build",
+     "name": "Build",
+     "damage": 0,
+     "text": "Raise Storm by 1.",
+     "effects": [
+      {
+       "op": "storm_raise",
+       "n": 1
+      }
+     ],
+     "ability": true
+    },
+    {
+     "id": "anvi_weight",
+     "name": "Weight",
+     "damage": 24,
+     "text": "24 damage.",
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_anvilthunderhead",
+   "name": "Anvilthunderhead",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 150,
+   "retreat": 3,
+   "evolves_from": "tempest_anvilwhorl",
+   "flavor": "Flat-topped, sixty thousand feet, and directly overhead.",
+   "attacks": [
+    {
+     "id": "anvi_spread",
+     "name": "Spread the Anvil",
+     "damage": 0,
+     "text": "Raise Storm by 4.",
+     "effects": [
+      {
+       "op": "storm_raise",
+       "n": 4
+      }
+     ],
+     "ability": true
+    },
+    {
+     "id": "anvi_fall",
+     "name": "Fall",
+     "damage": 54,
+     "text": "54 damage, and 3 more per point of Storm.",
+     "effects": [
+      {
+       "op": "storm_scale_damage",
+       "n": 3
+      }
+     ],
+     "cost": {
+      "tempest": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_thrumwisp",
+   "name": "Thrumwisp",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 48,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 4
+    }
+   ],
+   "flavor": "A sound with weather behind it.",
+   "attacks": [
+    {
+     "id": "thru_hum",
+     "name": "Hum",
+     "damage": 20,
+     "text": "20 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 4
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "thru_pass",
+     "name": "Pass the Charge",
+     "damage": 0,
+     "text": "Move this unit's counter to another unit you control.",
+     "effects": [
+      {
+       "op": "charge_transfer"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_thrumrush",
+   "name": "Thrumrush",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 98,
+   "retreat": 2,
+   "evolves_from": "tempest_thrumwisp",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 7
+    }
+   ],
+   "flavor": "Everything loose in the lane is moving in sympathy.",
+   "attacks": [
+    {
+     "id": "thru_resonate",
+     "name": "Resonate",
+     "damage": 36,
+     "text": "36 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "thru_carry",
+     "name": "Carry",
+     "damage": 0,
+     "text": "Move this unit's counter to another unit you control, then draw a card.",
+     "effects": [
+      {
+       "op": "charge_transfer"
+      },
+      {
+       "op": "draw",
+       "n": 1
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_thrummaelstrom",
+   "name": "Thrummaelstrom",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 156,
+   "retreat": 3,
+   "evolves_from": "tempest_thrumrush",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 11
+    }
+   ],
+   "flavor": "It is no longer answering the weather. The weather is answering it.",
+   "attacks": [
+    {
+     "id": "thru_resound",
+     "name": "Resound",
+     "damage": 62,
+     "text": "62 damage, and 3 more per point of Storm.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 11
+      },
+      {
+       "op": "storm_scale_damage",
+       "n": 3
+      }
+     ],
+     "cost": {
+      "tempest": 5,
+      "colorless": 5
+     }
+    },
+    {
+     "id": "thru_amplify",
+     "name": "Amplify",
+     "damage": 0,
+     "text": "Raise Storm by 2, then move this unit's counter to another unit you control.",
+     "effects": [
+      {
+       "op": "storm_raise",
+       "n": 2
+      },
+      {
+       "op": "charge_transfer"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_keraunskirl",
+   "name": "Keraunskirl",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 54,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 4
+    }
+   ],
+   "flavor": "It has found the shortest path to the ground and it is through you.",
+   "attacks": [
+    {
+     "id": "kera_jolt",
+     "name": "Jolt",
+     "damage": 21,
+     "text": "21 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 4
+      },
+      {
+       "op": "charge_on_kill",
+       "n": 8
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "kera_earth",
+     "name": "Earth It",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals twice the counter to a single target.",
+     "effects": [
+      {
+       "op": "discharge_single",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_keraunsquall",
+   "name": "Keraunsquall",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 104,
+   "retreat": 2,
+   "evolves_from": "tempest_keraunskirl",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 7
+    }
+   ],
+   "flavor": "Twice in the same place, which is supposed to be impossible.",
+   "attacks": [
+    {
+     "id": "kera_arc",
+     "name": "Arc",
+     "damage": 35,
+     "text": "35 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 7
+      },
+      {
+       "op": "charge_on_kill",
+       "n": 14
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "kera_ground",
+     "name": "Ground",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals twice the counter to a single target.",
+     "effects": [
+      {
+       "op": "discharge_single",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_kerauntempest",
+   "name": "Kerauntempest",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 165,
+   "retreat": 4,
+   "evolves_from": "tempest_keraunsquall",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 12
+    }
+   ],
+   "flavor": "It picks the tallest thing standing. It is very rarely wrong.",
+   "attacks": [
+    {
+     "id": "kera_smite",
+     "name": "Smite",
+     "damage": 60,
+     "text": "60 damage. A discharge on this attack may strike a tower or throne past living units.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 12
+      },
+      {
+       "op": "charge_on_kill",
+       "n": 24
+      },
+      {
+       "op": "discharge_structures"
+      }
+     ],
+     "cost": {
+      "tempest": 5,
+      "colorless": 5
+     }
+    },
+    {
+     "id": "kera_call",
+     "name": "Call It Down",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals twice the counter to a single target.",
+     "effects": [
+      {
+       "op": "discharge_single",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_nephelmote",
+   "name": "Nephelmote",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 50,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 3
+    }
+   ],
+   "flavor": "Cloud in the making, still deciding what kind.",
+   "attacks": [
+    {
+     "id": "neph_wisp",
+     "name": "Wisping",
+     "damage": 18,
+     "text": "18 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 3
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "neph_bank",
+     "name": "Bank",
+     "damage": 0,
+     "text": "Discharge: heal a unit you control for the counter.",
+     "effects": [
+      {
+       "op": "discharge_heal"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_nephelgale",
+   "name": "Nephelgale",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 100,
+   "retreat": 2,
+   "evolves_from": "tempest_nephelmote",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 6
+    }
+   ],
+   "flavor": "It decided. It is the kind with a flat black underside.",
+   "attacks": [
+    {
+     "id": "neph_swell",
+     "name": "Swell",
+     "damage": 34,
+     "text": "34 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 6
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "neph_tend",
+     "name": "Tend",
+     "damage": 0,
+     "text": "Discharge: heal a unit you control for the counter.",
+     "effects": [
+      {
+       "op": "discharge_heal"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_nepheldeluge",
+   "name": "Nepheldeluge",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 168,
+   "retreat": 4,
+   "evolves_from": "tempest_nephelgale",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 9
+    },
+    {
+     "kw": "resist",
+     "n": 5
+    }
+   ],
+   "flavor": "The only thing in the faction that gives more than it takes.",
+   "attacks": [
+    {
+     "id": "neph_open",
+     "name": "Open",
+     "damage": 56,
+     "text": "56 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 9
+      }
+     ],
+     "cost": {
+      "tempest": 5,
+      "colorless": 4
+     }
+    },
+    {
+     "id": "neph_shelter",
+     "name": "Shelter the Line",
+     "damage": 0,
+     "text": "Discharge: heal a unit you control for twice the counter.",
+     "effects": [
+      {
+       "op": "discharge_heal",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_blusterwhorl",
+   "name": "Blusterwhorl",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 52,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 4
+    }
+   ],
+   "flavor": "Loud, and not entirely empty.",
+   "attacks": [
+    {
+     "id": "blus_buffet",
+     "name": "Buffet",
+     "damage": 20,
+     "text": "20 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 4
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "blus_spread",
+     "name": "Spread",
+     "damage": 0,
+     "text": "Discharge: split the counter as evenly as possible among every living unit on one enemy board.",
+     "effects": [
+      {
+       "op": "discharge_sweep"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_blustershear",
+   "name": "Blustershear",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 96,
+   "retreat": 2,
+   "evolves_from": "tempest_blusterwhorl",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 6
+    }
+   ],
+   "flavor": "It has stopped being loud and started being a problem.",
+   "attacks": [
+    {
+     "id": "blus_rake",
+     "name": "Rake",
+     "damage": 33,
+     "text": "33 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 6
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "blus_scour",
+     "name": "Scour the Rank",
+     "damage": 0,
+     "text": "Discharge: split the counter as evenly as possible among every living unit on one enemy board.",
+     "effects": [
+      {
+       "op": "discharge_sweep"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_bank_the_gale",
+   "name": "Bank the Gale",
+   "type": "support",
+   "faction": "tempest",
+   "cost": 2,
+   "text": "A unit you control gains 30 Charge.",
+   "effects": [
+    {
+     "op": "charge_on_damage",
+     "n": 30
+    }
+   ],
+   "flavor": "Everything the ridge collected, handed over at once."
+  },
+  {
+   "id": "tempest_standing_front",
+   "name": "Standing Front",
+   "type": "support",
+   "faction": "tempest",
+   "cost": 1,
+   "text": "Raise Storm by 3.",
+   "effects": [
+    {
+     "op": "storm_raise",
+     "n": 3
+    }
+   ],
+   "flavor": "It has stopped moving east. It is going to sit here."
+  },
+  {
+   "id": "tempest_conductor",
+   "name": "Conductor",
+   "type": "tool",
+   "faction": "tempest",
+   "text": "This unit grows 4 extra Charge per point of Storm when it deals damage.",
+   "effects": [
+    {
+     "op": "storm_charge_bonus",
+     "n": 4
+    }
+   ],
+   "flavor": "Everything in the field wants to go through it, so it lets them."
   }
  ]
 }
