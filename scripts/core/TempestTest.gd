@@ -9,7 +9,7 @@ extends SceneTree
 ## Total assertions this harness is expected to run. Checked at the end, because
 ## a crash mid-file produces "0 failed" and exit 0 — the assertions after the
 ## crash simply never run, and silence reads identically to success.
-const EXPECTED_ASSERTIONS := 46
+const EXPECTED_ASSERTIONS := 49
 
 const CardDataS = preload("res://scripts/core/CardData.gd")
 const UnitS = preload("res://scripts/core/Unit.gd")
@@ -64,6 +64,7 @@ func _initialize() -> void:
 	_test_charge_kill_vs_judgment()
 	_test_discharge()
 	_test_storm_ops()
+	_test_retribution_once()
 
 	print("%d passed, %d failed" % [_pass, _fail])
 	if _pass + _fail != EXPECTED_ASSERTIONS:
@@ -425,3 +426,37 @@ func _test_storm_ops() -> void:
 	_place(gs5, 0, 0, 0, f)
 	gs5.use_ability(gs5.players[0], f, f.card.attacks[0])
 	_check("storm_raise raises the global counter", gs5.storm, 2)
+
+
+## Storm adds a second damage instance, and Retribution reads "when this unit
+## takes damage from an ATTACK" -- singular. Without a per-attack gate a
+## Retribution 25 wall would recoil 50 at Storm 3, and Gaia's Thicket and Forge's
+## Standing Heat would become unattackable as the game escalated.
+func _test_retribution_once() -> void:
+	var gs = _new_game()
+	gs.raise_storm(3)
+	var a := _make("atk", "hel", 200, {}, [_attack_line(20)])
+	var r := _make("wall", "gaia", 500, {"retribution": 25}, [])
+	_place(gs, 0, 0, 0, a)
+	_place(gs, 1, 0, 0, r)
+	var before: int = a.hp
+	gs._deliver_attack_damage(gs.players[0], gs.players[1], a, 0, 0, 20,
+		a.card.attacks[0])
+	_check("Retribution fires once per attack, not per instance", before - a.hp, 25)
+
+	## Identical with no Storm at all -- the gate must not change the base case.
+	var gs2 = _new_game()
+	var a2 := _make("atk", "hel", 200, {}, [_attack_line(20)])
+	var r2 := _make("wall", "gaia", 500, {"retribution": 25}, [])
+	_place(gs2, 0, 0, 0, a2)
+	_place(gs2, 1, 0, 0, r2)
+	var b2: int = a2.hp
+	gs2._deliver_attack_damage(gs2.players[0], gs2.players[1], a2, 0, 0, 20,
+		a2.card.attacks[0])
+	_check("and identically with no Storm at all", b2 - a2.hp, 25)
+
+	## A SECOND attack in the same volley recoils again -- the gate is per attack,
+	## not per turn.
+	gs2._deliver_attack_damage(gs2.players[0], gs2.players[1], a2, 0, 0, 20,
+		a2.card.attacks[0])
+	_check("a second attack recoils again", b2 - a2.hp, 50)

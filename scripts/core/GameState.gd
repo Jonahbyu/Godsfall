@@ -179,6 +179,13 @@ func _is_void_card(id: String) -> bool:
 ## Storm instance is doubled, which is the dial to cut if Storm proves too strong.
 var storm: int = 0
 
+## Whether this ATTACK has already drawn Retribution. `Resist X` reads "each
+## incoming instance", so it applies per instance — but Retribution reads "when
+## this unit takes damage from an attack", singular, and Storm's extra instance
+## would otherwise double every wall's recoil. Reset at the top of each attack's
+## delivery, so a volley of several attacks still recoils once per attack.
+var _retribution_fired: bool = false
+
 
 ## Raise the global counter. Cards only ever add; nothing lowers Storm.
 func raise_storm(n: int) -> void:
@@ -2165,6 +2172,9 @@ func _damage_unit(target: Unit, amount: int, source_label: String) -> int:
 ## line is a card that should have been cut rather than a stacking rule.
 func _deliver_attack_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int,
 		dmg: int, atk: AttackData) -> void:
+	## One attack, one recoil — see `_retribution_fired`.
+	_retribution_fired = false
+
 	var stoked_ok: bool = u != null and _stoke_meets_threshold(u, atk)
 
 	## Tempest: a discharge armed earlier this turn rides this attack out. Added
@@ -2467,7 +2477,8 @@ func _after_defender_damaged(p: Player, _enemy: Player, u: Unit, defender: Unit,
 		u.add_charge(atk.effect_value("charge_on_kill", 0))
 
 	var retr: int = defender.total_retribution()
-	if retr > 0:
+	if retr > 0 and not _retribution_fired:
+		_retribution_fired = true
 		var r := u.take_damage(_apply_resist(u, retr))
 		_log("  Retribution: %s takes %d back (%d HP left)." % [u.card.name, r, max(0, u.hp)])
 
