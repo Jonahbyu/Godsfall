@@ -982,6 +982,8 @@ const UNIT_TARGET_OPS := [
 	"move_enemy",
 	## Void — all three point at an enemy unit.
 	"siphon_support", "void_all", "gap_damage",
+	## Tempest — Updraft banks a counter onto one of your bodies.
+	"charge_on_damage",
 ]
 
 const TWO_UNIT_OPS := ["move_energy", "swap_slots"]
@@ -1175,6 +1177,29 @@ func _fire_spite_engine(p: Player, bi: int, mods: Array) -> void:
 ## rule), so these are handled independently rather than as a match.
 func _resolve_support_effects(p: Player, card: CardData, target) -> void:
 	var enemy: Player = opponent_of(players.find(p))
+
+	## ---- Tempest
+	##
+	## Raising Storm from a support as well as from a unit line: the op lives in
+	## two dispatchers because units and supports do not share one, and a support
+	## effect the engine never reads is silent dead data.
+	if card.has_effect("storm_raise"):
+		raise_storm(card.effect_value("storm_raise", 1))
+
+	## Updraft banks a counter directly onto a unit you control, rather than
+	## waiting for it to swing.
+	if card.has_effect("charge_on_damage"):
+		var ct: Unit = target if target is Unit else null
+		if ct == null:
+			## No pick: bank onto whichever of your bodies already holds the most,
+			## since a counter is worth more concentrated than spread.
+			for cand in p.all_units():
+				if cand.is_alive() and (ct == null or cand.charge > ct.charge):
+					ct = cand
+		if ct != null:
+			ct.add_charge(card.effect_value("charge_on_damage", 0))
+			_log("  %s gains %d charge." % [
+				ct.card.name, card.effect_value("charge_on_damage", 0)])
 
 	## ---- draw & selection
 	if card.has_effect("draw"):

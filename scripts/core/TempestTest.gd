@@ -9,7 +9,7 @@ extends SceneTree
 ## Total assertions this harness is expected to run. Checked at the end, because
 ## a crash mid-file produces "0 failed" and exit 0 — the assertions after the
 ## crash simply never run, and silence reads identically to success.
-const EXPECTED_ASSERTIONS := 49
+const EXPECTED_ASSERTIONS := 56
 
 const CardDataS = preload("res://scripts/core/CardData.gd")
 const UnitS = preload("res://scripts/core/Unit.gd")
@@ -65,6 +65,8 @@ func _initialize() -> void:
 	_test_discharge()
 	_test_storm_ops()
 	_test_retribution_once()
+	_test_support_ops()
+	_test_real_cards()
 
 	print("%d passed, %d failed" % [_pass, _fail])
 	if _pass + _fail != EXPECTED_ASSERTIONS:
@@ -460,3 +462,48 @@ func _test_retribution_once() -> void:
 	gs2._deliver_attack_damage(gs2.players[0], gs2.players[1], a2, 0, 0, 20,
 		a2.card.attacks[0])
 	_check("a second attack recoils again", b2 - a2.hp, 50)
+
+
+## Units and supports do NOT share an effect dispatcher, so an op wired only into
+## the unit path is silent dead data on a support -- exactly the shape of the
+## dropped-`effects` bug in the decision log. Both Tempest supports are checked
+## against the REAL card data rather than an inline fixture.
+func _test_support_ops() -> void:
+	var db = root.get_node_or_null("CardDB")
+
+	var gs = _new_game()
+	var front = db.get_card("tempest_front_line")
+	_ok("Weather Front exists in the card data", front != null)
+	if front != null:
+		gs._resolve_support_effects(gs.players[0], front, null)
+		_check("Weather Front raises Storm", gs.storm, 2)
+
+	var gs2 = _new_game()
+	var up = db.get_card("tempest_updraft")
+	var b := _make("bank", "tempest", 100, {"charge": 4}, [])
+	_place(gs2, 0, 0, 0, b)
+	_ok("Updraft exists in the card data", up != null)
+	if up != null:
+		gs2._resolve_support_effects(gs2.players[0], up, b)
+		_check("Updraft banks a counter onto a unit", b.charge, 15)
+
+
+## The shipped cards, not fixtures: a card whose printed effects never reach the
+## engine loads fine and does nothing.
+func _test_real_cards() -> void:
+	var db = root.get_node_or_null("CardDB")
+	var foehn = db.get_card("tempest_foehnsile")
+	_ok("Foehnsile exists", foehn != null)
+	if foehn == null:
+		return
+	var gs = _new_game()
+	var u := UnitS.new(foehn)
+	_place(gs, 0, 0, 0, u)
+	var ability = null
+	for ln in foehn.ability_lines():
+		ability = ln
+		break
+	_ok("Foehnsile prints an ability", ability != null)
+	if ability != null:
+		gs.use_ability(gs.players[0], u, ability)
+		_check("its ability actually raises Storm", gs.storm, 1)

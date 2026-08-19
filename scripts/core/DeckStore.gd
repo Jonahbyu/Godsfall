@@ -239,6 +239,12 @@ func sample_decks() -> Array:
 			"name": "Standing Heat",
 			"cards": _standing_heat(),
 		},
+		## Tempest: the accumulation colour. Anchored on the banker chain, whose
+		## Stage 2 discharges twice the counter and may reach a tower past a wall.
+		{
+			"name": "Gathering Weather",
+			"cards": _gathering_weather(),
+		},
 	]
 
 
@@ -1686,4 +1692,39 @@ func _standing_heat() -> Dictionary:
 		"forge_draw_the_temper": 2,
 		"forge_bellows_rig": 3,
 		"forge_energy": 20,
+	}
+
+
+## Tempest's starter list. One idea: bank a counter, then break with it.
+##
+## Runs the banker, the baseline and the weather-maker chains complete, plus the
+## relay so a counter is not simply lost when its body dies. Foehn is what makes
+## the rest work — Storm doubles every Tempest unit's banking rate, so the
+## Charge numbers are printed assuming it is on the board.
+func _gathering_weather() -> Dictionary:
+	return {
+		## The banker, complete. Biggest single-target dump in the faction, and
+		## the Stage 2 may reach a tower past a living wall.
+		"tempest_nimbwhorl": 4,
+		"tempest_nimbsquall": 3,
+		"tempest_nimbmaelstrom": 2,
+		## The baseline: discharge hits the target and a second body beside it.
+		"tempest_cirrsile": 4,
+		"tempest_cirrgale": 3,
+		"tempest_cirrtempest": 2,
+		## The weather-maker. Carries no Charge of its own on purpose — it exists
+		## to raise Storm, which doubles what everything else banks.
+		"tempest_foehnsile": 4,
+		"tempest_foehnshear": 3,
+		"tempest_foehnthunderhead": 2,
+		## The relay: moves a counter off a body that is about to die, which is
+		## the faction's only answer to its own failure case.
+		"tempest_siroccskirl": 3,
+		"tempest_siroccsquall": 2,
+		"tempest_front_line": 3,
+		"tempest_updraft": 3,
+		"tempest_earthing": 2,
+		## A banking deck loses to its bodies dying, so the neutral slot is heal.
+		"shore_up": 3,
+		"tempest_energy": 17,
 	}

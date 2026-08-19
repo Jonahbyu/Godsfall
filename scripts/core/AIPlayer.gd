@@ -159,6 +159,45 @@ func _stoke_worth_it(p: Player, u: Unit, ab: AttackData) -> bool:
 
 ## Free abilities are always taken. A Consume has to justify the energy it
 ## destroys, so it is only used when there is something to gain.
+## Is spending the whole Charge counter worth it right now?
+##
+## Discharge costs no pool energy, so the AI's "free abilities are always taken"
+## default would cash the counter the turn it opens — which is the exact shape of
+## the Forge bug already in the decision log: a cost the engine does not charge in
+## pool energy is invisible to a heuristic that measures pool energy.
+func _discharge_worth_it(p: Player, u: Unit, ab: AttackData) -> bool:
+	## A transfer is about to save a counter rather than spend it, so it is worth
+	## doing whenever this body is likely to die holding one. Cheap proxy: the
+	## unit is under half health and something is banked.
+	if ab.has_effect("charge_transfer"):
+		return u.charge > 0 and u.hp * 2 <= u.max_hp()
+
+	if u.charge <= 0:
+		return false
+
+	## Healing is worth it when an ally can actually use most of it — a flat heal
+	## overflows and is wasted on a body near full.
+	if ab.has_effect("discharge_heal"):
+		for a in p.all_units():
+			if a.is_alive() and gs.effective_max_hp(p, a) - a.hp >= u.charge / 2:
+				return true
+		return false
+
+	## Otherwise hold until the counter is worth an attack. The floor scales with
+	## the unit's own rate: banking three swings before cashing is the rhythm the
+	## keyword is priced around, and a bigger body banks faster so it waits for
+	## more. Cash early only when the counter alone would finish something.
+	var floor_n: int = maxi(10, u.charge_rate() * 3)
+	if u.charge >= floor_n:
+		return true
+
+	var foe: Player = gs.opponent_of(gs.active)
+	for v in foe.all_units():
+		if v.is_alive() and v.hp <= u.charge:
+			return true
+	return false
+
+
 func _ability_worth_it(p: Player, u: Unit, ab: AttackData) -> bool:
 	## Checked ahead of the free/Consume split, because a Siphon or Void ability
 	## with nothing to take is a wasted activation whether or not it charges —
@@ -169,6 +208,31 @@ func _ability_worth_it(p: Player, u: Unit, ab: AttackData) -> bool:
 			if other.is_alive() and other.attached > 0:
 				return true
 		return false
+
+	## ---------------------------------------------------------- Tempest
+	##
+	## Discharge costs no pool energy either, so the same trap applies: the
+	## default would cash a counter of 3 on turn one, every turn, and the whole
+	## point of the keyword is choosing WHEN. Checked before the free/Consume
+	## split for the same reason the Forge checks are.
+	if ab.has_effect("discharge") or ab.has_effect("discharge_single") 			or ab.has_effect("discharge_sweep") or ab.has_effect("discharge_heal") 			or ab.has_effect("charge_transfer"):
+		return _discharge_worth_it(p, u, ab)
+
+	## Raising Storm is nearly always right for a Tempest deck — it doubles this
+	## unit's own banking rate and every Tempest body's damage. It DOES arm the
+	## opponent too, so it is refused when they hold more board than we do and
+	## would therefore get more out of it than we would.
+	if ab.has_effect("storm_raise"):
+		var foe_s: Player = gs.opponent_of(gs.active)
+		var mine_n: int = 0
+		for m in p.all_units():
+			if m.is_alive():
+				mine_n += 1
+		var theirs_n: int = 0
+		for t in foe_s.all_units():
+			if t.is_alive():
+				theirs_n += 1
+		return mine_n >= theirs_n
 
 	## ------------------------------------------------------------ Forge
 	##
