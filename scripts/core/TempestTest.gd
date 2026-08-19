@@ -9,7 +9,7 @@ extends SceneTree
 ## Total assertions this harness is expected to run. Checked at the end, because
 ## a crash mid-file produces "0 failed" and exit 0 — the assertions after the
 ## crash simply never run, and silence reads identically to success.
-const EXPECTED_ASSERTIONS := 19
+const EXPECTED_ASSERTIONS := 27
 
 const CardDataS = preload("res://scripts/core/CardData.gd")
 const UnitS = preload("res://scripts/core/Unit.gd")
@@ -60,6 +60,8 @@ func _initialize() -> void:
 	_test_charge_persistence()
 	_test_storm_counter()
 	_test_storm_instance()
+	_test_charge_growth()
+	_test_charge_kill_vs_judgment()
 
 	print("%d passed, %d failed" % [_pass, _fail])
 	if _pass + _fail != EXPECTED_ASSERTIONS:
@@ -187,3 +189,88 @@ func _test_storm_instance() -> void:
 	var gs4 = _new_game()
 	_check("no Storm, no extra instance", _attack_for(gs4, "hel", 20), 20)
 	_check("and the counter stays 0", gs4.storm, 0)
+
+
+## Place a Tempest attacker whose attack banks `n` Charge per instance dealt.
+func _place_charger(gs, n: int, on_kill: int = 0, dmg: int = 20) -> Unit:
+	var fx: Array = [{"op": "charge_on_damage", "n": n}]
+	if on_kill > 0:
+		fx.append({"op": "charge_on_kill", "n": on_kill})
+	var a := _make("chg", "tempest", 100, {"charge": n}, [_attack_line(dmg, fx)])
+	_place(gs, 0, 0, 0, a)
+	return a
+
+
+## Swing the unit at slot 0's attack into whatever is across from it.
+func _swing(gs, a: Unit) -> void:
+	var atk = a.card.attacks[0]
+	gs._deliver_attack_damage(gs.players[0], gs.players[1], a, 0, 0, atk.damage, atk)
+
+
+func _place_defender(gs, hp: int = 500) -> Unit:
+	var d := _make("def", "hel", hp, {}, [])
+	_place(gs, 1, 0, 0, d)
+	return d
+
+
+func _test_charge_growth() -> void:
+	## Grows on damage DEALT. One instance per attack with no Storm up.
+	var gs = _new_game()
+	var a := _place_charger(gs, 5)
+	_place_defender(gs)
+	_swing(gs, a)
+	_check("one instance dealt grows the counter once", a.charge, 5)
+
+	## With Storm up an attack is TWO instances: the attack, then Storm's.
+	gs.raise_storm(2)
+	_swing(gs, a)
+	_check("with Storm up, an attack is two instances", a.charge, 15)
+
+	## NEVER on damage taken. The counterplay must not be "stop attacking".
+	var gs2 = _new_game()
+	var b := _place_charger(gs2, 5)
+	var atkr := _make("enemy", "hel", 100, {}, [_attack_line(10)])
+	_place(gs2, 1, 0, 0, atkr)
+	gs2._deliver_attack_damage(gs2.players[1], gs2.players[0], atkr, 0, 0, 10,
+		atkr.card.attacks[0])
+	_check("taking damage never grows the counter", b.charge, 0)
+
+	## A unit with no charge_on_damage line banks nothing.
+	var gs3 = _new_game()
+	var c := _make("plain", "tempest", 100, {}, [_attack_line(20)])
+	_place(gs3, 0, 0, 0, c)
+	_place_defender(gs3)
+	_swing(gs3, c)
+	_check("a unit with no Charge line banks nothing", c.charge, 0)
+
+	## charge_on_kill pays an EXTRA bonus when the damage kills.
+	var gs4 = _new_game()
+	var k := _place_charger(gs4, 3, 6, 40)
+	_place_defender(gs4, 30)
+	_swing(gs4, k)
+	_check("a kill pays the on-damage AND the on-kill bonus", k.charge, 9)
+
+	## storm_charge_bonus banks extra per point of Storm.
+	var gs5 = _new_game()
+	gs5.raise_storm(3)
+	var t := _make("tool", "tempest", 100, {"charge": 4}, [_attack_line(20, [
+		{"op": "charge_on_damage", "n": 4},
+		{"op": "storm_charge_bonus", "n": 2}])])
+	_place(gs5, 0, 0, 0, t)
+	_place_defender(gs5)
+	_swing(gs5, t)
+	## Two instances (attack + Storm), each banking 4 + 2*3 = 10.
+	_check("storm_charge_bonus banks extra per point of Storm", t.charge, 20)
+
+
+## `charge_on_kill` reads `defender.hp <= 0`, and defensive Judgment rescues a
+## unit AFTER that check. A Judgment save is not a kill, so the bonus must not
+## pay -- this is the ordering trap the Heaven mirror already documents.
+func _test_charge_kill_vs_judgment() -> void:
+	var gs = _new_game()
+	var k := _place_charger(gs, 3, 6, 40)
+	var j := _make("judge", "heaven", 30, {"judgment": 20}, [])
+	_place(gs, 1, 0, 0, j)
+	_swing(gs, k)
+	_check("Judgment saved the body, so it lives", j.hp, 20)
+	_check("a Judgment save is not a kill - no bonus", k.charge, 3)

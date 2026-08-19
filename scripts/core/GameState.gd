@@ -2276,7 +2276,24 @@ func _deal_lane_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int, dmg:
 ## Retribution, in exactly that order. Two code paths for one question is one path
 ## too many — the drag-and-drop legality bug in the decision log is the same shape.
 func _after_defender_damaged(p: Player, _enemy: Player, u: Unit, defender: Unit,
-		_atk: AttackData, _dealt: int) -> void:
+		atk: AttackData, _dealt: int) -> void:
+	## --- Tempest Charge: the attacker banks its counter for THIS instance.
+	##
+	## Placed here rather than at either call site because this function exists
+	## precisely so the ordinary path and Forge's `stoked_unpreventable` path
+	## cannot drift — Charge has to grow identically down both, and two code
+	## paths for one question is one path too many.
+	##
+	## Keyed on the instance dealt rather than on damage above zero, so a fully
+	## absorbed hit still banks: the keyword reads "each time this unit deals an
+	## instance of damage", which keeps it legible against a Sanctuary wall.
+	if u != null and atk != null and atk.has_effect("charge_on_damage"):
+		var per: int = atk.effect_value("charge_on_damage", 0)
+		if atk.has_effect("storm_charge_bonus"):
+			per += atk.effect_value("storm_charge_bonus", 0) * storm
+		if per > 0:
+			u.add_charge(per)
+
 	## --- Step 4: defensive Judgment. A unit that would die survives at N instead.
 	## Checked before the offensive half so the Heaven mirror resolves by ordering
 	## rather than by a special-case tiebreak rule.
@@ -2309,6 +2326,16 @@ func _after_defender_damaged(p: Player, _enemy: Player, u: Unit, defender: Unit,
 	## instance, so it is resisted. Sanctuary is deliberately NOT applied here:
 	## this line has always bypassed it, `CLAUDE.md` says it should not, and
 	## changing it would alter Heaven's behaviour. Recorded in gaia.md instead.
+	## --- Tempest: the kill bonus, checked only AFTER Judgment has resolved.
+	##
+	## Defensive Judgment rescues a unit at N *after* damage lands, so reading
+	## `defender.hp <= 0` any earlier pays the executioner for a body that is
+	## still standing. Offensive Judgment can also turn a survivor into a corpse,
+	## and that IS a kill this attack caused — so the check belongs here, below
+	## both halves, where the board state is finally settled.
+	if u != null and atk != null and defender.hp <= 0 						and atk.has_effect("charge_on_kill"):
+		u.add_charge(atk.effect_value("charge_on_kill", 0))
+
 	var retr: int = defender.total_retribution()
 	if retr > 0:
 		var r := u.take_damage(_apply_resist(u, retr))
