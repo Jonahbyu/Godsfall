@@ -79,9 +79,11 @@ PLANNED_OPS = {
     "storm_charge_bonus",    # this unit grows extra Charge per point of Storm
 }
 
+# The ops that actually SPEND the counter. `discharge_structures` is deliberately
+# absent: it is a RIDER on the attack a discharge rides out, not a spender, and it
+# must sit on an attack line rather than an ability (see the check in build()).
 DISCHARGE_OPS = {
-    "discharge", "discharge_single", "discharge_sweep",
-    "discharge_structures", "discharge_heal",
+    "discharge", "discharge_single", "discharge_sweep", "discharge_heal",
 }
 
 # A counter needs SOME way off the unit, but Discharge is not the only one:
@@ -221,14 +223,15 @@ CHAINS = [
                [{"op": "discharge_single", "n": 2}]),
         ], "Still gathering. It has not decided where to put this."),
         ("maelstrom", "stage2", 162, KW(charge=11), [
-            A("nimb_bear_down", "Bear Down", 63, "63 damage.",
-              [{"op": "charge_on_damage", "n": 11}]),
+            A("nimb_bear_down", "Bear Down", 63,
+              "63 damage. A discharge on this attack may strike a tower or "
+              "throne past living units.",
+              [{"op": "charge_on_damage", "n": 11},
+               {"op": "discharge_structures"}]),
             AB("nimb_cloudburst", "Cloudburst",
                "Discharge: this unit's next attack deals twice the counter to a "
-               "single target. This attack may strike a tower or throne past "
-               "living units.",
-               [{"op": "discharge_single", "n": 2},
-                {"op": "discharge_structures"}]),
+               "single target.",
+               [{"op": "discharge_single", "n": 2}]),
         ], "It decided."),
     ]),
 
@@ -419,6 +422,15 @@ def build():
                     op = e.get("op", "")
                     if op not in ops:
                         problems.append(f"{name}/{ln['name']}: op '{op}' is not implemented")
+                    # `discharge_structures` is read off the ATTACK as it
+                    # resolves — _deal_lane_damage never sees the ability that
+                    # armed the counter. On an ability it is silent dead data,
+                    # the same shape as a `stoked_` payoff on a line that cannot
+                    # Stoke, so it is refused here rather than discovered in play.
+                    if op == "discharge_structures" and ln["_kind"] == "ability":
+                        problems.append(
+                            f"{name}/{ln['name']}: 'discharge_structures' on an "
+                            f"ability — it must ride the attack that resolves")
                     if op in SPENDER_OPS:
                         has_discharge = True
                         # Discharge is free and once per turn, so it is an

@@ -831,11 +831,11 @@
    "name": "Shore Up",
    "type": "support",
    "faction": "neutral",
-   "text": "Heal one of your units 20 HP.",
+   "text": "Heal one of your units 32 HP.",
    "effects": [
     {
      "op": "heal",
-     "n": 20
+     "n": 32
     }
    ],
    "flavor": "The baseline every other heal is priced against."
@@ -845,11 +845,11 @@
    "name": "Field Rites",
    "type": "support",
    "faction": "neutral",
-   "text": "Heal each of your units 10 HP.",
+   "text": "Heal each of your units 16 HP.",
    "effects": [
     {
      "op": "heal_all",
-     "n": 10
+     "n": 16
     }
    ],
    "flavor": "Its real use is against Decay, which hits everything for small amounts."
@@ -859,11 +859,11 @@
    "name": "Last Breath",
    "type": "support",
    "faction": "neutral",
-   "text": "Heal one of your units 50 HP. It must be at or below half its printed HP.",
+   "text": "Heal one of your units 80 HP. It must be at or below half its printed HP.",
    "effects": [
     {
      "op": "heal_conditional",
-     "n": 50
+     "n": 80
     }
    ],
    "flavor": "Dead in hand when you are not under pressure. A flat number, not a reset."
@@ -873,11 +873,11 @@
    "name": "Reconsecrate",
    "type": "support",
    "faction": "neutral",
-   "text": "Heal one of your units 20 HP and remove all Decay damage dealt to it this turn.",
+   "text": "Heal one of your units 32 HP and remove all Decay damage dealt to it this turn.",
    "effects": [
     {
      "op": "heal_undo_decay",
-     "n": 20
+     "n": 32
     }
    ],
    "flavor": "The narrow answer to Hel's identity keyword, printed as neutral on purpose."
@@ -901,11 +901,11 @@
    "name": "Mend",
    "type": "support",
    "faction": "neutral",
-   "text": "Heal one of your units 10 HP.",
+   "text": "Heal one of your units 16 HP.",
    "effects": [
     {
      "op": "heal",
-     "n": 10
+     "n": 16
     }
    ],
    "flavor": "One round of early tower fire. The bottom rung of the ladder."
@@ -916,11 +916,11 @@
    "type": "support",
    "faction": "neutral",
    "cost": 1,
-   "text": "Heal one of your units 50 HP.",
+   "text": "Heal one of your units 80 HP.",
    "effects": [
     {
      "op": "heal",
-     "n": 50
+     "n": 80
     }
    ],
    "flavor": "One energy buys thirty more healing. The rate everything priced is checked against."
@@ -931,11 +931,11 @@
    "type": "support",
    "faction": "neutral",
    "cost": 2,
-   "text": "Heal each of your units 20 HP.",
+   "text": "Heal each of your units 32 HP.",
    "effects": [
     {
      "op": "heal_all",
-     "n": 20
+     "n": 32
     }
    ],
    "flavor": "Wants a wide board, not a dead one. Worthless on a single unit."
@@ -946,11 +946,11 @@
    "type": "support",
    "faction": "neutral",
    "cost": 2,
-   "text": "Heal one of your units 15 HP for each round that has passed, counting the current one.",
+   "text": "Heal one of your units 24 HP for each round that has passed, counting the current one.",
    "effects": [
     {
      "op": "heal_per_round",
-     "n": 15
+     "n": 24
     }
    ],
    "flavor": "Three times the tower's scaling. The only heal that grows."
@@ -961,11 +961,11 @@
    "type": "support",
    "faction": "neutral",
    "cost": 3,
-   "text": "Heal one of your units 100 HP.",
+   "text": "Heal one of your units 120 HP.",
    "effects": [
     {
      "op": "heal",
-     "n": 100
+     "n": 120
     }
    ],
    "flavor": "More than most bodies can hold. The overflow is the price of certainty."
@@ -1031,11 +1031,11 @@
    "name": "Bone Splint",
    "type": "tool",
    "faction": "neutral",
-   "text": "Attached unit heals 5 HP at end of turn.",
+   "text": "Attached unit heals 8 HP at end of turn.",
    "effects": [
     {
      "op": "heal_eot",
-     "n": 5
+     "n": 8
     }
    ],
    "flavor": "Five turns to match Shore Up. Excellent on a wall nobody attacks."
@@ -1165,11 +1165,11 @@
    "type": "tower_support",
    "faction": "neutral",
    "permanent": false,
-   "text": "Heal target tower 25 HP. It cannot be healed above its max HP.",
+   "text": "Heal target tower 40 HP. It cannot be healed above its max HP.",
    "effects": [
     {
      "op": "tower_heal",
-     "n": 25
+     "n": 40
     }
    ],
    "flavor": "The cap is the important clause - uncapped tower healing is the stall engine."
@@ -1497,8 +1497,8 @@
       "heaven": 4,
       "colorless": 1
      },
-     "damage": 65,
-     "text": "65 damage",
+     "damage": 53,
+     "text": "53 damage",
      "effects": []
     }
    ],
@@ -1585,8 +1585,8 @@
       "heaven": 3,
       "colorless": 3
      },
-     "damage": 75,
-     "text": "75 damage",
+     "damage": 61,
+     "text": "61 damage",
      "effects": []
     }
    ],
@@ -2819,11 +2819,11 @@
    "type": "support",
    "faction": "gaia",
    "cost": 2,
-   "text": "Heal 20 to all your units. A friendly unit gains +1 Earth permanently.",
+   "text": "Heal 32 to all your units. A friendly unit gains +1 Earth permanently.",
    "effects": [
     {
      "op": "heal_all",
-     "n": 20
+     "n": 32
     },
     {
      "op": "grow_earth_target",
@@ -4429,8 +4429,8 @@
       "heaven": 4,
       "colorless": 1
      },
-     "damage": 32,
-     "text": "32 damage",
+     "damage": 26,
+     "text": "26 damage",
      "effects": []
     }
    ],
@@ -4459,8 +4459,8 @@
       "heaven": 4,
       "colorless": 3
      },
-     "damage": 55,
-     "text": "55 damage",
+     "damage": 45,
+     "text": "45 damage",
      "effects": []
     }
    ],
@@ -4489,8 +4489,8 @@
       "heaven": 6,
       "colorless": 5
      },
-     "damage": 95,
-     "text": "95 damage",
+     "damage": 78,
+     "text": "78 damage",
      "effects": []
     },
     {
@@ -4714,8 +4714,8 @@
       "heaven": 4,
       "colorless": 1
      },
-     "damage": 33,
-     "text": "33 damage",
+     "damage": 27,
+     "text": "27 damage",
      "effects": []
     }
    ],
@@ -4808,8 +4808,8 @@
       "heaven": 4,
       "colorless": 1
      },
-     "damage": 35,
-     "text": "35 damage",
+     "damage": 29,
+     "text": "29 damage",
      "effects": []
     }
    ],
@@ -4902,8 +4902,8 @@
       "heaven": 6,
       "colorless": 6
      },
-     "damage": 92,
-     "text": "92 damage",
+     "damage": 75,
+     "text": "75 damage",
      "effects": []
     },
     {
@@ -4947,8 +4947,8 @@
       "heaven": 4,
       "colorless": 1
      },
-     "damage": 32,
-     "text": "32 damage",
+     "damage": 26,
+     "text": "26 damage",
      "effects": []
     }
    ],
@@ -4977,8 +4977,8 @@
       "heaven": 4,
       "colorless": 3
      },
-     "damage": 56,
-     "text": "56 damage",
+     "damage": 46,
+     "text": "46 damage",
      "effects": []
     }
    ],
@@ -5011,8 +5011,8 @@
       "heaven": 6,
       "colorless": 5
      },
-     "damage": 98,
-     "text": "98 damage",
+     "damage": 80,
+     "text": "80 damage",
      "effects": []
     },
     {
@@ -5176,8 +5176,8 @@
       "heaven": 3,
       "colorless": 1
      },
-     "damage": 28,
-     "text": "28 damage",
+     "damage": 23,
+     "text": "23 damage",
      "effects": []
     }
    ],
@@ -5206,8 +5206,8 @@
       "heaven": 3,
       "colorless": 3
      },
-     "damage": 52,
-     "text": "52 damage",
+     "damage": 43,
+     "text": "43 damage",
      "effects": []
     }
    ],
@@ -5304,8 +5304,8 @@
       "heaven": 4,
       "colorless": 1
      },
-     "damage": 34,
-     "text": "34 damage",
+     "damage": 28,
+     "text": "28 damage",
      "effects": []
     }
    ],
@@ -5338,8 +5338,8 @@
       "heaven": 4,
       "colorless": 3
      },
-     "damage": 57,
-     "text": "57 damage",
+     "damage": 47,
+     "text": "47 damage",
      "effects": []
     }
    ],
@@ -5503,8 +5503,8 @@
       "heaven": 3,
       "colorless": 3
      },
-     "damage": 48,
-     "text": "48 damage",
+     "damage": 39,
+     "text": "39 damage",
      "effects": []
     }
    ],
@@ -5613,8 +5613,8 @@
       "heaven": 3,
       "colorless": 3
      },
-     "damage": 46,
-     "text": "46 damage",
+     "damage": 38,
+     "text": "38 damage",
      "effects": []
     }
    ],
@@ -5723,8 +5723,8 @@
       "heaven": 4,
       "colorless": 3
      },
-     "damage": 53,
-     "text": "53 damage",
+     "damage": 43,
+     "text": "43 damage",
      "effects": []
     }
    ],
@@ -8593,6 +8593,2989 @@
     }
    ],
    "flavor": "A great many thorns, all doing their best."
+  },
+  {
+   "id": "forge_energy",
+   "name": "Forge Energy",
+   "type": "energy",
+   "faction": "forge",
+   "text": "Adds (turn + 1) Forge energy to your pool.",
+   "flavor": "Fire is the one god that asks to be fed before it answers."
+  },
+  {
+   "id": "forge_cindspark",
+   "name": "Cindspark",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 60,
+   "retreat": 1,
+   "flavor": "It banks its own heat and waits to be worth spending.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "ember_strike",
+     "name": "Ember Strike",
+     "damage": 28,
+     "text": "28 damage. If this unit stoked this turn, +10 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 10
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_cindbrand",
+   "name": "Cindbrand",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 105,
+   "retreat": 2,
+   "evolves_from": "forge_cindspark",
+   "flavor": "The metal stops glowing red and starts glowing white. So does the smith.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 30 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 30
+    },
+    {
+     "id": "white_heat",
+     "name": "White Heat",
+     "damage": 44,
+     "text": "44 damage. If this unit stoked this turn, +1 damage per 2 HP stoked.",
+     "effects": [
+      {
+       "op": "stoked_scale_damage",
+       "n": 2
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_cindpyre",
+   "name": "Cindpyre",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 160,
+   "retreat": 4,
+   "evolves_from": "forge_cindbrand",
+   "flavor": "Everything it was keeping in reserve, spent at once, through the wall.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 50 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 50
+    },
+    {
+     "id": "the_last_heat",
+     "name": "The Last Heat",
+     "damage": 70,
+     "text": "70 damage. If this unit stoked 40 or more this turn, this attack burns past living units and strikes the tower behind them.",
+     "effects": [
+      {
+       "op": "stoked_threshold",
+       "n": 40
+      },
+      {
+       "op": "stoked_ignore_shield",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_slagash",
+   "name": "Slagash",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 45,
+   "retreat": 1,
+   "flavor": "Cheap to light, cheap to lose. It knows both.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 10 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 10
+    },
+    {
+     "id": "scour",
+     "name": "Scour",
+     "damage": 24,
+     "text": "24 damage. If this unit stoked this turn, +7 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_slagkiln",
+   "name": "Slagkiln",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 88,
+   "retreat": 2,
+   "evolves_from": "forge_slagash",
+   "flavor": "Feed it and it asks for nothing else.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "bellows",
+     "name": "Bellows",
+     "damage": 40,
+     "text": "40 damage. If this unit stoked this turn, this attack costs no energy.",
+     "effects": [
+      {
+       "op": "stoked_free_attack",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_gristgnash",
+   "name": "Gristgnash",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 55,
+   "retreat": 1,
+   "flavor": "It does not distinguish between fuel and family.",
+   "attacks": [
+    {
+     "id": "feed",
+     "name": "Feed the Fire",
+     "damage": 0,
+     "text": "Destroy another unit you control. Deal 10 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 10,
+     "scrap": true
+    },
+    {
+     "id": "cinder_bite",
+     "name": "Cinder Bite",
+     "damage": 26,
+     "text": "26 damage. If this unit stoked this turn, +7 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_gristforge",
+   "name": "Gristforge",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 100,
+   "retreat": 2,
+   "evolves_from": "forge_gristgnash",
+   "flavor": "Everything on the bench is stock. That is what a bench is for.",
+   "attacks": [
+    {
+     "id": "consume_stock",
+     "name": "Consume the Stock",
+     "damage": 0,
+     "text": "Destroy another unit you control. Deal 30 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 30,
+     "scrap": true
+    },
+    {
+     "id": "hammerfall",
+     "name": "Hammerfall",
+     "damage": 48,
+     "text": "48 damage. If this unit stoked this turn, +1 damage per 2 HP stoked.",
+     "effects": [
+      {
+       "op": "stoked_scale_damage",
+       "n": 2
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_gristsmith",
+   "name": "Gristsmith",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 140,
+   "retreat": 3,
+   "evolves_from": "forge_gristforge",
+   "flavor": "It takes the heat back out of the metal and keeps it.",
+   "attacks": [
+    {
+     "id": "reforge",
+     "name": "Reforge",
+     "damage": 0,
+     "text": "Destroy another unit you control. Deal 40 damage to this unit, then heal it for that much. It has stoked this turn.",
+     "effects": [
+      {
+       "op": "stoked_heal_back",
+       "n": 100
+      }
+     ],
+     "ability": true,
+     "stoke": 40,
+     "scrap": true
+    },
+    {
+     "id": "the_work",
+     "name": "The Work",
+     "damage": 62,
+     "text": "62 damage. If this unit stoked this turn, this damage is doubled.",
+     "effects": [
+      {
+       "op": "stoked_double",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_embash",
+   "name": "Embash",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 50,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "retribution",
+     "n": 10
+    }
+   ],
+   "flavor": "It burns outward as readily as inward. It does not much notice which.",
+   "attacks": [
+    {
+     "id": "flare",
+     "name": "Flare",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit and 20 damage to the enemy unit across from it. It has stoked this turn.",
+     "effects": [
+      {
+       "op": "stoked_cleave",
+       "n": 100
+      }
+     ],
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "sear",
+     "name": "Sear",
+     "damage": 22,
+     "text": "22 damage",
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_embkiln",
+   "name": "Embkiln",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 95,
+   "retreat": 2,
+   "evolves_from": "forge_embash",
+   "keywords": [
+    {
+     "kw": "retribution",
+     "n": 15
+    }
+   ],
+   "flavor": "Stand too close to the work and the work stands too close to you.",
+   "attacks": [
+    {
+     "id": "backdraft",
+     "name": "Backdraft",
+     "damage": 0,
+     "text": "Deal 30 damage to this unit and 30 damage to the enemy unit across from it. It has stoked this turn.",
+     "effects": [
+      {
+       "op": "stoked_cleave",
+       "n": 100
+      }
+     ],
+     "ability": true,
+     "stoke": 30
+    },
+    {
+     "id": "open_flame",
+     "name": "Open Flame",
+     "damage": 42,
+     "text": "42 damage. If this unit stoked this turn, +10 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 10
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_quenchwick",
+   "name": "Quenchwick",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 65,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "resist",
+     "n": 5
+    }
+   ],
+   "flavor": "Heated, cooled, heated again. That is not damage. That is the process.",
+   "attacks": [
+    {
+     "id": "temper",
+     "name": "Temper",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit, then heal it for that much. It has stoked this turn.",
+     "effects": [
+      {
+       "op": "stoked_heal_back",
+       "n": 100
+      }
+     ],
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "anneal",
+     "name": "Anneal",
+     "damage": 25,
+     "text": "25 damage. If this unit stoked this turn, +7 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_quenchbrand",
+   "name": "Quenchbrand",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 110,
+   "retreat": 2,
+   "evolves_from": "forge_quenchwick",
+   "keywords": [
+    {
+     "kw": "resist",
+     "n": 5
+    }
+   ],
+   "flavor": "The shape is decided. Now it is only a question of how hard.",
+   "attacks": [
+    {
+     "id": "draw_the_heat",
+     "name": "Draw the Heat",
+     "damage": 0,
+     "text": "Deal 30 damage to this unit, then heal it for that much. It has stoked this turn.",
+     "effects": [
+      {
+       "op": "stoked_heal_back",
+       "n": 100
+      }
+     ],
+     "ability": true,
+     "stoke": 30
+    },
+    {
+     "id": "hardened",
+     "name": "Hardened",
+     "damage": 45,
+     "text": "45 damage. If this unit stoked this turn, +10 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 10
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_quenchanvil",
+   "name": "Quenchanvil",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 155,
+   "retreat": 3,
+   "evolves_from": "forge_quenchbrand",
+   "keywords": [
+    {
+     "kw": "resist",
+     "n": 10
+    }
+   ],
+   "flavor": "It has been in and out of the fire so many times it no longer counts as leaving.",
+   "attacks": [
+    {
+     "id": "the_long_temper",
+     "name": "The Long Temper",
+     "damage": 0,
+     "text": "Deal 50 damage to this unit, then heal it for that much. It has stoked this turn.",
+     "effects": [
+      {
+       "op": "stoked_heal_back",
+       "n": 100
+      }
+     ],
+     "ability": true,
+     "stoke": 50
+    },
+    {
+     "id": "finished_work",
+     "name": "Finished Work",
+     "damage": 66,
+     "text": "66 damage. If this unit stoked 40 or more this turn, +40 damage.",
+     "effects": [
+      {
+       "op": "stoked_threshold",
+       "n": 40
+      },
+      {
+       "op": "stoked_threshold_damage",
+       "n": 40
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_bank_the_coals",
+   "name": "Bank the Coals",
+   "type": "support",
+   "faction": "forge",
+   "cost": 1,
+   "effects": [
+    {
+     "op": "heal",
+     "n": 96
+    }
+   ],
+   "text": "Heal 96 damage from one of your units.",
+   "flavor": "You do not put the fire out. You put it away."
+  },
+  {
+   "id": "forge_quenching_trough",
+   "name": "Quenching Trough",
+   "type": "support",
+   "faction": "forge",
+   "effects": [
+    {
+     "op": "heal_all",
+     "n": 32
+    }
+   ],
+   "text": "Heal 32 damage from each of your units.",
+   "flavor": "Steam to the rafters, and every blade on the rack still sharp."
+  },
+  {
+   "id": "forge_stoke_the_works",
+   "name": "Stoke the Works",
+   "type": "support",
+   "faction": "forge",
+   "cost": 2,
+   "effects": [
+    {
+     "op": "draw",
+     "n": 3
+    }
+   ],
+   "text": "Draw 3 cards.",
+   "flavor": "Every hand in the shop, working at once."
+  },
+  {
+   "id": "forge_scrap_heap",
+   "name": "Scrap Heap",
+   "type": "support",
+   "faction": "forge",
+   "effects": [
+    {
+     "op": "random_from_discard",
+     "n": 1
+    }
+   ],
+   "text": "Return a random unit from your discard pile to your hand.",
+   "flavor": "Nothing here is finished. Some of it is only cold."
+  },
+  {
+   "id": "forge_hearthstone",
+   "name": "Hearthstone",
+   "type": "tool",
+   "faction": "forge",
+   "effects": [
+    {
+     "op": "heal_eot",
+     "n": 16
+    }
+   ],
+   "text": "Attach to one of your units. It heals 16 damage at end of turn.",
+   "flavor": "A stone that remembers being a fire."
+  },
+  {
+   "id": "forge_bellowwick",
+   "name": "Bellowwick",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 55,
+   "retreat": 1,
+   "flavor": "Air first. Everything else the fire will do on its own.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "draft",
+     "name": "Draft",
+     "damage": 26,
+     "text": "26 damage. If this unit stoked this turn, +8 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 8
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_bellowbrand",
+   "name": "Bellowbrand",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 92,
+   "retreat": 2,
+   "evolves_from": "forge_bellowwick",
+   "flavor": "Two strokes, one breath. The rhythm is the whole trade.",
+   "attacks": [
+    {
+     "id": "double_draft",
+     "name": "Double Draft",
+     "damage": 0,
+     "text": "Deal 25 damage to this unit. It has stoked this turn, and may attack twice this turn.",
+     "effects": [
+      {
+       "op": "stoked_extra_attack",
+       "n": 1
+      }
+     ],
+     "ability": true,
+     "stoke": 25
+    },
+    {
+     "id": "hammer_song",
+     "name": "Hammer Song",
+     "damage": 34,
+     "text": "34 damage",
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_bellowmaul",
+   "name": "Bellowmaul",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 148,
+   "retreat": 3,
+   "evolves_from": "forge_bellowbrand",
+   "flavor": "It stopped counting blows a long time ago. It counts breaths.",
+   "attacks": [
+    {
+     "id": "full_bellows",
+     "name": "Full Bellows",
+     "damage": 0,
+     "text": "Deal 40 damage to this unit. It has stoked this turn, may attack twice this turn, and its attacks cost 1 less this turn.",
+     "effects": [
+      {
+       "op": "stoked_extra_attack",
+       "n": 1
+      },
+      {
+       "op": "stoked_cost_reduction",
+       "n": 1
+      }
+     ],
+     "ability": true,
+     "stoke": 40
+    },
+    {
+     "id": "both_hands",
+     "name": "Both Hands",
+     "damage": 54,
+     "text": "54 damage",
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_charash",
+   "name": "Charash",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 50,
+   "retreat": 1,
+   "flavor": "It leaves a shape behind on whatever it touched.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 15 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 15
+    },
+    {
+     "id": "scorch",
+     "name": "Scorch",
+     "damage": 24,
+     "text": "24 damage. If this unit stoked this turn, +7 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_charkiln",
+   "name": "Charkiln",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 96,
+   "retreat": 2,
+   "evolves_from": "forge_charash",
+   "flavor": "It does not choose. It only spreads.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 30 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 30
+    },
+    {
+     "id": "wildfire",
+     "name": "Wildfire",
+     "damage": 30,
+     "text": "30 damage. If this unit stoked 25 or more this turn, this attack hits every unit on the target board instead.",
+     "effects": [
+      {
+       "op": "stoked_threshold",
+       "n": 25
+      },
+      {
+       "op": "stoked_sweep",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_charpyre",
+   "name": "Charpyre",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 150,
+   "retreat": 3,
+   "evolves_from": "forge_charkiln",
+   "flavor": "A whole rank of them, and one line drawn through all of it.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 45 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 45
+    },
+    {
+     "id": "the_burning_line",
+     "name": "The Burning Line",
+     "damage": 40,
+     "text": "40 damage. If this unit stoked 40 or more this turn, this attack hits every unit on the target board instead.",
+     "effects": [
+      {
+       "op": "stoked_threshold",
+       "n": 40
+      },
+      {
+       "op": "stoked_sweep",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_scoriaslag",
+   "name": "Scoriaslag",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 58,
+   "retreat": 1,
+   "flavor": "Shields are just another thing that has not been hot enough yet.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "bite_through",
+     "name": "Bite Through",
+     "damage": 22,
+     "text": "22 damage. If this unit stoked this turn, this damage cannot be prevented or reduced.",
+     "effects": [
+      {
+       "op": "stoked_unpreventable",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_scoriaforge",
+   "name": "Scoriaforge",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 104,
+   "retreat": 2,
+   "evolves_from": "forge_scoriaslag",
+   "flavor": "It finds the join in the plate and goes in at the join.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 30 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 30
+    },
+    {
+     "id": "run_the_seam",
+     "name": "Run the Seam",
+     "damage": 40,
+     "text": "40 damage. If this unit stoked this turn, this damage cannot be prevented or reduced.",
+     "effects": [
+      {
+       "op": "stoked_unpreventable",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_scoriasmith",
+   "name": "Scoriasmith",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 152,
+   "retreat": 3,
+   "evolves_from": "forge_scoriaforge",
+   "flavor": "Every wall it has ever met was built by someone who had not met it.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 45 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 45
+    },
+    {
+     "id": "nothing_holds",
+     "name": "Nothing Holds",
+     "damage": 63,
+     "text": "63 damage. If this unit stoked this turn, this damage cannot be prevented or reduced, and it also scorches the tower behind for 15.",
+     "effects": [
+      {
+       "op": "stoked_unpreventable",
+       "n": 1
+      },
+      {
+       "op": "stoked_also_tower",
+       "n": 15
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_fluxwick",
+   "name": "Fluxwick",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 48,
+   "retreat": 1,
+   "flavor": "It takes the scum off the top and the metal underneath is worth more.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "skim",
+     "name": "Skim",
+     "damage": 21,
+     "text": "21 damage. If this unit stoked this turn, this attack costs no energy.",
+     "effects": [
+      {
+       "op": "stoked_free_attack",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_fluxbrand",
+   "name": "Fluxbrand",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 90,
+   "retreat": 2,
+   "evolves_from": "forge_fluxwick",
+   "flavor": "Heat kept overnight is heat you did not have to make twice.",
+   "attacks": [
+    {
+     "id": "bank_heat",
+     "name": "Bank the Heat",
+     "damage": 0,
+     "text": "Deal 25 damage to this unit. It has stoked this turn, and your pool does not decay at the end of this turn.",
+     "effects": [
+      {
+       "op": "stoked_no_decay",
+       "n": 1
+      }
+     ],
+     "ability": true,
+     "stoke": 25
+    },
+    {
+     "id": "draw_off",
+     "name": "Draw Off",
+     "damage": 36,
+     "text": "36 damage",
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_fluxanvil",
+   "name": "Fluxanvil",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 138,
+   "retreat": 3,
+   "evolves_from": "forge_fluxbrand",
+   "flavor": "Everything the shop made this season, in one shape, still warm.",
+   "attacks": [
+    {
+     "id": "the_long_bank",
+     "name": "The Long Bank",
+     "damage": 0,
+     "text": "Deal 40 damage to this unit. It has stoked this turn, your pool does not decay at the end of this turn, and draw 2 cards.",
+     "effects": [
+      {
+       "op": "stoked_no_decay",
+       "n": 1
+      },
+      {
+       "op": "stoked_draw",
+       "n": 2
+      }
+     ],
+     "ability": true,
+     "stoke": 40
+    },
+    {
+     "id": "poured_out",
+     "name": "Poured Out",
+     "damage": 58,
+     "text": "58 damage",
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_tindspark",
+   "name": "Tindspark",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 52,
+   "retreat": 1,
+   "flavor": "The smallest possible amount of fire, and it is enough.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 15 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 15
+    },
+    {
+     "id": "catch",
+     "name": "Catch",
+     "damage": 20,
+     "text": "20 damage. If this unit stoked this turn, +1 damage per 2 HP stoked.",
+     "effects": [
+      {
+       "op": "stoked_scale_damage",
+       "n": 2
+      }
+     ],
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_tindkiln",
+   "name": "Tindkiln",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 94,
+   "retreat": 2,
+   "evolves_from": "forge_tindspark",
+   "flavor": "Twice in a turn is not twice the fire. It is the same fire, refusing to stop.",
+   "attacks": [
+    {
+     "id": "relight",
+     "name": "Relight",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn, may stoke again this turn, and you draw a card.",
+     "effects": [
+      {
+       "op": "stoked_twice",
+       "n": 1
+      },
+      {
+       "op": "stoked_draw",
+       "n": 1
+      }
+     ],
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "run_hot",
+     "name": "Run Hot",
+     "damage": 32,
+     "text": "32 damage. If this unit stoked this turn, +1 damage per 2 HP stoked.",
+     "effects": [
+      {
+       "op": "stoked_scale_damage",
+       "n": 2
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_tindpyre",
+   "name": "Tindpyre",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 158,
+   "retreat": 3,
+   "evolves_from": "forge_tindkiln",
+   "flavor": "It has been burning since before the shop was built and intends to outlast it.",
+   "attacks": [
+    {
+     "id": "never_out",
+     "name": "Never Out",
+     "damage": 0,
+     "text": "Deal 35 damage to this unit. It has stoked this turn, may stoke again this turn, and you draw a card.",
+     "effects": [
+      {
+       "op": "stoked_twice",
+       "n": 1
+      },
+      {
+       "op": "stoked_draw",
+       "n": 1
+      }
+     ],
+     "ability": true,
+     "stoke": 35
+    },
+    {
+     "id": "everything_at_once",
+     "name": "Everything At Once",
+     "damage": 45,
+     "text": "45 damage. If this unit stoked this turn, +1 damage per 2 HP stoked.",
+     "effects": [
+      {
+       "op": "stoked_scale_damage",
+       "n": 2
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_drossalgnash",
+   "name": "Drossalgnash",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 62,
+   "retreat": 1,
+   "flavor": "It sorts the yard by what will burn and what will burn longer.",
+   "attacks": [
+    {
+     "id": "pick_over",
+     "name": "Pick Over",
+     "damage": 0,
+     "text": "Destroy another unit you control. Deal 15 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 15,
+     "scrap": true
+    },
+    {
+     "id": "slagbite",
+     "name": "Slagbite",
+     "damage": 25,
+     "text": "25 damage. If this unit stoked this turn, +8 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 8
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_drossalkiln",
+   "name": "Drossalkiln",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 98,
+   "retreat": 2,
+   "evolves_from": "forge_drossalgnash",
+   "flavor": "Whatever it was is not the point. What it becomes is the point.",
+   "attacks": [
+    {
+     "id": "melt_down",
+     "name": "Melt Down",
+     "damage": 0,
+     "text": "Consume 1. Destroy another unit you control. Deal 25 damage to this unit, then heal it for that much. It has stoked this turn.",
+     "effects": [
+      {
+       "op": "stoked_heal_back",
+       "n": 100
+      }
+     ],
+     "ability": true,
+     "stoke": 25,
+     "scrap": true,
+     "consume": 1
+    },
+    {
+     "id": "pour",
+     "name": "Pour",
+     "damage": 42,
+     "text": "42 damage. If this unit stoked this turn, +10 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 10
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_drossalsmith",
+   "name": "Drossalsmith",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 144,
+   "retreat": 3,
+   "evolves_from": "forge_drossalkiln",
+   "flavor": "Nothing leaves the yard. It only changes which shelf it is on.",
+   "attacks": [
+    {
+     "id": "the_whole_yard",
+     "name": "The Whole Yard",
+     "damage": 0,
+     "text": "Consume 2. Destroy another unit you control. Deal 40 damage to this unit, then heal it for that much. It has stoked this turn, and you draw 2 cards.",
+     "effects": [
+      {
+       "op": "stoked_heal_back",
+       "n": 100
+      },
+      {
+       "op": "stoked_draw",
+       "n": 2
+      }
+     ],
+     "ability": true,
+     "stoke": 40,
+     "scrap": true,
+     "consume": 2
+    },
+    {
+     "id": "rendered",
+     "name": "Rendered",
+     "damage": 60,
+     "text": "60 damage. If this unit stoked this turn, this damage is doubled.",
+     "effects": [
+      {
+       "op": "stoked_double",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_annealash",
+   "name": "Annealash",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 70,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "retribution",
+     "n": 15
+    }
+   ],
+   "flavor": "Hitting it is a decision, and it would like you to make it.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "backhand",
+     "name": "Backhand",
+     "damage": 21,
+     "text": "21 damage. If this unit stoked this turn, +7 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_annealbrand",
+   "name": "Annealbrand",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 112,
+   "retreat": 2,
+   "evolves_from": "forge_annealash",
+   "keywords": [
+    {
+     "kw": "retribution",
+     "n": 20
+    }
+   ],
+   "flavor": "Cooled slowly on purpose. That is what makes it hard to break.",
+   "attacks": [
+    {
+     "id": "case_harden",
+     "name": "Case Harden",
+     "damage": 0,
+     "text": "Deal 25 damage to this unit, then heal it for that much. It has stoked this turn.",
+     "effects": [
+      {
+       "op": "stoked_heal_back",
+       "n": 100
+      }
+     ],
+     "ability": true,
+     "stoke": 25
+    },
+    {
+     "id": "recoil",
+     "name": "Recoil",
+     "damage": 38,
+     "text": "38 damage. If this unit stoked this turn, +10 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 10
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_annealanvil",
+   "name": "Annealanvil",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 168,
+   "retreat": 4,
+   "evolves_from": "forge_annealbrand",
+   "keywords": [
+    {
+     "kw": "retribution",
+     "n": 25
+    },
+    {
+     "kw": "resist",
+     "n": 5
+    }
+   ],
+   "flavor": "Every mark on it belongs to someone who is no longer swinging.",
+   "attacks": [
+    {
+     "id": "the_standing_heat",
+     "name": "The Standing Heat",
+     "damage": 0,
+     "text": "Deal 40 damage to this unit, then heal it for that much. It has stoked this turn.",
+     "effects": [
+      {
+       "op": "stoked_heal_back",
+       "n": 100
+      }
+     ],
+     "ability": true,
+     "stoke": 40
+    },
+    {
+     "id": "struck_back",
+     "name": "Struck Back",
+     "damage": 56,
+     "text": "56 damage. If this unit stoked this turn, +15 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 15
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_ingotspark",
+   "name": "Ingotspark",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 56,
+   "retreat": 1,
+   "flavor": "It goes now, while the going is still the going.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "first_strike",
+     "name": "First Strike",
+     "damage": 21,
+     "text": "21 damage. If this unit stoked this turn, this attack resolves immediately instead of at the end of your turn.",
+     "effects": [
+      {
+       "op": "stoked_immediate",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_ingotforge",
+   "name": "Ingotforge",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 108,
+   "retreat": 2,
+   "evolves_from": "forge_ingotspark",
+   "flavor": "The window is exactly as wide as the metal is hot.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 30 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 30
+    },
+    {
+     "id": "strike_while",
+     "name": "Strike While",
+     "damage": 36,
+     "text": "36 damage. If this unit stoked 25 or more this turn, this attack resolves immediately instead of at the end of your turn.",
+     "effects": [
+      {
+       "op": "stoked_threshold",
+       "n": 25
+      },
+      {
+       "op": "stoked_immediate",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_ingotpyre",
+   "name": "Ingotpyre",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 165,
+   "retreat": 4,
+   "evolves_from": "forge_ingotforge",
+   "flavor": "Two fires, one draught, and no wall between them that it respects.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 50 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 50
+    },
+    {
+     "id": "both_furnaces",
+     "name": "Both Furnaces",
+     "damage": 46,
+     "text": "46 damage. If this unit stoked 45 or more this turn, this attack strikes both enemy boards.",
+     "effects": [
+      {
+       "op": "stoked_threshold",
+       "n": 45
+      },
+      {
+       "op": "stoked_both_boards",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_cinderlingwick",
+   "name": "Cinderlingwick",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 46,
+   "retreat": 1,
+   "flavor": "Small enough to get in through the gap in the visor.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 15 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 15
+    },
+    {
+     "id": "needle",
+     "name": "Needle",
+     "damage": 20,
+     "text": "20 damage. If this unit stoked this turn, this damage cannot be prevented or reduced.",
+     "effects": [
+      {
+       "op": "stoked_unpreventable",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_cinderlingbrand",
+   "name": "Cinderlingbrand",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 86,
+   "retreat": 2,
+   "evolves_from": "forge_cinderlingwick",
+   "flavor": "It has been practising on the gap.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 25 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 25
+    },
+    {
+     "id": "through_the_gap",
+     "name": "Through the Gap",
+     "damage": 34,
+     "text": "34 damage. If this unit stoked this turn, this damage cannot be prevented or reduced.",
+     "effects": [
+      {
+       "op": "stoked_unpreventable",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_sootfallash",
+   "name": "Sootfallash",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 54,
+   "retreat": 1,
+   "flavor": "What goes up in a forge does not stay up.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "ember_fall",
+     "name": "Ember Fall",
+     "damage": 22,
+     "text": "22 damage. If this unit stoked this turn, it also scorches the tower behind for 8.",
+     "effects": [
+      {
+       "op": "stoked_also_tower",
+       "n": 8
+      }
+     ],
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_sootfallkiln",
+   "name": "Sootfallkiln",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 100,
+   "retreat": 2,
+   "evolves_from": "forge_sootfallash",
+   "flavor": "The roof is the first thing to learn what the shop is for.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 30 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 30
+    },
+    {
+     "id": "rain_of_coals",
+     "name": "Rain of Coals",
+     "damage": 38,
+     "text": "38 damage. If this unit stoked this turn, it also scorches the tower behind for 15.",
+     "effects": [
+      {
+       "op": "stoked_also_tower",
+       "n": 15
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_cokewrightslag",
+   "name": "Cokewrightslag",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 60,
+   "retreat": 1,
+   "flavor": "It reckons the price in heat and finds the price agreeable.",
+   "attacks": [
+    {
+     "id": "shave_cost",
+     "name": "Shave the Cost",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn, and its attacks cost 1 less this turn.",
+     "effects": [
+      {
+       "op": "stoked_cost_reduction",
+       "n": 1
+      }
+     ],
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "knap",
+     "name": "Knap",
+     "damage": 24,
+     "text": "24 damage",
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_cokewrightforge",
+   "name": "Cokewrightforge",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 102,
+   "retreat": 2,
+   "evolves_from": "forge_cokewrightslag",
+   "flavor": "Everything in the shop is for sale and everything is priced in fuel.",
+   "attacks": [
+    {
+     "id": "cut_the_price",
+     "name": "Cut the Price",
+     "damage": 0,
+     "text": "Deal 30 damage to this unit. It has stoked this turn, and its attacks cost 2 less this turn.",
+     "effects": [
+      {
+       "op": "stoked_cost_reduction",
+       "n": 2
+      }
+     ],
+     "ability": true,
+     "stoke": 30
+    },
+    {
+     "id": "hard_bargain",
+     "name": "Hard Bargain",
+     "damage": 40,
+     "text": "40 damage",
+     "cost": {
+      "forge": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_forgehand",
+   "name": "Forgehand",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 64,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "retribution",
+     "n": 10
+    }
+   ],
+   "flavor": "One pair of hands, one job, and no opinions about either.",
+   "attacks": [
+    {
+     "id": "stoke",
+     "name": "Stoke",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn.",
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "strike",
+     "name": "Strike",
+     "damage": 26,
+     "text": "26 damage. If this unit stoked this turn, +7 damage.",
+     "effects": [
+      {
+       "op": "stoked_bonus_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "forge": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_slakeling",
+   "name": "Slakeling",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 68,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "resist",
+     "n": 5
+    }
+   ],
+   "flavor": "In and out of the water so often it has forgotten which state is rest.",
+   "attacks": [
+    {
+     "id": "douse",
+     "name": "Douse",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit, then heal it for that much. It has stoked this turn.",
+     "effects": [
+      {
+       "op": "stoked_heal_back",
+       "n": 100
+      }
+     ],
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "hiss",
+     "name": "Hiss",
+     "damage": 22,
+     "text": "22 damage",
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_tapwright",
+   "name": "Tapwright",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "basic",
+   "hp": 50,
+   "retreat": 1,
+   "flavor": "It knows what is in the crucible because it is the one who looks.",
+   "attacks": [
+    {
+     "id": "open_the_tap",
+     "name": "Open the Tap",
+     "damage": 0,
+     "text": "Deal 20 damage to this unit. It has stoked this turn, and you draw a card.",
+     "effects": [
+      {
+       "op": "stoked_draw",
+       "n": 1
+      }
+     ],
+     "ability": true,
+     "stoke": 20
+    },
+    {
+     "id": "runoff",
+     "name": "Runoff",
+     "damage": 21,
+     "text": "21 damage",
+     "cost": {
+      "forge": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_bloomsmith",
+   "name": "Bloomsmith",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage1",
+   "hp": 106,
+   "retreat": 2,
+   "flavor": "The bloom is worked until it stops arguing.",
+   "attacks": [
+    {
+     "id": "work_it_twice",
+     "name": "Work It Twice",
+     "damage": 0,
+     "text": "Deal 30 damage to this unit. It has stoked this turn, and may stoke again this turn.",
+     "effects": [
+      {
+       "op": "stoked_twice",
+       "n": 1
+      }
+     ],
+     "ability": true,
+     "stoke": 30
+    },
+    {
+     "id": "consolidate",
+     "name": "Consolidate",
+     "damage": 42,
+     "text": "42 damage. If this unit stoked this turn, +1 damage per 2 HP stoked.",
+     "effects": [
+      {
+       "op": "stoked_scale_damage",
+       "n": 2
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_cindergaunt",
+   "name": "Cindergaunt",
+   "type": "unit",
+   "faction": "forge",
+   "stage": "stage2",
+   "hp": 132,
+   "retreat": 3,
+   "flavor": "It is down to the last of everything and has never been more dangerous.",
+   "attacks": [
+    {
+     "id": "last_measure",
+     "name": "Last Measure",
+     "damage": 0,
+     "text": "Destroy another unit you control. Deal 35 damage to this unit, then heal it for that much. It has stoked this turn, and you draw a card.",
+     "effects": [
+      {
+       "op": "stoked_heal_back",
+       "n": 100
+      },
+      {
+       "op": "stoked_draw",
+       "n": 1
+      }
+     ],
+     "ability": true,
+     "stoke": 35,
+     "scrap": true
+    },
+    {
+     "id": "spend_it_all",
+     "name": "Spend It All",
+     "damage": 58,
+     "text": "58 damage. If this unit stoked 30 or more this turn, this damage cannot be prevented or reduced.",
+     "effects": [
+      {
+       "op": "stoked_threshold",
+       "n": 30
+      },
+      {
+       "op": "stoked_unpreventable",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "forge": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "forge_second_wind",
+   "name": "Second Wind",
+   "type": "support",
+   "faction": "forge",
+   "cost": 1,
+   "effects": [
+    {
+     "op": "clear_locks",
+     "n": 1
+    },
+    {
+     "op": "draw",
+     "n": 2
+    }
+   ],
+   "text": "Cards returned to your hand this turn are playable again. Draw 2 cards.",
+   "flavor": "The shop does not close. It only changes who is standing at the anvil."
+  },
+  {
+   "id": "forge_the_long_shift",
+   "name": "The Long Shift",
+   "type": "support",
+   "faction": "forge",
+   "cost": 2,
+   "effects": [
+    {
+     "op": "heal_all",
+     "n": 40
+    }
+   ],
+   "text": "Heal 40 damage from each of your units.",
+   "flavor": "Everyone stops. Everyone drinks. Then everyone starts again."
+  },
+  {
+   "id": "forge_cold_shut",
+   "name": "Cold Shut",
+   "type": "support",
+   "faction": "forge",
+   "cost": 1,
+   "effects": [
+    {
+     "op": "damage_uncharged",
+     "n": 25
+    }
+   ],
+   "text": "Deal 25 damage to an enemy unit with no attached energy.",
+   "flavor": "The metal folded and did not weld. Now it is only a shape of a thing."
+  },
+  {
+   "id": "forge_draw_the_temper",
+   "name": "Draw the Temper",
+   "type": "support",
+   "faction": "forge",
+   "cost": 1,
+   "effects": [
+    {
+     "op": "heal_conditional",
+     "n": 112
+    }
+   ],
+   "text": "Heal 112 damage from one of your units that is below half HP.",
+   "flavor": "It is not too late. It is only very nearly too late."
+  },
+  {
+   "id": "forge_open_the_doors",
+   "name": "Open the Doors",
+   "type": "support",
+   "faction": "forge",
+   "cost": 2,
+   "effects": [
+    {
+     "op": "search_basic",
+     "n": 2
+    }
+   ],
+   "text": "Search your deck for up to 2 Basic units and add them to your hand.",
+   "flavor": "Every hand in the district, and the district owes the shop a favour."
+  },
+  {
+   "id": "forge_the_reclaim",
+   "name": "The Reclaim",
+   "type": "support",
+   "faction": "forge",
+   "cost": 1,
+   "effects": [
+    {
+     "op": "return_from_discard",
+     "n": 1
+    }
+   ],
+   "text": "Return a unit from your discard pile to your hand.",
+   "flavor": "Scrap is only scrap until somebody with a fire disagrees."
+  },
+  {
+   "id": "forge_murder_holes_hot",
+   "name": "Firing Slits",
+   "type": "tower_support",
+   "faction": "forge",
+   "effects": [
+    {
+     "op": "tower_damage",
+     "n": 5
+    }
+   ],
+   "text": "Attach to one of your towers. It deals 5 more damage.",
+   "flavor": "They cut the slits after the third siege, and never after that."
+  },
+  {
+   "id": "forge_bellows_rig",
+   "name": "Bellows Rig",
+   "type": "tool",
+   "faction": "forge",
+   "effects": [
+    {
+     "op": "heal_eot",
+     "n": 20
+    }
+   ],
+   "text": "Attach to one of your units. It heals 20 damage at end of turn.",
+   "flavor": "Someone has to keep the air moving. It may as well be a machine."
+  },
+  {
+   "id": "forge_deadmans_hammer",
+   "name": "Deadman's Hammer",
+   "type": "tool",
+   "faction": "forge",
+   "effects": [
+    {
+     "op": "buff_keyword",
+     "kw": "retribution",
+     "n": 15
+    }
+   ],
+   "text": "Attach to one of your units. It gains Retribution 15.",
+   "flavor": "It swings whether or not anybody is holding it."
+  },
+  {
+   "id": "tempest_energy",
+   "name": "Stormlight",
+   "type": "energy",
+   "faction": "tempest",
+   "flavor": "The air before it breaks."
+  },
+  {
+   "id": "tempest_cirrsile",
+   "name": "Cirrsile",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 50,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 3
+    }
+   ],
+   "flavor": "The first stirring. Nothing in it yet but direction.",
+   "attacks": [
+    {
+     "id": "cirr_lash",
+     "name": "Lash",
+     "damage": 14,
+     "text": "14 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 3
+      }
+     ],
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "cirr_break",
+     "name": "Break",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals the counter as bonus damage and strikes a second unit on that board for the counter.",
+     "effects": [
+      {
+       "op": "discharge"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_cirrgale",
+   "name": "Cirrgale",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 96,
+   "retreat": 2,
+   "evolves_from": "tempest_cirrsile",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 6
+    }
+   ],
+   "flavor": "It has found the shape of the valley and begun to hurry.",
+   "attacks": [
+    {
+     "id": "cirr_scour",
+     "name": "Scour",
+     "damage": 40,
+     "text": "40 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 6
+      }
+     ],
+     "cost": {
+      "tempest": 4,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "cirr_burst",
+     "name": "Burst",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals the counter as bonus damage and strikes a second unit on that board for the counter.",
+     "effects": [
+      {
+       "op": "discharge"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_cirrtempest",
+   "name": "Cirrtempest",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 150,
+   "retreat": 3,
+   "evolves_from": "tempest_cirrgale",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 10
+    }
+   ],
+   "flavor": "Everything it gathered on the way, arriving at once.",
+   "attacks": [
+    {
+     "id": "cirr_rend",
+     "name": "Rend",
+     "damage": 72,
+     "text": "72 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 10
+      }
+     ],
+     "cost": {
+      "tempest": 6,
+      "colorless": 5
+     }
+    },
+    {
+     "id": "cirr_landfall",
+     "name": "Landfall",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals the counter as bonus damage and strikes a second unit on that board for the counter.",
+     "effects": [
+      {
+       "op": "discharge"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_nimbwhorl",
+   "name": "Nimbwhorl",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 60,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 3
+    }
+   ],
+   "flavor": "Patience is only pressure that has not been asked for yet.",
+   "attacks": [
+    {
+     "id": "nimb_gather",
+     "name": "Gather",
+     "damage": 18,
+     "text": "18 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 3
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "nimb_hold",
+     "name": "Hold",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals twice the counter to a single target.",
+     "effects": [
+      {
+       "op": "discharge_single",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_nimbsquall",
+   "name": "Nimbsquall",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 104,
+   "retreat": 2,
+   "evolves_from": "tempest_nimbwhorl",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 7
+    }
+   ],
+   "flavor": "Still gathering. It has not decided where to put this.",
+   "attacks": [
+    {
+     "id": "nimb_press",
+     "name": "Press",
+     "damage": 36,
+     "text": "36 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "nimb_hold_fast",
+     "name": "Hold Fast",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals twice the counter to a single target.",
+     "effects": [
+      {
+       "op": "discharge_single",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_nimbmaelstrom",
+   "name": "Nimbmaelstrom",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 162,
+   "retreat": 4,
+   "evolves_from": "tempest_nimbsquall",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 11
+    }
+   ],
+   "flavor": "It decided.",
+   "attacks": [
+    {
+     "id": "nimb_bear_down",
+     "name": "Bear Down",
+     "damage": 63,
+     "text": "63 damage. A discharge on this attack may strike a tower or throne past living units.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 11
+      },
+      {
+       "op": "discharge_structures"
+      }
+     ],
+     "cost": {
+      "tempest": 5,
+      "colorless": 5
+     }
+    },
+    {
+     "id": "nimb_cloudburst",
+     "name": "Cloudburst",
+     "damage": 0,
+     "text": "Discharge: this unit's next attack deals twice the counter to a single target.",
+     "effects": [
+      {
+       "op": "discharge_single",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_foehnsile",
+   "name": "Foehnsile",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 46,
+   "retreat": 1,
+   "flavor": "A warm wind off the ridge. It means something is coming.",
+   "attacks": [
+    {
+     "id": "foehn_rise",
+     "name": "Rising Air",
+     "damage": 0,
+     "text": "Raise Storm by 1.",
+     "effects": [
+      {
+       "op": "storm_raise",
+       "n": 1
+      }
+     ],
+     "ability": true
+    },
+    {
+     "id": "foehn_gust",
+     "name": "Gust",
+     "damage": 21,
+     "text": "21 damage.",
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_foehnshear",
+   "name": "Foehnshear",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 88,
+   "retreat": 2,
+   "evolves_from": "tempest_foehnsile",
+   "flavor": "Two air masses that will not agree, and the line between them.",
+   "attacks": [
+    {
+     "id": "foehn_front",
+     "name": "Front",
+     "damage": 0,
+     "text": "Raise Storm by 2.",
+     "effects": [
+      {
+       "op": "storm_raise",
+       "n": 2
+      }
+     ],
+     "ability": true
+    },
+    {
+     "id": "foehn_drive",
+     "name": "Drive",
+     "damage": 38,
+     "text": "38 damage.",
+     "cost": {
+      "tempest": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_foehnthunderhead",
+   "name": "Foehnthunderhead",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 140,
+   "retreat": 3,
+   "evolves_from": "tempest_foehnshear",
+   "flavor": "The sky arranged itself into a hammer and then used it.",
+   "attacks": [
+    {
+     "id": "foehn_anvil",
+     "name": "Anvil Top",
+     "damage": 0,
+     "text": "Raise Storm by 3.",
+     "effects": [
+      {
+       "op": "storm_raise",
+       "n": 3
+      }
+     ],
+     "ability": true
+    },
+    {
+     "id": "foehn_downburst",
+     "name": "Downburst",
+     "damage": 54,
+     "text": "54 damage, and 3 more per point of Storm.",
+     "effects": [
+      {
+       "op": "storm_scale_damage",
+       "n": 3
+      }
+     ],
+     "cost": {
+      "tempest": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "tempest_siroccskirl",
+   "name": "Siroccskirl",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 44,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 4
+    }
+   ],
+   "flavor": "It does not stop. It only stops being here.",
+   "attacks": [
+    {
+     "id": "sirocc_scud",
+     "name": "Scud",
+     "damage": 13,
+     "text": "13 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 4
+      }
+     ],
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "sirocc_pass",
+     "name": "Pass the Charge",
+     "damage": 0,
+     "text": "Move this unit's counter to another unit you control.",
+     "effects": [
+      {
+       "op": "charge_transfer"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_siroccsquall",
+   "name": "Siroccsquall",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 92,
+   "retreat": 2,
+   "evolves_from": "tempest_siroccskirl",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 7
+    }
+   ],
+   "flavor": "Nothing is lost. It is merely somewhere you did not expect.",
+   "attacks": [
+    {
+     "id": "sirocc_flense",
+     "name": "Flense",
+     "damage": 34,
+     "text": "34 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 7
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "sirocc_hand_off",
+     "name": "Hand Off",
+     "damage": 0,
+     "text": "Move this unit's counter to another unit you control, then draw a card.",
+     "effects": [
+      {
+       "op": "charge_transfer"
+      },
+      {
+       "op": "draw",
+       "n": 1
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_borawhorl",
+   "name": "Borawhorl",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 54,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 3
+    }
+   ],
+   "flavor": "A cold fall wind. It takes the weakest thing first, then the next.",
+   "attacks": [
+    {
+     "id": "bora_bite",
+     "name": "Bite",
+     "damage": 16,
+     "text": "16 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 3
+      },
+      {
+       "op": "charge_on_kill",
+       "n": 6
+      }
+     ],
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "bora_scatter",
+     "name": "Scatter",
+     "damage": 0,
+     "text": "Discharge: split the counter as evenly as possible among every living unit on one enemy board.",
+     "effects": [
+      {
+       "op": "discharge_sweep"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_borashear",
+   "name": "Borashear",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 100,
+   "retreat": 2,
+   "evolves_from": "tempest_borawhorl",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 6
+    }
+   ],
+   "flavor": "It has learned that a cleared field is worth more than a felled tree.",
+   "attacks": [
+    {
+     "id": "bora_harrow",
+     "name": "Harrow",
+     "damage": 42,
+     "text": "42 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 6
+      },
+      {
+       "op": "charge_on_kill",
+       "n": 12
+      }
+     ],
+     "cost": {
+      "tempest": 4,
+      "colorless": 4
+     }
+    },
+    {
+     "id": "bora_strew",
+     "name": "Strew",
+     "damage": 0,
+     "text": "Discharge: split the counter as evenly as possible among every living unit on one enemy board.",
+     "effects": [
+      {
+       "op": "discharge_sweep"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_boramaelstrom",
+   "name": "Boramaelstrom",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage2",
+   "hp": 155,
+   "retreat": 3,
+   "evolves_from": "tempest_borashear",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 10
+    }
+   ],
+   "flavor": "What is left standing was never the point.",
+   "attacks": [
+    {
+     "id": "bora_unroof",
+     "name": "Unroof",
+     "damage": 68,
+     "text": "68 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 10
+      },
+      {
+       "op": "charge_on_kill",
+       "n": 20
+      }
+     ],
+     "cost": {
+      "tempest": 6,
+      "colorless": 5
+     }
+    },
+    {
+     "id": "bora_winnow",
+     "name": "Winnow",
+     "damage": 0,
+     "text": "Discharge: split the counter as evenly as possible among every living unit on one enemy board.",
+     "effects": [
+      {
+       "op": "discharge_sweep"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_calmsile",
+   "name": "Calmsile",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "basic",
+   "hp": 56,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 3
+    },
+    {
+     "kw": "resist",
+     "n": 5
+    }
+   ],
+   "flavor": "The quiet at the middle is not the storm ending.",
+   "attacks": [
+    {
+     "id": "calm_still",
+     "name": "Still Air",
+     "damage": 17,
+     "text": "17 damage.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 3
+      }
+     ],
+     "cost": {
+      "tempest": 2,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "calm_eye",
+     "name": "The Eye",
+     "damage": 0,
+     "text": "Discharge: heal a unit you control for the counter.",
+     "effects": [
+      {
+       "op": "discharge_heal"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_calmgale",
+   "name": "Calmgale",
+   "type": "unit",
+   "faction": "tempest",
+   "stage": "stage1",
+   "hp": 112,
+   "retreat": 2,
+   "evolves_from": "tempest_calmsile",
+   "keywords": [
+    {
+     "kw": "charge",
+     "n": 6
+    },
+    {
+     "kw": "resist",
+     "n": 5
+    }
+   ],
+   "flavor": "It holds the middle open a little longer for whoever is inside it.",
+   "attacks": [
+    {
+     "id": "calm_press",
+     "name": "Pressure Drop",
+     "damage": 32,
+     "text": "32 damage, and 2 more per point of Storm.",
+     "effects": [
+      {
+       "op": "charge_on_damage",
+       "n": 6
+      },
+      {
+       "op": "storm_scale_damage",
+       "n": 2
+      }
+     ],
+     "cost": {
+      "tempest": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "calm_shelter",
+     "name": "Shelter",
+     "damage": 0,
+     "text": "Discharge: heal a unit you control for the counter.",
+     "effects": [
+      {
+       "op": "discharge_heal"
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "tempest_front_line",
+   "name": "Weather Front",
+   "type": "support",
+   "faction": "tempest",
+   "cost": 0,
+   "text": "Raise Storm by 2.",
+   "effects": [
+    {
+     "op": "storm_raise",
+     "n": 2
+    }
+   ],
+   "flavor": "It was always going to happen. This only fixes the hour."
+  },
+  {
+   "id": "tempest_updraft",
+   "name": "Updraft",
+   "type": "support",
+   "faction": "tempest",
+   "cost": 1,
+   "text": "A unit you control gains 15 Charge.",
+   "effects": [
+    {
+     "op": "charge_on_damage",
+     "n": 15
+    }
+   ],
+   "flavor": "Everything light enough to be taken is taken."
+  },
+  {
+   "id": "tempest_earthing",
+   "name": "Earthing Rod",
+   "type": "tool",
+   "faction": "tempest",
+   "text": "This unit grows 2 extra Charge per point of Storm when it deals damage.",
+   "effects": [
+    {
+     "op": "storm_charge_bonus",
+     "n": 2
+    }
+   ],
+   "flavor": "Something has to take the strike. Better it be a thing you chose."
   }
  ]
 }

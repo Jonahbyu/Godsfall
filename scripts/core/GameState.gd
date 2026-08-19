@@ -1869,15 +1869,26 @@ func _resolve_line_effects(p: Player, enemy: Player, u: Unit, atk: AttackData,
 	## here, because the counter is a bonus ON an attack: resolving it immediately
 	## would let a discharge fire with no attack behind it and skip the targeting
 	## chain entirely.
-	for mode in ["discharge", "discharge_single", "discharge_sweep"]:
-		if atk.has_effect(mode):
-			var held: int = u.spend_charge()
-			if held > 0:
-				u.pending_discharge = held
-				u.pending_discharge_mult = maxi(1, atk.effect_value(mode, 1))
-				u.pending_discharge_mode = mode
-				_log("%s discharges %d." % [u.card.name, held])
-			return
+	## Named literally rather than looped over a list, so the op names are
+	## greppable: tools/add_tempest_faction.py scrapes `has_effect("...")` out of
+	## this file to prove a card cannot print an effect the engine ignores, and a
+	## variable in that position is invisible to it. An unknown op parses fine and
+	## silently does nothing, which is the exact bug the scrape exists to catch.
+	var mode: String = ""
+	if atk.has_effect("discharge"):
+		mode = "discharge"
+	elif atk.has_effect("discharge_single"):
+		mode = "discharge_single"
+	elif atk.has_effect("discharge_sweep"):
+		mode = "discharge_sweep"
+	if mode != "":
+		var held: int = u.spend_charge()
+		if held > 0:
+			u.pending_discharge = held
+			u.pending_discharge_mult = maxi(1, atk.effect_value(mode, 1))
+			u.pending_discharge_mode = mode
+			_log("%s discharges %d." % [u.card.name, held])
+		return
 
 	## Spend it as healing instead. Flat, like every heal in the game — a heal
 	## that scales with its target cannot be priced (CLAUDE.md).

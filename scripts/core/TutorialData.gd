@@ -1007,6 +1007,7 @@ static func compendium() -> Array:
 			_p_kw_resist(), _p_kw_siphon(), _p_kw_void(), _p_kw_rift(),
 			_p_kw_earth(), _p_kw_essence(),
 			_p_kw_stoke(), _p_kw_scrap(),
+			_p_kw_charge(), _p_kw_storm(),
 		]},
 		{"title": "Factions", "pages": [
 			_p_factions(), _p_gap(),
@@ -1657,3 +1658,33 @@ It is the deliberate exception to [i]attached energy is lost when the unit dies[
 [b]Nearest living friendly unit, same board, ties go left.[/b] It never crosses boards — crossing would make Essence best at exactly the moment it should fail, when the board it defended has been cleared.
 
 If you cannot pay, it simply does not fire."}
+
+
+static func _p_kw_charge() -> Dictionary:
+	return {"id": "kw_charge", "title": "Charge N", "keyword": "charge", "faction": "Tempest signature", "body":
+"[b]A visible counter on this unit. It grows by N each time this unit deals an instance of damage, and a Discharge ability spends the whole thing at once.[/b]
+
+[b]It grows on damage DEALT, never on damage taken.[/b] The unit has to be swinging, which costs energy and exposes the body — so banking is a decision rather than something that happens to you. If it grew on damage taken, the opponent's only counterplay would be to stop attacking, which is no counterplay at all.
+
+[b]The counter persists across turns, and it survives evolution.[/b] Attached energy and Tools are the only other things that do. The value carries and the [i]rate[/i] comes from the new card, so [b]evolving is a rate increase[/b] — a Basic banking 3 a hit that evolves into a Stage 1 keeps its counter and starts banking 8.
+
+[b]It is lost when the unit dies.[/b] That is the whole counterplay, and it is the same bargain attached energy already makes: kill the body and the investment goes with it. It is also lost on [i]Rise[/i] and on retreat — Rise restores the card, not the history, and retreat would otherwise launder a counter past every piece of removal in the game.
+
+[b]What a discharge does is printed on the card.[/b] The baseline is [i]this attack deals the counter as bonus damage and strikes a second unit for the counter[/i], but different cards spend it differently — into one target, split across a board, or as healing.
+
+[b]Discharge damage never grows the counter back.[/b] A spend is a spend."}
+
+
+static func _p_kw_storm() -> Dictionary:
+	return {"id": "kw_storm", "title": "Storm N", "keyword": "storm", "faction": "Tempest signature", "body":
+"[b]A global counter both players read. Every attack in the game deals one additional instance of N damage.[/b]
+
+Storm is a property of the [b]board[/b], not of a card — the same category as the Gap. It is [b]0 until a Tempest card raises it[/b], it never falls, and it is [b]symmetric[/b]: one number shared by both players, where each player has their own Gap.
+
+[b]One instance of N, never N instances of 1.[/b] This matters more than it sounds. [i]Resist X[/i] reduces each incoming [b]instance[/b] to a minimum of 1 damage, so N separate ticks would slip past armour entirely as Storm climbed. As a single instance, Resist blunts it normally and armour keeps working.
+
+[b]A Tempest unit's Storm instance is doubled.[/b] That is the asymmetry that makes Storm a Tempest mechanic rather than a house rule — it is a shared resource the faction simply uses better.
+
+[b]The extra instance obeys the targeting chain on its own.[/b] If the main attack killed the defender, the Storm instance retargets to the next living unit, and falls through to the tower once the board is clear — so Storm quietly rewards clearing a board.
+
+[b]Retribution still fires only once per attack[/b], not once per instance. Otherwise every wall's recoil would double the moment Storm appeared."}
