@@ -40,6 +40,7 @@ RUST = (150, 92, 60)
 
 FACTION = {
     "hel": ACCENT,
+    "forge": (224, 122, 60),   # Theme.gd forge.base -- the set's only warm colour
     "void": (90, 96, 120),
     "gaia": HP_GREEN,
     "heaven": GOLD,
@@ -2009,7 +2010,27 @@ def build(card):
     return finish(img, tint)
 
 
+## The 58 bestiary creatures (2026-08-15) live in their own module -- this file
+## was already 2029 lines and doubling it in place would have made both halves
+## harder to read. Registered here rather than at import time so DRAW and every
+## helper above already exist when it runs.
+def _register_bestiary():
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import bestiary_art
+    bestiary_art.register(sys.modules[__name__])
+    import bestiary_art2
+    bestiary_art2.register(sys.modules[__name__])
+    import forge_art
+    forge_art.register(sys.modules[__name__])
+    import forge_art2
+    forge_art2.register(sys.modules[__name__])
+    import tempest_art
+    tempest_art.register(sys.modules[__name__])
+
+
 def main():
+    _register_bestiary()
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(ROOT, "data", "cards.json"), encoding="utf-8") as f:
         cards = json.load(f)["cards"]
