@@ -18,6 +18,24 @@ var earth_grown: int = 0
 ## `earth_grown` this is history, so Rise and evolution reset it.
 var hp_grown: int = 0
 
+## Tempest `Charge`: a banked counter that grows when this unit DEALS damage and
+## is spent whole by a Discharge ability.
+##
+## Unlike every other accumulated value on a unit, this SURVIVES evolution — see
+## evolve_into(). Attached energy and the Tool are the only other things that do,
+## and the reason is identical: without it, evolving destroys the investment, so
+## the correct play for the one faction whose resource is time would be never to
+## evolve. It is still lost on death, on `Rise`, and on retreat.
+var charge: int = 0
+
+## A discharge that has been paid for and is riding this unit's next attack.
+## Kept separate from `charge` because the counter is already spent — this is the
+## amount in flight, and it must never feed back into the counter. A spend is a
+## spend, or a large discharge partially refunds itself.
+var pending_discharge: int = 0
+var pending_discharge_mult: int = 1
+var pending_discharge_mode: String = ""
+
 ## Sanctuary runtime state. `sanctuary_pool` is the remaining absorb pool; when it
 ## hits 0 the shield is still live for one final full absorb (plain Sanctuary), and
 ## only then is `sanctuary_active` cleared. Plain Sanctuary starts with pool 0.
@@ -76,6 +94,39 @@ var protected_this_turn: bool = false
 ## Decay damage taken this turn, so Reconsecrate can undo it.
 var decay_taken_this_turn: int = 0
 
+## HP this unit has Stoked this turn. Forge's signature: `Stoke N` is a free
+## once-per-turn ability that deals N to this unit and sets this counter, and
+## *other lines read it* — "if this unit stoked this turn, ...". See forge.md.
+##
+## An AMOUNT rather than a bool, because payoffs come in two shapes and both
+## have to read one field: scaling ones ("+1 damage per 2 HP stoked") and
+## thresholds ("if this unit stoked 40 or more"). A bool would make a large
+## printed Stoke strictly worse than a small one.
+##
+## Cleared with the rest of the per-turn unit state in Player.start_turn().
+var stoked_this_turn: int = 0
+
+## Forge: a second attack this unit may queue this turn, granted by a
+## `stoked_extra_attack` payoff. Conditional multi-attack rather than printed
+## `Windfury` — the condition sits on a Forge body, which is what keeps it clear
+## of the standing rule that Windfury may never share a card with `Judgment`.
+##
+## An extra SLOT rather than a flag: `queued_attack` holds one line, so a second
+## attack needs somewhere to live. Resolution walks this after the primary.
+var extra_attack: AttackData = null
+var extra_target = null
+var extra_attack_allowed: bool = false
+
+## Forge: this unit may Stoke a second time this turn (`stoked_twice`). Breaks
+## the once-per-turn ability limit for Stoke lines only, which is what doubles
+## every amount-scaling payoff on the body.
+var extra_stoke_allowed: bool = false
+
+## Forge `stoked_cost_reduction`: energy taken off this unit's attacks this turn.
+## Stacks (two grants are 2 cheaper) and floors the cost at 0 on read rather than
+## being clamped as it accumulates, the same rule the keyword modifier layer uses.
+var cost_reduction_this_turn: int = 0
+
 ## The evolution path underneath this unit, oldest first: the card ids this unit
 ## was built from. Retreat returns all of them to hand as separate cards.
 var evolution_path: Array = []   ## Array[String] card ids
@@ -125,6 +176,26 @@ func add_kw_mod(kw_name: String, n: int) -> void:
 ## that per-unit state the engine tracks has to be visible per-unit).
 func kw_is_modified(kw_name: String) -> bool:
 	return int(kw_mods.get(kw_name, 0)) != 0
+
+
+## Grow the banked counter. Floored at 0 here rather than on read, because
+## `charge` has no printed value to fall back to the way kw_mods does.
+func add_charge(n: int) -> void:
+	charge = maxi(0, charge + n)
+
+
+## Spend the whole counter and return what it held.
+func spend_charge() -> int:
+	var held: int = charge
+	charge = 0
+	return held
+
+
+## The printed Charge rate — how much this unit banks per damage instance dealt.
+## Read through kw_value so a card that raises Charge is honoured, exactly as
+## every other keyword works.
+func charge_rate() -> int:
+	return kw_value("charge")
 
 
 func _init(c: CardData) -> void:
@@ -252,15 +323,56 @@ func absorb(amount: int) -> int:
 	if amount <= sanctuary_pool:
 		sanctuary_pool -= amount
 		return 0
-	## Pool cannot cover it: full absorb, shield spent.
+	## Pool cannot cover it. The shield absorbs everything it still holds, is
+	## spent, and the REMAINDER GETS THROUGH.
+	##
+	## This replaced an unbounded "terminal overflow" that absorbed the whole
+	## instance no matter how large. That rule was adopted so a small pool is
+	## never wasted and so Sanctuary resists burst as well as chip -- but it makes
+	## every shielded body worth `pool + one arbitrarily large hit`, and a deck
+	## running thirty of them (Sealed Light) simply cannot be killed: it measured
+	## 88-91% across 3M games while its games ran 4 rounds longer than average,
+	## i.e. it was surviving to win on the tower clock rather than out-playing
+	## anyone. Draining the pool exactly keeps Sanctuary strong against chip --
+	## which is its documented identity -- while letting a genuinely big attack
+	## punch through the last sliver instead of being erased by it (heaven.md).
+	## PLAIN Sanctuary (printed pool 0) is the exception and keeps the full
+	## absorb: it is a boolean "block the next instance" shield, so draining it
+	## exactly would make it block nothing at all and delete the keyword.
+	if kw_value("sanctuary") <= 0:
+		sanctuary_active = false
+		return 0
+	var through: int = amount - sanctuary_pool
 	sanctuary_pool = 0
 	sanctuary_active = false
-	return 0
+	return through
 
 
-## Restore Sanctuary to its printed value — Rekindle and Aegis of the Choir.
+## Restore Sanctuary to its printed value — Aegis of the Choir, and any card that
+## spends a CARD to do it. A one-shot support paying full price gets full value.
 func restore_sanctuary() -> void:
 	_reset_sanctuary()
+
+
+## Recharge Sanctuary by `amount`, never above its printed pool, and re-arm the
+## shield if it had been spent entirely.
+##
+## This is the FREE, repeating form used by the end-of-turn `Rekindle` abilities,
+## and it is deliberately weaker than `restore_sanctuary()`. A free once-per-turn
+## refill to a printed 100 prevents more damage per turn than any attack in the
+## game deals, which is why Sealed Light — running four such bodies — measured
+## 89.2% over 1M games. Partial recharge keeps the "a shield that comes back"
+## identity while making chip damage actually accumulate against it (heaven.md).
+func recharge_sanctuary(amount: int) -> void:
+	if amount <= 0:
+		return
+	var printed: int = kw_value("sanctuary")
+	if printed <= 0:
+		## Plain Sanctuary (printed 0) is a boolean shield: re-arm it, no pool.
+		sanctuary_active = true
+		return
+	sanctuary_pool = min(printed, sanctuary_pool + amount)
+	sanctuary_active = true
 
 
 ## Grant plain Sanctuary to a unit whose printed card has none (Aegis of the Choir).
@@ -332,9 +444,53 @@ func take_damage(amount: int) -> int:
 	return dealt
 
 
+## Pay a Stoke cost: lose `amount` HP and record it for this turn's payoffs.
+## Returns the HP actually spent.
+##
+## Deliberately NOT routed through take_damage(), and that is the whole keyword:
+## Stoke is a COST the controller chooses to pay, not an incoming damage event.
+## So `Sanctuary` does not absorb it, `Resist` does not reduce it, and
+## `Retribution` does not recoil — there is no attacker. If it went through the
+## damage path a shielded body would Stoke for FREE, and the faction's central
+## cost would be optional in exactly the matchups where it has to be real.
+##
+## `protected_this_turn` is honoured, because Hold the Slot is a floor on the
+## unit's HP rather than damage prevention — it says this body does not die this
+## turn, and a voluntary cost should not be able to route around that either.
+##
+## Stoke MAY kill. The caller resolves the death through the normal path, so
+## `Toll`, `Rise` and `Essence` all fire; Forge gets no private kind of death.
+func pay_stoke(amount: int) -> int:
+	if amount <= 0 or not is_alive():
+		return 0
+	var floor_hp: int = 1 if protected_this_turn else 0
+	var spent: int = min(amount, max(0, hp - floor_hp))
+	hp -= spent
+	stoked_this_turn += spent
+	return spent
+
+
+## True if this unit has Stoked at all this turn — the plain flag most payoffs read.
+func has_stoked() -> bool:
+	return stoked_this_turn > 0
+
+
+## Forge: an extra attack slot is only usable while it has been granted AND is
+## still empty. Checked by GameState before a second queue is accepted.
+func can_queue_extra() -> bool:
+	return extra_attack_allowed and extra_attack == null and is_alive()
+
+
+func clear_extra_queue() -> void:
+	extra_attack = null
+	extra_target = null
+
+
 ## What this attack actually costs on this unit, including a Deadweight tax.
 func attack_cost(atk: AttackData) -> int:
-	return atk.total_cost() + tool_cost_penalty()
+	## Deadweight taxes upward, Forge's Stoke discount cuts downward, and the
+	## result floors at 0 — an attack may become free but never pays the player.
+	return max(0, atk.total_cost() + tool_cost_penalty() - cost_reduction_this_turn)
 
 
 func can_afford(atk: AttackData, pool: int) -> bool:
@@ -354,9 +510,21 @@ func pool_needed(atk: AttackData) -> int:
 func can_use_ability(ab: AttackData) -> bool:
 	if not ab.is_ability or not is_alive():
 		return false
+	## Forge `stoked_twice` lifts the once-per-turn limit for STOKE lines only,
+	## and for exactly one extra use. Any other ability still gets one activation
+	## — the payoff breaks its own rule, not the general one.
 	if has_used_ability(ab):
+		if not (ab.stoke > 0 and extra_stoke_allowed):
+			return false
+	if attached < ab.consume_cost():
 		return false
-	return attached >= ab.consume_cost()
+	## A Stoke line needs the HP to actually spend. Requiring MORE than the cost
+	## (not >=) is deliberate: a unit may Stoke itself to death, but only when the
+	## HP is really there — a 20 HP body cannot pay Stoke 40 and it may not pay a
+	## partial cost, the same way an unaffordable attack is simply illegal.
+	if ab.stoke > 0 and hp < ab.stoke:
+		return false
+	return true
 
 
 func has_used_ability(ab: AttackData) -> bool:
@@ -364,9 +532,21 @@ func has_used_ability(ab: AttackData) -> bool:
 
 
 ## Burn the Consume cost and mark the ability spent for this turn.
+##
+## Stoke is NOT paid here. It has to happen inside GameState, because paying it
+## can kill the unit and a death has to resolve through the normal path so Toll,
+## Rise and Essence all fire — which is not something a Unit can do to itself.
+## Scrap likewise destroys a *different* unit and needs the board.
 func spend_ability(ab: AttackData) -> void:
 	attached = max(0, attached - ab.consume_cost())
-	abilities_used.append(ab.id)
+	## A second Stoke consumes the grant rather than the once-per-turn slot, so
+	## `stoked_twice` buys exactly one extra use. Without this the grant would
+	## persist for the rest of the turn and Stoke would become unlimited, which
+	## is the one thing the ability limit exists to prevent.
+	if ab.stoke > 0 and abilities_used.has(ab.id) and extra_stoke_allowed:
+		extra_stoke_allowed = false
+	else:
+		abilities_used.append(ab.id)
 
 
 func clear_abilities_used() -> void:
@@ -376,6 +556,8 @@ func clear_abilities_used() -> void:
 ## Clears the pending attack but deliberately keeps `last_attack` — that is the
 ## memory the lock re-fires from, and it has to outlive the attack resolving.
 func clear_queue() -> void:
+	extra_attack = null
+	extra_target = null
 	queued_attack = null
 	queued_target = null
 
@@ -395,6 +577,11 @@ func make_risen() -> Unit:
 	## A risen Makeshift Tower comes back at its printed size, not the size it
 	## had grown to — same rule, same reason.
 	u.hp_grown = 0
+	## A banked Charge counter dies with the body. Rise restores the card, not
+	## the history — refunding a full counter would make death nearly free for
+	## the one faction whose counterplay IS death. Fresh Units start at 0, so
+	## this is belt-and-braces against a make_risen that later copies more state.
+	u.charge = 0
 	## Keyword modifiers are history too — a "+2 Toll" support raised the body
 	## that died, not the card. A risen unit comes back at its printed values.
 	u.kw_mods = {}
@@ -421,6 +608,12 @@ func evolve_into(new_card: CardData) -> void:
 	hp = max(1, new_card.max_hp - missing)
 	lost_rise = false                        ## new printed card, new keywords
 	judgment_spent = false                   ## new printed card, new charge
+	## `charge` is deliberately NOT reset here. It is the third thing to survive
+	## evolution, after attached energy and the Tool, and for the same reason:
+	## without it, evolving destroys the investment, so the correct play for the
+	## one faction whose resource is time would be never to evolve. The VALUE
+	## carries and the RATE comes from the new card via kw_value(), which is what
+	## makes evolving Tempest's rate increase. Guarded by TempestTest.
 	_reset_sanctuary()                       ## new printed card, new shield
 	clear_queue()
 	## The remembered attack belonged to the old printed card and does not exist

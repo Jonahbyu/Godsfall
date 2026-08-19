@@ -427,7 +427,7 @@ Concretely, a support card may do about one of these:
 | Retreat modification | Reduce a retreat cost by 1–2, or refund it |
 | Direct damage | ~20, or ~25 with a condition |
 | Board manipulation | Move a unit, move attached energy |
-| Healing | 20 HP is the baseline; ~10 to the whole board, or 50 with a condition |
+| Healing | 32 HP is the baseline; ~16 to the whole board, or 80 with a condition |
 | Tool (per turn) | ~1/3 of the one-shot equivalent |
 | Tower support | +20 max HP, +5 tower damage, or a 25 HP repair |
 
@@ -465,8 +465,8 @@ all is that it's the cleanest axis for printing **two versions of the same card*
 
 | Free | Priced |
 |---|---|
-| `Shore Up` — heal 20 | `Field Surgery` — *heal 50*, for 1 **(built)** |
-| `Field Rites` — heal 10 to all | `Closing Ranks` — *heal 20 to all*, for 2 **(built)** |
+| `Shore Up` — heal 32 | `Field Surgery` — *heal 80*, for 1 **(built)** |
+| `Field Rites` — heal 16 to all | `Closing Ranks` — *heal 32 to all*, for 2 **(built)** |
 | `Collapse` — 20 damage to an **uncharged** unit | *20 damage to any unit*, for 2 |
 | `Muster` — search a Basic | *search any unit*, for 1 |
 | `Offering` — +3 pool energy | — energy-for-energy is never a variant |
@@ -485,10 +485,20 @@ Two guards on the pattern:
   Priced supports buy *effects*, never pool energy.
 
 **The healing class sets the reference rate.** Healing was the first class given priced
-cards, and its ladder is the worked example the others should follow: **a 20 HP baseline,
-and each energy buys about 30 more** (`Shore Up` 20 free → `Field Surgery` 50 for 1 →
-`Grave Warden's Oath` 100 for 3). A free card may reach the same +30 by taking a condition
-instead of a cost, which is what `Last Breath` does.
+cards, and its ladder is the worked example the others should follow: **a 32 HP baseline,
+and each energy buys about 48 more** (`Shore Up` 32 free → `Field Surgery` 80 for 1 →
+`Grave Warden's Oath` 120 for 3, capped). A free card may reach the same step by taking a
+condition instead of a cost, which is what `Last Breath` does.
+
+**The ladder was re-anchored ×1.6 on 2026-08-17, and the reason is that it had never been
+re-derived after the HP curve moved.** The old 20/50/100 numbers were set when Basics were
+~50 HP; the 2026-08-08 raise took bodies to 40–175 and deliberately left the *damage*
+anchors alone, but nothing revisited the *support* band — so a 20-point heal went from 40%
+of a small body to 12% of a large one. Measured over 4M games, supports-per-deck correlated
+**negatively** with win rate (−0.19): every deck in the bottom third ran 15–22 supports and
+every deck in the top third ran 7–10, because a support is a card that is not a body, and
+bodies are what shield. Draw, search and utility were **not** rescaled — their value is in
+card economy and did not change when HP did.
 
 **No card fully heals a unit, at any price.** Every heal is a flat number — never "restore
 to max," never a percentage of printed HP. A heal that scales with its target can't be
@@ -694,10 +704,11 @@ curve because they burn the investment.
 
 Consume is a mechanic **all factions have access to**, tuned to each faction's identity.
 
-**Consume may appear on either an attack or an ability**, and it is the *only* cost an
-ability may carry (see Abilities are free). On an ability it is the whole price, which is
-what stops a free once-per-turn effect from being a permanent no-cost engine: the unit has
-to be re-charged to keep using it.
+**Consume may appear on either an attack or an ability.** On an ability it is the whole
+price, which is what stops a free once-per-turn effect from being a permanent no-cost
+engine: the unit has to be re-charged to keep using it. It is **one of three** non-energy
+costs an ability may print — the others are Forge's `Stoke N` and `Scrap`, which spend HP
+and bodies on the same principle (see *Abilities are free*).
 
 ---
 
@@ -846,11 +857,13 @@ touches.
 |---|---|
 | **Rise** | When this dies, return it to an empty slot on your side at the start of your next turn, at **half HP** and **without Rise**. Every other ability, attack, and keyword returns intact — at their **printed** values. Attached energy is not restored, and neither is any stat the card had *grown* in play (notably Gaia's `Earth`). Rise restores the card, not the history. |
 | **Retribution N** | When this unit takes damage from an attack, deal N damage back to the attacker. |
-| **Consume N** | This line destroys N attached energy on activation. Priced at ≈20 damage per energy consumed. May appear on an attack or an ability; on an ability it is the only cost permitted. |
+| **Consume N** | This line destroys N attached energy on activation. Priced at ≈20 damage per energy consumed. May appear on an attack or an ability. |
 | **Judgment N** | One charge, spent by either use. **Defensive:** when this unit would die, it instead survives at N HP. **Offensive:** when this unit attacks and leaves the defender at N HP or below, that defender is destroyed. Returns only if the card returns to hand. |
-| **Sanctuary / Sanctuary N** | Plain **Sanctuary** absorbs the next instance of damage entirely, from any source, then is spent. **Sanctuary N** is a pool of N that damage depletes; when the pool is exhausted it becomes plain Sanctuary for one final full absorb, then is spent. |
+| **Sanctuary / Sanctuary N** | Plain **Sanctuary** absorbs the next instance of damage entirely, from any source, then is spent. **Sanctuary N** is a pool of N that damage depletes; a hit larger than the pool drains it and **the remainder gets through**. |
 | **Windfury** | This unit may attack twice per turn. |
 | **Resist X** | Reduce each incoming instance of damage by X, to a **minimum of 1 damage**. |
+| **Stoke N** | *(Forge)* Free once-per-turn ability: deal N damage to this unit. It has **stoked** until end of turn, and other lines read that state. **Unpreventable** — it is a cost, not damage from a source. |
+| **Scrap** | *(Forge)* An ability cost: destroy **another** unit you control. It dies normally, so `Toll`, `Rise` and `Essence` all fire. |
 
 ### The Gap
 
@@ -918,30 +931,50 @@ Heaven's biggest attacks sit on Sanctuary bodies rather than Judgment ones.
 
 ### Sanctuary
 
-**N is a floor, not a ceiling.** Sanctuary N blocks *at least* N and possibly far more,
-because the last sliver of pool still eats one whole instance.
+**N is exactly what it blocks.** Sanctuary N is a pool of N that damage depletes; when a
+hit exceeds what is left, the pool absorbs everything it still holds and **the remainder
+gets through**.
 
 | Incoming | Result |
 |---|---|
 | 30 into Sanctuary 100 | Absorbed. Now Sanctuary 70. |
-| 110 into Sanctuary 100 | Pool cannot cover it → full absorb. All 110 blocked, Sanctuary gone. |
-| 30 into Sanctuary 20 | Pool cannot cover it → full absorb. Sanctuary gone. |
-| 30 × 4 into Sanctuary 100 | 100 → 70 → 40 → 10, then the fourth hit exceeds 10 and is fully absorbed. Four attacks blocked. |
+| 110 into Sanctuary 100 | 100 absorbed, **10 through**. Sanctuary gone. |
+| 30 into Sanctuary 20 | 20 absorbed, **10 through**. Sanctuary gone. |
+| 30 × 4 into Sanctuary 100 | 100 → 70 → 40 → 10, then the fourth hit takes the last 10 and puts **20 through**. |
+
+**Plain `Sanctuary` is the exception and still absorbs one whole instance**, at any size.
+It has no pool, so draining it exactly would make it block nothing and delete the keyword.
 
 **Blocks all damage sources** — attacks, tower fire, `Decay`, support damage, `Retribution`.
 
 **Why the pool form.** A boolean shield treats a free `Decay 5` tick and a 75-damage
 attack identically, so the cheapest possible chip would strip a shield a 6-energy attack
-had to break. Under the pool form a 5-point tick removes only 5. Sanctuary N is therefore
-resistant to chip *and* resistant to burst, and neither the Hel matchup nor the big-attack
-matchup has a degenerate line.
+had to break. Under the pool form a 5-point tick removes only 5, so Sanctuary N stays
+resistant to chip — which is its identity.
 
-**Minimum printed N is 60.** Below that the number does no work: because of the free
-overflow, a Sanctuary 30 against a 38-damage attack blocks all 38 — identical to plain
-Sanctuary. Printed values are plain, 60, 80, or 100. Nothing in between.
+**The unbounded overflow was removed on 2026-08-17, and it is the change that mattered
+most.** The rule used to be that a pool which could not cover a hit absorbed the *whole*
+instance regardless of size, so `N` was a floor rather than a value. That made every
+shielded body worth `N + one arbitrarily large hit`, which is not a shield but an extra
+life — and a deck running thirty of them is not killable. Measured over 3M games,
+`Sealed Light` (30 units, every one carrying Sanctuary 60+) sat at **88–91%** while its
+games ran four rounds *longer* than average: it was not out-playing anyone, it was
+surviving to win on the tower clock. Draining the pool exactly removes the extra life and
+keeps everything the pool form was adopted for.
 
-**The counterplay is inverted, deliberately.** The way to break Sanctuary N is many small
-hits, not one big one. Wide boards beat it; a single haymaker feeds it.
+**Minimum printed N is 60.** Below that the number is too small to matter against the
+damage the game actually deals. Printed values are plain, 60, 80, or 100.
+
+**The counterplay is no longer inverted.** Chip still depletes a pool efficiently, but a
+single big attack now punches through the last sliver instead of being erased by it, so
+both answers work and neither is degenerate.
+
+**Sanctuary bodies buy damage at ≈ 18% below the standard curve.** Sanctuary is worth a
+large amount of effective HP — measured across the card pool, a Sanctuary body carried
+1.5–1.9× the effective HP of a plain one at the same stage — and it used to pay *nothing*
+for it, hitting 2–22% harder than plain units rather than softer. `Judgment` takes a
+documented one-third rate cut for a smaller benefit; Sanctuary now takes a smaller cut for
+a larger one, applied as **less damage at the same cost** so the rate genuinely moves.
 
 ### Windfury
 
@@ -1020,26 +1053,40 @@ Multiple keywords on a single ability line (e.g. `Toll 2, Decay 5`) count as one
 core rule, and an ability is not an attack. An ability resolves the moment you use it
 rather than at end of turn, and it takes nothing from the pool.
 
-**The one exception is `Consume N`**, which destroys N *attached* energy on activation.
-Consume is not a payment into the pool and not a requirement that stays on the unit: it
-burns an investment already committed to that body. An ability may carry a Consume; it may
-carry nothing else.
+**An ability is free unless it prints a cost.** The costs an ability may print are the
+ones that are *not* pool energy:
+
+| Printed ability cost | What it spends |
+|---|---|
+| **`Consume N`** | N *attached* energy, destroyed |
+| **`Stoke N`** | N of the unit's own HP |
+| **`Scrap`** | Another unit you control, destroyed |
+
+None of these is a payment into the pool, and none stays on the unit as a requirement.
+Each burns something already committed — an investment, a health bar, a body.
 
 | | Attack | Ability |
 |---|---|---|
 | When it resolves | End of turn | Immediately |
-| Cost source | Pool → attached | Nothing, or attached energy destroyed by `Consume` |
-| Cost after the first use | Free — the energy stays attached | Free, unless it Consumes every time |
+| Cost source | Pool → attached | Nothing, or a printed non-energy cost |
+| Cost after the first use | Free — the energy stays attached | Free, unless it charges every time |
 | Limit | One queued attack per unit | Once per turn, per unit |
 
 This is why the two are worth separating at all. An attack's cost is an *annuity* — you
-pay once and the attack is free every turn after. A Consume is the opposite: it charges
-every single time, which is what lets Consume abilities be strong without becoming
-permanent engines. A free ability is priced by the once-per-turn limit alone.
+pay once and the attack is free every turn after. A printed ability cost is the opposite:
+it charges **every single time**, which is what lets a strong ability exist without
+becoming a permanent engine. A free ability is priced by the once-per-turn limit alone.
+
+**This rule was narrower until 2026-08-16**, reading *"an ability may carry a Consume; it
+may carry nothing else."* That was written when Consume was the only non-energy cost anyone
+had designed, so the closed list was an accident of what existed rather than a decision.
+Forge's `Stoke` and `Scrap` made it false, and the generalisation — *free by default, priced
+when printed, never from the pool* — is what the original rule was actually protecting.
 
 The distinction is enforced in the data, not by convention: a line marked `"ability": true`
 has its `cost` block ignored outright, so a card cannot accidentally price an ability by
-filling in the wrong field. The only cost that reads is `"consume": N`.
+filling in the wrong field. The costs that read are `"consume": N`, `"stoke": N`, and
+`"scrap": true`.
 
 ### Evolution
 
@@ -1320,6 +1367,7 @@ A **faction is an energy color.** Four are being built first; more are held in r
 | **Void** | Absence, entropy, unmaking | Deny | 🔨 Built — see `void.md` |
 | **Gaia** | Life, growth, nature | Fuel | 🔨 Built — see `gaia.md` |
 | **Heaven** | Order, light, judgment | Protect | 🔨 Built — see `heaven.md` |
+| **Forge** | Fire, smithing, the primal | Kill | 🔨 Built — see `forge.md`. The aggro slot, and the only warm colour |
 
 Each faction must answer: *what does my deck do that no other faction can?*
 
@@ -1356,6 +1404,8 @@ rule-breakers.
 | **Hel signature** | `Toll`, `Decay` | `hel.md` |
 | **Void signature** | `Siphon`, `Void N` | `void.md` |
 | **Gaia signature** | `Earth`, `Essence` | `gaia.md` |
+| **Forge signature** | `Stoke`, `Scrap` | `forge.md` |
+| **Tempest signature** | `Charge`, `Storm` | `docs/specs/2026-08-17-tempest-faction-design.md` |
 
 This replaced the earlier arrangement where `Rise` and `Retribution` lived in `hel.md`.
 Hel keeps both and no Hel card changed — they simply stopped being exclusive. Hel's two
@@ -1371,20 +1421,28 @@ Sanctuary as a defensive primitive.
 
 ### Future Factions
 
-Held in reserve, not yet designed. The current four are all cool and cosmic — the set
-is missing anything warm or aggressive, so the aggro slot is the most urgent gap.
+**Forge is the fifth faction and its design is settled** — see `forge.md`. Its keywords,
+costs, and brakes are decided; no cards are authored and no engine work is done.
 
-| Candidate | Domain | Likely verb | Notes |
+| Candidate | Domain | Verb | Notes |
 |---|---|---|---|
-| **Forge** | Fire, smithing, the primal | Kill | The aggro slot. Completes a Norse-flavored cosmology alongside Hel, and "fire costs fuel" is the most intuitive energy justification in the set. **Most likely fifth faction.** |
-| **Tempest** | Storm, speed, motion | Chain | Cheap repeated attacks. **`Windfury` is now a shared keyword**, so Tempest's identity is *cheap, repeated, unconditional* multi-attack rather than owning the mechanic — it prints windfury widest and cheapest, where other factions get one card. |
+| ~~**Forge**~~ | Fire, smithing, the primal | Kill | **Built 2026-08-16 — no longer in reserve.** See the faction table above and `forge.md`. |
 | **Wyrd** | Fate, chance, transformation | Gamble | Randomness and transformation. Fun, hard to balance. |
 | **Wilds** | Flesh, beasts, raw physicality | Overwhelm | Big bodies, brute force. Distinct from Gaia's nurturing growth — this is nature as a threat, not a garden. |
+| **Tempest** | Storm, pressure, the break | Bank | **Revived 2026-08-17 as a genuinely different idea, per the clause below.** Its original *cheap repeated attacks* identity stays absorbed into Forge — nothing in the new design competes with Forge's multi-attack claim. Tempest is now the **accumulation** colour: `Charge` banks a growing per-unit counter, `Storm` is a shared global damage ramp. Designed, not built; see `docs/specs/2026-08-17-tempest-faction-design.md`. |
 
-A design gap worth tracking: **nothing yet punishes hoarding.** Hel is structurally the
-banking faction and currently faces no predator. Anti-hoard mechanics — energy denial,
-pool destruction, punishing large pools — most naturally belong in **Void**, with
-**Tempest** as a secondary home (speed beating accumulation).
+**Tempest was absorbed and then revived, and the absorption clause is what made it
+legitimate.** The 2026-08-16 merge into Forge ended with *"revivable later only as a
+genuinely different idea, or as a subfaction"*, and the revival had to clear that bar
+before any card was written: the new Tempest abandons cheap repeated attacks entirely and
+is built on **resources that persist and grow across turns**, which is the one axis no
+built colour occupies. Everything else in the game is instant (`Stoke`), live (`Earth`),
+binary (`Judgment`), or decaying (the pool).
+
+**The anti-hoard gap this table used to name is closed.** Void was built to be Hel's
+predator and is the faction that interacts with the energy economy itself; see `void.md`.
+Forge is immune to it from the other direction, since a deck paying costs in HP and bodies
+has less in its pool to siphon — that asymmetry is matchup texture, not a hole.
 
 ---
 
@@ -1404,6 +1462,43 @@ pool destruction, punishing large pools — most naturally belong in **Void**, w
 ---
 
 ## Open Questions
+
+- **The 5M-game sweep (2026-08-17) settled the seat question and it is real: P1 wins
+  58.5–59.4%.** Every ordered pairing was played in both seats, 1,600 games each, across
+  five 1M-game rounds — so this is not the 8-run noise the earlier entries hedged against,
+  and it did **not** move when Earth, Sanctuary and the support ladder all changed under
+  it. It survives the setup phase and round-1 tower silence, which were adopted partly to
+  remove it. What the sweep cannot say is whether the cause is the *rules* or the *AI*:
+  both seats run identical heuristics, so P1 simply acting first compounds. The cheapest
+  discriminator is an asymmetric-AI run (`ai=v1xv2`) or giving P2 a compensator and
+  re-measuring.
+- **The deck spread is still 83% to 22% after five rounds of tuning, and card-level
+  changes are not closing it.** Three targeted fixes each did exactly what they were aimed
+  at — Earth −12pt on `Standing Stones`, Sanctuary −6pt on `Sealed Light`, the support
+  ladder +4 to +7pt across four Forge decks — and the field standard deviation moved only
+  19.6 → 17.7. The decks at the bottom (`Cacophony Ramp` 22%, `Burning Line` 26%,
+  `Scrap Line` 27%) are not badly *costed*; they are slow decks losing to a ~9.5-round
+  clock. **Tower scaling was A/B tested as the suspected cause and exonerated**: at `+2`
+  a round instead of `+3`, games lengthened (9.5 → 9.9 mean) and the bottom decks did not
+  move at all. So the clock is not what is holding them down, and the next hypothesis
+  worth testing is that the AI cannot pilot a slow deck rather than that the decks are
+  weak.
+- **Supports correlate NEGATIVELY with winning (−0.19), and the ×1.6 re-anchor only
+  dented it.** Every deck in the bottom third runs 15–22 supports; every deck in the top
+  third runs 7–10. The re-anchor bought the support-heavy Forge decks 4–7 points and did
+  not reorder the table. The structural reading is that **a support is a card that is not
+  a body**, and under shielding, bodies are what keep a tower alive — so a support has to
+  beat a whole unit's worth of board presence to be worth its slot, which most do not.
+  That is a deckbuilding-cost question the power band cannot answer on its own.
+- **The AI holds a mean pool of 0.92 and dumps everything onto bodies, so "spend or save"
+  — design principle #2 — is effectively untested by every number in this report.** Decay
+  almost never fires. `void.md` already flags this for Rift; it is broader than Void, and
+  it is the single largest caveat on the whole sweep.
+- **Every one of 5,000,000 games ended by throne kill. Zero stalls, zero decking.** The
+  long-running stall worry in the entries below is, on current numbers, closed — no game in
+  5M reached the 300-round guard and the longest was 37 rounds. Deck-out is correspondingly
+  dead as a loss condition at 60 cards and ~9.5 rounds, which is probably intended but does
+  mean mill can never be a strategy.
 
 - **The second player won 7 of 8 random matchups. New, unexplained, and cheap to test.**
   Measured 2026-08-09 over the first eight random-deck runs of `RulesTest.gd`, including
@@ -1809,8 +1904,22 @@ There are **two** icons, and they are set in different places:
 
 | Icon | Source | Set by |
 |---|---|---|
-| Desktop shortcut | `tools/Godsfall.ico` | The `.lnk`'s IconLocation |
+| Desktop shortcut | `%LOCALAPPDATA%\Godsfall\Godsfall-crest*.ico` | The `.lnk`'s IconLocation |
 | Window / taskbar | `icon_window.png` | `WindowIcon.gd` autoload |
+
+**Both are the Crest** — the throne under a lit fracture in a broken ring, the same
+mark the main menu draws. `tools/make_icon.py` is a direct port of `Crest.gd`: same
+`RING_GAP`, same `CRACK_W`, same fractional offsets, colours read from the same
+`Theme.gd` values, so the two can be diffed line by line when either moves. The icon
+a player clicks and the emblem they land on should be the same object.
+
+Two ways the icon differs from the menu's, both forced by having no backdrop:
+
+- **It is transparent outside the mark**, so the desktop shows through.
+- **The throne and steps are solid**, not the menu's 30% wash. The wash reads
+  because the menu's dark panel sits behind it; on transparency, against a light
+  wallpaper, it would be nearly invisible. The icon bakes in the colour the wash
+  *resolves to* on the menu's ground, so the mark is identical where it matters.
 
 The taskbar shows the icon of the *running process*, not the shortcut that launched it,
 so the shortcut icon alone leaves Godot's default robot in the taskbar. `WindowIcon.gd`
@@ -1824,8 +1933,24 @@ Two things that will silently break it if changed:
   `.import` file, so `load()` has no loader for it — use `Image.load_from_file()`.
 
 Both icons are generated from one script, so they can't drift apart. To change the art,
-edit and rerun `tools/make_icon.py`, then refresh the shortcut icon (Windows caches it —
-easiest is to re-run the `WScript.Shell` snippet that created the `.lnk`).
+edit and rerun `tools/make_icon.py`.
+
+**The shortcut does not read `tools/Godsfall.ico`.** Its `IconLocation` points into
+`%LOCALAPPDATA%\Godsfall\`, so regenerating the repo file changes nothing on the
+desktop until it is copied there — and Windows caches shortcut icons **keyed by path**,
+hard enough that `ie4uinit.exe -show` and F5 on the desktop both fail to shift it.
+
+So the way to change it is to **write the new `.ico` under a filename Windows has never
+seen** (bump the suffix) and re-save the `.lnk` to point at it. A fresh path cannot have
+a stale entry, and no Explorer restart is needed. Delete the superseded files afterward.
+The heavy fallback — stop `explorer.exe`, delete `iconcache*.db` and `thumbcache*.db`
+from `%LOCALAPPDATA%\Microsoft\Windows\Explorer`, restart it — works, but it blanks the
+desktop for a few seconds and the `.db` files are locked while Explorer runs.
+
+This is worth the paragraph because the failure is **misattributed by default**: the
+`.ico` on disk is correct and verifiable (decode it and check the dominant colours),
+while the desktop shows the previous art — which reads as a broken generator rather
+than as a lying cache.
 
 ### The web build
 
@@ -2172,7 +2297,7 @@ with no console errors.
 Implemented: main menu, deck select, deck builder, combat vs. a heuristic AI, **both
 factions in full** — 15 Hel units and 13 Heaven units, each with its own energy card — the
 38 neutral supports, and the full turn/energy/combat rule set. Card data is data-driven
-from `data/cards.json` (**292 cards**: 61 Hel, 59 Heaven, 66 Void, 63 Gaia, 43 neutral).
+from `data/cards.json` (**355 cards**: 61 Hel, 59 Heaven, 66 Void, 63 Gaia, 63 Forge, 43 neutral).
 
 **Heaven is built — two factions now exist.** 13 units, an energy card, and one Tool,
 implementing the `Judgment` and `Sanctuary` keywords and the within-attack damage
@@ -2211,8 +2336,8 @@ tests seed and round-trip deck data, and while they shared the real path, **ever
 silently destroyed the player's saved decks.** Any new harness that touches `DeckStore`
 must call `use_sandbox_path()` before it writes.
 
-**Eighteen sample decks ship as the starter collection** — six Hel, four Heaven, four Void,
-four Gaia — laid down on first run by `DeckStore.sample_decks()`. Each is built around a
+**Twenty-five sample decks ship as the starter collection** — six Hel, four Heaven, four
+Void, four Gaia, seven Forge — laid down on first run by `DeckStore.sample_decks()`. Each is built around a
 single idea rather than a spread of the card pool, because a deck holding one of everything
 has no plan to read and plays the same whatever you draw:
 
@@ -2236,6 +2361,13 @@ has no plan to read and plays the same whatever you draw:
 | **Deep Grove** | Gaia | The growth engine — Earth from attached energy, `Essence` to survive a wipe. | 21 |
 | **Bedrock** | Gaia | `Earth` and `Resist` on the same bodies, topping out at two Earth 3 / Resist 10 Stage 2s at 165 and 168 HP. Best against exactly the wide chip that beats Sanctuary. | 23 |
 | **Thicket** | Gaia | `Retribution` 20–25 plus `Essence`, so attacking into the board is the mistake and the units that die hand their Earth to the next one. | 23 |
+| **White Heat** | Forge | `Stoke` big, then cash the flag. `Cindpyre` burns *past living units* into the tower once it has stoked 40, so it declines to clear the board it is supposed to clear. Heavy healing, because HP is the currency being spent. | 19 |
+| **Scrap Line** | Forge / Hel | The board as ammunition. `Scrap` eats a Hel `Toll` body and gets **paid** for the fuel. The collection's two-colour deck. | 12 + 11 |
+| **Second Wind** | Forge | One body, twice a turn. `Bellowmaul` grants the extra attack slot *and* a discount in one activation — Forge's answer to a board capped at 4 is more actions, not more bodies. Deliberately tall rather than wide. | 19 |
+| **Burning Line** | Forge | `Charpyre` sweeps the whole rank, which is what makes no-overkill work *for* you: clear the front and everything behind falls through. The one Forge deck that wants a wide enemy board. | 20 |
+| **Nothing Holds** | Forge | Every attacker can make its damage unpreventable — the printed answer to `Sanctuary` and `Resist`, and the reason Forge/Heaven is a real matchup rather than a keyword accident. | 18 |
+| **Bank the Heat** | Forge | The economy deck, and the only Forge list that plays long. `Fluxanvil` suspends the pool's decay and draws 2, so it *keeps* energy rather than spending it on arrival. | 21 |
+| **Standing Heat** | Forge | The wall that punishes being hit. `Annealanvil` is Retribution 25 / Resist 5 on 168 HP that heals back everything it stokes — the one Forge body that spends HP without running out. | 20 |
 
 **Every sample deck is exactly 60 cards**, not merely under the cap — `DeckStoreTest`
 asserts it, because a shipped deck should be battle-ready as printed rather than a
@@ -2287,11 +2419,50 @@ made the inspector reuse `CardView` rather than draw its own big card.
 
 **Energy costs sit beside the attack they pay for**, as faction-colored hexagons drawn by
 `EnergyIcon.gd` rather than as a bitmap, so they stay crisp at the four scales the game
-renders cards at. Attached energy fills an attack's icons left-to-right, so the row doubles
-as a progress bar toward affording it — that read was the whole job of the old
-bottom-of-card pip block, and it survived the move. Costs above 8 collapse to a numeric
-chip, because nine icons overflow the frame and a Cacophony Ramp player counting toward a
-14-cost attack wants the number anyway.
+renders cards at. They are **always solid and always in the colour they require** — an
+attack's cost states what it *needs*, which does not change with the board. Costs above 8
+collapse to a numeric chip, because nine icons overflow the frame and a Cacophony Ramp
+player counting toward a 14-cost attack wants the number anyway.
+
+**Each faction's energy token carries a distinct drawn mark, not only a colour.** Hel is a
+bone, Heaven a rayed sun, Void a hole with a hot rim, Gaia a leaf; the four reserve colours
+have marks too (Forge a flame, Tempest a bolt, Wyrd a four-point star, Wilds a fang). This
+is the correction `KEYWORD_COLORS` already needed: at the size a cost row renders at, Void's
+slate and Wilds' brown are one grey, and to a colourblind player a four-colour system
+carried by hue alone collapses entirely. A shape survives both.
+
+The marks are **one closed figure each, never linework**, and drawn in a darkened `deep`
+shade so they read as struck into the token rather than sitting on it. Below
+`EnergyIcon.MARK_MIN_PX` (9) the mark is skipped, which by arithmetic means **every hand
+card gets it and every board card does not** — `icon_size` is 10 in hand and 7 on the board.
+That split is deliberate: the hand is where you decide *which* energy a card demands, while
+the board card is a glance read where colour and count are the whole message and a figure
+inside a 7px hexagon is a smudge.
+
+**Every energy cost explains itself on hover.** An attack's icon row, an ability's Consume
+tag, and a card's play-cost line all carry a tooltip stating the cost in words — the same
+contract the keyword chips use, and `MOUSE_FILTER_PASS` for the same reason (the hover has
+to reach the row, and PASS still lets the click fall through to the card's own button, so
+reading a cost never costs you the ability to select the card).
+
+The icons and the tooltip answer **different** questions, which is why both exist. The row
+states the requirement well and has no channel left for how much of it is *already paid* —
+it used to encode that as fill, and doing so cost the requirement its colour entirely. The
+tooltip is where the paid/owed split, the colour breakdown, and the Consume-vs-attack
+distinction get said. Three rules it follows:
+
+- **It reads the LIVE cost, never the printed one, whenever a unit exists.** A `Deadweight`
+  Tool raises what every attack on that body costs, so a tooltip quoting
+  `AttackData.total_cost()` would be confidently wrong on exactly the unit whose cost is
+  surprising. `Unit.attack_cost()` is the authority, and the tooltip **names the tax as its
+  own line** — an unexplained gap between the icons drawn and the number charged reads as a
+  bug in the card.
+- **It states the colour split.** `2 Hel, 2 colorless` is a different card from `4 Hel` once
+  multi-colour enforcement lands, and the data is already right, so saying so now costs
+  nothing.
+- **It never promises what the engine cannot do.** Colour requirements are display-only
+  today — the pool is one untyped int — and the tooltip says so rather than implying an
+  enforcement that does not exist. Same discipline as `Windfury`'s keyword help.
 
 **Keywords render as chips, and the chips are live.** They are built from
 `CardView._live_keyword_line()`, not from the printed card, so a spent `Judgment` or `Rise`
@@ -2689,9 +2860,8 @@ Two guards worth keeping: the writer never raises (a balance log that can fail a
 or break a game is worse than no log), and a stall is recorded as `NO WINNER — stalled at
 round N`, since that is the single most important thing the file can capture.
 
-Verified by fifteen headless harnesses, all passing — run 2026-08-16 after the
-colorless split and the keyword modifier layer landed, **1004 counted assertions**
-across the twelve that count (`SceneSmokeTest`, `PlaythroughTest` and
+Verified by sixteen headless harnesses, all passing — run 2026-08-16 after the Forge
+expansion, **1182 counted assertions** across the thirteen that count (`SceneSmokeTest`, `PlaythroughTest` and
 `TutorialWalkTest` report pass/fail without a count and are not in that total):
 
 | Harness | Covers |
@@ -2704,11 +2874,12 @@ across the twelve that count (`SceneSmokeTest`, `PlaythroughTest` and
 | `PlaythroughTest.gd` | Drives the real combat UI: deploy, charge, queue, end turn |
 | `SupportUITest.gd` | 55 assertions driving the real combat UI: leaving setup by pressing Ready, support targeting mode, the two-unit pick, tower targeting for both owners, Tool attach by click and by drop, **support drop-targeting** (a heal drops and heals, tower support and two-unit supports still refused on a unit, an enemy-targeting support accepted on an enemy and refused on your own, and the drop path agreeing with the click path on both a legal and an illegal target), the retreat button, and the modal card picker |
 | `HeavenTest.gd` | 61 assertions: Heaven card data, Sanctuary pool depletion and terminal overflow, both halves of Judgment **driven through the real damage pipeline**, the Heaven mirror ordering, the save-is-not-re-executed guard, Sanctuary preceding Judgment, both reset cards, and keyword restoration on Rise and evolution |
-| `CardViewTest.gd` | 79 assertions on the card frame's *structure*: the header's HP and stage cells, the evolves-from strip (present on evolutions, absent on Basics), keyword chips including a spent `Judgment` dropping its chip, the ability banner (present with an ability, absent without), attack rows whose cost icons are **always solid and always in the required colour** (the regression that rendered every requirement in hand as an empty colourless socket), the **attached-energy badge** as the footer's first child and absent when nothing is attached, **keyword-chip tooltips** and coverage of every keyword in `Palette.KEYWORD_COLORS`, the retreat footer and its reserved weakness/resistance slots, and a complete frame for all four non-unit card types. Checks which nodes exist and what they say, never pixel positions — those would break on every metric tweak |
+| `CardViewTest.gd` | 108 assertions on the card frame's *structure*: the header's HP and stage cells, the evolves-from strip (present on evolutions, absent on Basics), keyword chips including a spent `Judgment` dropping its chip, the ability banner (present with an ability, absent without), attack rows whose cost icons are **always solid and always in the required colour** (the regression that rendered every requirement in hand as an empty colourless socket), the **attached-energy badge** as the footer's first child and absent when nothing is attached, **keyword-chip tooltips** and coverage of every keyword in `Palette.KEYWORD_COLORS`, the retreat footer and its reserved weakness/resistance slots, a complete frame for all four non-unit card types, **cost tooltips** on the attack row, the ability Consume tag and the play-cost line (each hoverable, each naming the right numbers, and the attack one reporting a `Deadweight` unit's **raised** cost rather than the print), and **the faction mark** on every energy token being present, distinct from every other, and skipped at board size. Checks which nodes exist and what they say, never pixel positions — those would break on every metric tweak |
 | `VoidTest.gd` | 69 assertions: Void card data and the printed damage budget, Gap direction/floor/living-units-only, Siphon moving energy on a unit vs. into the pool on a support, Void N destruction, the damage-per-voided rider, Rift scaling **through the real damage pipeline**, Rift granted by a Tool, pool destruction, Gap-to-throne damage, **Gap relevance** (false with no Void card, true from either player's deck or from hand), and Siphon obeying the shielding chain |
 | `GaiaTest.gd` | 146 assertions: Gaia card data including per-colour attack costs, the Earth aura summed across both boards and excluding the dead, aura-adjusted max HP, healing that reaches the aura's ceiling, downward clamping that never kills, the aura on attack damage and on tower damage, `Resist` in both damage paths and on Retribution recoil with its minimum-1 floor, Sanctuary preceding Resist, `Essence` **through the real `_cleanup_dead`** (payment, the nearest-living heir, ties-go-left, never crossing boards, skipping a corpse in a batched death, and fizzling when unaffordable), grown Earth resetting on Rise and evolution, Earth derived live from attached energy, the additive rate-breaker, and Makeshift Tower's free auto-fire, per-round growth, and obedience to the shielding chain |
 | `TutorialTest.gd` | 119 assertions: lesson content integrity (unique ids, every step carrying text, every `advance` predicate one the evaluator handles), every card id a lesson names existing, every `read_more` resolving to a real page, every lesson deck building a `GameState`, the unshuffled deal being reproducible **and the default path still shuffling**, every scripted placement landing on a real non-tower slot, the gating hooks answering permissively when inactive, all eight step predicates **driven against a real `GameState`**, progress round-tripping through a sandboxed file, and compendium coverage of every keyword in `Palette.KEYWORD_COLORS`. **Also that every lesson declares an opening hand, that the hand is fully present in its deck, and that it holds the Basics/Stage 1/support/energy its steps actually demand** |
 | `TutorialWalkTest.gd` | Drives all 13 battle lessons through the **real Combat screen**, performing what each step asks via the entry points a player clicks, and fails if any step cannot be satisfied. Reports per-lesson rather than a counted total. This is the harness that checks a lesson can be **finished**, not merely that it is well formed |
+| `ForgeTest.gd` | 143 assertions: `Stoke` as a cost rather than a damage event (**`Sanctuary` does not absorb it and `Resist` does not reduce it** — the two assertions the file runs first, because they are the whole reason the keyword has the shape it does), the flag as an *amount* so scaling and threshold payoffs read one field, Hold the Slot still flooring it at 1 HP, lethal Stoke firing `Toll` through the ordinary death path, the flag clearing each turn, affordability refusing a partial payment, `Scrap` (weakest-body default, an explicit target honoured, never itself, refused with no other unit and costing nothing when refused, and firing the victim's `Toll`), all **nineteen** payoff ops **driven through the real damage pipeline** (the original nine, plus the ten the 2026-08-16 expansion built — unpreventable damage, the board sweep, both-boards, the tower splash, the extra attack slot, immediate resolution, the cost discount, the decay skip, draw, and the second Stoke), every one of them **verified by putting the bug back**, `stoked_heal_back` refunding the HP while **leaving the flag set**, cleave obeying the shielding chain, the threshold gate on the shielding break, ability cost parsing for all three non-energy costs, and the roster invariants (HP bands, two-line rule, retreat formula, Stoke only on an ability and never above the body's own HP) |
 | `KeywordModTest.gd` | 15 assertions on the keyword modifier layer: every previously-flat keyword (`toll`, `siphon`, `decay`, `judgment`, `essence`, `resist`) accepting a modifier, unbounded stacking, the accessors reporting the modified value rather than only the raw dictionary, the floor at 0 applying **on read** so a −5 then +5 returns to the print, and modifiers clearing on both `Rise` and evolution. Verified by reverting `toll()` to its flat form and watching two assertions fail before restoring the fix |
 | `LayoutTest.gd` | 37 assertions on what the UI *draws*: every entry in `Palette.GLYPH` being renderable by the actual theme font, every double-quoted literal across the twenty-one UI source files containing no character the font lacks (comments exempt — their ASCII diagrams are never rendered), all four screens building in **both** the desktop and phone layouts, and — the assertion that matters most — **no phone layout exceeding the 540-unit phone viewport**, measured with `get_combined_minimum_size()` and ignoring content inside a horizontally scrolling container. The glyph half reads the source rather than the running scene on purpose: a label built only in a rare branch — an error state, a disabled button's tooltip — is never instantiated by a smoke test, and those are exactly the strings that ship broken. The overflow half exists because its absence is what let mobile mode ship as pure zoom: every screen *built* fine, which is all the build assertions ever checked |
 
@@ -2770,8 +2941,10 @@ dies. Without this a retreating Stage 2 would have nothing to return to hand.
 
 **Abilities, `Consume`, and the attack lock are built.** Unit lines are now either
 attacks or abilities: a line marked `"ability": true` in `data/cards.json` resolves
-immediately, is limited to once per turn per unit, and has its `cost` block ignored — the
-only cost it can carry is `"consume": N`, which destroys that much attached energy.
+immediately, is limited to once per turn per unit, and has its `cost` block ignored. The
+only ability cost **implemented** is `"consume": N`, which destroys that much attached
+energy; the rule itself is broader (see *Abilities are free*) and Forge's `"stoke"` and
+`"scrap"` are designed but not built.
 `GameState.use_ability()` is the entry point, and `queue_attack()` refuses abilities
 outright so the two paths can't be confused.
 
@@ -3058,12 +3231,14 @@ even if the rule text later changes. Keep entries to one or two lines.
   the same card is worth 20 on a Basic and 110 on the Queen, and it gets stronger for free
   every time a bigger body is printed. Flat numbers also make big heals overflow and go to
   waste on small bodies, which is what makes the expensive ones a real choice instead of a
-  strict upgrade. Cost `Last Breath` its full heal (now a flat 50) and `Grave Warden's
-  Oath` its (now a flat 100). Guarded by a test.
-- **Healing is the reference ladder for priced supports: base 20, +30 per energy.**
-  `Shore Up` 20 free, `Field Surgery` 50 for 1, `Grave Warden's Oath` 100 for 3. A free
-  card can reach the same +30 by taking a condition instead of a cost, which is what
-  `Last Breath` does at 50-if-below-half. Healing went first because "how much" is a
+  strict upgrade. Cost `Last Breath` its full heal (now a flat 80) and `Grave Warden's
+  Oath` its (now a flat 120). Guarded by a test.
+- **Healing is the reference ladder for priced supports: base 32, +48 per energy.**
+  `Shore Up` 32 free, `Field Surgery` 80 for 1, `Grave Warden's Oath` 120 for 3 (capped
+  below the 175 HP ceiling rather than the rate's 176). A free card can reach the same step
+  by taking a condition instead of a cost, which is what `Last Breath` does at
+  80-if-below-half. **Re-anchored x1.6 on 2026-08-17** — the ladder was set against ~50 HP
+  bodies and never re-derived when the curve rose to 40-175. Healing went first because "how much" is a
   number that moves without changing what the card does.
 - **Support is a single card type with no item/supporter split and no per-turn limit.**
   Pokémon's split exists to gate overtuned cards; the alternative is to tune every support
@@ -3343,7 +3518,10 @@ even if the rule text later changes. Keep entries to one or two lines.
 - **A card with no art falls back to its initials.** Art is optional so that adding a
   card to `data/cards.json` is never blocked on drawing one, matching the same
   ship-the-data-first pattern retreat costs used.
-- **Activated abilities are free; `Consume` is the only cost one may carry.** Energy only
+- **Activated abilities are free; `Consume` is the only cost one may carry.**
+  *(Generalised 2026-08-16 — free by default, priced when printed, never from the pool.
+  See the Forge entries at the end of this log. The reasoning below is unchanged and is
+  why the generalisation kept the no-pool-energy half.)* Energy only
   buys attacks, and an ability is not an attack. Enforced in the data rather than by
   convention: a line marked `"ability": true` has its `cost` block ignored entirely, so a
   card cannot price an ability by filling in the wrong field. The distinction earns its
@@ -3388,12 +3566,17 @@ even if the rule text later changes. Keep entries to one or two lines.
   rate taxes cheap attacks hardest, which is the right shape, while a flat reduction would
   go negative on them. Sanctuary units keep the standard curve, which is why Heaven's
   biggest attacks sit on Sanctuary bodies.
-- **`Sanctuary N` is a depleting pool that ends in one free full absorb.** A boolean shield
-  is popped identically by a free `Decay 5` tick and a 75-damage attack, making the
-  cheapest chip the best answer to the most expensive shield. A pool makes small hits
-  inefficient while the terminal overflow still eats one whole big hit, so Sanctuary
-  resists chip and burst at once. Minimum printed N is 60, because below that the free
-  overflow means the number never does any work.
+- **`Sanctuary N` is a depleting pool, and the overflow is bounded.** A boolean shield is
+  popped identically by a free `Decay 5` tick and a 75-damage attack, making the cheapest
+  chip the best answer to the most expensive shield, which is why the pool form was
+  adopted. The pool originally ended in one *free full absorb* of any size — and that half
+  was removed 2026-08-17, because it made every shielded body worth `N + an extra life`.
+  Over 3M games `Sealed Light` measured 88–91% while its games ran four rounds longer than
+  average, i.e. it won by being unkillable rather than by out-playing anything. The pool
+  now drains exactly and the remainder lands; **plain Sanctuary keeps the full absorb**,
+  since it has no pool and draining it exactly would delete the keyword. Sanctuary bodies
+  also now pay ~18% of their damage for the keyword, which they previously did not — they
+  hit *harder* than plain bodies while carrying 1.5–1.9× the effective HP.
 - **The within-attack damage order is Sanctuary → damage → defensive Judgment → offensive
   Judgment → Retribution → batched deaths.** Sanctuary is prevention so it must precede
   everything; defensive-before-offensive Judgment is what makes the Heaven mirror resolve
@@ -3464,7 +3647,15 @@ even if the rule text later changes. Keep entries to one or two lines.
   faction's own board is its only defence and the opponent's removal is the answer. It also
   gives the faction one idea that covers offense, defense, structures, and counterplay at once,
   which is why Gaia needs no third mechanic.
-- **The aura is linear at +1/+1 per Earth, and cards may only break the rate additively.** The
+- **The aura pays +1 HP per Earth but only +1 damage per TWO Earth, and cards may only
+  break the rate additively.** The offensive half was halved on 2026-08-17: one point of
+  Earth pays into every unit's max HP, both towers' HP *and* every attack, so at a flat
+  +1/+1 a single point was worth six-plus stat points while costing one. Measured live,
+  `Deep Grove` ran a **mean aura of 14.6, peaking at 78** — +14.6 damage on every attack
+  from every body, free — and every Earth deck sat at 70–83% while the field averaged 50%.
+  Halving only the damage side keeps the faction's identity (it still grows, still buffs
+  towers, still raises its own ceiling) and removes the part that was doubling as an
+  undercosted damage engine. Gaia's four decks fell from a 73.8% mean to 66.2%. The
   aura applies to four units and two towers, so a multiplier on the Earth *total* is
   exponential across six things — at 10 Earth a doubling card is worth +60 stat points.
   Additive rate-breakers (*"Earth grants +2 instead of +1"*) keep the same linearity the rest
@@ -3913,6 +4104,26 @@ even if the rule text later changes. Keep entries to one or two lines.
   `DragDropTest` passing untouched. A visual change that rewrites behaviour is not a
   reskin, and the way to keep it visual is to extend the thing that already holds the
   behaviour.
+- **The desktop and window icons are the Crest, and the icon that ships is not the
+  emblem the menu draws.** Both are generated from `tools/make_icon.py`, a direct port of
+  `Crest.gd` — but two things had to change, and the reason generalises. An icon has **no
+  backdrop**, so the menu's 30% translucent throne (which reads only because a dark panel
+  sits behind it) would be nearly invisible on transparency against a light wallpaper; the
+  icon prints the colour that wash *resolves to* on the menu's ground instead. And Pillow's
+  `polygon(fill=...)` **replaces** pixels rather than blending, so the first pass rendered
+  every translucent shape as a flat opaque slab — translucent fills have to composite
+  through a scratch layer. **A drawing ported between two renderers is not the same drawing
+  until it is looked at**: both defects passed every structural check, because a shape that
+  is drawn wrong is still drawn.
+- **The desktop shortcut reads its icon from `%LOCALAPPDATA%`, not from the repo, and
+  Windows caches it by path.** Regenerating `tools/Godsfall.ico` changes nothing on the
+  desktop until the file is copied across, and `ie4uinit -show` and F5 both fail to shift
+  the cache. The fix is to write the new `.ico` under a **filename Windows has never seen**
+  and re-point the `.lnk`; a fresh path cannot have a stale entry. Worth logging because the
+  failure is **misattributed by default** — the `.ico` on disk is correct and verifiable by
+  decoding it, while the desktop shows the old art, so the obvious diagnosis is a broken
+  generator rather than a lying cache. Same shape as the encoding traps already in this log:
+  **the error's location is not the defect's location.**
 - **`TowerGlyph` turns the tower's condition into a silhouette, and its cracks come from a
   fixed table.** Merlons break away as HP falls, cracks open below two-thirds, rubble
   gathers below a third — so *which tower is nearly down* is answered by shape rather than
@@ -4032,6 +4243,38 @@ even if the rule text later changes. Keep entries to one or two lines.
   it, so the two cannot drift. The constant lives on `Palette` rather than on the
   `Settings` autoload because naming an autoload at a screen's class scope breaks
   every headless harness — the third time that trap has come up.
+- **Every energy cost carries a hover tooltip, and each faction's token carries a
+  distinct drawn mark.** Two channels were each doing only half a job. The icon row
+  states a requirement precisely and has **no channel left** for how much of it is
+  already paid — it used to encode that as fill, and that overload is what rendered
+  every requirement in hand as an empty grey socket (logged above); so the paid/owed
+  split, the colour breakdown and the Consume-vs-attack distinction now live in a
+  tooltip, where they can be read one card at a time on demand. And the four factions
+  differed **only by hue**, which is the same defect `KEYWORD_COLORS` was fixed for: at
+  the size a cost row draws at, Void's slate and Wilds' brown are one grey, and a
+  colourblind player got nothing at all from the system. Each token now carries one
+  closed figure — bone, sun, hole, leaf — so the sheet is readable in greyscale.
+  Three things were learned building it, all by getting them wrong first:
+  **(1)** `MARK_MIN_PX` was set to 11 against a comment claiming the desktop hand row
+  was 12 px. It is **10**, so the mark would have drawn *nowhere* in the entire game —
+  a feature that is inert everywhere still passes every structural assertion, because
+  a shape that is never drawn breaks no layout. The threshold is now derived from
+  `CardView.METRICS["icon_size"]` and asserted against it, so the two cannot drift.
+  **(2)** Hel's mark was a skull and read as a **blob**; Wilds' was a three-talon claw
+  and read as a **crown** — the mark said "Heaven" on the brownest token in the game.
+  Both failed the way the wave-2 emblems failed: a skull is identified by its eye
+  sockets, which are *interior negative space*, and a single filled polygon has no
+  interior. Replaced with a bone and a single fang, whose identity **is** their
+  outline. Caught only by rasterising the geometry at 10px and looking at it — the
+  assertions confirmed eight distinct polygons the whole time, which is true and says
+  nothing about whether any of them reads as its subject.
+  **(3)** `contains(str(taxed))` looked like a fine assertion for the Deadweight tax
+  and **passed with the bug deliberately reintroduced**: the printed cost is 1, the
+  taxed cost 2, and the tooltip's colour-split line already contains a "1". Tightened
+  to match the exact sentence, then re-sabotaged to confirm it fails. **A substring
+  search for a single digit inside generated prose is not a test**, and the only way
+  to know is to put the bug back.
+
 - **`ViewportFit` must measure the window, never `root.get_visible_rect()`.** The auto
   detection read the viewport — a value `_apply()` sets itself — so entering phone mode
   shrank the viewport to 540, the next read saw `540 < 820`, and a 1440-wide desktop could
@@ -4130,3 +4373,305 @@ even if the rule text later changes. Keep entries to one or two lines.
   ("valid" vs "completable"). The win-loss spread (Sealed Light 5-0, Thicket 1-4) is **not a
   balance reading**: five games is noise, and the AI has no Judgment or Sanctuary heuristics
   and dumps its whole pool onto one body, which flatters Rift decks and wastes Heaven's.
+
+- **Forge is the fifth faction, it absorbs Tempest, and its aggression is a *currency*
+  rather than a discount.** Designed 2026-08-16; no cards, no engine work. The reasoning
+  that decided the shape: **"aggro" has no obvious meaning in this engine**, because cards
+  are free to play and the board caps at 4 — cheap bodies cannot be an identity when every
+  faction deploys for free and Hel is already the disposable-bodies deck. The only
+  structurally available meaning is *acting more often than your energy should allow*,
+  which was also Tempest's entire stated identity, so the two reserve colors were competing
+  for one slot and Forge takes it.
+  Signatures are `Stoke N` and `Scrap`, plus the shared `Consume` printed widest.
+  **Stoke went through two designs and the second is the one that works.** The first made
+  it an *alternative cost* — pay 3 energy or pay 20 HP, pick one — which produces a flat
+  decision: you evaluate whether HP is cheaper than energy right now and the answer is
+  nearly always the same within a turn. The second makes Stoke a **free once-per-turn
+  ability that sets a per-unit state**: you lose the HP, the unit "has stoked," and
+  *separate lines read that flag.* That produces a sequencing decision instead, and one
+  Stoke can turn on several payoffs at once, which is what makes it a build-around rather
+  than a discount. `Scrap` stayed a cost, but an **ability** cost, occupying the same slot
+  `Consume` does.
+  **The load-bearing distinction is Forge vs. Hel, since both feed units into a grinder:
+  Hel's deaths are a trigger, Forge's are a cost.** A Hel body left alone still eventually
+  pays its `Toll`; a Forge body left alone has done nothing. Stated because without it
+  Forge is a reskin of the faction it sits next to in the cosmology.
+- **Forge's aggression lives in faction-locked supports, and that required correcting what
+  the support power band is actually for.** The original request was "powerful support cards
+  with no energy cost," which as stated breaks the band — but the band's real constraint is
+  not *"supports must be weak,"* it is **"cards every deck can run must be weak."** All 43
+  neutral supports are legal in all eighteen decks, so a strong free neutral support raises
+  every deck's floor and gives Forge no identity at all. A **Forge-locked** support is
+  instead bought with a deckbuilding commitment, which is a cost the neutral cards never pay
+  — and faction-colored supports already exist (Void has 4, Gaia 5), so this is not a new
+  card type, only the first faction whose identity is carried by its support suite.
+  **One asymmetry had to be replaced explicitly.** Supports are normally kept off the damage
+  curve by the fact that an attack's cost stays attached and pays out every turn while a
+  support's is spent for good. **A Stoke-paid attack builds no annuity either**, so that
+  brake does not exist for Forge, and the rule is restated as an absolute instead: a Forge
+  support's damage per unit of cost must sit visibly below the attack curve *regardless of
+  currency*. Forge supports buy reach and speed, never raw damage.
+- **`Windfury` is the largest piece of engine work Forge implies, and its one hard
+  constraint now has a named failure mode.** Windfury is documented and **unimplemented** —
+  no card uses it — so the multi-attack faction cannot ship without a second queued attack
+  slot on `Unit`. The standing rule that Windfury may never appear with `Judgment` is most
+  likely to be violated through a **multi-faction Forge/Heaven card** rather than a
+  mono-Forge one, which is why a board-wide *"your units gain Windfury"* effect is not
+  printable in Forge at all: in a two-color deck it would grant it to Heaven bodies.
+  Forge's Windfury is always on the printed card.
+
+- **Stoke is unpreventable, and `stoked` is a state cards may want to be in.** `Sanctuary`
+  does not absorb it and `Resist` does not reduce it, because a shielded body would
+  otherwise stoke **for free** — the faction's central cost would be optional in exactly
+  the matchups where it needs to be real. The price of that decision is that Forge/Heaven
+  and Forge/Gaia lose a synergy they would have got for free from the keyword interaction,
+  so those pairings now need a *printed* reason to exist.
+  The second half matters more: because the flag exists independently of what it paid for,
+  a card may read it with no attack involved — and *"heal this unit for the HP it stoked"*
+  is therefore **not a cost eraser**, since the unit still counts as having stoked and
+  every other payoff stayed on. That only works if other cards read the state, which is
+  what turns Stoke from a price into a condition you may want to be in.
+- **`Stoke N` varies by unit, anchored at 20 HP ≈ 1 energy of value.** Varying N is a
+  balance axis (a Basic stokes 20, a Stage 2 may stoke 50), but a **binary** payoff makes
+  a large N strictly worse — every deck would run the cheapest body that turns the flag on.
+  Two fixes, both used: amount-scaling payoffs (*"+1 damage per 2 HP stoked"*) and
+  thresholds (*"if this unit stoked 40 or more"*), with thresholds as the natural home for
+  the effects that break board geometry. The anchor itself is derived rather than invented:
+  attached energy is an **annuity** — pay once, fire free every turn — while HP is spent for
+  good and never returns above printed max, so Stoke must buy visibly less per use than
+  energy does. An earlier *1.5 damage per HP* figure was coherent for the alternative-cost
+  design and is meaningless now, since Stoke no longer buys an attack.
+- **The Stoke flag is per-unit, and board-wide readers must print that they read others.**
+  Per-unit is the baseline because it is cheap to reason about and easy to price; a card
+  that reads another unit's flag is the **rule-break**, printed deliberately and rarely.
+  This is the general shape Jonah asked the game to follow — *"everything has a break,
+  that's what makes each card powerful"* — applied to the faction's own build-around axis,
+  the same way Gaia's additive `earth_rate` breaks the aura's linearity.
+- **Ramp payoffs are the one Stoke class that needs a hard limit.** *"If this unit stoked,
+  attach N energy to it"* converts HP into a **permanent, decay-immune** resource that also
+  feeds Void's Gap — and one-energy-card-per-turn is the game's central pacing dial, so a
+  repeatable ability that walks around it is how a faction accidentally becomes a ramp deck.
+  The safer form is always the one that expires: *"this attack costs no energy"* is a
+  one-turn discount, while *"attach 3"* is permanent. Excluded from the core set entirely.
+- **Abilities are free unless they print a cost, and the printable costs are non-energy.**
+  The rule previously read *"an ability may carry a Consume; it may carry nothing else"* —
+  written when Consume was the only non-energy cost anyone had designed, so the closed list
+  was an accident of what existed rather than a decision. Forge's `Stoke` and `Scrap` made
+  it false. The generalisation — **free by default, priced when printed, never from the
+  pool** — is what the original rule was actually protecting, since the thing that must not
+  happen is an ability charging *pool energy* (energy only buys attacks). The data
+  enforcement is unchanged in shape: an `"ability": true` line still ignores its `cost`
+  block, and now reads `"consume"`, `"stoke"`, and `"scrap"` instead of `"consume"` alone.
+
+- **Forge shipped: 19 cards, and `Stoke` is a state rather than a payment.** The first
+  design made it an *alternative cost* — pay 3 energy or pay 20 HP, pick one — which
+  produces a flat decision you re-evaluate identically every turn. What shipped is a free
+  once-per-turn **ability that sets a per-unit flag**, with *separate lines reading it*.
+  That produces a sequencing decision instead, and one Stoke turns on several payoffs at
+  once. `Scrap` is the other signature and stayed a cost, but an **ability** cost in the
+  same slot `Consume` occupies.
+  **`Stoke` is deliberately not routed through `take_damage()`**, and that is the whole
+  keyword: `Sanctuary` does not absorb it and `Resist` does not reduce it, because it is a
+  cost the controller chooses to pay rather than damage from a source. Through the damage
+  path a shielded body would stoke **for free**, and the faction's central cost would be
+  optional in exactly the matchups where it has to be real. `ForgeTest` runs those two
+  assertions **first** in the file for that reason.
+- **The AI's "free abilities are always taken" default is actively wrong for Forge, and
+  finding that took a real game rather than a harness.** Stoke costs no pool energy, so
+  `_ability_worth_it()` classified it as free and the AI stoked **every turn regardless of
+  whether a payoff followed** — burning its own board down for nothing. `_stoke_worth_it()`
+  now requires that a line *on that same unit* actually reads the flag (it is per-unit, so
+  another body's payoff is no reason to burn this one), that the unit survives the cost, and
+  that it is not already too hurt; Scrap additionally refuses below three living bodies.
+  **The general shape: a cost the engine does not charge in pool energy is invisible to a
+  heuristic that measures pool energy**, and every existing free-ability check was written
+  when "free" and "costless" were the same thing.
+- **A `stoked_` payoff on a line that cannot itself Stoke is silent dead data, so the
+  generator refuses it.** `Gristgnash` was authored with a Scrap ability carrying
+  `stoked_bonus_damage` — but Scrap does not set the flag, only Stoke does, so the effect
+  could never have fired. It would have parsed cleanly and done nothing, which is the exact
+  shape of the dropped-`effects` bug already in this log twice. `tools/add_forge_faction.py`
+  now rejects it at authoring time, and the check was verified by **putting the bug back and
+  watching the build refuse**.
+- **Three Forge emblems had to be redrawn after looking at them at 78px, and all three
+  failed the way the bestiary waves already documented.** The hammer was a head and a haft
+  drawn as two separate polygons with a gap, which read as two grey blobs — fixed by
+  overlapping them so the silhouette closes. The crucible was drawn *tipped*, and a rotated
+  quad has no distinguishing outline at 20 pixels across, so it read as a plain grey
+  rectangle — redrawn upright with an exaggerated taper and a bright molten brim, which is
+  what identifies the object. And the steam was three tapered spikes, which read as blades
+  rather than vapour — replaced with overlapping circles. **The structural assertions were
+  green throughout**: they confirm an emblem exists, never that it reads as its subject.
+
+- **An attack's conditional rider was never drawn on the card, on 26 attack lines across
+  every faction.** `_add_attack_rows` rendered cost icons, name and damage and never
+  `atk.text`, so `Ember Strike` showed `28` with nothing to say that stoking adds 10 — and
+  `THE LAST TOLL` had been showing `—` with nothing to say it destroys both boards **since
+  Hel shipped**. Jonah found it by looking at a Forge card in the game; no harness could
+  have, because `CardViewTest` asserted which nodes *exist* and never that a card states
+  what it does.
+  This is the same failure as the spent-`Judgment` chip and it is worth stating as the
+  general rule it now clearly is: **the engine being right is not the card being readable.**
+  Both bugs were correct in `GameState`, invisible on the frame, and indistinguishable from
+  broken to a player.
+  The fix draws only the part of the text that is *not* a restatement of the damage number
+  already beside it, because a "28 damage" line next to a `28` is noise on a 132px card.
+  Guarded by a regression test that was **verified by putting the bug back** — with the
+  rider suppressed it fails two assertions, which is the only thing that makes a
+  written-after-the-fact test worth anything.
+  One trap worth keeping: the first version of `_attack_rider` used a `RegEx`, and the
+  backslash escapes did not survive being written through a Python heredoc — the parser
+  died on `Invalid escape in string` and the whole of `CardView` failed to load, which
+  surfaced as *every* structural assertion failing at once rather than as anything to do
+  with regexes. Plain string scanning replaced it.
+
+- **Forge went to full parity (19 → 63 cards), and the expansion was engine-first because
+  it had to be.** Forge's original 13 units read as five chains but only three *ideas*
+  (stoke-then-hit-harder, scrap-a-body, heal-the-stoke-back), and the reason was structural:
+  **nine of the eleven payoffs `forge.md` catalogues were designed and unimplemented**, so
+  any new chain built on the shipped ops was forced to reprint `stoked_bonus_damage`. Adding
+  cards first would have produced a wider faction that was not a deeper one. So the ten
+  missing ops were built, and each of the eight new chains then got one to *own*: Bellow the
+  extra attack, Char the sweep, Scoria unpreventable damage, Flux the economy, Tind the
+  double-stoke engine, Drossal Scrap-plus-Consume, Anneal Retribution, Ingot the two
+  geometry breaks. **The general shape: when a faction reads as repetitive, check whether
+  its design doc is describing mechanics the engine does not have** — the cards can only be
+  as varied as the ops underneath them.
+- **`Windfury` was deliberately NOT built, and the faction is complete without it.**
+  `forge.md` calls it the largest single piece of engine work Forge implies (a second queued
+  attack slot on `Unit`) and simultaneously prefers `stoked_extra_attack` — a *conditional*
+  grant — on the grounds that the condition sits on a Forge body and therefore cannot drift
+  onto a `Judgment` card the way a granted keyword could. Building the conditional version
+  gave the multi-attack identity its cards while leaving the standing Windfury/Judgment
+  constraint untouched. The second attack slot exists on `Unit`, so printed Windfury is now
+  a smaller job than it was, not a larger one.
+- **Two geometry breaks never stack on one line.** `_deliver_attack_damage` treats
+  `stoked_sweep`, `stoked_both_boards` and the shielding break as mutually exclusive rather
+  than cumulative — an attack that sweeps does not also strike a second board. A card
+  wanting two rule-breaks is a card that should have been cut, and making them exclusive in
+  the *dispatcher* means no future card can combine them by accident.
+- **`stoked_twice` refreshed its own permission, and only a sabotage pass found it.** The
+  grant is consumed by the second Stoke (`Unit.spend_ability`), but the second Stoke re-runs
+  the line's own riders — which re-granted it, making Stoke unlimited and turning the
+  once-per-turn ability limit into a formality. The fix reads `has_used_ability` **before**
+  `spend_ability` consumes the grant and passes it down as `was_repeat`. Worth logging
+  because the bug is invisible in the code (both halves read correctly on their own) and was
+  caught by an assertion that a *third* Stoke is refused — the case nobody writes unless
+  they are deliberately probing the boundary.
+- **Every new op was verified by putting the bug back, and one test was vacuous.**
+  `_test_grants_expire` called `p.start_turn()`, which does not exist on `Player` — so the
+  call silently no-opped and all five of its assertions passed against nothing. The sabotage
+  pass caught it precisely because it was the one sabotage the suite did *not* notice.
+  **A test that passes when the feature is removed is not a test**, and the only way to know
+  which ones those are is to remove the feature. Nine of ten sabotages failed the suite as
+  intended; the tenth is why the pass is worth running at all.
+- **The rule-4 guard on Forge supports was written wrong first, and the cards disproved it.**
+  `forge.md`'s binding constraint is that a Forge support may not sell damage more
+  efficiently than an attack, so the generator first checked *damage per pool energy* — and
+  refused `Cold Shut` at 25-for-1. But the two neutral damage supports (`Collapse` 20,
+  `Toppling Blow` 25) are both **free and restricted**: the restriction is what they pay
+  with, so dividing by a pool cost of 0 measures nothing. The guard is now an absolute
+  ceiling set by the existing neutral maximum. **A rule expressed as a rate cannot be
+  checked against cards that pay in something other than the rate's denominator.**
+- **Op-reachability is a third question, distinct from "the op works" and "the AI finds
+  it".** `ForgeTest` proves each op resolves when driven directly; a probe over six AI games
+  showed several never firing. That is an **AI heuristics gap, not an engine defect** — the
+  pre-existing `stoked_cleave` and `Scrap` never fire either — and it was confirmed by a
+  separate probe that plays each card as written through `use_ability` and `queue_attack`
+  and reaches every one of them. One real bug did surface from it: `_queue_attacks` skipped
+  any unit with an attack already queued, so the AI could stoke, pay the HP for an extra
+  attack slot, and then never use it.
+- **The AI's Forge payoff check could not see payoffs on the Stoke line itself.**
+  `_stoke_worth_it` scans the unit's *other* lines for a `stoked_` op, which was right when
+  every payoff sat on a later attack. The expansion put draw, the decay skip, the extra
+  attack slot, the second Stoke and the discount on the **ability**, which the scan
+  deliberately skips — so the AI refused to use cards whose whole point is the ability.
+  `stoked_heal_back` is deliberately excluded from the added list: it refunds the cost and
+  pays nothing on its own, which is exactly the no-op case the check exists to catch.
+- **A `git checkout` on one file destroyed uncommitted work in it, and the harnesses are
+  what caught it.** Reverting `scripts/core/Player.gd` to discard a temporary sabotage also
+  discarded the 8-card opener, draw 2, the 150 HP throne, the two-Basic guarantee and the
+  Stoke per-turn reset — none of which was committed. `RulesTest` fell from 146 to 112 with
+  eleven failures all naming a throne at 100, which is what made the cause findable at all.
+  **`git checkout <file>` is not an undo for an edit made this session** when the file also
+  holds work that was never committed; the safe revert is a copy taken before the edit,
+  which is what the other sabotages used.
+
+- **Tempest is revived as the accumulation colour, and the two signatures are `Charge`
+  and `Storm`.** The 2026-08-16 absorption into Forge left one door open — *"revivable
+  only as a genuinely different idea"* — and this clears it: nothing here competes with
+  Forge's multi-attack claim, which `Bellow`/`stoked_extra_attack` and the `Second Wind`
+  deck now hold concretely. **Tempest is the only faction whose resources persist and grow
+  across turns**; everything else is instant (`Stoke`), live (`Earth`), binary
+  (`Judgment`), or decaying (the pool). Against Gaia, the distinction is wide versus deep:
+  Gaia's aura rewards keeping many bodies alive and shrinks the instant one dies, while
+  Tempest's counter sits on one body and is lost whole with it.
+  **Four decisions were reversed mid-design and each reversal is the useful part.**
+  *(1)* `Charge` grows on damage **dealt only**, never taken — the both-ways draft made
+  the counterplay *"stop attacking"*, which is the weakest kind, and it collided with
+  shared `Retribution` on a board where Gaia's `Thicket` is already the Retribution-wall
+  deck. *(2)* `Storm N` is **one instance of N**, not N instances of 1 — the multi-instance
+  reading was accidentally a **`Resist`-piercing** mechanic, since `Resist` floors each
+  instance at 1 damage, so armour would have become useless as Storm climbed. *(3)* The
+  `Charge` bands were re-derived twice as the growth rules changed, which is why the
+  numbers in the spec are the third table and not the first. *(4)* Two chains had their
+  `Charge` **removed** rather than given a spender, because a faction where every body
+  carries the keyword is the sameness failure the bestiary waves already documented.
+  **Charge is the third thing to survive evolution**, after attached energy and Tools, and
+  for the identical reason: without it, evolving would punish the one faction whose
+  resource is time, so the correct play would be never to evolve. The value carries and
+  the rate does not — **evolving is Tempest's rate increase.** It is still lost on death
+  (the counterplay), on `Rise` (*"Rise restores the card, not the history"*), and on
+  retreat (which would otherwise launder a counter past every piece of removal).
+  **Three deliberate bets are recorded in the spec rather than designed away**, each one
+  a place where a modelled concern was overruled: Storm is permanent/uncapped/symmetric,
+  Charge is uncapped with the tower clock as its only brake, and every instance grows
+  Charge. The case for the first is that Storm is *symmetric*, so it sets the pace rather
+  than the winner — and the 5M sweep's measured problem is that **slow decks lose**, with
+  tower scaling already A/B tested as the cause and exonerated.
+  **Tempest's damage discount is 30%, and it was derived rather than picked.** The live
+  pool measures 7.0–8.1 damage per energy (mean 7.69), and an attack grows Charge twice
+  (the attack plus its Storm instance), so amortised the keyword is worth **+2N damage
+  every swing forever** — +20 at Stage 2, ~2.6 energy of value, the largest keyword
+  benefit in the game. Compare `Judgment` −1/3 and `Sanctuary` −18%. Non-Charge Tempest
+  bodies keep the standard rate, which the generator enforces per line rather than per
+  card.
+  **No cards are written.** `tools/add_tempest_faction.py` holds 20 of them (16 units in
+  6 chains, 3 supports, an energy card) and **refuses `--apply` while any of its 11 ops is
+  unimplemented** — an unknown op parses fine and silently does nothing, which is the exact
+  shape of the dropped-`effects` bug already in this log twice, so the generator makes the
+  unplayable state unreachable rather than merely discouraged. Its guards were verified by
+  putting six separate bugs back and confirming each is refused.
+
+- **A 5-round, 5,000,000-game balance sweep (2026-08-17) produced three rule changes, and
+  the method matters as much as the changes.** Each round played 1M games — every one of
+  the 625 ordered deck pairings exactly 1,600 times, so the matchup matrix carries no
+  sampling noise — then one change was made and the next million re-run, which is what
+  makes each change's effect *attributable* rather than confounded with the others.
+  The three changes, each aimed at a measured cause rather than at a win rate:
+  **(1) The Earth aura's damage half was halved.** One point of Earth paid +1 into every
+  unit's max HP, both towers' HP *and* every attack, so it bought six-plus stat points for
+  one. A live probe measured `Deep Grove` at a mean aura of **14.6, peaking at 78**. HP
+  stays at full rate; damage is now +1 per two points. Gaia 73.8% → 66.2%.
+  **(2) `Sanctuary N`'s unbounded terminal overflow was removed.** A pool that could not
+  cover a hit used to absorb the *whole* instance at any size, making every shielded body
+  worth `N + an extra life`; `Sealed Light` runs thirty of them and sat at 89–91% while its
+  games ran **four rounds longer** than average — winning by being unkillable rather than
+  by out-playing anything. The pool now drains exactly and the remainder lands. Plain
+  Sanctuary keeps the full absorb, since it has no pool to drain.
+  **(3) The support healing ladder was re-anchored ×1.6.** It had been set against ~50 HP
+  bodies and was never re-derived when the 2026-08-08 curve raise took bodies to 40–175 —
+  the damage anchors were deliberately held, and nothing revisited the *support* band. Draw
+  and search were left alone; only HP-denominated numbers were rescaled.
+  **Two things were tested and deliberately NOT changed.** Tower scaling was the obvious
+  suspect for the ~9.5-round clock and was A/B tested at `+2` instead of `+3`: games got
+  longer and the bottom decks did not move, so it was reverted rather than shipped on a
+  plausible story. And Judgment was left alone despite `Verdict Engine` sitting at 46%,
+  because `AIPlayer` has no Judgment heuristic — the keyword's entire decision (cash the
+  charge or hold it) is not being played, so its win rate is not evidence about the keyword.
+  **The general shape: a keyword that pays into several systems at once has to be priced
+  against the SUM, not against each payment.** Earth read as +1/+1 and was really +1 to six
+  things; Sanctuary read as "a pool of N" and was really "N plus one free hit of any size."
+  Both looked correctly costed line by line and neither was, and only aggregate play
+  surfaced it — the assertion suites were green throughout, because every one of these was
+  the rules working exactly as written.
