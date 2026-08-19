@@ -20,3 +20,8 @@ build/
 # tools/launch.ps1 on first run, so committing it only bakes one person's
 # Downloads folder into everyone else's checkout.
 tools/godot-path.txt
+
+# Balance simulation output. Regenerable from scripts/core/BalanceSim.gd, and a
+# 100k-game sample is ~16MB of CSV that means nothing on another checkout —
+# same reasoning that keeps the web build out of the source branch.
+logs/sim/

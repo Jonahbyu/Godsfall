@@ -3442,3 +3442,2882 @@ Damage by card (unit / tower / throne, total):
     Null Adept                      26  (26 / 0 / 0 over 2 hits)
     Rust Crawler                    24  (24 / 0 / 0 over 1 hits)
     Sundered Wretch                 18  (18 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T21:55:10  [RulesTest]
+Wasting Fen  vs  Unquiet Dead
+Result: Wasting Fen wins on round 6
+------------------------------------------------------------------------
+Wasting Fen (You)
+  throne 175 / 175
+  tower 1: 100 / 100
+  tower 2: 100 / 100
+  tower fire dealt: 84
+Unquiet Dead (Opponent)
+  throne 0 / 175
+  tower 1: DESTROYED (max was 95)
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 90
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Wasting Fen
+    Blighthusk                      60  (0 / 60 / 0 over 2 hits)
+    Hollowmaw                       59  (0 / 7 / 52 over 2 hits)
+    Blightfen                       50  (0 / 0 / 50 over 1 hits)
+    Rotwisp                         25  (25 / 0 / 0 over 1 hits)
+    Gnawling                        24  (0 / 0 / 24 over 1 hits)
+  Unquiet Dead
+    Ashlit                          25  (25 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T22:05:17  [RulesTest]
+Verdict Engine  vs  Sealed Light
+Result: Sealed Light wins on round 13
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 0 / 210
+  tower 1: DESTROYED (max was 95)
+  tower 2: DESTROYED (max was 130)
+  tower fire dealt: 76
+Sealed Light (Opponent)
+  throne 183 / 210
+  tower 1: 110 / 135
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 423
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Seraim                          96  (80 / 16 / 0 over 6 hits)
+    Seratribune                     77  (35 / 42 / 0 over 2 hits)
+    Lumemote                        19  (0 / 11 / 8 over 3 hits)
+    Belliel                         10  (10 / 0 / 0 over 1 hits)
+  Sealed Light
+    Serakin                        310  (205 / 70 / 35 over 10 hits)
+    Solemmant                      308  (200 / 53 / 55 over 10 hits)
+    Lucenlumen                     132  (94 / 38 / 0 over 4 hits)
+    Empyrseraph                    114  (0 / 57 / 57 over 2 hits)
+    Solemim                         89  (89 / 0 / 0 over 4 hits)
+    Lucenmote                       28  (28 / 0 / 0 over 1 hits)
+    Empyriel                         8  (8 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T22:05:21  [SupportTest]
+Bedrock  vs  Toll Engine
+Result: Bedrock wins on round 9
+------------------------------------------------------------------------
+Bedrock (You)
+  throne 190 / 190
+  tower 1: 110 / 126
+  tower 2: 126 / 126
+  tower fire dealt: 557
+Toll Engine (Opponent)
+  throne 0 / 190
+  tower 1: 100 / 115
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 193
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Bedrock
+    Petriling                      257  (159 / 50 / 48 over 9 hits)
+    Caldthane                      194  (80 / 6 / 108 over 4 hits)
+    Tussbole                        99  (99 / 0 / 0 over 4 hits)
+    Caldling                        20  (20 / 0 / 0 over 1 hits)
+    Granling                        18  (18 / 0 / 0 over 1 hits)
+  Toll Engine
+    Rimethane                      102  (102 / 0 / 0 over 6 hits)
+    Gnawgrub                        65  (65 / 0 / 0 over 7 hits)
+    Cairnlit                        28  (28 / 0 / 0 over 4 hits)
+    Osslit                          23  (23 / 0 / 0 over 4 hits)
+    Morwisp                         15  (15 / 0 / 0 over 3 hits)
+
+========================================================================
+2026-08-16T22:06:32  [Combat]
+Toll Engine  vs  Sealed Light
+Result: Sealed Light wins on round 6
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 175
+  tower 1: 9 / 100
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 0
+Sealed Light (Opponent)
+  throne 175 / 175
+  tower 1: 120 / 120
+  tower 2: 100 / 100
+  tower fire dealt: 108
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    (no card damage dealt)
+  Sealed Light
+    Empyrseraph                    165  (0 / 73 / 92 over 4 hits)
+    Sanctim                         77  (13 / 64 / 0 over 3 hits)
+    Lucenmote                       56  (0 / 0 / 56 over 2 hits)
+
+========================================================================
+2026-08-16T22:06:54  [Combat]
+Toll Engine  vs  Starve
+Result: Starve wins on round 5
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 170
+  tower 1: DESTROYED (max was 90)
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 51
+Starve (Opponent)
+  throne 170 / 170
+  tower 1: 95 / 95
+  tower 2: 93 / 95
+  tower fire dealt: 68
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Rimethane                       25  (25 / 0 / 0 over 1 hits)
+  Starve
+    Wanesk                         168  (24 / 96 / 48 over 7 hits)
+    Nullfray                        75  (0 / 25 / 50 over 3 hits)
+    Umbrith                         60  (12 / 24 / 24 over 5 hits)
+    Hushith                         15  (0 / 3 / 12 over 2 hits)
+
+========================================================================
+2026-08-16T22:13:06  [RulesTest]
+Verdict Engine  vs  Barrow Wall
+Result: Barrow Wall wins on round 11
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 0 / 200
+  tower 1: DESTROYED (max was 115)
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 221
+Barrow Wall (Opponent)
+  throne 200 / 200
+  tower 1: 18 / 145  +10 dmg
+  tower 2: 92 / 125
+  tower fire dealt: 523
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Seraureole                      84  (42 / 42 / 0 over 2 hits)
+    Lumesear                        48  (48 / 0 / 0 over 3 hits)
+    Bellchoir                       31  (31 / 0 / 0 over 2 hits)
+    Lumemote                        24  (8 / 16 / 0 over 3 hits)
+  Barrow Wall
+    Rimethane                      169  (109 / 5 / 55 over 9 hits)
+    Cairnmaw                       111  (111 / 0 / 0 over 4 hits)
+    Gristbarrow                     38  (38 / 0 / 0 over 1 hits)
+    Cairnlit                        24  (12 / 0 / 12 over 2 hits)
+    Sepulling                       22  (22 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T22:13:10  [SupportTest]
+Thicket  vs  Lamp Wall
+Result: Lamp Wall wins on round 14
+------------------------------------------------------------------------
+Thicket (You)
+  throne 0 / 215
+  tower 1: DESTROYED (max was 105)
+  tower 2: DESTROYED (max was 136)
+  tower fire dealt: 388
+Lamp Wall (Opponent)
+  throne 140 / 215
+  tower 1: 180 / 180  +5 dmg
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 589
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Thicket
+    Lichbud                         73  (10 / 63 / 0 over 3 hits)
+    Burrbud                         51  (51 / 0 / 0 over 2 hits)
+    Thornbud                        30  (30 / 0 / 0 over 1 hits)
+    Sedgesprout                     24  (24 / 0 / 0 over 2 hits)
+  Lamp Wall
+    Lumearch                       184  (64 / 21 / 99 over 7 hits)
+    Aurmant                        183  (118 / 65 / 0 over 6 hits)
+    Lumesear                        96  (64 / 32 / 0 over 6 hits)
+    Aurkin                          25  (0 / 25 / 0 over 1 hits)
+    Clarim                          18  (0 / 18 / 0 over 3 hits)
+    Lumemote                        16  (16 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-16T22:24:50  [RulesTest]
+Starve  vs  Bedrock
+Result: Bedrock wins on round 7
+------------------------------------------------------------------------
+Starve (You)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 95)
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 107
+Bedrock (Opponent)
+  throne 180 / 180
+  tower 1: 130 / 130
+  tower 2: 101 / 115
+  tower fire dealt: 337
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Starve
+    Wanesk                          57  (57 / 0 / 0 over 3 hits)
+    Hushfray                        33  (33 / 0 / 0 over 3 hits)
+    Hushith                         19  (7 / 12 / 0 over 2 hits)
+    Umbrith                          7  (7 / 0 / 0 over 1 hits)
+  Bedrock
+    Petriling                      183  (90 / 46 / 47 over 5 hits)
+    Tussling                       174  (44 / 38 / 92 over 4 hits)
+    Caldcrag                        86  (0 / 86 / 0 over 2 hits)
+
+========================================================================
+2026-08-16T22:24:54  [SupportTest]
+Standing Stones  vs  Widening Rift
+Result: Standing Stones wins on round 12
+------------------------------------------------------------------------
+Standing Stones (You)
+  throne 205 / 205
+  tower 1: 165 / 165
+  tower 2: 94 / 135
+  tower fire dealt: 578
+Widening Rift (Opponent)
+  throne 0 / 205
+  tower 1: DESTROYED (max was 115)
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 258
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Standing Stones
+    Thornspore                     156  (84 / 58 / 14 over 11 hits)
+    Petricrag                      140  (103 / 37 / 0 over 9 hits)
+    Lichcrag                        92  (92 / 0 / 0 over 4 hits)
+    Petrimonolith                   40  (28 / 0 / 12 over 3 hits)
+    Lichling                        19  (0 / 0 / 19 over 1 hits)
+  Widening Rift
+    Scourebb                       115  (115 / 0 / 0 over 2 hits)
+    Wanesk                          79  (79 / 0 / 0 over 4 hits)
+    Nullith                         20  (20 / 0 / 0 over 2 hits)
+    Sevwane                         19  (19 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-16T23:40:47  [RulesTest]
+Lamp Wall  vs  Lamp Wall
+Result: Lamp Wall wins on round 10
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 195 / 195
+  tower 1: 160 / 160
+  tower 2: 120 / 120
+  tower fire dealt: 300
+Lamp Wall (Opponent)
+  throne 0 / 195
+  tower 1: DESTROYED (max was 130)
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 204
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Aurseraph                      290  (140 / 75 / 75 over 5 hits)
+    Clarim                         144  (64 / 64 / 16 over 18 hits)
+  Lamp Wall
+    Aurkin                          75  (75 / 0 / 0 over 3 hits)
+    Clarim                          64  (64 / 0 / 0 over 8 hits)
+
+========================================================================
+2026-08-16T23:40:57  [RulesTest]
+Widening Rift  vs  Sealed Light
+Result: Widening Rift wins on round 9
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 190 / 190
+  tower 1: 115 / 115
+  tower 2: 115 / 115
+  tower fire dealt: 121
+Sealed Light (Opponent)
+  throne 0 / 190
+  tower 1: 135 / 135
+  tower 2: 115 / 115
+  tower fire dealt: 373
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Sevnull                         46  (46 / 0 / 0 over 1 hits)
+    Wanesk                          24  (24 / 0 / 0 over 1 hits)
+    Scourebb                        21  (21 / 0 / 0 over 1 hits)
+    Nullith                         15  (15 / 0 / 0 over 1 hits)
+    Scoursk                         15  (15 / 0 / 0 over 1 hits)
+  Sealed Light
+    Solemim                        121  (121 / 0 / 0 over 4 hits)
+    Serakin                         35  (35 / 0 / 0 over 1 hits)
+    Lucenmote                       27  (27 / 0 / 0 over 1 hits)
+    Sanctim                         18  (18 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T23:45:22  [RulesTest]
+Wasting Fen  vs  Wasting Fen
+Result: Wasting Fen wins on round 8
+------------------------------------------------------------------------
+Wasting Fen (You)
+  throne 185 / 185
+  tower 1: 85 / 110
+  tower 2: 77 / 110
+  tower fire dealt: 191
+Wasting Fen (Opponent)
+  throne 0 / 185
+  tower 1: DESTROYED (max was 100)
+  tower 2: 57 / 110
+  tower fire dealt: 185
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Wasting Fen
+    Rotfen                         152  (40 / 22 / 90 over 5 hits)
+    Rotwisp                         87  (29 / 29 / 29 over 3 hits)
+    Blighthusk                      60  (60 / 0 / 0 over 2 hits)
+    Gnawling                        14  (14 / 0 / 0 over 1 hits)
+  Wasting Fen
+    Hollowgrub                      29  (29 / 0 / 0 over 1 hits)
+    Hollowmaw                       27  (27 / 0 / 0 over 1 hits)
+    Gnawling                        24  (24 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T23:51:39  [RulesTest]
+Reaffirmation  vs  Starve
+Result: Reaffirmation wins on round 15
+------------------------------------------------------------------------
+Reaffirmation (You)
+  throne 220 / 220
+  tower 1: 38 / 145
+  tower 2: 85 / 145
+  tower fire dealt: 791
+Starve (Opponent)
+  throne 0 / 220
+  tower 1: DESTROYED (max was 140)
+  tower 2: DESTROYED (max was 125)
+  tower fire dealt: 644
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Reaffirmation
+    Clarchoir                       91  (43 / 48 / 0 over 2 hits)
+    Halosear                        78  (78 / 0 / 0 over 2 hits)
+    Glorialumen                     50  (50 / 0 / 0 over 1 hits)
+    Oratora                         49  (0 / 0 / 49 over 1 hits)
+    Oratim                          31  (0 / 31 / 0 over 1 hits)
+    Halokin                         28  (0 / 28 / 0 over 1 hits)
+    Clariel                         22  (22 / 0 / 0 over 1 hits)
+  Starve
+    Wanesk                          99  (99 / 0 / 0 over 6 hits)
+    Hushith                         66  (66 / 0 / 0 over 3 hits)
+    Umbrith                         48  (12 / 36 / 0 over 4 hits)
+    Nullith                         45  (45 / 0 / 0 over 3 hits)
+
+========================================================================
+2026-08-16T23:51:42  [SupportTest]
+Scrap Line  vs  White Heat
+Result: White Heat wins on round 8
+------------------------------------------------------------------------
+Scrap Line (You)
+  throne 0 / 185
+  tower 1: DESTROYED (max was 100)
+  tower 2: 78 / 110
+  tower fire dealt: 171
+White Heat (Opponent)
+  throne 8 / 185
+  tower 1: 110 / 110
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 180
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Scrap Line
+    Gristsmith                     229  (22 / 83 / 124 over 4 hits)
+    Gristforge                      40  (40 / 0 / 0 over 1 hits)
+    Embash                          34  (34 / 0 / 0 over 2 hits)
+    Morwisp                         25  (25 / 0 / 0 over 3 hits)
+    Slagash                         25  (25 / 0 / 0 over 1 hits)
+    Gristgnash                      23  (23 / 0 / 0 over 1 hits)
+    Gnawgrub                        15  (15 / 0 / 0 over 1 hits)
+  White Heat
+    Slagash                        227  (93 / 86 / 48 over 8 hits)
+    Quenchanvil                    151  (45 / 0 / 106 over 3 hits)
+    Quenchbrand                    107  (107 / 0 / 0 over 3 hits)
+    Quenchwick                      32  (0 / 32 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T23:55:45  [RulesTest]
+Cacophony Ramp  vs  Scrap Line
+Result: Cacophony Ramp wins on round 10
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 145 / 145
+  tower 1: 99 / 120
+  tower 2: 64 / 120
+  tower fire dealt: 307
+Scrap Line (Opponent)
+  throne 0 / 145
+  tower 1: DESTROYED (max was 105)
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 234
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Gristbarrow                    148  (34 / 76 / 38 over 5 hits)
+    Morwisp                        120  (70 / 30 / 20 over 12 hits)
+  Scrap Line
+    Osslit                          55  (43 / 12 / 0 over 5 hits)
+    Embash                          54  (54 / 0 / 0 over 3 hits)
+    Gnawgrub                        15  (15 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T23:55:48  [SupportTest]
+Rise & Recur  vs  Wasting Fen
+Result: Rise & Recur wins on round 8
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 135 / 135
+  tower 1: 110 / 110
+  tower 2: 110 / 110
+  tower fire dealt: 200
+Wasting Fen (Opponent)
+  throne 0 / 135
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 95
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Cairnmaw                        78  (58 / 0 / 20 over 3 hits)
+    Osslit                          72  (0 / 60 / 12 over 6 hits)
+    Morwisp                         70  (10 / 30 / 30 over 7 hits)
+    Ossgaunt                        33  (33 / 0 / 0 over 1 hits)
+    Cairnlit                        12  (12 / 0 / 0 over 1 hits)
+  Wasting Fen
+    Rotwisp                        159  (159 / 0 / 0 over 6 hits)
+    Hollowgrub                      30  (30 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T23:56:07  [RulesTest]
+Widening Rift  vs  Rise & Recur
+Result: Rise & Recur wins on round 7
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 0 / 130
+  tower 1: DESTROYED (max was 100)
+  tower 2: 48 / 105
+  tower fire dealt: 173
+Rise & Recur (Opponent)
+  throne 130 / 130
+  tower 1: 105 / 105
+  tower 2: 64 / 105
+  tower fire dealt: 167
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Wanesk                          48  (48 / 0 / 0 over 2 hits)
+    Nullith                         45  (30 / 15 / 0 over 3 hits)
+  Rise & Recur
+    Osslit                         108  (72 / 24 / 12 over 10 hits)
+    Cairnmaw                       104  (36 / 28 / 40 over 3 hits)
+    Cairnlit                        48  (48 / 0 / 0 over 4 hits)
+    Morwisp                         20  (20 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-16T23:56:15  [RulesTest]
+Unquiet Dead  vs  Standing Stones
+Result: Standing Stones wins on round 6
+------------------------------------------------------------------------
+Unquiet Dead (You)
+  throne 0 / 125
+  tower 1: 40 / 100
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 107
+Standing Stones (Opponent)
+  throne 125 / 125
+  tower 1: 124 / 124
+  tower 2: 104 / 104
+  tower fire dealt: 155
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Unquiet Dead
+    Osskin                          87  (87 / 0 / 0 over 3 hits)
+    Osswisp                         26  (26 / 0 / 0 over 1 hits)
+  Standing Stones
+    Lichling                        85  (49 / 36 / 0 over 6 hits)
+    Bryobud                         77  (0 / 38 / 39 over 6 hits)
+    Petrisprout                     71  (0 / 31 / 40 over 6 hits)
+    Thornspore                      26  (26 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-16T23:56:54  [RulesTest]
+Standing Stones  vs  White Heat
+Result: White Heat wins on round 9
+------------------------------------------------------------------------
+Standing Stones (You)
+  throne 0 / 140
+  tower 1: DESTROYED (max was 148)
+  tower 2: 123 / 123
+  tower fire dealt: 360
+White Heat (Opponent)
+  throne 15 / 140
+  tower 1: 115 / 115
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 219
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Standing Stones
+    Petrisprout                    140  (30 / 74 / 36 over 9 hits)
+    Thornspore                      77  (77 / 0 / 0 over 5 hits)
+    Petrimonolith                   71  (43 / 0 / 28 over 4 hits)
+    Petricrag                       50  (50 / 0 / 0 over 3 hits)
+    Bryobud                         23  (23 / 0 / 0 over 3 hits)
+  White Heat
+    Quenchanvil                    335  (227 / 20 / 88 over 7 hits)
+    Cindspark                      150  (28 / 94 / 28 over 5 hits)
+    Slagash                         52  (52 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-16T23:57:02  [RulesTest]
+Thicket  vs  Bedrock
+Result: Bedrock wins on round 7
+------------------------------------------------------------------------
+Thicket (You)
+  throne 0 / 130
+  tower 1: 11 / 106
+  tower 2: DESTROYED (max was 106)
+  tower fire dealt: 230
+Bedrock (Opponent)
+  throne 130 / 130
+  tower 1: 107 / 124
+  tower 2: 109 / 109
+  tower fire dealt: 387
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Thicket
+    Sedgefen                       102  (102 / 0 / 0 over 2 hits)
+    Rootwarden                      49  (49 / 0 / 0 over 1 hits)
+    Sedgesprout                     27  (27 / 0 / 0 over 1 hits)
+    Rootsprout                      22  (22 / 0 / 0 over 1 hits)
+    Thornbud                         7  (7 / 0 / 0 over 1 hits)
+  Bedrock
+    Caldcrag                       291  (100 / 129 / 62 over 5 hits)
+    Grancrag                        58  (0 / 0 / 58 over 1 hits)
+    Tussbole                        34  (34 / 0 / 0 over 2 hits)
+    Caldling                        32  (32 / 0 / 0 over 1 hits)
+    Tussling                        24  (24 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T23:57:10  [RulesTest]
+Sealed Light  vs  Widening Rift
+Result: Sealed Light wins on round 11
+------------------------------------------------------------------------
+Sealed Light (You)
+  throne 150 / 150
+  tower 1: 145 / 145
+  tower 2: 125 / 125
+  tower fire dealt: 582
+Widening Rift (Opponent)
+  throne 0 / 150
+  tower 1: 125 / 125
+  tower 2: DESTROYED (max was 120)
+  tower fire dealt: 146
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Sealed Light
+    Sanctcant                      245  (77 / 56 / 112 over 5 hits)
+    Empyriel                       118  (118 / 0 / 0 over 4 hits)
+    Sanctim                         32  (32 / 0 / 0 over 1 hits)
+    Sanctthrone                     23  (16 / 7 / 0 over 2 hits)
+    Solemim                         15  (15 / 0 / 0 over 2 hits)
+  Widening Rift
+    Waneebb                         63  (63 / 0 / 0 over 2 hits)
+    Scourebb                        60  (60 / 0 / 0 over 1 hits)
+    Wanesk                          51  (51 / 0 / 0 over 3 hits)
+    Scoursk                         40  (40 / 0 / 0 over 2 hits)
+    Sevwane                         21  (21 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T23:57:24  [RulesTest]
+Starve  vs  Total Eclipse
+Result: Starve wins on round 9
+------------------------------------------------------------------------
+Starve (You)
+  throne 190 / 190
+  tower 1: 115 / 115
+  tower 2: 115 / 115
+  tower fire dealt: 327
+Total Eclipse (Opponent)
+  throne 0 / 190
+  tower 1: 25 / 115
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 275
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Starve
+    Waneebb                        168  (112 / 56 / 0 over 7 hits)
+    Wanesk                         144  (48 / 24 / 72 over 6 hits)
+    Umbrith                         85  (21 / 28 / 36 over 8 hits)
+    Nullith                         60  (30 / 30 / 0 over 4 hits)
+    Hushfray                        53  (37 / 16 / 0 over 4 hits)
+    Hushith                         20  (20 / 0 / 0 over 1 hits)
+  Total Eclipse
+    Pallith                         59  (59 / 0 / 0 over 2 hits)
+    Sevith                          32  (32 / 0 / 0 over 1 hits)
+    Ebonith                         28  (28 / 0 / 0 over 1 hits)
+    Pallgaunt                       28  (28 / 0 / 0 over 1 hits)
+    Umbrsk                          26  (26 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T23:57:51  [RulesTest]
+Wasting Fen  vs  Reaffirmation
+Result: Reaffirmation wins on round 15
+------------------------------------------------------------------------
+Wasting Fen (You)
+  throne 0 / 220
+  tower 1: DESTROYED (max was 125)
+  tower 2: 45 / 145
+  tower fire dealt: 641
+Reaffirmation (Opponent)
+  throne 107 / 220
+  tower 1: 77 / 145
+  tower 2: DESTROYED (max was 115)
+  tower fire dealt: 661
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Wasting Fen
+    Hollowdrung                    118  (28 / 90 / 0 over 3 hits)
+    Hollowgrub                      41  (41 / 0 / 0 over 2 hits)
+    Gnawling                        33  (33 / 0 / 0 over 2 hits)
+    Blighthusk                      10  (10 / 0 / 0 over 1 hits)
+    Rotwisp                         10  (10 / 0 / 0 over 1 hits)
+  Reaffirmation
+    Oratim                         124  (62 / 0 / 62 over 4 hits)
+    Halokin                         84  (0 / 56 / 28 over 3 hits)
+    Gloriamote                      64  (22 / 12 / 30 over 4 hits)
+    Glorialumen                     60  (60 / 0 / 0 over 2 hits)
+    Psalmiel                        58  (0 / 58 / 0 over 2 hits)
+    Bellmote                        34  (34 / 0 / 0 over 2 hits)
+    Clariel                         29  (0 / 29 / 0 over 1 hits)
+    Clarchoir                       22  (22 / 0 / 0 over 1 hits)
+    Clararch                        16  (16 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-16T23:57:54  [SupportTest]
+Wasting Fen  vs  Sealed Light
+Result: Sealed Light wins on round 11
+------------------------------------------------------------------------
+Wasting Fen (You)
+  throne 0 / 200
+  tower 1: DESTROYED (max was 125)
+  tower 2: DESTROYED (max was 115)
+  tower fire dealt: 144
+Sealed Light (Opponent)
+  throne 200 / 200
+  tower 1: 75 / 125
+  tower 2: 125 / 125
+  tower fire dealt: 497
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Wasting Fen
+    Hollowmaw                      127  (127 / 0 / 0 over 3 hits)
+    Blightknell                     35  (35 / 0 / 0 over 1 hits)
+    Hollowgrub                      25  (25 / 0 / 0 over 1 hits)
+    Rotwisp                          7  (7 / 0 / 0 over 1 hits)
+  Sealed Light
+    Sanctcant                      235  (95 / 81 / 59 over 7 hits)
+    Empyrseraph                    132  (132 / 0 / 0 over 4 hits)
+    Lucenlumen                     111  (7 / 52 / 52 over 3 hits)
+    Solemtribune                    40  (24 / 16 / 0 over 2 hits)
+    Serakin                         35  (35 / 0 / 0 over 1 hits)
+    Solemim                         32  (0 / 0 / 32 over 1 hits)
+    Lucenmote                       28  (28 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T00:09:01  [RulesTest]
+Widening Rift  vs  Lamp Wall
+Result: Widening Rift wins on round 16
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 9 / 225
+  tower 1: 31 / 150
+  tower 2: DESTROYED (max was 115)
+  tower fire dealt: 565
+Lamp Wall (Opponent)
+  throne 0 / 225
+  tower 1: DESTROYED (max was 180)
+  tower 2: 113 / 150
+  tower fire dealt: 710
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Scoursk                        270  (185 / 13 / 72 over 9 hits)
+    Wanesk                         124  (100 / 24 / 0 over 6 hits)
+    Sevwane                         82  (27 / 0 / 55 over 2 hits)
+    Nullith                         59  (25 / 34 / 0 over 3 hits)
+    Sevnull                         14  (0 / 0 / 14 over 1 hits)
+  Lamp Wall
+    Aurkin                         100  (100 / 0 / 0 over 4 hits)
+    Lumesear                        96  (32 / 64 / 0 over 6 hits)
+    Lumearch                        85  (85 / 0 / 0 over 3 hits)
+    Clarim                          16  (16 / 0 / 0 over 2 hits)
+    Lumemote                         8  (8 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T00:09:04  [SupportTest]
+Nothing Holds  vs  Barrow Wall
+Result: Nothing Holds wins on round 10
+------------------------------------------------------------------------
+Nothing Holds (You)
+  throne 195 / 195
+  tower 1: 80 / 120
+  tower 2: 118 / 120
+  tower fire dealt: 338
+Barrow Wall (Opponent)
+  throne 0 / 195
+  tower 1: 42 / 140  +5 dmg
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 327
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Nothing Holds
+    Scoriasmith                    225  (0 / 78 / 147 over 6 hits)
+    Tapwright                      166  (103 / 63 / 0 over 8 hits)
+    Cinderlingwick                  40  (0 / 40 / 0 over 2 hits)
+    Slakeling                       32  (32 / 0 / 0 over 2 hits)
+    Scoriaslag                      22  (22 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Gristbarrow                     85  (85 / 0 / 0 over 3 hits)
+    Sepulshroud                     66  (66 / 0 / 0 over 2 hits)
+    Rimethane                       65  (65 / 0 / 0 over 3 hits)
+    Cairnmaw                        35  (35 / 0 / 0 over 1 hits)
+    Sepulling                       35  (35 / 0 / 0 over 2 hits)
+    Cairnlit                        12  (12 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T00:09:33  [Combat]
+Toll Engine  vs  Barrow Wall
+Result: Barrow Wall wins on round 6
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 175
+  tower 1: DESTROYED (max was 95)
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 80
+Barrow Wall (Opponent)
+  throne 175 / 175
+  tower 1: 120 / 120  +10 dmg
+  tower 2: 100 / 100
+  tower fire dealt: 118
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Morwisp                         10  (10 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Sepulshroud                    131  (0 / 55 / 76 over 4 hits)
+    Rimethane                      101  (25 / 50 / 26 over 5 hits)
+    Cairnlit                        33  (7 / 14 / 12 over 4 hits)
+    Sepulling                       22  (0 / 22 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T00:21:18  [RulesTest]
+Standing Heat  vs  Widening Dark
+Result: Standing Heat wins on round 8
+------------------------------------------------------------------------
+Standing Heat (You)
+  throne 69 / 185
+  tower 1: 130 / 130
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 160
+Widening Dark (Opponent)
+  throne 0 / 185
+  tower 1: DESTROYED (max was 100)
+  tower 2: 110 / 110
+  tower fire dealt: 130
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Standing Heat
+    Annealanvil                    251  (45 / 71 / 135 over 5 hits)
+    Slakeling                      121  (77 / 22 / 22 over 6 hits)
+    Quenchwick                      32  (32 / 0 / 0 over 1 hits)
+    Annealash                       28  (28 / 0 / 0 over 1 hits)
+  Widening Dark
+    Vastebb                        245  (141 / 52 / 52 over 5 hits)
+    Vastsk                          77  (15 / 31 / 31 over 4 hits)
+    Gyresk                          25  (25 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T00:21:21  [SupportTest]
+Scrap Line  vs  Total Eclipse
+Result: Total Eclipse wins on round 6
+------------------------------------------------------------------------
+Scrap Line (You)
+  throne 0 / 175
+  tower 1: DESTROYED (max was 85)
+  tower 2: 92 / 100
+  tower fire dealt: 85
+Total Eclipse (Opponent)
+  throne 175 / 175
+  tower 1: 100 / 100
+  tower 2: 16 / 100
+  tower fire dealt: 139
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Scrap Line
+    Gristsmith                     101  (39 / 62 / 0 over 2 hits)
+    Embash                          62  (62 / 0 / 0 over 3 hits)
+    Embkiln                         60  (60 / 0 / 0 over 2 hits)
+    Osslit                          24  (24 / 0 / 0 over 2 hits)
+  Total Eclipse
+    Pallgaunt                      178  (35 / 34 / 109 over 5 hits)
+    Scourgaunt                     139  (49 / 45 / 45 over 4 hits)
+    Pallith                         62  (62 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-17T00:21:51  [Combat]
+Toll Engine  vs  Wasting Fen
+Result: Wasting Fen wins on round 6
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 175
+  tower 1: DESTROYED (max was 90)
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 89
+Wasting Fen (Opponent)
+  throne 175 / 175
+  tower 1: 100 / 100
+  tower 2: 92 / 100
+  tower fire dealt: 96
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Rimethane                       25  (25 / 0 / 0 over 1 hits)
+  Wasting Fen
+    Rotfen                         146  (2 / 48 / 96 over 4 hits)
+    Blighthusk                      69  (0 / 66 / 3 over 4 hits)
+    Gnawling                        24  (0 / 0 / 24 over 1 hits)
+
+========================================================================
+2026-08-17T00:23:09  [RulesTest]
+Starve  vs  Scrap Line
+Result: Starve wins on round 8
+------------------------------------------------------------------------
+Starve (You)
+  throne 185 / 185
+  tower 1: 110 / 110
+  tower 2: 110 / 110
+  tower fire dealt: 267
+Scrap Line (Opponent)
+  throne 0 / 185
+  tower 1: 62 / 110
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 190
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Starve
+    Nullfray                       221  (71 / 25 / 125 over 9 hits)
+    Nullith                         85  (30 / 55 / 0 over 6 hits)
+    Hushith                         79  (67 / 12 / 0 over 6 hits)
+    Wanesk                          68  (68 / 0 / 0 over 3 hits)
+    Hushfray                        48  (48 / 0 / 0 over 3 hits)
+    Umbrith                         12  (12 / 0 / 0 over 1 hits)
+  Scrap Line
+    Gristforge                      48  (48 / 0 / 0 over 1 hits)
+    Slagash                         31  (31 / 0 / 0 over 1 hits)
+    Gristgnash                      26  (26 / 0 / 0 over 1 hits)
+    Morwisp                         20  (20 / 0 / 0 over 2 hits)
+    Gnawgrub                        15  (15 / 0 / 0 over 1 hits)
+    Osslit                          12  (12 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T00:23:12  [SupportTest]
+Widening Rift  vs  Verdict Engine
+Result: Verdict Engine wins on round 10
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 0 / 195
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 115)
+  tower fire dealt: 254
+Verdict Engine (Opponent)
+  throne 195 / 195
+  tower 1: 120 / 120
+  tower 2: 73 / 120
+  tower fire dealt: 357
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Nullith                         75  (30 / 45 / 0 over 5 hits)
+    Scoursk                         69  (69 / 0 / 0 over 2 hits)
+    Nullnought                      61  (61 / 0 / 0 over 3 hits)
+    Sevwane                         40  (40 / 0 / 0 over 2 hits)
+    Wanesk                           4  (4 / 0 / 0 over 1 hits)
+  Verdict Engine
+    Seratribune                    199  (85 / 37 / 77 over 6 hits)
+    Seraim                         124  (64 / 60 / 0 over 8 hits)
+    Belliel                         80  (70 / 10 / 0 over 8 hits)
+    Lumemote                        56  (32 / 16 / 8 over 7 hits)
+    Lumesear                        16  (0 / 0 / 16 over 1 hits)
+
+========================================================================
+2026-08-17T00:41:31  [RulesTest]
+Rise & Recur  vs  Cacophony Ramp
+Result: Rise & Recur wins on round 6
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 113 / 175
+  tower 1: DESTROYED (max was 90)
+  tower 2: 100 / 100
+  tower fire dealt: 83
+Cacophony Ramp (Opponent)
+  throne 0 / 175
+  tower 1: 100 / 100
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 65
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Cairnmaw                       148  (28 / 40 / 80 over 4 hits)
+    Osslit                          48  (48 / 0 / 0 over 4 hits)
+    Cairnlit                        12  (12 / 0 / 0 over 1 hits)
+  Cacophony Ramp
+    Gristbarrow                    203  (85 / 75 / 43 over 5 hits)
+    Nithogg, Root-Gnawer            30  (30 / 0 / 0 over 1 hits)
+    Sepulling                       22  (22 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T00:41:38  [SupportTest]
+Wasting Fen  vs  Starve
+Result: Wasting Fen wins on round 11
+------------------------------------------------------------------------
+Wasting Fen (You)
+  throne 200 / 200
+  tower 1: 67 / 125
+  tower 2: 49 / 125
+  tower fire dealt: 444
+Starve (Opponent)
+  throne 0 / 200
+  tower 1: DESTROYED (max was 115)
+  tower 2: DESTROYED (max was 120)
+  tower fire dealt: 324
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Wasting Fen
+    Blighthusk                     179  (54 / 30 / 95 over 6 hits)
+    Hollowgrub                      58  (28 / 30 / 0 over 2 hits)
+    Hollowdrung                     48  (48 / 0 / 0 over 2 hits)
+    Gnawling                        24  (0 / 0 / 24 over 1 hits)
+    Rotfen                          17  (17 / 0 / 0 over 1 hits)
+  Starve
+    Waneebb                        168  (140 / 28 / 0 over 6 hits)
+    Umbrith                         84  (72 / 12 / 0 over 7 hits)
+    Wanesk                          48  (48 / 0 / 0 over 2 hits)
+    Hushfray                        32  (32 / 0 / 0 over 2 hits)
+    Hushith                         17  (17 / 0 / 0 over 1 hits)
+    Nullith                         15  (15 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T00:53:40  [RulesTest]
+Toll Engine  vs  Widening Rift
+Result: Toll Engine wins on round 12
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 205 / 205
+  tower 1: 112 / 130
+  tower 2: 130 / 130
+  tower fire dealt: 574
+Widening Rift (Opponent)
+  throne 0 / 205
+  tower 1: 17 / 130
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 540
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Rimethane                      211  (61 / 50 / 100 over 9 hits)
+    Cairnlit                       173  (137 / 36 / 0 over 16 hits)
+    Morwisp                        110  (100 / 10 / 0 over 11 hits)
+    Gnawgrub                        45  (45 / 0 / 0 over 3 hits)
+  Widening Rift
+    Sevnull                        146  (146 / 0 / 0 over 4 hits)
+    Scoursk                        105  (105 / 0 / 0 over 4 hits)
+    Nullith                         45  (45 / 0 / 0 over 3 hits)
+    Nullnought                      25  (25 / 0 / 0 over 2 hits)
+    Sevgaunt                        22  (22 / 0 / 0 over 1 hits)
+    Waneebb                         19  (19 / 0 / 0 over 1 hits)
+    Sevwane                         12  (12 / 0 / 0 over 1 hits)
+    Wanesk                           2  (2 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T00:53:48  [SupportTest]
+Lamp Wall  vs  Unquiet Dead
+Result: Lamp Wall wins on round 8
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 185 / 185
+  tower 1: 110 / 110
+  tower 2: 110 / 110
+  tower fire dealt: 209
+Unquiet Dead (Opponent)
+  throne 0 / 185
+  tower 1: 92 / 110
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 168
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Aurkin                         190  (97 / 50 / 43 over 9 hits)
+    Aurseraph                      122  (0 / 0 / 122 over 2 hits)
+    Lumesear                       107  (107 / 0 / 0 over 8 hits)
+    Aurmant                        104  (104 / 0 / 0 over 3 hits)
+    Clarim                          32  (16 / 16 / 0 over 4 hits)
+  Unquiet Dead
+    Osskin                         109  (109 / 0 / 0 over 4 hits)
+    Tomblit                         28  (28 / 0 / 0 over 1 hits)
+    Ashlit                          25  (25 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T01:04:28  [RulesTest]
+Toll Engine  vs  Burning Line
+Result: Toll Engine wins on round 9
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 190 / 190
+  tower 1: 115 / 115
+  tower 2: 111 / 115
+  tower fire dealt: 218
+Burning Line (Opponent)
+  throne 0 / 190
+  tower 1: DESTROYED (max was 105)
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 233
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Rimethane                      387  (152 / 110 / 125 over 17 hits)
+    Cairnlit                        72  (60 / 12 / 0 over 6 hits)
+    Morwisp                         20  (10 / 10 / 0 over 2 hits)
+  Burning Line
+    Charkiln                       103  (103 / 0 / 0 over 5 hits)
+    Charash                         31  (31 / 0 / 0 over 1 hits)
+    Tindspark                       27  (27 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T01:04:35  [SupportTest]
+Wasting Fen  vs  Barrow Wall
+Result: Wasting Fen wins on round 8
+------------------------------------------------------------------------
+Wasting Fen (You)
+  throne 185 / 185
+  tower 1: 45 / 110
+  tower 2: 110 / 110
+  tower fire dealt: 200
+Barrow Wall (Opponent)
+  throne 0 / 185
+  tower 1: DESTROYED (max was 125)
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 164
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Wasting Fen
+    Hollowmaw                      260  (75 / 71 / 114 over 6 hits)
+    Blighthusk                      87  (42 / 45 / 0 over 4 hits)
+    Hollowgrub                      30  (30 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Gristbarrow                    105  (67 / 38 / 0 over 3 hits)
+    Cairnlit                        48  (48 / 0 / 0 over 4 hits)
+    Sepulling                       44  (44 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-17T01:31:41  [RulesTest]
+Rise & Recur  vs  Second Wind
+Result: Second Wind wins on round 7
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 0 / 180
+  tower 1: 105 / 105
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 114
+Second Wind (Opponent)
+  throne 82 / 180
+  tower 1: DESTROYED (max was 100)
+  tower 2: 103 / 105
+  tower fire dealt: 139
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Cairnmaw                       124  (84 / 0 / 40 over 4 hits)
+    Cairnlit                        12  (12 / 0 / 0 over 1 hits)
+  Second Wind
+    Bellowwick                     157  (37 / 34 / 86 over 6 hits)
+    Tapwright                      150  (57 / 42 / 51 over 8 hits)
+    Cokewrightslag                 144  (144 / 0 / 0 over 6 hits)
+
+========================================================================
+2026-08-17T01:31:49  [SupportTest]
+Rise & Recur  vs  Second Wind
+Result: Rise & Recur wins on round 8
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 185 / 185
+  tower 1: 110 / 110
+  tower 2: 30 / 110
+  tower fire dealt: 232
+Second Wind (Opponent)
+  throne 0 / 185
+  tower 1: DESTROYED (max was 95)
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 128
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Cairnmaw                       174  (124 / 50 / 0 over 7 hits)
+    Osslit                          68  (56 / 0 / 12 over 6 hits)
+    Morwisp                         19  (19 / 0 / 0 over 2 hits)
+    Cairnlit                        12  (0 / 12 / 0 over 1 hits)
+  Second Wind
+    Bellowmaul                      90  (90 / 0 / 0 over 2 hits)
+    Tapwright                       63  (21 / 42 / 0 over 3 hits)
+    Bellowwick                      60  (34 / 26 / 0 over 2 hits)
+    Cokewrightslag                  48  (48 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-17T01:32:00  [SupportTest]
+Reaffirmation  vs  Widening Rift
+Result: Widening Rift wins on round 10
+------------------------------------------------------------------------
+Reaffirmation (You)
+  throne 0 / 195
+  tower 1: 120 / 120
+  tower 2: 110 / 120
+  tower fire dealt: 447
+Widening Rift (Opponent)
+  throne 195 / 195
+  tower 1: 120 / 120
+  tower 2: 48 / 120
+  tower fire dealt: 433
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Reaffirmation
+    Psalmcant                      141  (141 / 0 / 0 over 3 hits)
+    Oratora                         95  (95 / 0 / 0 over 2 hits)
+    Bellmote                        50  (50 / 0 / 0 over 2 hits)
+  Widening Rift
+    Nullnought                     155  (155 / 0 / 0 over 4 hits)
+    Scourebb                       111  (111 / 0 / 0 over 2 hits)
+    Sevgaunt                       108  (108 / 0 / 0 over 4 hits)
+    Wanesk                          61  (61 / 0 / 0 over 3 hits)
+    Sevwane                         29  (29 / 0 / 0 over 3 hits)
+    Waneebb                         25  (25 / 0 / 0 over 1 hits)
+    Nullfray                        20  (20 / 0 / 0 over 1 hits)
+    Nullith                         15  (15 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T01:32:29  [SupportTest]
+Unquiet Dead  vs  Wasting Fen
+Result: Unquiet Dead wins on round 8
+------------------------------------------------------------------------
+Unquiet Dead (You)
+  throne 185 / 185
+  tower 1: 50 / 110
+  tower 2: 39 / 110
+  tower fire dealt: 240
+Wasting Fen (Opponent)
+  throne 0 / 185
+  tower 1: 19 / 110
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 226
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Unquiet Dead
+    Ossrend                        264  (70 / 89 / 105 over 4 hits)
+    Ossloam                        237  (177 / 0 / 60 over 7 hits)
+    Ossshroud                       86  (33 / 53 / 0 over 2 hits)
+    Tomblit                         56  (28 / 28 / 0 over 2 hits)
+    Osskin                          19  (19 / 0 / 0 over 1 hits)
+  Wasting Fen
+    Hollowdrung                    122  (122 / 0 / 0 over 3 hits)
+    Hollowgrub                      30  (30 / 0 / 0 over 1 hits)
+    Rotwisp                         29  (0 / 29 / 0 over 1 hits)
+    Gnawling                        24  (24 / 0 / 0 over 1 hits)
+    Blighthusk                      17  (17 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T01:32:43  [SupportTest]
+Second Wind  vs  Barrow Wall
+Result: Second Wind wins on round 7
+------------------------------------------------------------------------
+Second Wind (You)
+  throne 180 / 180
+  tower 1: 98 / 105
+  tower 2: 105 / 105
+  tower fire dealt: 159
+Barrow Wall (Opponent)
+  throne 0 / 180
+  tower 1: 51 / 105  +10 dmg
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 128
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Second Wind
+    Cokewrightforge                176  (56 / 40 / 80 over 5 hits)
+    Cokewrightslag                 157  (48 / 44 / 65 over 7 hits)
+    Bellowmaul                      54  (0 / 54 / 0 over 1 hits)
+    Tapwright                       42  (42 / 0 / 0 over 2 hits)
+    Bellowwick                      34  (34 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Gristbarrow                    132  (132 / 0 / 0 over 5 hits)
+    Rimethane                       50  (50 / 0 / 0 over 2 hits)
+    Cairnlit                        24  (24 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-17T01:32:53  [RulesTest]
+Total Eclipse  vs  Starve
+Result: Total Eclipse wins on round 14
+------------------------------------------------------------------------
+Total Eclipse (You)
+  throne 91 / 215
+  tower 1: DESTROYED (max was 125)
+  tower 2: 120 / 140
+  tower fire dealt: 573
+Starve (Opponent)
+  throne 0 / 215
+  tower 1: 113 / 140
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 406
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Total Eclipse
+    Scourwane                      107  (107 / 0 / 0 over 4 hits)
+    Ebonith                         90  (34 / 28 / 28 over 4 hits)
+    Sevith                          72  (36 / 36 / 0 over 2 hits)
+    Pallith                         31  (31 / 0 / 0 over 1 hits)
+    Umbrsk                          20  (20 / 0 / 0 over 1 hits)
+    Lacunith                        17  (17 / 0 / 0 over 1 hits)
+  Starve
+    Wanesk                         195  (147 / 24 / 24 over 9 hits)
+    Nullfray                        44  (19 / 25 / 0 over 2 hits)
+    Hushith                         28  (16 / 12 / 0 over 2 hits)
+    Umbrith                         24  (12 / 0 / 12 over 2 hits)
+    Hushfray                        16  (0 / 16 / 0 over 1 hits)
+    Nullith                         15  (15 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T01:32:57  [SupportTest]
+Thicket  vs  Verdict Engine
+Result: Verdict Engine wins on round 13
+------------------------------------------------------------------------
+Thicket (You)
+  throne 0 / 210
+  tower 1: DESTROYED (max was 110)
+  tower 2: DESTROYED (max was 118)
+  tower fire dealt: 351
+Verdict Engine (Opponent)
+  throne 210 / 210
+  tower 1: 135 / 135
+  tower 2: 38 / 135
+  tower fire dealt: 594
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Thicket
+    Sedgefen                       135  (83 / 52 / 0 over 3 hits)
+    Thornbud                        70  (70 / 0 / 0 over 3 hits)
+    Rootsprout                      31  (31 / 0 / 0 over 1 hits)
+    Burrbud                         29  (29 / 0 / 0 over 1 hits)
+    Lichbud                          4  (4 / 0 / 0 over 2 hits)
+  Verdict Engine
+    Lumemote                       120  (48 / 47 / 25 over 16 hits)
+    Belliel                         70  (50 / 20 / 0 over 7 hits)
+    Seraim                          48  (16 / 32 / 0 over 3 hits)
+    Seraureole                      41  (41 / 0 / 0 over 3 hits)
+    Bellchoir                       16  (16 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T01:43:05  [RulesTest]
+Bank the Heat  vs  Standing Heat
+Result: Standing Heat wins on round 9
+------------------------------------------------------------------------
+Bank the Heat (You)
+  throne 0 / 190
+  tower 1: DESTROYED (max was 110)
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 165
+Standing Heat (Opponent)
+  throne 190 / 190
+  tower 1: 88 / 135
+  tower 2: 115 / 115
+  tower fire dealt: 262
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Bank the Heat
+    Tindkiln                        84  (84 / 0 / 0 over 2 hits)
+    Fluxbrand                       62  (62 / 0 / 0 over 2 hits)
+    Annealash                       28  (28 / 0 / 0 over 1 hits)
+    Tapwright                       21  (21 / 0 / 0 over 1 hits)
+    Fluxwick                        16  (16 / 0 / 0 over 1 hits)
+  Standing Heat
+    Annealbrand                    142  (115 / 0 / 27 over 5 hits)
+    Slakeling                      132  (22 / 44 / 66 over 6 hits)
+    Quenchwick                     117  (34 / 51 / 32 over 6 hits)
+    Annealash                       28  (0 / 28 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T01:43:09  [SupportTest]
+Scrap Line  vs  Cacophony Ramp
+Result: Cacophony Ramp wins on round 3
+------------------------------------------------------------------------
+Scrap Line (You)
+  throne 0 / 160
+  tower 1: DESTROYED (max was 75)
+  tower 2: 85 / 85
+  tower fire dealt: 8
+Cacophony Ramp (Opponent)
+  throne 160 / 160
+  tower 1: 85 / 85
+  tower 2: 25 / 85
+  tower fire dealt: 26
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Scrap Line
+    Gristgnash                      52  (0 / 52 / 0 over 2 hits)
+  Cacophony Ramp
+    Nithogg, Root-Gnawer           172  (0 / 60 / 112 over 3 hits)
+    Gnawgrub                        15  (0 / 0 / 15 over 1 hits)
+
+========================================================================
+2026-08-17T01:51:30  [RulesTest]
+Bedrock  vs  Wasting Fen
+Result: Bedrock wins on round 8
+------------------------------------------------------------------------
+Bedrock (You)
+  throne 185 / 185
+  tower 1: 137 / 137
+  tower 2: 122 / 122
+  tower fire dealt: 283
+Wasting Fen (Opponent)
+  throne 0 / 185
+  tower 1: 56 / 110
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 118
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Bedrock
+    Grancrag                       234  (107 / 58 / 69 over 5 hits)
+    Tussling                       230  (66 / 82 / 82 over 7 hits)
+    Petriling                      117  (117 / 0 / 0 over 3 hits)
+  Wasting Fen
+    Rotwisp                         96  (96 / 0 / 0 over 4 hits)
+    Hollowmaw                       94  (94 / 0 / 0 over 2 hits)
+    Hollowgrub                      30  (30 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-17T01:51:33  [SupportTest]
+Widening Rift  vs  Widening Dark
+Result: Widening Rift wins on round 8
+------------------------------------------------------------------------
+Widening Rift (You)
+  throne 185 / 185
+  tower 1: DESTROYED (max was 100)
+  tower 2: 110 / 110
+  tower fire dealt: 156
+Widening Dark (Opponent)
+  throne 0 / 185
+  tower 1: DESTROYED (max was 105)
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 132
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Rift
+    Scourebb                       166  (55 / 51 / 60 over 4 hits)
+    Wanesk                         120  (96 / 24 / 0 over 5 hits)
+    Sevwane                         98  (16 / 82 / 0 over 3 hits)
+    Sevgaunt                        89  (0 / 0 / 89 over 2 hits)
+    Scoursk                         52  (52 / 0 / 0 over 2 hits)
+    Nullith                         15  (0 / 15 / 0 over 1 hits)
+  Widening Dark
+    Gyresk                          74  (14 / 60 / 0 over 3 hits)
+    Waneith                         70  (70 / 0 / 0 over 2 hits)
+    Vastsk                          13  (13 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-17T01:51:58  [Combat]
+Toll Engine  vs  Sealed Light
+Result: Sealed Light wins on round 7
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 95)
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 0
+Sealed Light (Opponent)
+  throne 180 / 180
+  tower 1: 125 / 125
+  tower 2: 105 / 105
+  tower fire dealt: 121
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    (no card damage dealt)
+  Sealed Light
+    Lucenmote                       89  (0 / 66 / 23 over 4 hits)
+    Solemtribune                    78  (0 / 0 / 78 over 1 hits)
+    Sanctim                         74  (0 / 48 / 26 over 3 hits)
+    Solemim                         58  (32 / 26 / 0 over 3 hits)
+
+========================================================================
+2026-08-18T17:31:21  [RulesTest]
+Toll Engine  vs  Barrow Wall
+Result: Toll Engine wins on round 10
+------------------------------------------------------------------------
+Toll Engine (You)
+  throne 195 / 195
+  tower 1: 90 / 120
+  tower 2: 113 / 120
+  tower fire dealt: 355
+Barrow Wall (Opponent)
+  throne 0 / 195
+  tower 1: 130 / 180
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 297
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Toll Engine
+    Rimethane                      150  (100 / 50 / 0 over 6 hits)
+    Ossgaunt                       122  (0 / 72 / 50 over 2 hits)
+    Gnawgrub                       108  (63 / 0 / 45 over 8 hits)
+    Cairnlit                       101  (89 / 12 / 0 over 9 hits)
+    Morwisp                         50  (50 / 0 / 0 over 5 hits)
+    Osslit                          36  (12 / 12 / 12 over 3 hits)
+  Barrow Wall
+    Sepulshroud                    167  (167 / 0 / 0 over 7 hits)
+    Sepulling                       92  (92 / 0 / 0 over 5 hits)
+    Gristbarrow                     68  (68 / 0 / 0 over 2 hits)
+    Cairnlit                        18  (18 / 0 / 0 over 2 hits)
+    Rimethane                       17  (17 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T17:31:28  [RulesTest]
+Bedrock  vs  White Heat
+Result: Bedrock wins on round 14
+------------------------------------------------------------------------
+Bedrock (You)
+  throne 215 / 215
+  tower 1: 71 / 171
+  tower 2: 109 / 141
+  tower fire dealt: 812
+White Heat (Opponent)
+  throne 0 / 215
+  tower 1: DESTROYED (max was 130)
+  tower 2: DESTROYED (max was 125)
+  tower fire dealt: 378
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Bedrock
+    Caldcrag                       108  (108 / 0 / 0 over 4 hits)
+    Granthane                      102  (102 / 0 / 0 over 2 hits)
+    Tussling                        47  (11 / 0 / 36 over 2 hits)
+    Petriling                       46  (8 / 38 / 0 over 2 hits)
+    Caldling                        35  (35 / 0 / 0 over 1 hits)
+  White Heat
+    Quenchanvil                    152  (152 / 0 / 0 over 2 hits)
+    Quenchwick                      79  (79 / 0 / 0 over 4 hits)
+    Slagkiln                        70  (70 / 0 / 0 over 2 hits)
+    Slagash                         57  (26 / 31 / 0 over 2 hits)
+    Cindspark                       49  (49 / 0 / 0 over 3 hits)
+
+========================================================================
+2026-08-18T17:40:09  [RulesTest]
+Widening Dark  vs  Bank the Heat
+Result: Widening Dark wins on round 9
+------------------------------------------------------------------------
+Widening Dark (You)
+  throne 39 / 190
+  tower 1: 115 / 115
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 173
+Bank the Heat (Opponent)
+  throne 0 / 190
+  tower 1: DESTROYED (max was 105)
+  tower 2: 113 / 115
+  tower fire dealt: 256
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Dark
+    Gyreshear                      410  (174 / 82 / 154 over 7 hits)
+    Waneith                         94  (94 / 0 / 0 over 2 hits)
+    Starksk                         39  (39 / 0 / 0 over 1 hits)
+    Rivewane                        35  (35 / 0 / 0 over 1 hits)
+    Vastebb                         26  (26 / 0 / 0 over 1 hits)
+  Bank the Heat
+    Tindkiln                       144  (38 / 42 / 64 over 4 hits)
+    Annealash                      102  (52 / 8 / 42 over 6 hits)
+    Fluxanvil                       32  (32 / 0 / 0 over 1 hits)
+    Tindspark                       27  (0 / 27 / 0 over 1 hits)
+    Fluxwick                        21  (21 / 0 / 0 over 1 hits)
+    Tapwright                       21  (21 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T17:41:47  [RulesTest]
+Starve  vs  Barrow Wall
+Result: Starve wins on round 10
+------------------------------------------------------------------------
+Starve (You)
+  throne 195 / 195
+  tower 1: 80 / 120
+  tower 2: 120 / 120
+  tower fire dealt: 315
+Barrow Wall (Opponent)
+  throne 0 / 195
+  tower 1: DESTROYED (max was 135)
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 282
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Starve
+    Wanesk                         231  (178 / 53 / 0 over 11 hits)
+    Umbrith                         96  (36 / 36 / 24 over 8 hits)
+    Waneebb                         84  (28 / 0 / 56 over 3 hits)
+    Nullith                         68  (23 / 15 / 30 over 5 hits)
+    Nullfray                        54  (0 / 50 / 4 over 3 hits)
+    Hushith                         47  (36 / 11 / 0 over 3 hits)
+  Barrow Wall
+    Sepulling                       44  (44 / 0 / 0 over 2 hits)
+    Gristbarrow                     41  (41 / 0 / 0 over 2 hits)
+    Cairnmaw                        28  (28 / 0 / 0 over 1 hits)
+    Rimethane                       25  (25 / 0 / 0 over 1 hits)
+    Cairnlit                        12  (12 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T17:41:50  [SupportTest]
+White Heat  vs  Total Eclipse
+Result: Total Eclipse wins on round 9
+------------------------------------------------------------------------
+White Heat (You)
+  throne 0 / 190
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 182
+Total Eclipse (Opponent)
+  throne 190 / 190
+  tower 1: 115 / 115
+  tower 2: 41 / 115
+  tower fire dealt: 232
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  White Heat
+    Cindspark                       68  (68 / 0 / 0 over 3 hits)
+    Slagkiln                        40  (40 / 0 / 0 over 1 hits)
+    Quenchwick                      32  (32 / 0 / 0 over 1 hits)
+    Slagash                         19  (19 / 0 / 0 over 1 hits)
+  Total Eclipse
+    Lacunabyss                     237  (145 / 92 / 0 over 3 hits)
+    Umbrsk                         193  (95 / 44 / 54 over 5 hits)
+    Lacunith                        78  (49 / 0 / 29 over 3 hits)
+    Sevith                          59  (23 / 0 / 36 over 2 hits)
+    Scourwane                       16  (0 / 0 / 16 over 1 hits)
+
+========================================================================
+2026-08-18T17:43:13  [RulesTest]
+Bedrock  vs  Second Wind
+Result: Bedrock wins on round 7
+------------------------------------------------------------------------
+Bedrock (You)
+  throne 180 / 180
+  tower 1: 130 / 130
+  tower 2: 115 / 115
+  tower fire dealt: 217
+Second Wind (Opponent)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 95
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Bedrock
+    Grancrag                       218  (105 / 59 / 54 over 5 hits)
+    Caldcrag                       156  (30 / 63 / 63 over 3 hits)
+    Petriling                       96  (35 / 19 / 42 over 4 hits)
+  Second Wind
+    Cokewrightslag                  76  (76 / 0 / 0 over 4 hits)
+    Tapwright                       48  (48 / 0 / 0 over 3 hits)
+
+========================================================================
+2026-08-18T17:43:17  [SupportTest]
+Bank the Heat  vs  Standing Heat
+Result: Standing Heat wins on round 6
+------------------------------------------------------------------------
+Bank the Heat (You)
+  throne 0 / 175
+  tower 1: DESTROYED (max was 90)
+  tower 2: 70 / 100
+  tower fire dealt: 88
+Standing Heat (Opponent)
+  throne 175 / 175
+  tower 1: 140 / 140
+  tower 2: 77 / 100
+  tower fire dealt: 130
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Bank the Heat
+    Tindpyre                        70  (70 / 0 / 0 over 2 hits)
+    Annealash                       49  (49 / 0 / 0 over 2 hits)
+    Fluxwick                        21  (21 / 0 / 0 over 1 hits)
+    Tapwright                       16  (16 / 0 / 0 over 1 hits)
+  Standing Heat
+    Quenchbrand                    195  (30 / 55 / 110 over 4 hits)
+    Annealash                       77  (0 / 28 / 49 over 3 hits)
+    Slakeling                       66  (66 / 0 / 0 over 3 hits)
+
+========================================================================
+2026-08-18T17:45:14  [RulesTest]
+Widening Dark  vs  Total Eclipse
+Result: Widening Dark wins on round 15
+------------------------------------------------------------------------
+Widening Dark (You)
+  throne 129 / 220
+  tower 1: DESTROYED (max was 120)
+  tower 2: 80 / 145
+  tower fire dealt: 553
+Total Eclipse (Opponent)
+  throne 0 / 220
+  tower 1: 74 / 145
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 622
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Dark
+    Gyreshear                      123  (123 / 0 / 0 over 3 hits)
+    Gyrerift                       106  (33 / 73 / 0 over 2 hits)
+    Vastsk                          75  (75 / 0 / 0 over 2 hits)
+    Vastnought                      68  (68 / 0 / 0 over 2 hits)
+    Rivewane                        61  (61 / 0 / 0 over 2 hits)
+    Starksk                         59  (59 / 0 / 0 over 1 hits)
+    Gyresk                          45  (45 / 0 / 0 over 1 hits)
+  Total Eclipse
+    Pallgaunt                      118  (118 / 0 / 0 over 3 hits)
+    Lacunith                        58  (0 / 58 / 0 over 2 hits)
+    Scourgaunt                      45  (0 / 0 / 45 over 1 hits)
+    Umbrsk                          20  (20 / 0 / 0 over 1 hits)
+    Scourwane                        9  (0 / 9 / 0 over 1 hits)
+    Sevith                           8  (8 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T17:45:17  [SupportTest]
+Cacophony Ramp  vs  Barrow Wall
+Result: Cacophony Ramp wins on round 11
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 74 / 200
+  tower 1: DESTROYED (max was 115)
+  tower 2: 125 / 125
+  tower fire dealt: 396
+Barrow Wall (Opponent)
+  throne 0 / 200
+  tower 1: DESTROYED (max was 95)
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 52
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Sepulling                      190  (92 / 54 / 44 over 9 hits)
+    Gristbarrow                    114  (76 / 38 / 0 over 3 hits)
+    Nithogg, Root-Gnawer            60  (0 / 60 / 0 over 1 hits)
+    Gnawgrub                        15  (0 / 15 / 0 over 1 hits)
+  Barrow Wall
+    Rimethane                      160  (55 / 55 / 50 over 8 hits)
+    Gristbarrow                    114  (114 / 0 / 0 over 3 hits)
+    Sepulshroud                    114  (0 / 38 / 76 over 3 hits)
+    Sepulling                       44  (22 / 22 / 0 over 2 hits)
+
+========================================================================
+2026-08-18T17:46:52  [RulesTest]
+White Heat  vs  Wasting Fen
+Result: White Heat wins on round 7
+------------------------------------------------------------------------
+White Heat (You)
+  throne 180 / 180
+  tower 1: 105 / 105
+  tower 2: 43 / 105
+  tower fire dealt: 174
+Wasting Fen (Opponent)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 154
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  White Heat
+    Slagkiln                       160  (111 / 49 / 0 over 5 hits)
+    Slagash                        155  (76 / 31 / 48 over 6 hits)
+    Quenchwick                     102  (38 / 32 / 32 over 4 hits)
+    Cindspark                       76  (38 / 38 / 0 over 2 hits)
+  Wasting Fen
+    Rotwisp                         58  (29 / 29 / 0 over 2 hits)
+    Blighthusk                      35  (35 / 0 / 0 over 1 hits)
+    Hollowgrub                      30  (30 / 0 / 0 over 1 hits)
+    Gnawling                        24  (24 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T17:46:55  [SupportTest]
+Bedrock  vs  Bedrock
+Result: Bedrock wins on round 10
+------------------------------------------------------------------------
+Bedrock (You)
+  throne 0 / 195
+  tower 1: DESTROYED (max was 112)
+  tower 2: 102 / 121
+  tower fire dealt: 289
+Bedrock (Opponent)
+  throne 195 / 195
+  tower 1: 154 / 154
+  tower 2: 21 / 139
+  tower fire dealt: 495
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Bedrock
+    Tussbole                       309  (249 / 60 / 0 over 6 hits)
+    Caldcrag                        86  (86 / 0 / 0 over 2 hits)
+    Petriling                       55  (55 / 0 / 0 over 2 hits)
+  Bedrock
+    Caldcrag                       402  (240 / 0 / 162 over 8 hits)
+    Caldthane                      281  (185 / 96 / 0 over 6 hits)
+    Tussling                        38  (38 / 0 / 0 over 1 hits)
+    Petriling                       25  (25 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T17:47:37  [RulesTest]
+Scrap Line  vs  Verdict Engine
+Result: Scrap Line wins on round 17
+------------------------------------------------------------------------
+Scrap Line (You)
+  throne 16 / 230
+  tower 1: 19 / 155
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 553
+Verdict Engine (Opponent)
+  throne 0 / 230
+  tower 1: DESTROYED (max was 135)
+  tower 2: 16 / 155
+  tower fire dealt: 820
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Scrap Line
+    Embash                         153  (47 / 106 / 0 over 8 hits)
+    Gristsmith                     133  (133 / 0 / 0 over 4 hits)
+    Slagash                        130  (35 / 31 / 64 over 6 hits)
+    Gristgnash                      91  (58 / 33 / 0 over 4 hits)
+    Morwisp                         70  (20 / 10 / 40 over 7 hits)
+    Osslit                          24  (24 / 0 / 0 over 2 hits)
+  Verdict Engine
+    Lumemote                       144  (48 / 64 / 32 over 18 hits)
+    Seraim                          60  (60 / 0 / 0 over 5 hits)
+    Belliel                         40  (20 / 0 / 20 over 4 hits)
+
+========================================================================
+2026-08-18T17:47:40  [SupportTest]
+Sealed Light  vs  Burning Line
+Result: Sealed Light wins on round 10
+------------------------------------------------------------------------
+Sealed Light (You)
+  throne 195 / 195
+  tower 1: 120 / 120
+  tower 2: 90 / 120
+  tower fire dealt: 286
+Burning Line (Opponent)
+  throne 0 / 195
+  tower 1: DESTROYED (max was 115)
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 91
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Sealed Light
+    Solemmant                      265  (186 / 55 / 24 over 8 hits)
+    Sanctthrone                    226  (66 / 80 / 80 over 3 hits)
+    Empyriel                        90  (34 / 28 / 28 over 4 hits)
+    Solemim                         33  (33 / 0 / 0 over 2 hits)
+    Sanctim                         25  (25 / 0 / 0 over 1 hits)
+  Burning Line
+    Sootfallkiln                    65  (35 / 30 / 0 over 3 hits)
+    Slakeling                       46  (46 / 0 / 0 over 3 hits)
+
+========================================================================
+2026-08-18T17:51:16  [RulesTest]
+White Heat  vs  Starve
+Result: White Heat wins on round 15
+------------------------------------------------------------------------
+White Heat (You)
+  throne 14 / 220
+  tower 1: DESTROYED (max was 120)
+  tower 2: 121 / 145
+  tower fire dealt: 587
+Starve (Opponent)
+  throne 0 / 220
+  tower 1: 120 / 145
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 485
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  White Heat
+    Quenchbrand                    134  (134 / 0 / 0 over 3 hits)
+    Quenchwick                      96  (96 / 0 / 0 over 3 hits)
+    Cindspark                       88  (22 / 66 / 0 over 4 hits)
+    Slagash                         70  (70 / 0 / 0 over 3 hits)
+    Slagkiln                        33  (33 / 0 / 0 over 2 hits)
+  Starve
+    Waneebb                        214  (74 / 56 / 84 over 8 hits)
+    Wanesk                          85  (85 / 0 / 0 over 5 hits)
+    Umbrith                         62  (26 / 24 / 12 over 6 hits)
+    Nullfray                        60  (60 / 0 / 0 over 3 hits)
+    Hushith                         24  (12 / 0 / 12 over 2 hits)
+    Hushfray                        16  (0 / 16 / 0 over 1 hits)
+    Nullith                         15  (15 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T17:51:20  [SupportTest]
+Scrap Line  vs  Deep Grove
+Result: Deep Grove wins on round 7
+------------------------------------------------------------------------
+Scrap Line (You)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 85)
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 80
+Deep Grove (Opponent)
+  throne 180 / 180
+  tower 1: 109 / 109
+  tower 2: 109 / 109
+  tower fire dealt: 257
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Scrap Line
+    Slagash                        121  (121 / 0 / 0 over 4 hits)
+    Gristgnash                      85  (85 / 0 / 0 over 3 hits)
+    Embash                          42  (42 / 0 / 0 over 2 hits)
+    Osslit                          12  (12 / 0 / 0 over 1 hits)
+    Morwisp                         10  (10 / 0 / 0 over 1 hits)
+  Deep Grove
+    Thornspore                     185  (57 / 76 / 52 over 14 hits)
+    Verdbough                      136  (104 / 32 / 0 over 5 hits)
+    Thornmant                      124  (37 / 28 / 59 over 5 hits)
+    Verdling                        13  (13 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T17:52:43  [RulesTest]
+Barrow Wall  vs  Deep Grove
+Result: Deep Grove wins on round 6
+------------------------------------------------------------------------
+Barrow Wall (You)
+  throne 0 / 175
+  tower 1: 140 / 140  +5 dmg
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 134
+Deep Grove (Opponent)
+  throne 175 / 175
+  tower 1: 113 / 113
+  tower 2: 110 / 113
+  tower fire dealt: 188
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Barrow Wall
+    Gristbarrow                    190  (190 / 0 / 0 over 5 hits)
+    Sepulling                       44  (22 / 22 / 0 over 2 hits)
+    Rimethane                       25  (25 / 0 / 0 over 1 hits)
+  Deep Grove
+    Thornmant                      139  (0 / 65 / 74 over 5 hits)
+    Verdling                        96  (42 / 7 / 47 over 5 hits)
+    Bryoelder                       83  (83 / 0 / 0 over 2 hits)
+    Verdbough                       37  (37 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T17:52:47  [SupportTest]
+Thicket  vs  Lamp Wall
+Result: Thicket wins on round 7
+------------------------------------------------------------------------
+Thicket (You)
+  throne 180 / 180
+  tower 1: 103 / 111
+  tower 2: 106 / 111
+  tower fire dealt: 131
+Lamp Wall (Opponent)
+  throne 0 / 180
+  tower 1: 56 / 125
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 142
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Thicket
+    Burrcrag                       152  (0 / 50 / 102 over 3 hits)
+    Burrbud                         76  (0 / 33 / 43 over 4 hits)
+    Rootsprout                      66  (66 / 0 / 0 over 3 hits)
+    Lichbud                         64  (32 / 32 / 0 over 2 hits)
+    Thornbud                        31  (0 / 31 / 0 over 1 hits)
+  Lamp Wall
+    Aurkin                          84  (84 / 0 / 0 over 4 hits)
+    Lumemote                        40  (32 / 8 / 0 over 5 hits)
+    Clarim                          24  (24 / 0 / 0 over 3 hits)
+
+========================================================================
+2026-08-18T17:53:51  [RulesTest]
+Total Eclipse  vs  Rise & Recur
+Result: Rise & Recur wins on round 12
+------------------------------------------------------------------------
+Total Eclipse (You)
+  throne 0 / 205
+  tower 1: DESTROYED (max was 125)
+  tower 2: DESTROYED (max was 120)
+  tower fire dealt: 456
+Rise & Recur (Opponent)
+  throne 205 / 205
+  tower 1: 63 / 130
+  tower 2: 52 / 130
+  tower fire dealt: 463
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Total Eclipse
+    Pallgaunt                      144  (144 / 0 / 0 over 4 hits)
+    Ebonith                         52  (24 / 28 / 0 over 2 hits)
+    Scourwane                       33  (33 / 0 / 0 over 1 hits)
+    Sevith                          27  (27 / 0 / 0 over 1 hits)
+    Pallith                          7  (7 / 0 / 0 over 1 hits)
+  Rise & Recur
+    Cairnlit                       132  (120 / 12 / 0 over 11 hits)
+    Osslit                          48  (24 / 24 / 0 over 4 hits)
+    Morwisp                         30  (30 / 0 / 0 over 3 hits)
+    Cairnmaw                         9  (5 / 4 / 0 over 2 hits)
+
+========================================================================
+2026-08-18T18:00:40  [RulesTest]
+Barrow Wall  vs  Deep Grove
+Result: Deep Grove wins on round 8
+------------------------------------------------------------------------
+Barrow Wall (You)
+  throne 0 / 185
+  tower 1: 150 / 150  +10 dmg
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 239
+Deep Grove (Opponent)
+  throne 50 / 185
+  tower 1: DESTROYED (max was 112)
+  tower 2: 48 / 122
+  tower fire dealt: 232
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Barrow Wall
+    Sepulling                      176  (110 / 66 / 0 over 8 hits)
+    Sepulshroud                    114  (0 / 38 / 76 over 3 hits)
+    Rimethane                      100  (50 / 50 / 0 over 4 hits)
+  Deep Grove
+    Verdbough                      206  (40 / 38 / 128 over 7 hits)
+    Verdling                       102  (72 / 30 / 0 over 5 hits)
+    Thornspore                      56  (56 / 0 / 0 over 5 hits)
+
+========================================================================
+2026-08-18T18:00:43  [SupportTest]
+Rise & Recur  vs  Barrow Wall
+Result: Barrow Wall wins on round 8
+------------------------------------------------------------------------
+Rise & Recur (You)
+  throne 0 / 185
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 145
+Barrow Wall (Opponent)
+  throne 185 / 185
+  tower 1: 150 / 150  +5 dmg
+  tower 2: 89 / 110
+  tower fire dealt: 200
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Rise & Recur
+    Osslit                          48  (48 / 0 / 0 over 4 hits)
+    Morwisp                         20  (20 / 0 / 0 over 2 hits)
+    Cairnlit                        12  (12 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Gristbarrow                    256  (142 / 76 / 38 over 7 hits)
+    Rimethane                       75  (25 / 50 / 0 over 3 hits)
+    Cairnmaw                        40  (0 / 0 / 40 over 1 hits)
+    Sepulling                        7  (7 / 0 / 0 over 1 hits)
+    Cairnlit                         2  (0 / 2 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:15:48  [RulesTest]
+Reaffirmation  vs  Bank the Heat
+Result: Reaffirmation wins on round 13
+------------------------------------------------------------------------
+Reaffirmation (You)
+  throne 210 / 210
+  tower 1: 135 / 135
+  tower 2: 125 / 135
+  tower fire dealt: 586
+Bank the Heat (Opponent)
+  throne 0 / 210
+  tower 1: DESTROYED (max was 110)
+  tower 2: DESTROYED (max was 130)
+  tower fire dealt: 422
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Reaffirmation
+    Halosear                       110  (65 / 45 / 0 over 4 hits)
+    Psalmcant                       79  (79 / 0 / 0 over 3 hits)
+    Clararch                        65  (0 / 13 / 52 over 2 hits)
+    Glorialumen                     64  (14 / 0 / 50 over 2 hits)
+    Gloriamote                      30  (0 / 30 / 0 over 1 hits)
+    Bellmote                        20  (20 / 0 / 0 over 1 hits)
+  Bank the Heat
+    Fluxbrand                      110  (110 / 0 / 0 over 5 hits)
+    Tapwright                       55  (55 / 0 / 0 over 3 hits)
+    Tindspark                       54  (54 / 0 / 0 over 2 hits)
+    Fluxwick                        42  (42 / 0 / 0 over 2 hits)
+    Annealash                       28  (28 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:15:51  [SupportTest]
+Burning Line  vs  Bank the Heat
+Result: Bank the Heat wins on round 7
+------------------------------------------------------------------------
+Burning Line (You)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 95)
+  tower 2: 30 / 105
+  tower fire dealt: 172
+Bank the Heat (Opponent)
+  throne 180 / 180
+  tower 1: 105 / 105
+  tower 2: 105 / 105
+  tower fire dealt: 140
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Burning Line
+    Slakeling                       74  (74 / 0 / 0 over 4 hits)
+    Charash                         31  (31 / 0 / 0 over 1 hits)
+    Tindspark                       22  (22 / 0 / 0 over 1 hits)
+  Bank the Heat
+    Tindkiln                       134  (97 / 37 / 0 over 4 hits)
+    Tapwright                      119  (14 / 63 / 42 over 6 hits)
+    Tindpyre                       105  (0 / 0 / 105 over 2 hits)
+    Annealash                       39  (39 / 0 / 0 over 2 hits)
+    Fluxwick                        21  (0 / 21 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:16:18  [SupportTest]
+Lamp Wall  vs  Nothing Holds
+Result: Lamp Wall wins on round 11
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 152 / 200
+  tower 1: 100 / 125  +10 dmg
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 353
+Nothing Holds (Opponent)
+  throne 0 / 200
+  tower 1: DESTROYED (max was 110)
+  tower 2: 115 / 125
+  tower fire dealt: 282
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Lumearch                       311  (179 / 66 / 66 over 10 hits)
+    Aurseraph                       62  (9 / 0 / 53 over 2 hits)
+    Aurkin                          25  (0 / 0 / 25 over 1 hits)
+    Clarim                          24  (24 / 0 / 0 over 3 hits)
+  Nothing Holds
+    Cinderlingbrand                134  (66 / 68 / 0 over 4 hits)
+    Forgehand                       66  (66 / 0 / 0 over 2 hits)
+    Scoriasmith                     61  (46 / 15 / 0 over 2 hits)
+    Scoriaslag                      22  (22 / 0 / 0 over 1 hits)
+    Tapwright                       21  (21 / 0 / 0 over 1 hits)
+    Cinderlingwick                  20  (20 / 0 / 0 over 1 hits)
+    Slakeling                       19  (19 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:16:30  [SupportTest]
+Widening Dark  vs  Reaffirmation
+Result: Reaffirmation wins on round 9
+------------------------------------------------------------------------
+Widening Dark (You)
+  throne 0 / 190
+  tower 1: DESTROYED (max was 110)
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 208
+Reaffirmation (Opponent)
+  throne 190 / 190
+  tower 1: 115 / 115
+  tower 2: 115 / 115
+  tower fire dealt: 319
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Widening Dark
+    Starkrift                      193  (193 / 0 / 0 over 6 hits)
+    Vastebb                         86  (86 / 0 / 0 over 2 hits)
+  Reaffirmation
+    Clarchoir                      292  (122 / 79 / 91 over 7 hits)
+    Glorialumen                    100  (50 / 50 / 0 over 2 hits)
+    Gloriamote                      30  (0 / 0 / 30 over 1 hits)
+    Clariel                         29  (0 / 29 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:16:33  [SupportTest]
+Unquiet Dead  vs  Starve
+Result: Unquiet Dead wins on round 9
+------------------------------------------------------------------------
+Unquiet Dead (You)
+  throne 190 / 190
+  tower 1: 115 / 115
+  tower 2: 103 / 115
+  tower fire dealt: 298
+Starve (Opponent)
+  throne 0 / 190
+  tower 1: DESTROYED (max was 110)
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 252
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Unquiet Dead
+    Ossshroud                      176  (31 / 92 / 53 over 4 hits)
+    Osskin                         164  (98 / 62 / 4 over 7 hits)
+    Ashloam                        138  (138 / 0 / 0 over 4 hits)
+    Tombthane                      100  (0 / 0 / 100 over 1 hits)
+    Tomblit                         56  (28 / 28 / 0 over 2 hits)
+  Starve
+    Nullith                        105  (105 / 0 / 0 over 7 hits)
+    Nullfray                        75  (75 / 0 / 0 over 3 hits)
+    Hushith                         51  (51 / 0 / 0 over 3 hits)
+    Umbrith                         36  (24 / 12 / 0 over 3 hits)
+    Wanesk                          24  (24 / 0 / 0 over 1 hits)
+    Hushfray                        16  (16 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:16:36  [SupportTest]
+Deep Grove  vs  Bank the Heat
+Result: Deep Grove wins on round 7
+------------------------------------------------------------------------
+Deep Grove (You)
+  throne 180 / 180
+  tower 1: 126 / 126
+  tower 2: 126 / 126
+  tower fire dealt: 224
+Bank the Heat (Opponent)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 124
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Deep Grove
+    Thornmant                      272  (165 / 80 / 27 over 10 hits)
+    Verdling                       164  (62 / 46 / 56 over 7 hits)
+    Verdbough                       57  (0 / 21 / 36 over 2 hits)
+    Bryobud                          7  (7 / 0 / 0 over 1 hits)
+  Bank the Heat
+    Tindkiln                        42  (42 / 0 / 0 over 1 hits)
+    Annealash                       28  (28 / 0 / 0 over 1 hits)
+    Tindspark                       27  (27 / 0 / 0 over 1 hits)
+    Tapwright                        3  (3 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:16:40  [SupportTest]
+Gathering Weather  vs  Bank the Heat
+Result: Bank the Heat wins on round 10
+------------------------------------------------------------------------
+Gathering Weather (You)
+  throne 0 / 195
+  tower 1: 70 / 120
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 253
+Bank the Heat (Opponent)
+  throne 182 / 195
+  tower 1: DESTROYED (max was 110)
+  tower 2: 101 / 120
+  tower fire dealt: 332
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Gathering Weather
+    Foehnshear                      90  (38 / 52 / 0 over 4 hits)
+    Foehnsile                       64  (54 / 10 / 0 over 6 hits)
+    Nimbwhorl                       64  (64 / 0 / 0 over 4 hits)
+    Nimbmaelstrom                   49  (49 / 0 / 0 over 2 hits)
+    Siroccskirl                     34  (17 / 17 / 0 over 4 hits)
+    Cirrsile                        20  (20 / 0 / 0 over 2 hits)
+  Bank the Heat
+    Annealash                      219  (142 / 35 / 42 over 16 hits)
+    Tapwright                      168  (33 / 46 / 89 over 14 hits)
+    Tindspark                       83  (83 / 0 / 0 over 6 hits)
+    Fluxwick                        54  (26 / 28 / 0 over 4 hits)
+
+========================================================================
+2026-08-18T18:16:43  [SupportTest]
+Reaffirmation  vs  White Heat
+Result: Reaffirmation wins on round 15
+------------------------------------------------------------------------
+Reaffirmation (You)
+  throne 220 / 220
+  tower 1: 145 / 145
+  tower 2: 20 / 145
+  tower fire dealt: 781
+White Heat (Opponent)
+  throne 0 / 220
+  tower 1: DESTROYED (max was 135)
+  tower 2: DESTROYED (max was 135)
+  tower fire dealt: 780
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Reaffirmation
+    Psalmcant                      226  (85 / 47 / 94 over 5 hits)
+    Psalmiel                        53  (24 / 29 / 0 over 2 hits)
+    Clariel                         35  (35 / 0 / 0 over 2 hits)
+    Bellmote                        31  (31 / 0 / 0 over 1 hits)
+    Halokin                         26  (26 / 0 / 0 over 2 hits)
+    Oratim                          26  (26 / 0 / 0 over 1 hits)
+    Gloriamote                      25  (25 / 0 / 0 over 1 hits)
+  White Heat
+    Quenchbrand                    286  (286 / 0 / 0 over 9 hits)
+    Slagash                        130  (130 / 0 / 0 over 6 hits)
+    Quenchwick                      60  (60 / 0 / 0 over 3 hits)
+    Cindbrand                       36  (36 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:16:46  [SupportTest]
+Nothing Holds  vs  Barrow Wall
+Result: Barrow Wall wins on round 9
+------------------------------------------------------------------------
+Nothing Holds (You)
+  throne 0 / 190
+  tower 1: DESTROYED (max was 115)
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 326
+Barrow Wall (Opponent)
+  throne 190 / 190
+  tower 1: 135 / 135  +5 dmg
+  tower 2: 115 / 115
+  tower fire dealt: 343
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Nothing Holds
+    Forgehand                       85  (85 / 0 / 0 over 3 hits)
+    Scoriaslag                      44  (44 / 0 / 0 over 2 hits)
+    Slakeling                       37  (37 / 0 / 0 over 3 hits)
+    Cinderlingwick                  20  (20 / 0 / 0 over 1 hits)
+  Barrow Wall
+    Sepulshroud                    241  (102 / 38 / 101 over 8 hits)
+    Rimethane                      192  (140 / 52 / 0 over 11 hits)
+    Sepulling                      115  (10 / 61 / 44 over 6 hits)
+    Cairnlit                        38  (38 / 0 / 0 over 4 hits)
+
+========================================================================
+2026-08-18T18:17:02  [SupportTest]
+Bedrock  vs  Thicket
+Result: Bedrock wins on round 8
+------------------------------------------------------------------------
+Bedrock (You)
+  throne 185 / 185
+  tower 1: 124 / 124
+  tower 2: 124 / 124
+  tower fire dealt: 391
+Thicket (Opponent)
+  throne 0 / 185
+  tower 1: 68 / 111
+  tower 2: DESTROYED (max was 107)
+  tower fire dealt: 165
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Bedrock
+    Caldthane                      362  (157 / 96 / 109 over 5 hits)
+    Tussbole                        50  (0 / 0 / 50 over 1 hits)
+    Granling                        49  (49 / 0 / 0 over 2 hits)
+    Tussling                        43  (0 / 43 / 0 over 1 hits)
+    Petriling                       31  (31 / 0 / 0 over 1 hits)
+  Thicket
+    Sedgefen                        96  (96 / 0 / 0 over 2 hits)
+    Lichbud                         65  (65 / 0 / 0 over 3 hits)
+    Burrbud                         25  (25 / 0 / 0 over 1 hits)
+    Sedgesprout                     23  (23 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:17:05  [SupportTest]
+Standing Stones  vs  Standing Stones
+Result: Standing Stones wins on round 15
+------------------------------------------------------------------------
+Standing Stones (You)
+  throne 0 / 220
+  tower 1: DESTROYED (max was 190)
+  tower 2: 2 / 145
+  tower fire dealt: 749
+Standing Stones (Opponent)
+  throne 144 / 220
+  tower 1: 185 / 185
+  tower 2: DESTROYED (max was 115)
+  tower fire dealt: 663
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Standing Stones
+    Petricrag                      115  (66 / 49 / 0 over 7 hits)
+    Bryobud                         73  (61 / 12 / 0 over 7 hits)
+    Lichling                        45  (45 / 0 / 0 over 3 hits)
+    Thornspore                      23  (23 / 0 / 0 over 3 hits)
+    Lichcrag                        20  (20 / 0 / 0 over 1 hits)
+    Petrisprout                     10  (10 / 0 / 0 over 1 hits)
+  Standing Stones
+    Petrimonolith                  216  (93 / 57 / 66 over 12 hits)
+    Lichling                       107  (17 / 90 / 0 over 6 hits)
+    Petricrag                       90  (71 / 19 / 0 over 5 hits)
+    Lichcrag                        82  (82 / 0 / 0 over 3 hits)
+    Bryobud                         78  (36 / 42 / 0 over 6 hits)
+    Petrisprout                     53  (53 / 0 / 0 over 5 hits)
+    Thornspore                      32  (4 / 0 / 28 over 3 hits)
+
+========================================================================
+2026-08-18T18:17:09  [SupportTest]
+Unquiet Dead  vs  Unquiet Dead
+Result: Unquiet Dead wins on round 12
+------------------------------------------------------------------------
+Unquiet Dead (You)
+  throne 205 / 205
+  tower 1: 88 / 130
+  tower 2: 77 / 130
+  tower fire dealt: 578
+Unquiet Dead (Opponent)
+  throne 0 / 205
+  tower 1: DESTROYED (max was 125)
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 447
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Unquiet Dead
+    Tombthane                      468  (175 / 193 / 100 over 7 hits)
+    Osskin                         171  (139 / 0 / 32 over 6 hits)
+    Ossloam                        126  (77 / 0 / 49 over 3 hits)
+    Ashlit                          95  (95 / 0 / 0 over 4 hits)
+    Tombshroud                      89  (89 / 0 / 0 over 2 hits)
+    Tomblit                         84  (84 / 0 / 0 over 3 hits)
+    Osswisp                         52  (52 / 0 / 0 over 2 hits)
+    Ashloam                         43  (43 / 0 / 0 over 2 hits)
+  Unquiet Dead
+    Tombthane                      239  (239 / 0 / 0 over 5 hits)
+    Ossshroud                      147  (94 / 53 / 0 over 6 hits)
+    Ashlit                          75  (75 / 0 / 0 over 3 hits)
+    Osskin                          68  (68 / 0 / 0 over 3 hits)
+    Osswisp                         26  (26 / 0 / 0 over 1 hits)
+    Ossloam                         23  (23 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:17:12  [SupportTest]
+Reaffirmation  vs  Standing Stones
+Result: Reaffirmation wins on round 7
+------------------------------------------------------------------------
+Reaffirmation (You)
+  throne 180 / 180
+  tower 1: 105 / 105
+  tower 2: 105 / 105
+  tower fire dealt: 140
+Standing Stones (Opponent)
+  throne 0 / 180
+  tower 1: 104 / 122
+  tower 2: DESTROYED (max was 96)
+  tower fire dealt: 173
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Reaffirmation
+    Glorialumen                    138  (138 / 0 / 0 over 3 hits)
+    Clarchoir                      133  (0 / 77 / 56 over 4 hits)
+    Psalmcant                       94  (0 / 0 / 94 over 2 hits)
+    Oratim                          31  (31 / 0 / 0 over 1 hits)
+    Clariel                         29  (29 / 0 / 0 over 1 hits)
+    Psalmiel                        29  (29 / 0 / 0 over 1 hits)
+  Standing Stones
+    Petrisprout                     40  (40 / 0 / 0 over 4 hits)
+    Thornspore                      38  (38 / 0 / 0 over 4 hits)
+    Lichling                        15  (15 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:17:15  [SupportTest]
+Reaffirmation  vs  Wasting Fen
+Result: Wasting Fen wins on round 11
+------------------------------------------------------------------------
+Reaffirmation (You)
+  throne 0 / 200
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 221
+Wasting Fen (Opponent)
+  throne 200 / 200
+  tower 1: 125 / 125
+  tower 2: 39 / 125
+  tower fire dealt: 449
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Reaffirmation
+    Oratim                         155  (155 / 0 / 0 over 5 hits)
+    Halosear                        92  (46 / 46 / 0 over 2 hits)
+    Gloriamote                      30  (30 / 0 / 0 over 1 hits)
+    Psalmiel                        29  (29 / 0 / 0 over 1 hits)
+  Wasting Fen
+    Blightknell                    324  (187 / 37 / 100 over 7 hits)
+    Blightfen                      123  (35 / 50 / 38 over 4 hits)
+    Gnawling                        48  (24 / 24 / 0 over 2 hits)
+    Blighthusk                      43  (43 / 0 / 0 over 2 hits)
+    Rotwisp                          3  (3 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:17:19  [SupportTest]
+Bank the Heat  vs  Toll Engine
+Result: Toll Engine wins on round 7
+------------------------------------------------------------------------
+Bank the Heat (You)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 105)
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 155
+Toll Engine (Opponent)
+  throne 180 / 180
+  tower 1: 98 / 105
+  tower 2: 105 / 105
+  tower fire dealt: 137
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Bank the Heat
+    Annealash                       49  (49 / 0 / 0 over 2 hits)
+    Tapwright                       21  (21 / 0 / 0 over 1 hits)
+  Toll Engine
+    Cairnlit                       122  (74 / 36 / 12 over 11 hits)
+    Gnawgrub                        87  (12 / 30 / 45 over 6 hits)
+    Rimethane                       74  (24 / 25 / 25 over 3 hits)
+    Osslit                          59  (0 / 35 / 24 over 5 hits)
+    Ossgaunt                        14  (0 / 0 / 14 over 1 hits)
+
+========================================================================
+2026-08-18T18:17:22  [SupportTest]
+Verdict Engine  vs  Standing Heat
+Result: Verdict Engine wins on round 10
+------------------------------------------------------------------------
+Verdict Engine (You)
+  throne 195 / 195
+  tower 1: 113 / 120
+  tower 2: 120 / 120
+  tower fire dealt: 275
+Standing Heat (Opponent)
+  throne 0 / 195
+  tower 1: DESTROYED (max was 135)
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 213
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Verdict Engine
+    Seravigil                      155  (60 / 36 / 59 over 8 hits)
+    Belliel                        125  (39 / 46 / 40 over 15 hits)
+    Seratribune                     74  (74 / 0 / 0 over 2 hits)
+    Lumesear                        64  (0 / 48 / 16 over 4 hits)
+    Seraim                          16  (0 / 16 / 0 over 1 hits)
+    Lumemote                         8  (0 / 8 / 0 over 1 hits)
+  Standing Heat
+    Slakeling                       89  (89 / 0 / 0 over 5 hits)
+    Quenchwick                      64  (64 / 0 / 0 over 2 hits)
+    Annealash                       12  (12 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:17:25  [SupportTest]
+Cacophony Ramp  vs  Scrap Line
+Result: Scrap Line wins on round 13
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 0 / 210
+  tower 1: DESTROYED (max was 115)
+  tower 2: 7 / 135
+  tower fire dealt: 440
+Scrap Line (Opponent)
+  throne 153 / 210
+  tower 1: 46 / 135
+  tower 2: DESTROYED (max was 115)
+  tower fire dealt: 394
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Sepulling                      162  (96 / 66 / 0 over 8 hits)
+    Gnawgrub                        73  (58 / 15 / 0 over 5 hits)
+    Morwisp                         10  (10 / 0 / 0 over 1 hits)
+  Scrap Line
+    Gnawgrub                       110  (35 / 15 / 60 over 8 hits)
+    Osslit                          77  (29 / 48 / 0 over 7 hits)
+    Gristgnash                      60  (34 / 26 / 0 over 3 hits)
+    Slagash                         55  (55 / 0 / 0 over 2 hits)
+    Embash                          40  (20 / 20 / 0 over 2 hits)
+    Morwisp                         32  (10 / 0 / 22 over 4 hits)
+
+========================================================================
+2026-08-18T18:17:29  [SupportTest]
+Cacophony Ramp  vs  Verdict Engine
+Result: Cacophony Ramp wins on round 8
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 185 / 185
+  tower 1: 110 / 110
+  tower 2: 31 / 110
+  tower fire dealt: 258
+Verdict Engine (Opponent)
+  throne 0 / 185
+  tower 1: DESTROYED (max was 95)
+  tower 2: 110 / 110
+  tower fire dealt: 139
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Nithogg Ascendant              185  (145 / 0 / 40 over 5 hits)
+    Gnawgrub                        70  (70 / 0 / 0 over 4 hits)
+    Mordrung                        34  (34 / 0 / 0 over 1 hits)
+    Morwisp                         10  (10 / 0 / 0 over 1 hits)
+  Verdict Engine
+    Seratribune                     42  (42 / 0 / 0 over 1 hits)
+    Lumemote                        32  (8 / 24 / 0 over 4 hits)
+    Seraureole                      32  (32 / 0 / 0 over 1 hits)
+    Bellchoir                       16  (16 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:17:32  [SupportTest]
+White Heat  vs  Widening Dark
+Result: Widening Dark wins on round 6
+------------------------------------------------------------------------
+White Heat (You)
+  throne 0 / 175
+  tower 1: DESTROYED (max was 95)
+  tower 2: 100 / 100
+  tower fire dealt: 122
+Widening Dark (Opponent)
+  throne 8 / 175
+  tower 1: 100 / 100
+  tower 2: DESTROYED (max was 85)
+  tower fire dealt: 74
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  White Heat
+    Slagkiln                       160  (0 / 80 / 80 over 4 hits)
+    Slagash                         63  (0 / 1 / 62 over 3 hits)
+    Cindspark                       28  (28 / 0 / 0 over 1 hits)
+  Widening Dark
+    Gyreshear                      164  (0 / 80 / 84 over 3 hits)
+    Vastebb                        122  (43 / 3 / 76 over 4 hits)
+    Rivewane                        30  (30 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:17:35  [SupportTest]
+Lamp Wall  vs  Widening Rift
+Result: Lamp Wall wins on round 10
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 113 / 195
+  tower 1: 140 / 140  +5 dmg
+  tower 2: DESTROYED (max was 105)
+  tower fire dealt: 282
+Widening Rift (Opponent)
+  throne 0 / 195
+  tower 1: DESTROYED (max was 105)
+  tower 2: 120 / 120
+  tower fire dealt: 182
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Lumearch                       198  (99 / 33 / 66 over 6 hits)
+    Aurseraph                      109  (27 / 0 / 82 over 3 hits)
+    Aurmant                         89  (36 / 53 / 0 over 2 hits)
+    Aurkin                          46  (46 / 0 / 0 over 2 hits)
+    Lumemote                        43  (43 / 0 / 0 over 6 hits)
+    Clarim                          16  (16 / 0 / 0 over 2 hits)
+  Widening Rift
+    Scoursk                        183  (147 / 36 / 0 over 6 hits)
+    Sevwane                         93  (29 / 40 / 24 over 7 hits)
+    Sevnull                         47  (47 / 0 / 0 over 1 hits)
+    Nullith                         45  (45 / 0 / 0 over 3 hits)
+    Wanesk                          24  (24 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:17:38  [SupportTest]
+Cacophony Ramp  vs  Standing Heat
+Result: Standing Heat wins on round 7
+------------------------------------------------------------------------
+Cacophony Ramp (You)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 90)
+  tower fire dealt: 57
+Standing Heat (Opponent)
+  throne 180 / 180
+  tower 1: 145 / 145
+  tower 2: 105 / 105
+  tower fire dealt: 144
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Cacophony Ramp
+    Sepulling                       68  (68 / 0 / 0 over 4 hits)
+    Morwisp                         20  (20 / 0 / 0 over 2 hits)
+  Standing Heat
+    Quenchwick                     192  (9 / 115 / 68 over 8 hits)
+    Slakeling                       76  (54 / 22 / 0 over 4 hits)
+    Annealash                       58  (0 / 9 / 49 over 3 hits)
+
+========================================================================
+2026-08-18T18:17:42  [SupportTest]
+Reaffirmation  vs  Deep Grove
+Result: Reaffirmation wins on round 14
+------------------------------------------------------------------------
+Reaffirmation (You)
+  throne 149 / 215
+  tower 1: 96 / 140
+  tower 2: DESTROYED (max was 120)
+  tower fire dealt: 507
+Deep Grove (Opponent)
+  throne 0 / 215
+  tower 1: DESTROYED (max was 120)
+  tower 2: DESTROYED (max was 136)
+  tower fire dealt: 473
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Reaffirmation
+    Oratim                         315  (144 / 47 / 124 over 11 hits)
+    Clariel                         58  (29 / 29 / 0 over 2 hits)
+    Halokin                         56  (56 / 0 / 0 over 2 hits)
+    Psalmiel                        35  (35 / 0 / 0 over 2 hits)
+    Gloriamote                      30  (0 / 30 / 0 over 1 hits)
+    Psalmcant                       30  (30 / 0 / 0 over 1 hits)
+    Gloriathrone                     9  (0 / 0 / 9 over 1 hits)
+  Deep Grove
+    Thornmant                       74  (48 / 26 / 0 over 3 hits)
+    Thornspore                      66  (66 / 0 / 0 over 6 hits)
+    Bryobud                         62  (62 / 0 / 0 over 6 hits)
+    Verdling                        27  (27 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-18T18:17:45  [SupportTest]
+Lamp Wall  vs  Standing Stones
+Result: Standing Stones wins on round 9
+------------------------------------------------------------------------
+Lamp Wall (You)
+  throne 0 / 190
+  tower 1: DESTROYED (max was 170)
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 251
+Standing Stones (Opponent)
+  throne 190 / 190
+  tower 1: 139 / 139
+  tower 2: 119 / 119
+  tower fire dealt: 252
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Lamp Wall
+    Aurkin                         125  (125 / 0 / 0 over 5 hits)
+    Clarim                          16  (16 / 0 / 0 over 2 hits)
+    Lumemote                        16  (16 / 0 / 0 over 2 hits)
+  Standing Stones
+    Lichling                       226  (38 / 118 / 70 over 16 hits)
+    Lichcrag                       121  (68 / 53 / 0 over 5 hits)
+    Petrisprout                     98  (36 / 25 / 37 over 8 hits)
+
+========================================================================
+2026-08-18T18:17:57  [SupportTest]
+Gathering Weather  vs  Rise & Recur
+Result: Gathering Weather wins on round 9
+------------------------------------------------------------------------
+Gathering Weather (You)
+  throne 190 / 190
+  tower 1: 115 / 115
+  tower 2: 111 / 115
+  tower fire dealt: 295
+Rise & Recur (Opponent)
+  throne 0 / 190
+  tower 1: 107 / 115
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 278
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Gathering Weather
+    Siroccsquall                   126  (0 / 0 / 126 over 6 hits)
+    Nimbsquall                      62  (62 / 0 / 0 over 2 hits)
+    Nimbwhorl                       36  (0 / 36 / 0 over 2 hits)
+    Cirrtempest                     31  (17 / 0 / 14 over 2 hits)
+    Siroccskirl                     26  (0 / 26 / 0 over 2 hits)
+    Foehnsile                       23  (23 / 0 / 0 over 2 hits)
+  Rise & Recur
+    Osslit                          76  (76 / 0 / 0 over 7 hits)
+    Cairnlit                        24  (24 / 0 / 0 over 3 hits)
+    Morwisp                         11  (11 / 0 / 0 over 2 hits)
+
+========================================================================
+2026-08-18T18:18:01  [SupportTest]
+Gathering Weather  vs  Lamp Wall
+Result: Lamp Wall wins on round 10
+------------------------------------------------------------------------
+Gathering Weather (You)
+  throne 0 / 195
+  tower 1: DESTROYED (max was 115)
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 263
+Lamp Wall (Opponent)
+  throne 195 / 195
+  tower 1: 140 / 140
+  tower 2: 120 / 120
+  tower fire dealt: 380
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Gathering Weather
+    Foehnsile                       21  (21 / 0 / 0 over 1 hits)
+  Lamp Wall
+    Aurkin                         278  (153 / 75 / 50 over 12 hits)
+    Aurseraph                      240  (156 / 23 / 61 over 6 hits)
+    Clarim                         120  (56 / 56 / 8 over 15 hits)
+    Aurmant                          9  (0 / 0 / 9 over 1 hits)
+
+========================================================================
+2026-08-18T18:18:04  [SupportTest]
+Gathering Weather  vs  Widening Dark
+Result: Gathering Weather wins on round 8
+------------------------------------------------------------------------
+Gathering Weather (You)
+  throne 185 / 185
+  tower 1: 99 / 110
+  tower 2: 106 / 110
+  tower fire dealt: 190
+Widening Dark (Opponent)
+  throne 0 / 185
+  tower 1: 21 / 110
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 163
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Gathering Weather
+    Cirrgale                       139  (0 / 99 / 40 over 4 hits)
+    Nimbsquall                     127  (127 / 0 / 0 over 4 hits)
+    Cirrtempest                     95  (0 / 0 / 95 over 3 hits)
+    Foehnsile                       23  (0 / 23 / 0 over 2 hits)
+    Cirrsile                        14  (0 / 14 / 0 over 1 hits)
+  Widening Dark
+    Gyresk                          90  (90 / 0 / 0 over 3 hits)
+    Vastsk                          58  (57 / 1 / 0 over 3 hits)
+    Rivewane                        29  (29 / 0 / 0 over 1 hits)
+
+========================================================================
+2026-08-18T18:18:07  [SupportTest]
+Gathering Weather  vs  Cacophony Ramp
+Result: Cacophony Ramp wins on round 7
+------------------------------------------------------------------------
+Gathering Weather (You)
+  throne 0 / 180
+  tower 1: DESTROYED (max was 95)
+  tower 2: 69 / 105
+  tower fire dealt: 190
+Cacophony Ramp (Opponent)
+  throne 144 / 180
+  tower 1: 105 / 105
+  tower 2: DESTROYED (max was 100)
+  tower fire dealt: 155
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Gathering Weather
+    Siroccskirl                    179  (113 / 38 / 28 over 14 hits)
+    Foehnthunderhead               125  (75 / 50 / 0 over 4 hits)
+  Cacophony Ramp
+    Gristbarrow                    313  (115 / 83 / 115 over 14 hits)
+    Morwisp                        170  (141 / 0 / 29 over 20 hits)
+    Sepulling                       61  (25 / 36 / 0 over 4 hits)
+
+========================================================================
+2026-08-18T18:18:11  [SupportTest]
+Gathering Weather  vs  Deep Grove
+Result: Deep Grove wins on round 8
+------------------------------------------------------------------------
+Gathering Weather (You)
+  throne 0 / 185
+  tower 1: 23 / 110
+  tower 2: DESTROYED (max was 95)
+  tower fire dealt: 204
+Deep Grove (Opponent)
+  throne 185 / 185
+  tower 1: 106 / 128
+  tower 2: 128 / 128
+  tower fire dealt: 293
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Gathering Weather
+    Nimbsquall                     123  (123 / 0 / 0 over 4 hits)
+    Nimbwhorl                       18  (18 / 0 / 0 over 1 hits)
+    Cirrsile                        14  (14 / 0 / 0 over 1 hits)
+  Deep Grove
+    Bryoelder                      200  (71 / 49 / 80 over 6 hits)
+    Verdling                        87  (87 / 0 / 0 over 5 hits)
+    Thornspore                      86  (42 / 0 / 44 over 7 hits)
+    Bryowarden                      54  (28 / 26 / 0 over 2 hits)
+    Bryobud                         25  (0 / 25 / 0 over 2 hits)
+
+========================================================================
+2026-08-18T18:18:14  [SupportTest]
+Gathering Weather  vs  Verdict Engine
+Result: Verdict Engine wins on round 9
+------------------------------------------------------------------------
+Gathering Weather (You)
+  throne 0 / 190
+  tower 1: DESTROYED (max was 100)
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 219
+Verdict Engine (Opponent)
+  throne 190 / 190
+  tower 1: 115 / 115
+  tower 2: 84 / 115
+  tower fire dealt: 280
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Gathering Weather
+    Foehnsile                       62  (62 / 0 / 0 over 4 hits)
+    Nimbsquall                      50  (50 / 0 / 0 over 2 hits)
+    Siroccskirl                     31  (31 / 0 / 0 over 2 hits)
+  Verdict Engine
+    Seraureole                     251  (149 / 42 / 60 over 10 hits)
+    Seraim                         116  (91 / 25 / 0 over 10 hits)
+    Lumesear                        93  (16 / 25 / 52 over 8 hits)
+    Lumemote                        51  (17 / 34 / 0 over 6 hits)
+    Belliel                         37  (37 / 0 / 0 over 6 hits)
+
+========================================================================
+2026-08-18T18:18:17  [SupportTest]
+Gathering Weather  vs  Bedrock
+Result: Bedrock wins on round 9
+------------------------------------------------------------------------
+Gathering Weather (You)
+  throne 0 / 190
+  tower 1: DESTROYED (max was 110)
+  tower 2: DESTROYED (max was 110)
+  tower fire dealt: 163
+Bedrock (Opponent)
+  throne 190 / 190
+  tower 1: 162 / 162
+  tower 2: 47 / 132
+  tower fire dealt: 440
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Gathering Weather
+    Cirrsile                       118  (48 / 70 / 0 over 15 hits)
+    Foehnsile                       17  (17 / 0 / 0 over 2 hits)
+  Bedrock
+    Granthane                      227  (107 / 83 / 37 over 10 hits)
+    Petriling                      182  (87 / 49 / 46 over 12 hits)
+    Granling                        85  (42 / 0 / 43 over 4 hits)
+    Tussling                        25  (0 / 23 / 2 over 2 hits)
+
+========================================================================
+2026-08-18T18:18:20  [SupportTest]
+Gathering Weather  vs  Starve
+Result: Starve wins on round 14
+------------------------------------------------------------------------
+Gathering Weather (You)
+  throne 0 / 215
+  tower 1: DESTROYED (max was 135)
+  tower 2: DESTROYED (max was 115)
+  tower fire dealt: 496
+Starve (Opponent)
+  throne 215 / 215
+  tower 1: 28 / 140
+  tower 2: 105 / 140
+  tower fire dealt: 652
+------------------------------------------------------------------------
+Damage by card (unit / tower / throne, total):
+  Gathering Weather
+    Siroccsquall                   102  (102 / 0 / 0 over 3 hits)
+    Nimbsquall                      92  (92 / 0 / 0 over 3 hits)
+    Cirrsile                        47  (47 / 0 / 0 over 3 hits)
+    Cirrgale                        23  (23 / 0 / 0 over 1 hits)
+    Foehnsile                       21  (21 / 0 / 0 over 1 hits)
+    Nimbwhorl                       18  (18 / 0 / 0 over 1 hits)
+    Siroccskirl                     13  (13 / 0 / 0 over 1 hits)
+  Starve
+    Hushith                        128  (104 / 24 / 0 over 7 hits)
+    Umbrith                         80  (36 / 33 / 11 over 7 hits)
+    Wanesk                          72  (72 / 0 / 0 over 3 hits)
+    Nullith                         45  (30 / 15 / 0 over 3 hits)
+    Waneebb                         28  (28 / 0 / 0 over 1 hits)
+    Nullfray                        20  (20 / 0 / 0 over 1 hits)

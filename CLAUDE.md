@@ -889,6 +889,15 @@ Three rules that matter:
 
 See `void.md` for `Rift N`, the stat that reads it.
 
+**`Storm` is the second global of this kind**, and it is deliberately unlike the Gap in one
+way: it is **symmetric**. One number both players read, rather than one each. It is 0 until
+a Tempest card raises it, never falls, and adds **one extra instance** of its value to every
+attack in the game — doubled for a Tempest unit. See `tempest.md`.
+
+The one-instance rule is load-bearing rather than cosmetic: `Resist X` reduces each incoming
+*instance* to a minimum of 1, so N separate ticks would pierce armour entirely as Storm
+climbed.
+
 ### Judgment
 
 The printed number does two jobs — it is both the HP you survive at and the threshold you
@@ -1368,6 +1377,7 @@ A **faction is an energy color.** Four are being built first; more are held in r
 | **Gaia** | Life, growth, nature | Fuel | 🔨 Built — see `gaia.md` |
 | **Heaven** | Order, light, judgment | Protect | 🔨 Built — see `heaven.md` |
 | **Forge** | Fire, smithing, the primal | Kill | 🔨 Built — see `forge.md`. The aggro slot, and the only warm colour |
+| **Tempest** | Storm, pressure, the break | Bank | 🔨 Built — see `tempest.md`. The only faction whose resources persist and grow across turns |
 
 Each faction must answer: *what does my deck do that no other faction can?*
 
@@ -1405,7 +1415,7 @@ rule-breakers.
 | **Void signature** | `Siphon`, `Void N` | `void.md` |
 | **Gaia signature** | `Earth`, `Essence` | `gaia.md` |
 | **Forge signature** | `Stoke`, `Scrap` | `forge.md` |
-| **Tempest signature** | `Charge`, `Storm` | `docs/specs/2026-08-17-tempest-faction-design.md` |
+| **Tempest signature** | `Charge`, `Storm` | `tempest.md` |
 
 This replaced the earlier arrangement where `Rise` and `Retribution` lived in `hel.md`.
 Hel keeps both and no Hel card changed — they simply stopped being exclusive. Hel's two
@@ -1429,7 +1439,7 @@ costs, and brakes are decided; no cards are authored and no engine work is done.
 | ~~**Forge**~~ | Fire, smithing, the primal | Kill | **Built 2026-08-16 — no longer in reserve.** See the faction table above and `forge.md`. |
 | **Wyrd** | Fate, chance, transformation | Gamble | Randomness and transformation. Fun, hard to balance. |
 | **Wilds** | Flesh, beasts, raw physicality | Overwhelm | Big bodies, brute force. Distinct from Gaia's nurturing growth — this is nature as a threat, not a garden. |
-| **Tempest** | Storm, pressure, the break | Bank | **Revived 2026-08-17 as a genuinely different idea, per the clause below.** Its original *cheap repeated attacks* identity stays absorbed into Forge — nothing in the new design competes with Forge's multi-attack claim. Tempest is now the **accumulation** colour: `Charge` banks a growing per-unit counter, `Storm` is a shared global damage ramp. Designed, not built; see `docs/specs/2026-08-17-tempest-faction-design.md`. |
+| ~~**Tempest**~~ | Storm, pressure, the break | Bank | **Built 2026-08-17 — no longer in reserve.** Absorbed into Forge on 2026-08-16 and revived the next day under the clause that permitted it, as a genuinely different idea: the accumulation colour rather than the multi-attack one. See `tempest.md`. |
 
 **Tempest was absorbed and then revived, and the absorption clause is what made it
 legitimate.** The 2026-08-16 merge into Forge ended with *"revivable later only as a
@@ -2297,7 +2307,7 @@ with no console errors.
 Implemented: main menu, deck select, deck builder, combat vs. a heuristic AI, **both
 factions in full** — 15 Hel units and 13 Heaven units, each with its own energy card — the
 38 neutral supports, and the full turn/energy/combat rule set. Card data is data-driven
-from `data/cards.json` (**355 cards**: 61 Hel, 59 Heaven, 66 Void, 63 Gaia, 63 Forge, 43 neutral).
+from `data/cards.json` (**375 cards**: 61 Hel, 59 Heaven, 66 Void, 63 Gaia, 63 Forge, 20 Tempest, 43 neutral).
 
 **Heaven is built — two factions now exist.** 13 units, an energy card, and one Tool,
 implementing the `Judgment` and `Sanctuary` keywords and the within-attack damage
@@ -2860,8 +2870,8 @@ Two guards worth keeping: the writer never raises (a balance log that can fail a
 or break a game is worse than no log), and a stall is recorded as `NO WINNER — stalled at
 round N`, since that is the single most important thing the file can capture.
 
-Verified by sixteen headless harnesses, all passing — run 2026-08-16 after the Forge
-expansion, **1182 counted assertions** across the thirteen that count (`SceneSmokeTest`, `PlaythroughTest` and
+Verified by seventeen headless harnesses, all passing — run 2026-08-16 after the Forge
+expansion, **1238 counted assertions** across the thirteen that count (`SceneSmokeTest`, `PlaythroughTest` and
 `TutorialWalkTest` report pass/fail without a count and are not in that total):
 
 | Harness | Covers |
@@ -2881,6 +2891,7 @@ expansion, **1182 counted assertions** across the thirteen that count (`SceneSmo
 | `TutorialWalkTest.gd` | Drives all 13 battle lessons through the **real Combat screen**, performing what each step asks via the entry points a player clicks, and fails if any step cannot be satisfied. Reports per-lesson rather than a counted total. This is the harness that checks a lesson can be **finished**, not merely that it is well formed |
 | `ForgeTest.gd` | 143 assertions: `Stoke` as a cost rather than a damage event (**`Sanctuary` does not absorb it and `Resist` does not reduce it** — the two assertions the file runs first, because they are the whole reason the keyword has the shape it does), the flag as an *amount* so scaling and threshold payoffs read one field, Hold the Slot still flooring it at 1 HP, lethal Stoke firing `Toll` through the ordinary death path, the flag clearing each turn, affordability refusing a partial payment, `Scrap` (weakest-body default, an explicit target honoured, never itself, refused with no other unit and costing nothing when refused, and firing the victim's `Toll`), all **nineteen** payoff ops **driven through the real damage pipeline** (the original nine, plus the ten the 2026-08-16 expansion built — unpreventable damage, the board sweep, both-boards, the tower splash, the extra attack slot, immediate resolution, the cost discount, the decay skip, draw, and the second Stoke), every one of them **verified by putting the bug back**, `stoked_heal_back` refunding the HP while **leaving the flag set**, cleave obeying the shielding chain, the threshold gate on the shielding break, ability cost parsing for all three non-energy costs, and the roster invariants (HP bands, two-line rule, retreat formula, Stoke only on an ability and never above the body's own HP) |
 | `KeywordModTest.gd` | 15 assertions on the keyword modifier layer: every previously-flat keyword (`toll`, `siphon`, `decay`, `judgment`, `essence`, `resist`) accepting a modifier, unbounded stacking, the accessors reporting the modified value rather than only the raw dictionary, the floor at 0 applying **on read** so a −5 then +5 returns to the print, and modifiers clearing on both `Rise` and evolution. Verified by reverting `toll()` to its flat form and watching two assertions fail before restoring the fix |
+| `TempestTest.gd` | 56 assertions: the `Charge` counter and its spend, persistence **through evolution** with the rate changing and the value carrying, the reset on `Rise`, the global `Storm` counter, Storm's extra damage instance (one instance of N and not N of 1, doubled for a Tempest body, blunted normally by `Resist`, and inert at Storm 0), Charge growing on damage **dealt** and never taken, `charge_on_kill` **not** paying when defensive Judgment rescued the body, all four Discharge modes plus `charge_transfer` **driven through the real `use_ability` and `_deliver_attack_damage`**, `discharge_structures` reaching a tower past a wall while a plain discharge does not, `storm_scale_damage`, `Retribution` firing once per attack rather than once per instance, and both Tempest supports checked against the **shipped card data** rather than a fixture |
 | `LayoutTest.gd` | 37 assertions on what the UI *draws*: every entry in `Palette.GLYPH` being renderable by the actual theme font, every double-quoted literal across the twenty-one UI source files containing no character the font lacks (comments exempt — their ASCII diagrams are never rendered), all four screens building in **both** the desktop and phone layouts, and — the assertion that matters most — **no phone layout exceeding the 540-unit phone viewport**, measured with `get_combined_minimum_size()` and ignoring content inside a horizontally scrolling container. The glyph half reads the source rather than the running scene on purpose: a label built only in a rare branch — an error state, a disabled button's tooltip — is never instantiated by a smoke test, and those are exactly the strings that ship broken. The overflow half exists because its absence is what let mobile mode ship as pure zoom: every screen *built* fine, which is all the build assertions ever checked |
 
 The Heaven pipeline tests deliberately call `GameState._deal_lane_damage` rather than
@@ -2903,8 +2914,12 @@ happens to look at will fail at whatever rate the other half changes.** The asse
 correct and the diagnosis wasted time twice because an intermittent failure reads as
 non-determinism in the engine rather than as leftover state in the harness.
 
-**`SupportTest.gd` is separately flaky — one failure in ~15 runs on 2026-08-08, not
-reproducible afterward and never captured.** The prime suspect is the support-heavy
+**`SupportTest.gd` is separately flaky — one failure in ~15 runs on 2026-08-08, and again
+once on 2026-08-17 during the Tempest build.** The 2026-08-17 sighting was chased rather
+than re-run away: 26 subsequent random-matchup runs and **8 runs with the Tempest deck
+forced into the game** all passed, so it is not the new faction. The failing assertion was
+still not captured — the run that failed was inside a loop that printed only the totals,
+which is the same mistake the note below warns against. Capture the output next time. The prime suspect is the support-heavy
 AI-vs-AI game at the end of the file: it is the only non-deterministic assertion there
 (shuffled decks, heuristic AI), and a game that happens to stall or end unusually would trip
 it. Worth capturing the output next time rather than re-running until green — an
@@ -4642,6 +4657,51 @@ even if the rule text later changes. Keep entries to one or two lines.
   shape of the dropped-`effects` bug already in this log twice, so the generator makes the
   unplayable state unreachable rather than merely discouraged. Its guards were verified by
   putting six separate bugs back and confirming each is refused.
+
+- **Tempest is built: `Charge` banks a per-unit counter, `Storm` is a shared global damage
+  ramp.** The sixth colour, and the first whose resources **persist and grow across turns** —
+  everything else in the game is instant (`Stoke`), live (`Earth`), binary (`Judgment`) or
+  decaying (the pool). Against Gaia the split is wide versus deep: Gaia's aura rewards many
+  living bodies and shrinks the instant one dies, while Tempest's counter sits on one body
+  and is lost whole with it.
+  **`Storm` is one instance of N, never N instances of 1, and that decision is the whole
+  keyword.** `Resist X` reduces each incoming *instance* to a minimum of 1 damage, so N
+  separate ticks would have made Storm a **Resist-piercing** mechanic — armour would stop
+  working entirely as Storm climbed, a wider anti-shield break than Forge's
+  `stoked_unpreventable` and printed on a global number that both players feed. As a single
+  instance, Resist blunts it exactly as printed.
+  **Charge is the third thing to survive evolution**, after attached energy and the Tool, for
+  the identical reason: without it, evolving destroys the investment, so the correct play for
+  the one faction whose resource is *time* would be never to evolve. The value carries and
+  the rate comes from the new card — **evolving is Tempest's rate increase**.
+  **Four bugs, and three of them were only findable by playing rather than by testing.**
+  *(1)* `charge_on_kill` read `defender.hp <= 0` **above** the Judgment block, so a defensive
+  Judgment save paid the executioner for a body still standing; the check moved below both
+  halves. *(2)* Both Tempest supports were **silent dead data** — units and supports do not
+  share an effect dispatcher, so `storm_raise` wired only into the unit path did nothing on a
+  support, and Storm never rose above 0 in two of five AI games. Same shape as the
+  dropped-`effects` bug already in this log twice. *(3)* The AI needed `_discharge_worth_it()`
+  for the reason Forge's Stoke needed `_stoke_worth_it()`: **a cost the engine does not charge
+  in pool energy is invisible to a heuristic that measures pool energy**, so the "free
+  abilities are always taken" default cashed a counter of 3 on turn one. *(4)* A harness that
+  forgot `skip_setup()` got `false` back from every ability and read as ten broken ops.
+  **The damage discount is 30% and was derived, not chosen.** The live pool measures 7.0–8.1
+  damage per energy; an attack grows Charge twice (itself plus its Storm instance), so
+  amortised the keyword is worth **+2N damage every swing forever** — +20 at Stage 2, the
+  largest keyword benefit in the game against `Judgment`'s −1/3 and `Sanctuary`'s −18%.
+  **Retribution now fires once per attack rather than once per damage instance.** Forced by
+  Storm's extra instance, which would otherwise double every wall's recoil and make
+  `Thicket` and `Standing Heat` unattackable as Storm climbed. Inert at Storm 0, so no
+  existing matchup changed.
+  **Three deliberate bets are recorded in `tempest.md` rather than designed away**: Storm is
+  permanent/uncapped/symmetric, Charge is uncapped with the tower clock as its only brake,
+  and every instance grows Charge. The case for the first is that Storm is *symmetric*, so it
+  sets the pace rather than the winner, and the 5M sweep's measured problem is that **slow
+  decks lose** — with tower scaling already A/B tested as the cause and exonerated.
+  **Not every Tempest body carries Charge**, and the generator enforces both halves: Foehn
+  prints none (a faction where every card has the keyword is the sameness failure the
+  bestiary waves documented), while a body that *does* print Charge must have something that
+  grows it and something that spends it, or the counter is dead data.
 
 - **A 5-round, 5,000,000-game balance sweep (2026-08-17) produced three rule changes, and
   the method matters as much as the changes.** Each round played 1M games — every one of

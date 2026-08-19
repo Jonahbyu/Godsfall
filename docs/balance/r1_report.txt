@@ -1,0 +1,95 @@
+==============================================================================
+GAMES: 1000000   finished: 1000000   stalled: 0 (0.000%)
+==============================================================================
+
+-- GAME LENGTH (rounds) --
+  mean   9.11  med   9.0  p10   6.0  p90  13.0  min   2.0  max  31.0
+     1-4:   5401    0.5%  
+     5-8: 461419   46.1%  #######################
+    9-12: 429074   42.9%  #####################
+   13-20: 103932   10.4%  #####
+   21-40:    174    0.0%  
+
+-- SEATING --
+  P1 wins 585355 / 1000000 = 58.54%
+  P2 wins 414645 / 1000000 = 41.46%
+
+-- DECK WIN RATE (seat-controlled: both seats pooled) --
+  Sealed Light        89.2%   (71337/80000)
+  Deep Grove          83.3%   (66641/80000)
+  Bedrock             82.5%   (66018/80000)
+  Toll Engine         75.8%   (60630/80000)
+  Unquiet Dead        71.6%   (57277/80000)
+  Standing Stones     70.6%   (56501/80000)
+  Reaffirmation       62.3%   (49817/80000)
+  Thicket             59.0%   (47202/80000)
+  Wasting Fen         58.4%   (46694/80000)
+  Rise & Recur        51.8%   (41446/80000)
+  Widening Rift       51.7%   (41395/80000)
+  Standing Heat       47.7%   (38191/80000)
+  Verdict Engine      46.0%   (36811/80000)
+  Starve              45.0%   (35971/80000)
+  White Heat          43.0%   (34380/80000)
+  Nothing Holds       41.2%   (32951/80000)
+  Second Wind         39.9%   (31888/80000)
+  Barrow Wall         35.5%   (28368/80000)
+  Total Eclipse       35.3%   (28273/80000)
+  Lamp Wall           33.2%   (26588/80000)
+  Widening Dark       30.4%   (24347/80000)
+  Scrap Line          27.0%   (21601/80000)
+  Bank the Heat       24.4%   (19502/80000)
+  Burning Line        22.9%   (18284/80000)
+  Cacophony Ramp      22.4%   (17887/80000)
+
+-- DECK WIN RATE BY SEAT --
+  P1: Bank the He=31%  Barrow Wall=41%  Bedrock=90%  Burning Lin=30%  Cacophony R=27%  Deep Grove=91%  Lamp Wall=41%  Nothing Hol=50%  Reaffirmati=72%  Rise & Recu=59%  Scrap Line=33%  Sealed Ligh=93%  Second Wind=50%  Standing He=57%  Standing St=78%  Starve=55%  Thicket=71%  Toll Engine=80%  Total Eclip=46%  Unquiet Dea=80%  Verdict Eng=55%  Wasting Fen=70%  White Heat=54%  Widening Da=43%  Widening Ri=65%
+  P2: Bank the He=17%  Barrow Wall=30%  Bedrock=75%  Burning Lin=16%  Cacophony R=17%  Deep Grove=76%  Lamp Wall=25%  Nothing Hol=32%  Reaffirmati=53%  Rise & Recu=44%  Scrap Line=21%  Sealed Ligh=85%  Second Wind=30%  Standing He=38%  Standing St=63%  Starve=35%  Thicket=47%  Toll Engine=72%  Total Eclip=24%  Unquiet Dea=63%  Verdict Eng=37%  Wasting Fen=47%  White Heat=32%  Widening Da=18%  Widening Ri=39%
+
+-- MATCHUP MATRIX (row = P1 deck, cell = P1 win%) --
+        Bank the Barrow W  Bedrock Burning  Cacophon Deep Gro Lamp Wal Nothing  Reaffirm Rise & R Scrap Li Sealed L Second W Standing Standing   Starve  Thicket Toll Eng Total Ec Unquiet  Verdict  Wasting  White He Widening Widening
+Bank t       58%      45%       5%      59%      63%       5%      55%      31%      10%      36%      56%       3%      41%      30%       8%      26%      17%       4%      45%      15%      26%      18%      43%      59%      27%
+Barrow       69%      52%       9%      72%      75%      15%      58%      40%      20%      34%      68%       4%      45%      39%      24%      62%      35%       8%      64%      18%      44%      28%      41%      63%      40%
+Bedroc       99%      97%      72%     100%      97%      59%      95%      99%      91%      89%      99%      50%      97%      97%      90%      99%      94%      90%      96%      70%      96%      94%      95%      99%      96%
+Burnin       60%      42%       4%      61%      67%       4%      48%      31%      12%      35%      55%       2%      34%      28%       9%      26%      19%       3%      43%      12%      26%      20%      33%      54%      24%
+Cacoph       48%      32%      10%      50%      55%      12%      42%      24%      14%      26%      41%       4%      26%      28%      12%      32%      22%       3%      38%      13%      26%      22%      29%      44%      27%
+Deep G       98%      94%      79%      99%      97%      72%      96%      97%      96%      90%      98%      63%      98%      92%      81%      97%      94%      75%      98%      83%      97%      93%      96%      99%      96%
+Lamp W       63%      54%      18%      72%      69%      16%      56%      49%      25%      39%      62%       5%      44%      46%      21%      45%      32%       7%      58%      19%      42%      31%      49%      67%      44%
+Nothin       83%      70%      11%      84%      86%       8%      72%      60%      29%      50%      82%       5%      67%      50%      21%      60%      35%      11%      71%      22%      55%      39%      58%      78%      45%
+Reaffi       98%      90%      32%      98%      92%      21%      93%      92%      66%      58%      93%      12%      95%      87%      33%      82%      72%      21%      96%      49%      81%      66%      93%      98%      74%
+Rise &       78%      73%      25%      81%      83%      25%      75%      66%      60%      54%      78%      30%      66%      64%      38%      67%      49%      48%      75%      32%      68%      53%      67%      77%      56%
+Scrap        59%      40%       6%      60%      67%      10%      54%      32%      18%      35%      56%       2%      41%      26%      12%      37%      23%       4%      52%      15%      33%      23%      37%      58%      33%
+Sealed       99%      98%      81%      99%      98%      66%      99%      99%      96%      82%      99%      63%      98%      98%      94%      99%      96%      97%      98%      88%      98%      95%      98%      99%      96%
+Second       81%      67%      13%      85%      85%      10%      73%      59%      20%      52%      77%       6%      63%      50%      19%      49%      38%       7%      74%      24%      47%      42%      63%      85%      53%
+Standi       84%      75%      15%      84%      83%      21%      71%      71%      33%      56%      87%       8%      74%      62%      45%      74%      47%      34%      69%      28%      65%      52%      58%      79%      63%
+Standi       98%      87%      29%      97%      94%      46%      92%      90%      89%      77%      96%      15%      94%      77%      59%      94%      81%      49%      97%      55%      92%      79%      80%      97%      90%
+Starve       89%      58%      10%      90%      81%      13%      77%      62%      42%      48%      78%       3%      75%      53%      16%      66%      45%       4%      90%      28%      66%      47%      65%      94%      66%
+Thicke       96%      82%      30%      96%      91%      30%      87%      90%      65%      68%      92%      14%      87%      82%      48%      83%      72%      27%      89%      44%      77%      64%      87%      94%      82%
+Toll E       99%      95%      24%      99%      98%      49%      96%      95%      90%      64%      98%       6%      97%      77%      68%      99%      89%      54%      98%      46%      96%      85%      87%      99%      91%
+Total        82%      54%      16%      84%      74%       8%      66%      58%      19%      42%      70%       7%      60%      60%      11%      35%      38%       4%      72%      25%      36%      37%      70%      84%      48%
+Unquie       95%      91%      56%      96%      93%      42%      91%      91%      76%      81%      93%      27%      90%      89%      68%      86%      80%      65%      91%      62%      87%      80%      88%      94%      85%
+Verdic       89%      71%      12%      87%      84%      12%      78%      65%      40%      45%      80%       5%      78%      55%      18%      60%      47%      10%      85%      28%      62%      45%      65%      89%      54%
+Wastin       95%      81%      22%      96%      91%      25%      85%      84%      68%      71%      90%      14%      85%      73%      42%      81%      70%      28%      89%      46%      79%      68%      82%      95%      77%
+White        77%      74%      20%      84%      83%      18%      70%      68%      27%      53%      82%       9%      62%      65%      38%      61%      42%      25%      63%      26%      55%      48%      65%      74%      56%
+Wideni       76%      56%      11%      80%      72%       8%      60%      56%      16%      46%      67%       5%      49%      54%      14%      29%      33%       6%      54%      23%      37%      30%      65%      75%      43%
+Wideni       92%      78%      22%      95%      87%      19%      82%      84%      59%      66%      88%      17%      81%      70%      34%      68%      56%      25%      84%      42%      76%      59%      79%      91%      70%
+
+-- ENERGY ECONOMY (per player-round averages) --
+  pool held      mean   0.92  med   0.0  p10   0.0  p90   3.0  min   0.0  max  25.0
+  attached       mean  11.19  med  10.8  p10   4.7  p90  18.1  min   0.0  max  77.1
+  units on board mean   2.61  med   2.5  p10   1.4  p90   3.9  min   0.1  max   5.2
+  pool peak      mean   5.34  med   0.0  p10   0.0  p90  18.0  min   0.0  max  80.0
+  unit-turns WITH a queued attack : 29503586  (62.4%)
+  unit-turns WITHOUT              : 17766017  (37.6%)  <- attacks unaffordable/absent
+  rounds w/ pool>=4 and nothing queued: 1418626 (1.42 per game)
+
+-- DAMAGE ROUTING (per game, both players) --
+  card dmg -> units      419.5  (61.4% of card damage)
+  card dmg -> towers     139.5  (20.4%)
+  card dmg -> throne     124.1  (18.2%)
+  tower fire (all)       556.0   [belongs to no card]
+  ratio tower-fire : card-damage = 0.81
+
+-- STRUCTURES AT GAME END --
+  games ending by throne kill: 1000000 (100.0%)
+  loser throne max HP  mean 190.56  med 190.0  p10 175.0  p90 210.0  min 155.0  max 300.0
+  towers dead at end: 1732708/4000000 (43.3%)

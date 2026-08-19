@@ -32,14 +32,14 @@ dies. Living units shield the structures behind them, per board — clearing a b
 opens a path to its tower, and killing the tower exposes the throne.
 
 ```
-              ENEMY THRONE (100 HP)
+              ENEMY THRONE (150 HP)
    ┌─────────────────────┐  ┌─────────────────────┐
    │  [ 1 ][ 2 ][TOWER]  │  │  [ 1 ][ 2 ][TOWER]  │   enemy boards
    └─────────────────────┘  └─────────────────────┘
    ┌─────────────────────┐  ┌─────────────────────┐
    │  [ 1 ][ 2 ][TOWER]  │  │  [ 1 ][ 2 ][TOWER]  │   your boards
    └─────────────────────┘  └─────────────────────┘
-              YOUR THRONE (100 HP)
+              YOUR THRONE (150 HP)
 ```
 
 Towers are an attrition engine, not a wall — they fire every round and scale, so passivity

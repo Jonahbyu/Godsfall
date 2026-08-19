@@ -17,7 +17,7 @@ all green):
 
 | Built | Where |
 |---|---|
-| `Earth` as a live board-wide aura — units and both towers, +1/+1 per point | `GameState.earth_for()` / `effective_max_hp()` / `sync_tower_aura()` |
+| `Earth` as a live board-wide aura — +1 HP per point, +1 damage per two points | `GameState.earth_for()` / `effective_max_hp()` / `sync_tower_aura()` |
 | Aura-aware healing and downward clamping that never kills | `heal_unit()` / `clamp_to_aura()` |
 | `Essence N` — prompted, pool-paid, carries Earth and attached energy | `_try_essence()` in `_kill()` |
 | `Resist X`, floored at 1, ordered after Sanctuary, including on recoil | `_apply_resist()` |
@@ -70,7 +70,7 @@ across a widening board.
 
 | Keyword | Effect |
 |---|---|
-| **Earth N** | *(Gaia signature)* A printed stat. Your board's Earth total grants **+1 max HP and +1 damage per point** to all your units and both your towers. |
+| **Earth N** | *(Gaia signature)* A printed stat. Your board's Earth total grants **+1 max HP per point** to all your units and both your towers, and **+1 damage per *two* points** (rounded down) to every attack, auto-fire and tower shot you make. |
 | **Essence N** | *(Gaia signature)* When this unit dies, if you have N energy in your pool, you may pay it to transfer this unit's Earth and attached energy to the nearest living friendly unit on the same board. |
 
 Gaia's two signature slots are **full**. Like every faction it may also print the shared

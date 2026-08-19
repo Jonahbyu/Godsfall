@@ -325,9 +325,13 @@ deck faces whether or not the opponent does anything. All healing is capped at *
 HP** — never above — so it can't combo with an HP buff into a bigger body, and it never
 moves `Toll` or `Retreat`, both of which are printed and fixed.
 
-**The base heal is 20, and one energy buys about 30 more.** That's the whole pricing
-rule for this class: `Shore Up` 20 free, `Field Surgery` 50 for 1, `Grave Warden's Oath`
-100 for 3.
+**The base heal is 32, and one energy buys about 48 more.** That's the whole pricing
+rule for this class: `Shore Up` 32 free, `Field Surgery` 80 for 1, `Grave Warden's Oath`
+120 for 3 (capped — the rate would put it at 176, above the largest printed HP).
+
+The ladder was re-anchored x1.6 on 2026-08-17. It had been set against ~50 HP bodies and
+was never re-derived when the HP curve rose to 40-175, so a "20 HP heal" quietly went from
+40% of a body to 12% of one. See `CLAUDE.md`.
 
 **No card fully heals a unit.** Every heal is a flat number — never "restore to max," and
 never a fraction of printed HP. A heal that scales with its target is unboundable: the
@@ -353,14 +357,14 @@ The heal ladder, free and priced together:
 | Card | Cost | Heals | Against the rate |
 |---|---|---|---|
 | `Mend` | 0 | 10, any unit | half the baseline |
-| `Shore Up` | 0 | **20**, any unit | **the baseline** |
+| `Shore Up` | 0 | **32**, any unit | **the baseline** |
 | `Field Rites` | 0 | 10 to every unit | spread |
 | `Reconsecrate` | 0 | 20 + undoes Decay | baseline + a rider |
 | `Last Breath` | 0 | 50, needs half HP | +30, paid by the condition |
 | `Field Surgery` | 1 | 50, any unit | 20 + 30 ✓ |
 | `Closing Ranks` | 2 | 20 to every unit | spread, up to 80 |
-| `Vigil` | 2 | 15 × the round number | scales |
-| `Grave Warden's Oath` | 3 | 100, any unit | 20 + 90 ≈ 3 × 30 ✓ |
+| `Vigil` | 2 | 24 × the round number | scales |
+| `Grave Warden's Oath` | 3 | 120, any unit | capped below the 175 HP ceiling |
 
 The rule reads straight down the table: **base 20, and each energy buys about 30 more.**
 `Last Breath` is the interesting row — it gets the same +30 that 1 energy buys, but pays
@@ -406,7 +410,7 @@ Its real use is against `Decay`, which hits everything for small amounts every t
 ---
 
 **Last Breath** — Support
-> Heal one of your units **50 HP**. It must be at or below **half** its printed HP.
+> Heal one of your units **80 HP**. It must be at or below **half** its printed HP.
 
 The conditional big heal, and the one free card that reaches the +30 that normally costs
 an energy — the HP condition is what pays for it instead. Dead in hand when you're not
@@ -442,7 +446,7 @@ with retreat, you're choosing the body over the refund.
 ---
 
 **Field Surgery** — Support · **1 energy**
-> Heal one of your units 50 HP.
+> Heal one of your units 80 HP.
 
 The straight upgrade, and the card that sets the exchange rate for the whole priced tier:
 **1 energy buys 30 more healing.** Everything else priced in this file is checked against
@@ -473,7 +477,7 @@ The card is a **catch-up** by construction, but a different flavor from `Sift th
 it wants a wide board, not a dead one. Its ceiling arrives when you're stable and behind,
 which is the position tower support decks live in.
 
-Worthless on one unit — 20 for 2 energy against `Field Surgery`'s 50 for 1 is a bad trade
+Worthless on one unit — 32 for 2 energy against `Field Surgery`'s 80 for 1 is a bad trade
 by a wide margin. The card is a board-state read, not a default, and at 2 energy it's
 punishing to misread.
 
@@ -502,13 +506,16 @@ late or hold, and holding it is a real cost against the hand limit.
 ---
 
 **Grave Warden's Oath** — Support · **3 energy**
-> Heal one of your units 100 HP.
+> Heal one of your units 120 HP.
 
-The top of the ladder and the only 3-cost card printed so far. 100 is `Shore Up`'s 20 plus
-three energy's worth of 30, so it sits exactly on the rate rather than bending it.
+The top of the ladder and the only 3-cost card printed so far. On the re-anchored rate
+(base 32, +48 per energy) it would land at 176 — but that exceeds the largest printed HP
+in the game, so it is **capped at 120** instead. The cap is the point rather than a
+rounding: a heal that covers every body in the game is a full heal by another name, and
+`CLAUDE.md` forbids those.
 
-**It is not a full heal**, and the difference matters more than it looks. 100 is more than
-any current body except the Queen can hold, so on most targets it deliberately overflows
+**It is not a full heal**, and the difference matters more than it looks. 120 is more than
+most bodies can hold, so on most targets it deliberately overflows
 and the excess is thrown away. That's the card's real cost: it's only efficient on the
 biggest thing you own, and it's a waste on anything else. A full heal would have been the
 opposite — perfectly efficient on every target, best on the biggest, and impossible to
@@ -581,7 +588,7 @@ a single unit alive for a long time.
 **Bone Splint** — Tool
 > Attached unit heals 5 HP at end of turn.
 
-The break-even math, printed: 5 per turn against `Shore Up`'s 20 means four turns to match
+The break-even math, printed: 8 per turn against `Shore Up`'s 32 means four turns to match
 it. Nearly worthless on chaff and quietly excellent on a Thornshade that the opponent has
 decided not to attack.
 
@@ -742,7 +749,7 @@ The tower-support tutor, and the reason the class hangs together as an archetype
 than being six loose cards.
 
 Digs an arbitrary distance for exactly one card type, which is only reasonable *because*
-tower support is the weakest class in the file — the payoff for finding one is a +20 HP
+tower support is the weakest class in the file — the payoff for finding one is a +20 max HP
 tower, not a win condition. In a deck with no tower support cards it whiffs entirely and
 mills nothing (everything shuffles back), so it's strictly a build-around.
 
@@ -815,19 +822,19 @@ card *and* energy, and buys about one band step per energy.
 | Rally the Line | — | Support | Removes the retreat lock |
 | Reposition | — | Support | Shoves an enemy unit within its board |
 | Hold the Slot | — | Support | Survives one turn |
-| Mend | — | Support | +10 HP |
-| Shore Up | — | Support | +20 HP — the baseline |
-| Field Rites | — | Support | +10 HP to every unit |
-| Last Breath | — | Support | +50 HP, needs half HP |
-| Reconsecrate | — | Support | +20 HP, undoes Decay |
-| **Field Surgery** | **1** | Support | +50 HP |
-| **Closing Ranks** | **2** | Support | +20 HP to every unit |
-| **Vigil** | **2** | Support | +15 HP per round elapsed |
-| **Grave Warden's Oath** | **3** | Support | +100 HP |
+| Mend | — | Support | +16 HP |
+| Shore Up | — | Support | +32 HP — the baseline |
+| Field Rites | — | Support | +16 HP to every unit |
+| Last Breath | — | Support | +80 HP, needs half HP |
+| Reconsecrate | — | Support | +32 HP, undoes Decay |
+| **Field Surgery** | **1** | Support | +80 HP |
+| **Closing Ranks** | **2** | Support | +32 HP to every unit |
+| **Vigil** | **2** | Support | +24 HP per round elapsed |
+| **Grave Warden's Oath** | **3** | Support | +120 HP |
 | Collapse | — | Support | 20 damage to an uncharged unit |
 | Sever | — | Support | −2 enemy attached energy |
 | Toppling Blow | — | Support | 25 damage to a tower |
-| Bone Splint | — | Tool | +5 HP per turn |
+| Bone Splint | — | Tool | +8 HP per turn |
 | Weighted Chain | — | Tool | +5 damage per attack |
 | Grave Anchor | — | Tool | −2 retreat cost |
 | Ration Pack | — | Tool | +1 pool→attached per turn |
@@ -838,7 +845,7 @@ card *and* energy, and buys about one band step per energy.
 | Murder Holes | — | Tower, permanent | Tower +5 damage |
 | Crossfire | — | Tower, permanent | Tower hits the other board for 5 |
 | Spite Engine | — | Tower, permanent | 20 damage when the tower dies |
-| Rebuild | — | Tower, one-shot | Tower +25 HP |
+| Rebuild | — | Tower, one-shot | Tower +40 HP |
 | Open the Gate | — | Tower, one-shot | Kill your tower, draw 2 |
 
 **43 neutral cards** — 31 one-shot supports, 6 Tools, and 6 tower support. Grouped as
