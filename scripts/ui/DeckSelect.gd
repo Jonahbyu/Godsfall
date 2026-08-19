@@ -16,12 +16,32 @@ const BUILDER_SCENE := "res://scenes/DeckBuilder.tscn"
 ## a shelf you scan rather than a list you scroll.
 const HERO_H := 74.0
 
+## The contents grid: one tile per distinct card, at the same scale and gap the
+## deck builder's deck pane uses, so a deck looks the same in the screen that
+## picks it as in the screen that built it.
+##
+## Column count is fitted to the pane's measured width rather than fixed — the
+## pane is a fraction of the window here and the window resizes. Clamped at both
+## ends: below the minimum the tiles are unreadably narrow, above it a wide
+## window gives one long row instead of a block you can take in at once.
+const GRID_CARD_SCALE := 0.86
+const GRID_CARD_SCALE_PHONE := 0.62
+const GRID_GAP := 6
+const GRID_MIN_COLUMNS := 3
+const GRID_MAX_COLUMNS := 8
+const GRID_FOOTER_H := 18
+
 ## Set false by the main menu's "Manage Decks" entry, so the screen shows
 ## "Edit" as the primary action instead of "Fight".
 var for_combat: bool = true
 
 var _list_box: VBoxContainer
-var _detail: RichTextLabel
+## The contents pane's card grid. A `Control` holding a `GridContainer` of card
+## tiles plus, when a deck is empty or illegal, a plain message — so callers only
+## ever address one node whichever the deck turns out to be.
+var _detail: VBoxContainer
+var _detail_grid: GridContainer = null
+var _detail_scroll: ScrollContainer = null
 var _detail_head: Control = null
 var _mix_bar: CompositionBar = null
 var _fight_btn: Button
@@ -41,6 +61,10 @@ var _contents_layer: Control = null
 var _contents_btn: Button = null
 ## Hidden owner of `_detail` while the overlay is closed. See `_open_contents`.
 var _detail_home: VBoxContainer = null
+
+## The card inspector, opened by clicking a card in the contents grid.
+var _inspector_layer: Control = null
+var _inspector: CardInspector = null
 
 ## Which layout this screen was built for. Latched at build time rather than
 ## read live, so every part of one build agrees about its shape and
@@ -71,7 +95,10 @@ func _on_layout_changed(is_mobile: bool) -> void:
 	for child in get_children():
 		remove_child(child)
 		child.queue_free()
+	_close_inspector()
 	_detail = null
+	_detail_grid = null
+	_detail_scroll = null
 	_contents_btn = null
 	_detail_home = null
 	_build()
@@ -205,13 +232,18 @@ func _build() -> void:
 	scroll.add_child(_list_box)
 	middle.add_child(left)
 
-	## The contents view itself is identical in both layouts — the same label
+	## The contents view itself is identical in both layouts — the same card grid
 	## inside the same scroller. Only its *parent* differs, which is what keeps
 	## `_show_detail()` and every caller of it working unchanged.
-	_detail = RichTextLabel.new()
-	_detail.bbcode_enabled = true
-	_detail.fit_content = true
-	_detail.add_theme_color_override("default_color", Palette.TEXT)
+	_detail = VBoxContainer.new()
+	_detail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_detail.add_theme_constant_override("separation", Palette.SPACE_SM)
+
+	_detail_grid = GridContainer.new()
+	_detail_grid.columns = GRID_MIN_COLUMNS
+	_detail_grid.add_theme_constant_override("h_separation", GRID_GAP)
+	_detail_grid.add_theme_constant_override("v_separation", GRID_GAP)
+	_detail.add_child(_detail_grid)
 
 	if _mobile:
 		## While the overlay is shut the label still has to belong to something,
@@ -246,15 +278,18 @@ func _build() -> void:
 		_detail_head = _build_detail_head()
 		right.add_child(_detail_head)
 
-		var detail_scroll := ScrollContainer.new()
-		detail_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		right.add_child(detail_scroll)
+		_detail_scroll = ScrollContainer.new()
+		_detail_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		_detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		right.add_child(_detail_scroll)
 
 		var detail_panel := Palette.make_panel(Palette.PANEL)
 		detail_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		detail_scroll.add_child(detail_panel)
+		_detail_scroll.add_child(detail_panel)
 		detail_panel.add_child(_detail)
+		## The pane is a fraction of a resizable window, so the column count is
+		## measured rather than assumed — see `_fit_columns`.
+		_detail_scroll.resized.connect(func(): _fit_columns(_detail_scroll))
 		middle.add_child(right)
 
 	## --- opponent row: which deck the AI brings. Defaults to Random, which is
@@ -605,6 +640,12 @@ func _open_contents() -> void:
 		_detail.get_parent().remove_child(_detail)
 	host.add_child(_detail)
 
+	## The grid was last fitted to whatever held it before — on a phone that is a
+	## zero-width hidden holder — so it is refitted to the overlay that now owns
+	## it, and kept fitted while the overlay is open.
+	scroll.resized.connect(func(): _fit_columns(scroll))
+	_fit_columns(scroll)
+
 
 func _close_contents() -> void:
 	## The label outlives the overlay: pull it back out before the layer is
@@ -618,13 +659,20 @@ func _close_contents() -> void:
 	_contents_layer = null
 
 
-## Escape closes the overlay rather than falling through to the screen.
+## Escape closes the topmost modal rather than falling through to the screen.
+##
+## The inspector is checked first because it opens *over* the contents overlay
+## on a phone — closing the layer underneath it would strand it on screen.
 func _unhandled_input(event: InputEvent) -> void:
-	if _contents_layer == null:
+	if _inspector_layer == null and _contents_layer == null:
 		return
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+	if not (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE):
+		return
+	if _inspector_layer != null:
+		_close_inspector()
+	else:
 		_close_contents()
-		get_viewport().set_input_as_handled()
+	get_viewport().set_input_as_handled()
 
 
 ## The contents pane's header: hero plate, deck name, and the composition bar.
@@ -711,12 +759,19 @@ func _refresh_detail_head(i: int) -> void:
 
 func _show_detail(i: int) -> void:
 	_refresh_detail_head(i)
+	_clear(_detail_grid)
+	_clear_extras()
 
 	var cards := DeckStore.cards_at(i)
 	if cards.is_empty():
-		_detail.text = "[color=#8f88a3]“%s” is empty. Hit [b]Edit Deck[/b] to build it.[/color]" % DeckStore.name_at(i)
+		_detail.add_child(Palette.label(
+			"“%s” is empty. Hit Edit Deck to build it." % DeckStore.name_at(i),
+			Palette.TYPE_BODY, Palette.TEXT_DIM))
 		return
 
+	## Grouped the way a deck is read — energy first, then units by stage — and
+	## by name within a group. Same order the builder's deck pane uses, so the
+	## two screens present one deck identically.
 	var ids := cards.keys()
 	ids.sort_custom(func(a, b):
 		var ca: CardData = CardDB.get_card(a)
@@ -730,28 +785,153 @@ func _show_detail(i: int) -> void:
 		return ca.name < cb.name
 	)
 
-	## The deck's name and counts are in the header above this list on a desktop,
-	## and in the overlay's own title on a phone — so printing them again at the
-	## top of the list is duplication in both layouts. This is the card list.
-	var s := ""
-
-	var last_group := ""
 	for id in ids:
 		var card: CardData = CardDB.get_card(id)
 		if card == null:
 			continue
-		var group := "Energy" if not card.is_unit() else card.stage_name()
-		if group != last_group:
-			## No blank line before the first group, now that nothing precedes it.
-			s += "%s[color=#7c4dff]— %s —[/color]\n" % ["" if last_group == "" else "\n", group]
-			last_group = group
-		s += "  [color=#d9b45b]%d×[/color]  %s\n" % [int(cards[id]), card.name]
+		_detail_grid.add_child(_card_tile(card, int(cards[id])))
 
 	var errs := DeckStore.errors_at(i)
 	if not errs.is_empty():
-		s += "\n[color=#d94f4f]! %s[/color]" % "  ".join(errs)
+		var warn := Palette.label("! %s" % "  ".join(errs),
+			Palette.TYPE_SMALL, Palette.DANGER)
+		warn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_detail.add_child(warn)
 
-	_detail.text = s
+	if _detail_scroll != null and is_instance_valid(_detail_scroll):
+		_fit_columns(_detail_scroll)
+
+
+## One card in the contents grid: the real card frame shrunk to a thumbnail with
+## its copy count underneath.
+##
+## One tile per *distinct* card with a ×N count, not N copies — a 60-card deck
+## holds only ~16 distinct cards, and 60 identical thumbnails would bury the
+## two-of you were looking for. The count sits under the frame rather than over
+## it, because overlaid it covers the card's name, which is what identifies a
+## thumbnail.
+##
+## Read-only, deliberately: this screen picks a deck, it does not edit one. The
+## builder's tile carries −/+ because that screen's whole job is changing
+## counts; here the same controls would make it far too easy to alter a deck you
+## only meant to look at before a fight.
+func _card_tile(card: CardData, count: int) -> Control:
+	var tile_scale: float = GRID_CARD_SCALE_PHONE if _mobile else GRID_CARD_SCALE
+	var card_size: Vector2 = CardView.BOARD_SIZE * tile_scale
+
+	var tile := VBoxContainer.new()
+	tile.add_theme_constant_override("separation", 2)
+
+	## A scaled node still reports its unscaled size to the layout, so the frame
+	## needs a holder of the real drawn size for the grid to lay out against.
+	var holder := Control.new()
+	holder.custom_minimum_size = card_size
+
+	var view := CardView.new(card, null, CardView.Mode.BOARD)
+	view.scale = Vector2(tile_scale, tile_scale)
+	holder.add_child(view)
+
+	var hit := Button.new()
+	hit.flat = true
+	hit.set_anchors_preset(Control.PRESET_FULL_RECT)
+	hit.tooltip_text = "%d× %s — click to inspect" % [count, card.name]
+	hit.pressed.connect(func(): _open_inspector(card))
+	holder.add_child(hit)
+
+	tile.add_child(holder)
+
+	var label := Palette.label("×%d" % count, Palette.TYPE_SMALL, Palette.GOLD)
+	label.custom_minimum_size = Vector2(card_size.x, GRID_FOOTER_H)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	tile.add_child(label)
+	return tile
+
+
+## Fit the grid's column count to the pane's measured width.
+##
+## Called on every resize of the scroller rather than once at build time: the
+## contents pane is a fraction of a resizable window, so its width is neither
+## known when the grid is built nor stable afterwards.
+func _fit_columns(scroll: ScrollContainer) -> void:
+	if _detail_grid == null or not is_instance_valid(_detail_grid):
+		return
+	if scroll == null or not is_instance_valid(scroll):
+		return
+	var tile_scale: float = GRID_CARD_SCALE_PHONE if _mobile else GRID_CARD_SCALE
+	var tile: float = CardView.BOARD_SIZE.x * tile_scale + GRID_GAP
+	## Leave room for the vertical scrollbar, which a 60-card deck always has.
+	var avail: float = scroll.size.x - 14.0
+	var n: int = clampi(int(floor(avail / tile)), GRID_MIN_COLUMNS, GRID_MAX_COLUMNS)
+	if _detail_grid.columns != n:
+		_detail_grid.columns = n
+
+
+## Drop everything `_show_detail` adds beside the grid — the empty-deck message
+## and the illegal-deck warning. The grid itself is kept, since it is the node
+## the overlay reparents and `_fit_columns` addresses.
+func _clear_extras() -> void:
+	if _detail == null or not is_instance_valid(_detail):
+		return
+	for child in _detail.get_children():
+		if child != _detail_grid:
+			child.queue_free()
+			_detail.remove_child(child)
+
+
+func _clear(node: Node) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	for child in node.get_children():
+		child.queue_free()
+		node.remove_child(child)
+
+
+## ----------------------------------------------------------- card inspector
+##
+## Same recipe as the contents overlay and the deck builder's inspector — a
+## full-rect layer, a scrim, an outside-tap catcher, and Escape — so a modal
+## never needs a gesture learned per screen.
+##
+## Opened read-only: this screen picks the deck you fight with and never edits
+## one, so the inspector omits its add/remove footer here. Editing lives one
+## button away behind "Edit Deck", which is where a deck is meant to change.
+func _open_inspector(card: CardData) -> void:
+	_close_inspector()
+
+	_inspector_layer = Control.new()
+	_inspector_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_inspector_layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(_inspector_layer)
+
+	var scrim := ColorRect.new()
+	scrim.color = Color(0, 0, 0, 0.62)
+	scrim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	scrim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_inspector_layer.add_child(scrim)
+
+	var dismiss := Button.new()
+	dismiss.flat = true
+	dismiss.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dismiss.pressed.connect(_close_inspector)
+	_inspector_layer.add_child(dismiss)
+
+	var centre := CenterContainer.new()
+	centre.set_anchors_preset(Control.PRESET_FULL_RECT)
+	centre.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_inspector_layer.add_child(centre)
+
+	_inspector = CardInspector.new(card, _mobile, true)
+	_inspector.closed.connect(_close_inspector)
+	_inspector.inspect_requested.connect(_open_inspector)
+	centre.add_child(_inspector)
+
+
+func _close_inspector() -> void:
+	if _inspector_layer != null and is_instance_valid(_inspector_layer):
+		_inspector_layer.queue_free()
+	_inspector_layer = null
+	_inspector = null
 
 
 # ------------------------------------------------------------------ actions

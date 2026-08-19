@@ -59,6 +59,7 @@ var _my_throne_lbl: Label
 var _turn_lbl: Label
 var _pool_lbl: Label
 var _gap_lbl: Label
+var _storm_lbl: Label
 var _hint_lbl: Label
 var _enemy_boards_row: HBoxContainer
 var _my_boards_row: HBoxContainer
@@ -651,6 +652,21 @@ func _build_ui() -> void:
 	)
 	poolbar.add_child(_gap_lbl)
 
+	## Tempest's Storm, shown only when a Tempest card is in the game — same rule
+	## and same reason as the Gap above. ONE number, not two: unlike the Gap,
+	## Storm is symmetric, so both players read the identical value.
+	_storm_lbl = Palette.label("", Palette.TYPE_SMALL, Palette.keyword_color("storm"))
+	_storm_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_storm_lbl.visible = false
+	_storm_lbl.tooltip_text = (
+		"Storm: a global counter both players read, raised by Tempest cards.
+"
+		+ "Every attack deals one extra instance of this much damage.
+"
+		+ "A Tempest unit's Storm instance is doubled."
+	)
+	poolbar.add_child(_storm_lbl)
+
 	poolbar.add_child(_build_pool_meter())
 
 	var controls := poolbar
@@ -937,6 +953,12 @@ func _refresh() -> void:
 			_gap_lbl.text = "Gap %d/%d" % [mine, theirs]
 		else:
 			_gap_lbl.text = "Gap %d   ·   Theirs %d" % [mine, theirs]
+	## Symmetric, so one number serves both players — the Gap needs two, Storm
+	## does not.
+	_storm_lbl.visible = gs.storm_is_relevant()
+	if _storm_lbl.visible:
+		_storm_lbl.text = "Storm %d" % gs.storm
+
 	_refresh_pool_meter(you)
 	_refresh_global_lock(you)
 

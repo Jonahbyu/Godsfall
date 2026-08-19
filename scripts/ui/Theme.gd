@@ -129,6 +129,16 @@ const KEYWORD_COLORS := {
 	"consume":     Color("e08a3c"),
 	"windfury":    Color("58b8d9"),
 	"resist":      Color("9494c9"),
+	## Forge signatures — the body itself as fuel. Both sit in Forge's warm
+	## orange-red, separated from `consume` (also warm) by pushing Stoke hotter
+	## and Scrap toward rust, since all three are "spend something you own".
+	"stoke":       Color("ff8a4c"),
+	"scrap":       Color("c4623a"),
+	## Tempest signatures — pressure that builds and breaks. Pushed cooler and
+	## more saturated than `windfury`, which shares the faction's storm blue but
+	## is a shared keyword rather than a Tempest one.
+	"charge":      Color("7fd4f5"),
+	"storm":       Color("4f8fd6"),
 }
 
 
@@ -267,6 +277,34 @@ const KEYWORD_HELP := {
 		+ "Per instance, so four hits of 10 into Resist 5 total 20, not 35.
 "
 		+ "Strong against chip damage, weak against one big attack.",
+	"stoke":
+		"A free once-per-turn ability: deal N damage to this unit.
+"
+		+ "The unit has STOKED until end of turn, and its other lines read that.
+"
+		+ "Unpreventable — Sanctuary, Resist and Retribution all ignore it,
+"
+		+ "because it is a cost you choose to pay, not damage from a source.
+"
+		+ "It may kill the unit paying it.",
+	"scrap":
+		"An ability cost: destroy ANOTHER unit you control to activate the line.
+"
+		+ "The scrapped unit really dies, so Toll, Rise and Essence all fire.
+"
+		+ "Never itself, and it charges every use — there is no annuity.",
+	"charge":
+		"Charge N — this unit banks N each time it deals an instance of damage.
+"
+		+ "Spend the whole counter with its Discharge ability.
+"
+		+ "Kept through evolution (the rate becomes the new card's); lost if the unit dies.",
+	"storm":
+		"Storm N — a global counter BOTH players read, raised by Tempest cards.
+"
+		+ "Every attack deals one extra instance of N damage.
+"
+		+ "A Tempest unit's Storm instance is doubled.",
 }
 
 

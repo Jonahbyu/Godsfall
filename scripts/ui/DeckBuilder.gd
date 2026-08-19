@@ -854,19 +854,22 @@ func _open_inspector(card: CardData) -> void:
 	dismiss.pressed.connect(_close_inspector)
 	_inspector_layer.add_child(dismiss)
 
-	## Inset from the screen edges rather than sized to its content, so a card
-	## with a lot of text scrolls inside the panel instead of growing off-screen.
-	_inspector = CardInspector.new(card)
-	_inspector.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_inspector.offset_left = 90
-	_inspector.offset_right = -90
-	_inspector.offset_top = 40
-	_inspector.offset_bottom = -40
+	## Sized to its content and centred, rather than stretched to the screen.
+	## A full-rect panel makes a support card with four lines of rules text into
+	## a wall of empty space with the card marooned in one corner; the inspector
+	## is a card being read, so it should be card-shaped. The panel caps its own
+	## width and scrolls internally, so a long card cannot grow off-screen.
+	var centre := CenterContainer.new()
+	centre.set_anchors_preset(Control.PRESET_FULL_RECT)
+	centre.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_inspector_layer.add_child(centre)
+
+	_inspector = CardInspector.new(card, _mobile)
 	_inspector.closed.connect(_close_inspector)
 	_inspector.add_requested.connect(func(id: String): DeckStore.add(id))
 	_inspector.remove_requested.connect(func(id: String): DeckStore.remove(id))
 	_inspector.inspect_requested.connect(_open_inspector)
-	_inspector_layer.add_child(_inspector)
+	centre.add_child(_inspector)
 
 
 func _close_inspector() -> void:

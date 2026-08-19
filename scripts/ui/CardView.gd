@@ -695,6 +695,11 @@ func _live_keyword_line() -> String:
 				continue
 			## Show what is left in the pool, not what was printed.
 			p = "Sanctuary" if unit.sanctuary_pool <= 0 else "Sanctuary %d" % unit.sanctuary_pool
+		elif lower.begins_with("charge"):
+			## Show what is BANKED, with the rate after it. The printed number is
+			## the rate; the interesting number — the one every decision about
+			## this unit turns on — is the counter. Same rule as Sanctuary's pool.
+			p = "Charge %d (+%d)" % [unit.charge, unit.charge_rate()]
 
 		## A keyword a card has RAISED on this body shows its live value, not its
 		## print. Same rule as the spent-Judgment fix: state the rules engine
@@ -788,7 +793,11 @@ func _add_ability_banner(root: VBoxContainer) -> void:
 		cost.add_theme_font_size_override("font_size", max(6, _m("ability_title_size") - 1))
 		cost.add_theme_color_override("font_color",
 			Palette.ACCENT.lightened(0.2) if atk.consume > 0 else Palette.TEXT_DIM)
-		cost.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		## PASS, so the hover reaches it. `-2` on a banner is not self-explanatory:
+		## it is attached energy DESTROYED, which is a different kind of cost from
+		## anything else on the card, and the tooltip is where that is said.
+		cost.mouse_filter = Control.MOUSE_FILTER_PASS
+		cost.tooltip_text = _ability_cost_help(atk)
 		head.add_child(cost)
 
 		## Body: the rules text. Hand cards wrap it; board cards get one trimmed
@@ -875,6 +884,63 @@ One per turn."
 		dmg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		row.add_child(dmg)
 
+		## The attack's RIDER, under the row — everything its text says beyond the
+		## damage number already shown to the right.
+		##
+		## Without this an attack renders as name + number, so every conditional
+		## is invisible on the card that prints it: `Ember Strike` showed "28" with
+		## no hint that stoking adds 10, and `THE LAST TOLL` showed "—" with no hint
+		## that it destroys the board. The rules engine had them right the whole
+		## time, which is the same "correct and invisible" failure the spent-Judgment
+		## chip was fixed for — state a card's behaviour depends on has to be ON the
+		## card.
+		var rider := _attack_rider(atk)
+		if rider != "":
+			var rl := Label.new()
+			rl.text = rider
+			rl.add_theme_font_size_override("font_size", _m("ability_text_size"))
+			rl.add_theme_color_override("font_color", Palette.TEXT_DIM)
+			rl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			rl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			box.add_child(rl)
+
+
+## What an attack's text says BEYOND the damage number already rendered beside it.
+##
+## Returns "" when the text is only a restatement of the damage ("28 damage"),
+## because repeating the number next to itself is noise on a 132px card. Anything
+## else — a condition, a Siphon rider, a Stoke payoff — is the part that cannot be
+## inferred from the frame and therefore has to be drawn.
+func _attack_rider(atk: AttackData) -> String:
+	var t: String = atk.text.strip_edges()
+	if t == "":
+		return ""
+
+	## Strip a leading "N damage" restatement by hand rather than with a RegEx.
+	## Plain scanning is easier to read than an escaped pattern here, and GDScript
+	## string literals do not take the backslash escapes a regex wants.
+	var i := 0
+	while i < t.length() and t[i] >= "0" and t[i] <= "9":
+		i += 1
+	if i > 0:
+		var rest_after_num: String = t.substr(i).strip_edges()
+		if rest_after_num.to_lower().begins_with("damage"):
+			rest_after_num = rest_after_num.substr(6)
+		elif not rest_after_num.begins_with("to "):
+			## A number followed by anything else is part of the sentence, not a
+			## restatement of the damage — keep the whole text.
+			rest_after_num = t
+		t = rest_after_num.strip_edges()
+
+	## Drop a leading separator left behind by the strip.
+	while t.length() > 0 and (t[0] == "." or t[0] == ";" or t[0] == ","):
+		t = t.substr(1).strip_edges()
+	if t == "":
+		return ""
+
+	## Re-capitalise, since the remainder usually starts mid-sentence.
+	return t.substr(0, 1).to_upper() + t.substr(1)
+
 
 ## The cost icons for one attack.
 ##
@@ -886,10 +952,18 @@ One per turn."
 ## frame, and the cards that cost that much (Cacophony Ramp reaches 14) are
 ## precisely the ones a player is counting toward, so the number is more useful
 ## than the row would be anyway.
+##
+## The whole row carries a hover tooltip spelling the cost out in words — see
+## `_attack_cost_help`. The icons are the glance read; the tooltip is the one that
+## says how much of it is *already paid*, which no arrangement of six 7px hexagons
+## can state. It is `PASS` for the same reason the keyword chips are: the hover has
+## to reach the row, and PASS still lets the click fall through to the card's own
+## button, so reading a cost never costs the player the ability to select the card.
 func _cost_icons(atk: AttackData, attached: int) -> Control:
 	var box := HBoxContainer.new()
 	box.add_theme_constant_override("separation", 1)
-	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.mouse_filter = Control.MOUSE_FILTER_PASS
+	box.tooltip_text = _attack_cost_help(atk)
 
 	var cost: int = atk.total_cost()
 
@@ -934,6 +1008,136 @@ func _cost_icons(atk: AttackData, attached: int) -> Control:
 		var is_colorless: bool = i >= atk.cost_faction
 		box.add_child(EnergyIcon.new(col, true, is_colorless, _m("icon_size"), fac))
 	return box
+
+
+## ------------------------------------------------------------- cost tooltips
+##
+## Every energy cost on a card explains itself on hover: what it takes to fire an
+## attack, to use an ability, and to play the card at all.
+##
+## The icons alone cannot carry this. They state the requirement well — solid, in
+## the colour demanded, one per energy — but a requirement is only half of what the
+## player is deciding from. The other half is *how much of it is already paid*, and
+## that is a per-unit number the row has no channel left to express: the row used to
+## encode it as fill, and doing so cost the requirement its colour entirely (see
+## `_cost_icons`). A tooltip is the right home for it because it is the reading you
+## want on one card at a time, on demand, rather than across a whole board at once.
+##
+## Three rules these follow:
+##
+## - **Read the LIVE cost, never the printed one, whenever a unit exists.** A
+##   `Deadweight` Tool raises what every attack on that body costs, so a tooltip
+##   quoting `AttackData.total_cost()` would be confidently wrong on exactly the
+##   unit whose cost is surprising. `Unit.attack_cost()` is the authority and the
+##   tooltip names the tax as a separate line, because an unexplained +2 reads as a
+##   bug in the card.
+## - **State the split.** `2 Hel, 2 colorless` is a different card from `4 Hel` once
+##   multi-colour enforcement lands, and the data is already right (see
+##   `AttackData.cost_color`). Saying so now costs nothing and stops the tooltip
+##   having to be rewritten when the rule ships.
+## - **Never promise what the engine cannot do.** Colour requirements are display
+##   only today — the pool is a single untyped int, so any energy pays anything —
+##   and the tooltip says so rather than implying an enforcement that does not
+##   exist. Same discipline as `Windfury`'s keyword help.
+
+
+## The cost of one attack, in words. Used as the tooltip on its icon row.
+func _attack_cost_help(atk: AttackData) -> String:
+	var printed: int = atk.total_cost()
+
+	if printed <= 0:
+		return "Free — this attack needs no energy attached, so it can be queued every turn from the moment the unit lands."
+
+	var lines: Array[String] = []
+
+	## The live cost on THIS body, which is not the printed cost when a Deadweight
+	## Tool is attached.
+	var live: int = unit.attack_cost(atk) if unit != null else printed
+	lines.append("Costs %d energy to queue." % live)
+
+	## The colour split, when the card prints one.
+	if atk.cost_faction > 0 and atk.cost_colorless > 0:
+		lines.append("Printed as %d %s and %d colorless. Colorless is payable with any colour." % [
+			atk.cost_faction, _faction_label(atk.cost_color), atk.cost_colorless])
+	elif atk.cost_colorless > 0 and atk.cost_faction == 0:
+		lines.append("Entirely colorless — payable with any colour of energy.")
+	elif atk.cost_faction > 0:
+		lines.append("Printed as %d %s. A pure colour requirement, which is this card's faction identity." % [
+			atk.cost_faction, _faction_label(atk.cost_color)])
+
+	## The Deadweight tax, named explicitly. An unexplained gap between the icons
+	## drawn and the number charged reads as a bug in the card, not as a Tool.
+	if live > printed:
+		lines.append("Printed cost is %d; a Tool on this unit adds +%d." % [printed, live - printed])
+
+	## What is paid and what is still owed. Only meaningful on a real body — a card
+	## in hand has no attached energy and nothing to compare against.
+	if unit != null:
+		var owed: int = unit.pool_needed(atk)
+		if owed <= 0:
+			lines.append("Fully paid: %d already attached, so queueing it takes nothing from your pool." % unit.attached)
+		else:
+			lines.append("%d attached, so %d more comes from your pool when you queue it." % [unit.attached, owed])
+
+	lines.append("Queueing pulls exactly the cost from your pool onto the unit, where it stays — the attack is free every turn after.")
+	return "
+".join(lines)
+
+
+## The cost of one ability. Abilities are free except for Consume, and the
+## difference between "free" and "free but it burns your investment" is the whole
+## reason the two are drawn differently.
+func _ability_cost_help(ab: AttackData) -> String:
+	var used: bool = unit != null and unit.has_used_ability(ab)
+	var lines: Array[String] = []
+
+	if ab.consume > 0:
+		lines.append("Consume %d — using this DESTROYS %d energy attached to this unit." % [ab.consume, ab.consume])
+		lines.append("Nothing comes from your pool. Consume is the only cost an ability may carry, and unlike an attack's cost it is spent for good: the unit has to be recharged to use this again.")
+		if unit != null:
+			if unit.attached >= ab.consume:
+				lines.append("%d attached, so this can be used now." % unit.attached)
+			else:
+				lines.append("Only %d attached — needs %d more before this can be used." % [
+					unit.attached, ab.consume - unit.attached])
+	else:
+		lines.append("Free — abilities never cost pool energy.")
+		lines.append("An ability resolves immediately rather than at end of turn, and its only limit is once per turn per unit.")
+
+	if used:
+		lines.append("Already used this turn.")
+	return "
+".join(lines)
+
+
+## The cost of playing the card itself: units and most supports are free, a
+## minority of supports charge 1-3 from the pool, and energy cards are the one
+## card whose value depends on when you play it.
+func _play_cost_help() -> String:
+	if card.is_energy():
+		return "An energy card adds turn + 1 energy of its colour to your pool — 2 on turn 1, 6 on turn 5. Holding it makes it worth more, but only one may be played per turn, so a skipped turn can never be made up."
+
+	if card.is_unit():
+		return "Free to play. Units are always free — energy only buys attacks, so the constraint in this game is acting, not deploying."
+
+	if card.cost <= 0:
+		return "Free to play. Most supports cost nothing; the cost of one is that you drew it instead of a unit."
+
+	return "
+".join([
+		"Costs %d energy from your pool to play." % card.cost,
+		"Paid from the pool rather than from a unit, so it competes directly with queueing an attack this turn — and unlike an attack's cost, it is spent for good rather than staying attached.",
+		"If you cannot pay it, the card cannot be played.",
+	])
+
+
+## A faction's display name for a cost line. Falls back to the raw key rather than
+## to a guess, so a colour added to the data before the UI knows about it still
+## reads as itself instead of as "colored".
+func _faction_label(key: String) -> String:
+	if key == "":
+		return "colored"
+	return key.capitalize()
 
 
 ## The bottom strip: weakness, resistance, and retreat cost.
@@ -1067,7 +1271,12 @@ func _add_play_cost(root: VBoxContainer) -> void:
 	row.name = "PlayCost"
 	row.add_theme_constant_override("separation", 3)
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	## PASS plus a tooltip, the same contract the attack cost row and the keyword
+	## chips use. "Free to play" is the line most worth explaining rather than the
+	## least: it is the game's core rule, and a new player reading it on every card
+	## has no way to know it is a rule instead of a property of that card.
+	row.mouse_filter = Control.MOUSE_FILTER_PASS
+	row.tooltip_text = _play_cost_help()
 	root.add_child(row)
 
 	if card.is_energy():
