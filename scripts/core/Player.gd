@@ -4,16 +4,25 @@ extends RefCounted
 ## One side of the game: two boards, a throne, a deck, a hand, and the energy pool.
 
 const BOARD_COUNT := 2
-const HAND_SIZE_START := 6
-const DRAW_PER_TURN := 1
+const HAND_SIZE_START := 8
+const DRAW_PER_TURN := 2
+
+## Every opening hand is guaranteed this many Basics, clamped to what the deck
+## actually holds. Two rather than one because setup deploys Basics and nothing
+## else: a one-Basic opener walks into round 1 with a single body against a board
+## that may show two, and under shielding the thinner side loses its tower cover
+## first. See CLAUDE.md, "The opening hand".
+const OPENING_BASICS := 2
 const MAX_HAND := 10             ## checked at end of turn, after everything else
 
 var display_name: String = "Player"
 var is_ai: bool = false
 
 var boards: Array = []           ## Array[Board], length 2
-var throne_hp: int = 100
-var throne_max_hp: int = 100
+## 150, raised with the 75 HP tower and the 8/2 draw on 2026-08-15 to answer
+## games ending too fast. See CLAUDE.md, "Towers & Throne".
+var throne_hp: int = 150
+var throne_max_hp: int = 150
 
 var pool: int = 0                ## energy pool — decays 20% at end of turn
 var deck: Array = []             ## Array[String] card ids
@@ -29,6 +38,11 @@ var mulligan_used: bool = false
 ## player could have queued by hand, and anything auto-queued can be cancelled.
 var auto_lock_attacks: bool = false
 var eot_multiplier: int = 1      ## set by Dirge / Requiem, reset each turn
+
+## Forge `stoked_no_decay`: suppresses this turn's 20% pool decay exactly once.
+## Lives on the Player rather than the Unit because decay is a pool-wide tax and
+## the unit that stoked for it may well be dead by end of turn.
+var decay_suspended: bool = false
 var unit_died_this_turn: bool = false
 var units_died_this_turn: int = 0    ## Sift the Ashes counts these
 
@@ -111,12 +125,35 @@ const OPENING_DEAL_TRIES := 20
 ## none and the hand stands as dealt — the caller does not need to do anything about it,
 ## it is reported only so a harness can assert on it.
 func deal_opening_hand() -> bool:
+	## Clamped to what the deck holds: a list running one Basic gets one, and the
+	## deal does not spin through every retry chasing a card that is not there.
+	var want: int = min(OPENING_BASICS, _basics_in_deck())
 	for attempt in OPENING_DEAL_TRIES:
 		_return_hand_to_deck()
 		draw(HAND_SIZE_START)
-		if has_basic_in_hand():
+		if basics_in_hand() >= want:
 			return true
 	return false
+
+
+## How many Basic units this hand holds. The guarantee counts rather than merely
+## checking presence, because the rule is "two Basics", not "a Basic".
+func basics_in_hand() -> int:
+	var n: int = 0
+	for id in hand:
+		var c: CardData = CardDB.get_card(id)
+		if c != null and c.is_unit() and c.stage == CardData.Stage.BASIC:
+			n += 1
+	return n
+
+
+func _basics_in_deck() -> int:
+	var n: int = 0
+	for id in deck:
+		var c: CardData = CardDB.get_card(id)
+		if c != null and c.is_unit() and c.stage == CardData.Stage.BASIC:
+			n += 1
+	return n
 
 
 ## Shuffle the whole hand back into the deck. Used by the opening deal and the mulligan.
@@ -267,6 +304,12 @@ func grow_structures() -> void:
 
 ## 20% of pool, minimum 1, rounded down. Returns amount lost.
 func apply_decay() -> int:
+	## Forge `stoked_no_decay`: the pool skips its 20% tax for one turn. A genuine
+	## rule-break on the game's central spend-or-save pressure, so it is spent on
+	## read — it never persists past the end of turn that granted it.
+	if decay_suspended:
+		decay_suspended = false
+		return 0
 	if pool <= 0:
 		return 0
 	var loss: int = max(1, int(floor(pool * 0.2)))
@@ -307,6 +350,7 @@ func find_unit(u: Unit) -> Array:
 func begin_turn() -> void:
 	energy_played_this_turn = false
 	eot_multiplier = 1
+	decay_suspended = false
 	unit_died_this_turn = false
 	units_died_this_turn = 0
 	## The retreat lock lasts exactly one turn — cards returned last turn are
@@ -315,4 +359,12 @@ func begin_turn() -> void:
 	for u in all_units():
 		u.protected_this_turn = false
 		u.decay_taken_this_turn = 0
+		u.stoked_this_turn = 0        ## Forge: the Stoke flag lasts one turn
+		## Forge grants expire with the flag that bought them. Both are payoffs
+		## of a Stoke that happened THIS turn, so neither may outlive it — an
+		## extra attack slot carried into next turn would be free multi-attack.
+		u.extra_attack_allowed = false
+		u.extra_stoke_allowed = false
+		u.cost_reduction_this_turn = 0
+		u.clear_extra_queue()
 		u.clear_abilities_used()      ## activated abilities are once per turn

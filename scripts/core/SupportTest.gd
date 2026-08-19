@@ -174,10 +174,10 @@ func _test_card_data(db) -> void:
 			full_heals += 1
 			print("     full heal: %s" % id)
 	_check("no card fully heals a unit", full_heals, 0)
-	_check("base heal is 20", db.get_card("shore_up").effect_value("heal", 0), 20)
-	_check("1 energy buys +30", db.get_card("field_surgery").effect_value("heal", 0), 50)
-	_check("Oath is a flat 100", db.get_card("grave_wardens_oath").effect_value("heal", 0), 100)
-	_check("Last Breath is a flat 50", db.get_card("last_breath").effect_value("heal_conditional", 0), 50)
+	_check("base heal is 32", db.get_card("shore_up").effect_value("heal", 0), 32)
+	_check("1 energy buys +48", db.get_card("field_surgery").effect_value("heal", 0), 80)
+	_check("Oath is a flat 120", db.get_card("grave_wardens_oath").effect_value("heal", 0), 120)
+	_check("Last Breath is a flat 80", db.get_card("last_breath").effect_value("heal_conditional", 0), 80)
 
 
 # ---- supports obey the 4-copy limit; only energy is exempt
@@ -260,7 +260,7 @@ func _test_healing(db) -> void:
 	u.hp = 10
 	p.hand = ["shore_up"]
 	_check("Shore Up plays", gs.play_support(p, 0, u), true)
-	_check("healed 20 — the baseline", u.hp, 30)
+	_check("healed 32 — the baseline", u.hp, 42)
 
 	## Healing never goes above printed HP.
 	u.hp = 45
@@ -288,7 +288,7 @@ func _test_healing(db) -> void:
 	big.hp = 20
 	p.hand = ["last_breath"]
 	gs.play_support(p, 0, big)
-	_check("Last Breath is a flat 50, not a full heal", big.hp, 70)
+	_check("Last Breath is a flat 80, not a full heal", big.hp, 100)
 
 	## Hold the Slot floors the unit at 1 HP for the turn — and it does not Toll,
 	## because it did not die.
@@ -308,13 +308,13 @@ func _test_healing(db) -> void:
 	u.hp = 10
 	p.hand = ["mend"]
 	gs.play_support(p, 0, u)
-	_check("Mend heals 10", u.hp, 20)
+	_check("Mend heals 16", u.hp, 26)
 
 	big.hp = 20
 	p.hand = ["field_surgery"]
 	p.pool = 7
 	_check("Field Surgery plays", gs.play_support(p, 0, big), true)
-	_check("1 energy buys 50 — base 20 plus 30", big.hp, 70)
+	_check("1 energy buys 80 — base 32 plus 48", big.hp, 100)
 	_check("cost not charged yet", p.pool, 7)
 
 	## Grave Warden's Oath is a flat 100 — big enough to top up almost any body,
@@ -322,7 +322,7 @@ func _test_healing(db) -> void:
 	big.hp = 5
 	p.hand = ["grave_wardens_oath"]
 	gs.play_support(p, 0, big)
-	_check("Oath heals 100", big.hp, 105)
+	_check("Oath heals 120", big.hp, 125)
 
 	## Overflow: heal from a point where 100 would exceed max HP, so the excess
 	## has somewhere to be wasted. Derived from the card's own max rather than a
@@ -347,7 +347,7 @@ func _test_healing(db) -> void:
 	gs.turn = 2
 	p.hand = ["vigil"]
 	gs.play_support(p, 0, u)
-	_check("Vigil heals 15 x round 2", u.hp, 35)
+	_check("Vigil heals 24 x round 2", u.hp, 50)
 
 	u.hp = 5
 	gs.turn = 9
@@ -363,9 +363,9 @@ func _test_healing(db) -> void:
 	big.hp = 10
 	p.hand = ["closing_ranks"]
 	gs.play_support(p, 0, null)
-	_check("Closing Ranks heals unit 1", u.hp, 30)
-	_check("Closing Ranks heals unit 2", u2.hp, 30)
-	_check("Closing Ranks reaches the other board too", big.hp, 30)
+	_check("Closing Ranks heals unit 1", u.hp, 42)
+	_check("Closing Ranks heals unit 2", u2.hp, 42)
+	_check("Closing Ranks reaches the other board too", big.hp, 42)
 
 
 # ---- damage, energy destruction, tower damage
@@ -422,7 +422,7 @@ func _test_tools(db) -> void:
 	## Bone Splint heals at end of turn, capped at printed HP.
 	u.hp = 20
 	gs._resolve_tool_effects(p)
-	_check("Bone Splint heals 5", u.hp, 25)
+	_check("Bone Splint heals 8", u.hp, 28)
 
 	## A Tool carries through evolution, like attached energy.
 	p.hand = ["gravebound_reaper"]
@@ -498,7 +498,7 @@ func _test_tower_support(db) -> void:
 	p.boards[0].tower_hp = 30
 	p.hand = ["rebuild"]
 	_check("Rebuild plays alongside a permanent", gs.play_support(p, 0, 0), true)
-	_check("repaired 25", p.boards[0].tower_hp, 55)
+	_check("repaired 40", p.boards[0].tower_hp, 70)
 	_check("permanents untouched by a one-shot", p.boards[0].tower_mods.size(), 3)
 	p.boards[0].tower_hp = 110
 	p.hand = ["rebuild"]

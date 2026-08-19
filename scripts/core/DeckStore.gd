@@ -177,6 +177,68 @@ func sample_decks() -> Array:
 			"name": "Deep Grove",
 			"cards": _deep_grove(),
 		},
+		{
+			"name": "Wasting Fen",
+			"cards": _wasting_fen(),
+		},
+		{
+			"name": "Unquiet Dead",
+			"cards": _unquiet_dead(),
+		},
+		{
+			"name": "Sealed Light",
+			"cards": _sealed_light(),
+		},
+		{
+			"name": "Reaffirmation",
+			"cards": _reaffirmation(),
+		},
+		{
+			"name": "Total Eclipse",
+			"cards": _total_eclipse(),
+		},
+		{
+			"name": "Widening Dark",
+			"cards": _widening_dark(),
+		},
+		{
+			"name": "Bedrock",
+			"cards": _bedrock(),
+		},
+		{
+			"name": "Thicket",
+			"cards": _thicket(),
+		},
+		{
+			"name": "White Heat",
+			"cards": _white_heat(),
+		},
+		{
+			"name": "Scrap Line",
+			"cards": _scrap_line(),
+		},
+		## The Forge expansion's five, each anchored on one of the new chains'
+		## Stage 2 so the list reads as a plan rather than a pile of orange cards.
+		{
+			"name": "Second Wind",
+			"cards": _second_wind(),
+		},
+		{
+			"name": "Burning Line",
+			"cards": _burning_line(),
+		},
+		{
+			"name": "Nothing Holds",
+			"cards": _nothing_holds(),
+		},
+		{
+			"name": "Bank the Heat",
+			"cards": _bank_the_heat(),
+		},
+		{
+			"name": "Standing Heat",
+			"cards": _standing_heat(),
+		},
 	]
 
 
@@ -1071,4 +1133,557 @@ func _deep_grove() -> Dictionary:
 		"muster": 3,
 		"gravekeepers_ledger": 2,
 		"gaia_energy": 21,
+	}
+
+
+## **Wasting Fen** — win without ever winning a fight.
+##
+## Every body prints `Decay`, so the board bleeds whether or not this deck can
+## afford to attack, and both Stage 2s carry a free once-per-turn 15-to-every-enemy
+## ability on top of it. That combination is the whole plan: Decay ticks are the
+## chip Sanctuary is worst against, and two Interment/Pestilence activations clear
+## a board of Basics without spending a single point of pool.
+## `Reconsecrate` is here for the mirror — it is the one card that undoes a turn
+## of Decay, and against another Hel deck it is the difference.
+func _wasting_fen() -> Dictionary:
+	return {
+		## Cheap Decay bodies. They are chip that keeps ticking after they are paid for.
+		"hollowgrub": 4,
+		"blighthusk": 4,
+		"rotwisp": 3,
+		"gnawling": 3,
+		## Both middle stages, because the Stage 2s are what the deck is for.
+		"hollowmaw": 3,
+		"blightfen": 3,
+		"rotfen": 2,
+		## Decay 10 apiece, and a free board-wide 15 every turn they live.
+		"hollowdrung": 2,
+		"blightknell": 2,
+		## Undo a turn of Decay in the mirror; refill otherwise.
+		"reconsecrate": 2,
+		"gravekeepers_ledger": 3,
+		"muster": 4,
+		"sift_the_ashes": 3,
+		## Reach: Decay cannot touch a structure, so the tower needs its own answer.
+		"weighted_chain": 2,
+		"toppling_blow": 2,
+		"hel_energy": 18,
+	}
+
+
+## **Unquiet Dead** — the board refuses to stay cleared.
+##
+## Two full `Rise` chains, and both Stage 2s carry a free Exhume/Grave Call that
+## returns a Hel unit from the discard to an empty slot every single turn. Rise is
+## one reprieve per body; the Stage 2 ability is a *repeating* one, which is why
+## this deck is happy to lose exchanges — the discard is its second board.
+## Heavy energy (22), because nothing here is cheap and the payoff is a 12-cost
+## Stage 2 that has to actually get charged.
+func _unquiet_dead() -> Dictionary:
+	return {
+		## Rise Basics, plus two vanilla openers that evolve into Rise bodies.
+		"osskin": 4,
+		"tomblit": 4,
+		"ashlit": 3,
+		"osswisp": 3,
+		## Middle stages — Rise on three of the four.
+		"ossshroud": 3,
+		"tombshroud": 3,
+		"ashloam": 2,
+		"ossloam": 2,
+		## The engine: return a unit from the discard, free, every turn.
+		"ossrend": 2,
+		"tombthane": 2,
+		## Reach into the discard by hand as well, so the engine has fuel early.
+		"grave_market": 3,
+		"last_rites": 2,
+		"line_of_succession": 3,
+		"scavengers_instinct": 2,
+		"hel_energy": 22,
+	}
+
+
+## **Sealed Light** — nothing gets through, and it keeps not getting through.
+##
+## Deliberately **no `Judgment` at all**, like Lamp Wall, so it keeps the standard
+## damage curve — but where Lamp Wall runs Sanctuary chaff in front of one big body,
+## this runs the 60/80/100 ladder at every stage and both Stage 2s restore their own
+## Sanctuary at end of turn. A shield that comes back is a different card from a
+## shield that is spent, and it is what makes the wide-board answer to Sanctuary stop
+## working: chip strips the pool, and the pool is simply back next turn.
+## The `Aegis of the Choir` copies stack a second Sanctuary onto a body that already
+## recharges one.
+func _sealed_light() -> Dictionary:
+	return {
+		## Sanctuary 60 across the whole opening.
+		"sanctim": 4,
+		"solemim": 4,
+		"empyriel": 3,
+		"lucenmote": 3,
+		"serakin": 2,
+		## Sanctuary 80, and Empyrseraph adds Resist on top of it.
+		"sanctcant": 3,
+		"solemmant": 3,
+		"empyrseraph": 2,
+		"lucenlumen": 2,
+		## Sanctuary 100 that restores itself at end of turn.
+		"sanctthrone": 2,
+		"solemtribune": 2,
+		## Stack a second shield, then keep the body under it alive.
+		"aegis_of_the_choir": 2,
+		"shore_up": 3,
+		"field_rites": 2,
+		"reinforced_base": 2,
+		"heaven_energy": 21,
+	}
+
+
+## **Reaffirmation** — spend the charge, then get it back.
+##
+## `Judgment` is one charge spent by either half, and that is the keyword's entire
+## brake. This deck runs the three cards that release it: Halosear restores its own
+## Judgment, and both Stage 2s restore Judgment to *every unit you control*, free,
+## once per turn. A board of five Judgment bodies that all recharge is the most
+## aggressive thing Heaven can do — every unit is an execute threat and
+## unkillable-once at the same time.
+##
+## Lowest energy count of the Heaven decks (17) on purpose: Judgment units buy damage
+## at the reduced ~8/energy rate, so this is not trying to land big attacks. It is
+## trying to chip things into threshold range, which is cheap.
+func _reaffirmation() -> Dictionary:
+	return {
+		## Judgment Basics — wide, so the board-wide reset has targets.
+		"gloriamote": 4,
+		"clariel": 4,
+		"halokin": 3,
+		"oratim": 3,
+		"psalmiel": 3,
+		"bellmote": 2,
+		## Judgment 35-40 middles. Halosear recharges itself, which is the cheap
+		## version of what the Stage 2s do for the whole board.
+		"glorialumen": 3,
+		"clarchoir": 3,
+		"halosear": 3,
+		"oratora": 2,
+		"psalmcant": 2,
+		## The payoff: restore Judgment to every unit you control, free, each turn.
+		"gloriathrone": 2,
+		"clararch": 2,
+		## Find the bodies. The plan needs a wide board, not a big one.
+		"muster": 3,
+		"roll_call": 2,
+		## Chip into execute range — 20 to an uncharged unit is often lethal here.
+		"collapse": 2,
+		"heaven_energy": 17,
+	}
+
+
+## **Total Eclipse** — they never get to spend it.
+##
+## The denial deck. `Siphon` on nearly every body moves energy off their units and
+## onto yours, which funds this deck's own expensive attacks, and the Stage 2s go
+## after what Siphon cannot reach — Expunge destroys attached energy outright and
+## Consume Light eats a fifth of the pool. Between them there is no safe place to
+## keep energy, which is the faction's thesis stated as a deck list.
+##
+## The Umbr line is a small second package rather than a full chain: two copies of a
+## Stage 2 that hits the pool is what this deck wants, and Umbrreave carries Siphon
+## as well, so it is never a dead draw.
+func _total_eclipse() -> Dictionary:
+	return {
+		## Siphon Basics. Early Siphon is the largest fraction of a turn's income.
+		"lacunith": 4,
+		"pallith": 4,
+		"scourwane": 3,
+		"ebonith": 3,
+		"sevith": 2,
+		## Siphon 2 middles — two energy a turn off their board and onto yours.
+		"lacunlack": 3,
+		"pallgaunt": 3,
+		"scourgaunt": 2,
+		"ebonlack": 2,
+		## Destroy attached energy outright, free, once a turn.
+		"lacunabyss": 2,
+		## The pool package: Consume Light eats 20% of what they were saving.
+		"umbrsk": 2,
+		"umbrfray": 2,
+		"umbrreave": 2,
+		## Denial by hand, for the body you cannot reach.
+		"draw_down": 3,
+		"exsanguinate": 2,
+		"unwrite": 2,
+		"void_energy": 19,
+	}
+
+
+## **Widening Dark** — the Gap is the win condition.
+##
+## Every unit prints `Rift`, so every attack scales with the Gap, and the Gap is your
+## attached energy minus theirs. That makes this the one deck in the collection that
+## *wants* to bank energy onto bodies rather than spend it — charging a unit it never
+## intends to attack with still makes every other attack bigger.
+##
+## Two Rift 2 Stage 2s are the ceiling and `Event Horizon` turns an ordinary body
+## into a third. `Widening Rift` is the reach: twice the Gap as direct damage, which
+## by the time this deck is working is a removal spell. Heaviest Void energy count
+## (21), because banking is the plan and pool energy does not feed the Gap — it has
+## to get attached.
+func _widening_dark() -> Dictionary:
+	return {
+		## Rift 1 on every Basic. Cheap bodies to hold the energy.
+		"vastsk": 4,
+		"gyresk": 4,
+		"starksk": 3,
+		"rivewane": 3,
+		"waneith": 2,
+		## Rift 1 middles, all scaling off the same number.
+		"vastebb": 3,
+		"gyrerift": 3,
+		"starkrift": 3,
+		"riveshear": 2,
+		## Rift 2 — double scaling, plus a free pool-destruction ability on Gyreshear.
+		"vastnought": 2,
+		"gyreshear": 2,
+		## Grant Rift to anything, and convert the Gap straight into damage.
+		"event_horizon": 3,
+		"widening_rift": 3,
+		## One point of Siphon swings the Gap by two — theirs down, yours up.
+		"draw_down": 2,
+		"void_energy": 21,
+	}
+
+
+## **Bedrock** — the aura is the armour.
+##
+## `Earth` and `Resist` on the same bodies, which is the pairing that makes Gaia hard
+## to remove rather than merely large. Earth raises max HP across every unit *and*
+## both towers, and Resist takes a flat cut off each incoming instance — so a wide
+## board of small hits, the thing that beats Sanctuary, is exactly what this deck is
+## best against.
+##
+## Two Earth 3 / Resist 10 Stage 2s at 165 and 168 HP are the biggest bodies in the
+## collection, and on an 8-Earth board they are effectively past 170. The price is
+## speed: 23 energy, the heaviest list here, and nothing happens before the aura does.
+func _bedrock() -> Dictionary:
+	return {
+		## Earth 1 / Resist 5 openers. Petriling is 70 HP, the largest Gaia Basic.
+		"gaia_granling": 4,
+		"gaia_caldling": 4,
+		"gaia_tussling": 3,
+		"gaia_petriling": 4,
+		## Earth 2 / Resist 5 middles.
+		"gaia_grancrag": 3,
+		"gaia_caldcrag": 3,
+		"gaia_tussbole": 3,
+		## Earth 3 / Resist 10. Both carry a free "gain 1 Earth" ability, so the aura
+		## keeps climbing without a card being spent on it.
+		"gaia_granthane": 2,
+		"gaia_caldthane": 2,
+		## Push the aura, and put it on the towers too.
+		"gaia_bedrock": 3,
+		"gaia_cairn": 2,
+		"gaia_verdant_anchor": 2,
+		"gaia_terraform": 2,
+		"gaia_energy": 23,
+	}
+
+
+## **Thicket** — attacking into this is the mistake.
+##
+## `Retribution` plus `Essence`, the two Gaia mechanics that punish the opponent for
+## playing the game normally. Retribution 20-25 means attacking into the board costs
+## the attacker a body's worth of HP over a few turns, and Essence means the units
+## that do die hand their Earth and attached energy to the unit beside them instead
+## of losing it.
+##
+## Thornheart is what the deck is built to reach: Earth 3, Retribution 25 and Essence
+## 2 on one 155 HP body, with a free ability that moves its Earth away before it dies.
+## `Iron Standard` stacks with printed Retribution, which is why it is here rather
+## than in a deck with fewer bodies already carrying it.
+func _thicket() -> Dictionary:
+	return {
+		## Retribution and Essence Basics.
+		"gaia_thornbud": 4,
+		"gaia_burrbud": 4,
+		"gaia_sedgesprout": 3,
+		"gaia_rootsprout": 3,
+		"gaia_lichbud": 2,
+		## Retribution 20 middles, and Essence 2 to carry the aura through a death.
+		"gaia_thorncrag": 3,
+		"gaia_burrcrag": 3,
+		"gaia_sedgefen": 2,
+		"gaia_rootwarden": 2,
+		## Retribution 25 on Earth 3, with Essence 2 under it.
+		"gaia_thornheart": 2,
+		## Stacks with printed Retribution.
+		"iron_standard": 2,
+		## Grow the aura; Essence is what stops a death from wasting it.
+		"gaia_deep_communion": 3,
+		"gaia_bedrock": 2,
+		"shore_up": 2,
+		"gaia_energy": 23,
+	}
+
+## **White Heat** — spend the body, break the wall.
+##
+## The Forge deck that plays the keyword straight: `Stoke` big, then cash the flag
+## on an attack that scales with how much was paid. Cindbrand adds +1 damage per 2
+## HP stoked and Cindpyre burns *past living units* into the tower once it has
+## stoked 40 — which is the deck's whole plan, because clearing a board is normally
+## the gate on reaching a structure and this list simply declines to clear it.
+##
+## Quench is the sustain half and it is not a hedge: `The Long Temper` stokes 50 and
+## heals all 50 back, so the unit is at full HP and *still counts as having stoked*.
+## That is the interaction the faction is built around — the flag is a state you want
+## to be in, not only a price you pay.
+##
+## Heavy on healing (Bank the Coals, Quenching Trough, Hearthstone) because HP is the
+## resource being spent, and 19 energy because Stoke buys actions, not energy: an
+## attack still has to be paid for.
+func _white_heat() -> Dictionary:
+	return {
+		## The big stoker, complete. Stoke 20 / 30 / 50 up the chain.
+		"forge_cindspark": 4,
+		"forge_cindbrand": 3,
+		"forge_cindpyre": 2,
+		## The sustain chain — stoke and heal it straight back.
+		"forge_quenchwick": 4,
+		"forge_quenchbrand": 3,
+		"forge_quenchanvil": 2,
+		## Cheap flag-setter: Stoke 10 is the least HP that turns a payoff on.
+		"forge_slagash": 4,
+		"forge_slagkiln": 3,
+		## HP is the currency, so healing is the mana base.
+		"forge_bank_the_coals": 3,
+		"forge_quenching_trough": 3,
+		"forge_hearthstone": 3,
+		"forge_stoke_the_works": 3,
+		"shore_up": 4,
+		"forge_energy": 19,
+	}
+
+
+## **Scrap Line** — the board is ammunition.
+##
+## Built on `Scrap`: Gristgnash, Gristforge and Gristsmith all pay by destroying
+## another unit you control, and the deck runs cheap Hel bodies as the fuel. That
+## pairing is deliberate and is supposed to be good — a scrapped unit really *dies*,
+## so `Toll` refunds on it, and the fuel pays you back on the way out.
+##
+## Two colours, so it is the collection's demonstration that a multi-faction deck is
+## buildable: 11 Hel energy and 12 Forge, with Hel providing bodies that want to die
+## and Forge providing the reason. `Scrap Heap` recurs a spent one.
+##
+## The risk it accepts is board width — every Scrap costs a slot, and a thin board is
+## a board whose tower is about to be exposed. It wins before that matters or not at all.
+func _scrap_line() -> Dictionary:
+	return {
+		## The scrappers, complete.
+		"forge_gristgnash": 4,
+		"forge_gristforge": 3,
+		"forge_gristsmith": 2,
+		## The cleaver — Stoke splashes onto their board while ours thins.
+		"forge_embash": 4,
+		"forge_embkiln": 2,
+		## Cheap Forge bodies that also serve as fuel.
+		"forge_slagash": 3,
+		## Hel fuel: cheap, and every one of them pays a Toll when it is eaten.
+		"grave_whelp": 4,
+		"carrion_crawler": 4,
+		"bonepicker": 3,
+		## Recursion, so the fuel comes back.
+		"forge_scrap_heap": 3,
+		"sift_the_ashes": 2,
+		"forge_bank_the_coals": 3,
+		"forge_energy": 12,
+		"hel_energy": 11,
+	}
+
+
+## **Second Wind** — one body, twice a turn.
+##
+## Built on `Bellowmaul`, whose Full Bellows grants the extra attack slot AND a
+## discount in the same activation: two swings from one unit, each one cheaper.
+## That is Forge's answer to a board capped at 4 — if you cannot have more bodies,
+## have more actions.
+##
+## The deck is deliberately TALL rather than wide. Every energy spent goes into one
+## charged attacker, because doubling a 54-damage attack is worth far more than
+## doubling a 26-damage one, and the extra slot only ever helps the unit that stoked.
+## Cokewright is the early discount body so the plan exists before the Stage 2 lands.
+##
+## 19 energy, high for Forge: the second attack still costs energy, so a turn that
+## uses the grant fully is a turn that spends double.
+func _second_wind() -> Dictionary:
+	return {
+		## The multi-attack chain, complete.
+		"forge_bellowwick": 4,
+		"forge_bellowbrand": 3,
+		"forge_bellowmaul": 2,
+		## The discount pair — the same payoff one stage earlier.
+		"forge_cokewrightslag": 4,
+		"forge_cokewrightforge": 3,
+		## A cheap flag-setter that also refills the hand.
+		"forge_tapwright": 3,
+		## Healing, because every activation is paid in HP.
+		"forge_bank_the_coals": 3,
+		"forge_bellows_rig": 3,
+		"forge_second_wind": 3,
+		"shore_up": 3,
+		## Digging for Bellowmaul matters more here than in any other Forge list:
+		## the whole plan is one specific Stage 2, so the deck pays slots to find it.
+		"gravekeepers_ledger": 3,
+		"muster": 3,
+		"forge_open_the_doors": 4,
+		"forge_energy": 19,
+	}
+
+
+## **Burning Line** — kill the rank, not the unit.
+##
+## `Charpyre` and `Charkiln` both convert a big Stoke into a board-wide sweep, and
+## the sweep is what makes the no-overkill rule work for you: clear the front rank
+## and everything queued behind it falls through to whatever is left.
+##
+## It is the one Forge deck that WANTS a wide enemy board, which is exactly the
+## board that beats `Sanctuary`. Sootfall is in for the same reason from the other
+## side — it splashes the tower behind without needing the board cleared at all.
+##
+## Runs `Cold Shut` over more healing: against a wide board the removal is what
+## turns a sweep into a clear.
+func _burning_line() -> Dictionary:
+	return {
+		## The sweeper chain, complete.
+		"forge_charash": 4,
+		"forge_charkiln": 3,
+		"forge_charpyre": 2,
+		## Tower splash — reach that does not need the board cleared first.
+		"forge_sootfallash": 4,
+		"forge_sootfallkiln": 3,
+		## A cheap body that turns a flag on for almost nothing.
+		"forge_tindspark": 3,
+		"forge_cold_shut": 3,
+		"forge_the_long_shift": 2,
+		"forge_bank_the_coals": 2,
+		"forge_hearthstone": 2,
+		## More bodies to hold a lane while the sweeper charges, and draw to find it.
+		"forge_slakeling": 3,
+		"gravekeepers_ledger": 3,
+		"forge_the_reclaim": 2,
+		"field_rites": 4,
+		"forge_energy": 20,
+	}
+
+
+## **Nothing Holds** — the printed answer to shield decks.
+##
+## Every attacker here can make its damage unpreventable, which is the one thing
+## `Sanctuary` and `Resist` have no answer to. It exists because making Stoke itself
+## unpreventable cost Forge/Heaven and Forge/Gaia their free keyword synergy — this
+## is the *printed* reason those matchups are winnable rather than a keyword accident.
+##
+## `Scoriasmith` is the closer: unpreventable AND a 15-point tower splash on the same
+## swing, so a shielded wall neither absorbs the hit nor protects what is behind it.
+## Cinderling is the cheap version of the same effect so the plan starts on turn 2.
+##
+## Low-ish energy at 18: the payoff is a condition rather than extra damage, so the
+## attacks themselves stay ordinary sized.
+func _nothing_holds() -> Dictionary:
+	return {
+		## The anti-shield chain, complete.
+		"forge_scoriaslag": 4,
+		"forge_scoriaforge": 3,
+		"forge_scoriasmith": 2,
+		## The same effect, cheaper and earlier.
+		"forge_cinderlingwick": 4,
+		"forge_cinderlingbrand": 3,
+		## A Stage 2 that is unpreventable above a threshold, and scraps for value.
+		"forge_cindergaunt": 2,
+		"forge_forgehand": 3,
+		"forge_bank_the_coals": 3,
+		"forge_draw_the_temper": 2,
+		"forge_deadmans_hammer": 2,
+		## A second unpreventable body low on the curve, plus the draw to assemble.
+		"forge_tapwright": 3,
+		"forge_slakeling": 3,
+		"gravekeepers_ledger": 3,
+		"forge_open_the_doors": 2,
+		"shore_up": 3,
+		"forge_energy": 18,
+	}
+
+
+## **Bank the Heat** — the economy deck, and the only Forge list that plays long.
+##
+## `Fluxanvil` suspends the pool's decay and draws two in one activation, so this is
+## the deck that *keeps* its energy rather than spending it the turn it arrives. Every
+## other Forge list burns principal; this one refuses the tax on saving it.
+##
+## The trick is that a suspended decay plus a discount means a turn where a big attack
+## costs almost nothing and the pool survives intact into the next one. Tind is the
+## engine half — stoke twice, draw twice, then convert with a scaling payoff.
+##
+## 21 energy, the highest in the faction, because a deck built on banking energy has
+## to have energy to bank.
+func _bank_the_heat() -> Dictionary:
+	return {
+		## The economy chain, complete.
+		"forge_fluxwick": 4,
+		"forge_fluxbrand": 3,
+		"forge_fluxanvil": 2,
+		## The engine chain — double stoke into an amount-scaling payoff.
+		"forge_tindspark": 4,
+		"forge_tindkiln": 3,
+		"forge_tindpyre": 2,
+		## Draws off the flag for free.
+		"forge_tapwright": 3,
+		"forge_second_wind": 3,
+		"forge_bank_the_coals": 2,
+		"forge_the_reclaim": 2,
+		"forge_hearthstone": 2,
+		## A banked pool is only worth what it eventually buys, so the deck runs
+		## a real body to spend it on and the draw to keep finding one.
+		"forge_annealash": 3,
+		"gravekeepers_ledger": 3,
+		"shore_up": 3,
+		"forge_energy": 21,
+	}
+
+
+## **Standing Heat** — the wall that punishes being hit.
+##
+## The defensive reading of Forge: it does not block, it makes attacking into it
+## expensive. `Annealanvil` is Retribution 25 and Resist 5 on a 168 HP body that heals
+## back everything it stokes, so it can hold a lane indefinitely while still turning
+## its payoffs on — the one Forge body that spends HP without ever running out.
+##
+## `Deadman's Hammer` is the multiplier: Retribution 15 on top of a printed 20 or 25
+## means a wide attacker takes 40 back per swing. Slakeling and Annealash are the
+## cheap versions holding the other lane.
+##
+## It is slow and it is supposed to be. Forge's losing condition is failing to close,
+## and this is the list that answers it by not needing to close early.
+func _standing_heat() -> Dictionary:
+	return {
+		## The Retribution wall, complete.
+		"forge_annealash": 4,
+		"forge_annealbrand": 3,
+		"forge_annealanvil": 2,
+		## Cheap sustain bodies that also turn a flag on.
+		"forge_slakeling": 4,
+		"forge_quenchwick": 3,
+		"forge_quenchbrand": 2,
+		## Retribution on a Tool, stacking with the printed value.
+		"forge_deadmans_hammer": 3,
+		"forge_the_long_shift": 2,
+		"forge_bank_the_coals": 3,
+		"forge_murder_holes_hot": 2,
+		"iron_standard": 2,
+		## Tower support and healing: the wall wins by outlasting, so the slots go
+		## to staying alive rather than to reach.
+		"reinforced_base": 2,
+		"field_rites": 3,
+		"forge_draw_the_temper": 2,
+		"forge_bellows_rig": 3,
+		"forge_energy": 20,
 	}

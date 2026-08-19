@@ -117,11 +117,17 @@ func _test_sanctuary_pool(db) -> void:
 	_check("pool now 10", u.sanctuary_pool, 10)
 
 
-# ---- the terminal overflow: an exhausted pool still eats one whole instance
+# ---- overflow: a pool that cannot cover a hit drains exactly and the rest lands
+#
+# `Sanctuary N` used to absorb the WHOLE instance when its pool could not cover it,
+# which made every shielded body worth `pool + one arbitrarily large hit`. A deck
+# of thirty such bodies could not be killed (Sealed Light, 88-91% over 3M games).
+# The pool now drains exactly. PLAIN Sanctuary keeps the full absorb, because it
+# has no pool and draining it exactly would delete the keyword.
 func _test_sanctuary_overflow(db) -> void:
-	print("Sanctuary terminal overflow:")
+	print("Sanctuary overflow:")
 	var u := _unit(db, "radiant_bastion")
-	_check("110 into pool 60 -> 0 through", u.absorb(110), 0)
+	_check("110 into pool 60 -> 50 through", u.absorb(110), 50)
 	_check("shield spent", u.sanctuary_active, false)
 	_check("pool emptied", u.sanctuary_pool, 0)
 	_check("next hit passes fully", u.absorb(25), 25)

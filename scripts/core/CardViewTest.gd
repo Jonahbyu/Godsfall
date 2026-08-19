@@ -2,7 +2,7 @@ extends SceneTree
 
 ## Total assertions this harness is expected to run; see the check at
 ## the end of the run. Update deliberately when assertions change.
-const EXPECTED_ASSERTIONS := 79   ## +4 keyword chip tooltips and help coverage (2026-08-15)
+const EXPECTED_ASSERTIONS := 114  ## +6 attack rider text (2026-08-16)
 
 ## Structural assertions on the card frame.
 ##
@@ -106,6 +106,10 @@ func _initialize() -> void:
 	await _test_cost_icons_show_required_color(db)
 	await _test_attached_badge(db)
 	await _test_keyword_tooltips(db)
+	await _test_cost_tooltips(db)
+	await _test_cost_tooltip_reads_the_tool_tax(db)
+	await _test_faction_marks(db)
+	await _test_attack_rider_text(db)
 
 	## A harness that errors out mid-run still reports "0 failed", because an
 	## assertion that never RUNS cannot fail — that is how the Gaia harness passed
@@ -612,3 +616,248 @@ func _test_keyword_tooltips(db) -> void:
 		if str(pal.keyword_help(str(kw))).strip_edges() == "":
 			missing.append(str(kw))
 	check(missing.is_empty(), "every coloured keyword has help, missing: %s" % str(missing))
+
+
+## Every energy cost explains itself on hover.
+##
+## The icons state the requirement; the tooltip states how much of it is already
+## paid, which is the half the row has no channel for. These assertions check the
+## tooltip EXISTS on the node that receives the hover and that it reads the LIVE
+## cost — a `Deadweight` Tool raises what an attack costs on that body, and a
+## tooltip quoting the printed cost would be confidently wrong on exactly the unit
+## whose cost is surprising.
+##
+## Note what is checked and what is not: that the row is hoverable and that the
+## text names the right numbers. Whether a tooltip actually POPS UP is mouse
+## routing, which a headless harness cannot exercise — the same limit the keyword
+## chip tooltips carry.
+func _test_cost_tooltips(db) -> void:
+	print("Energy costs carry hover tooltips:")
+
+	## An attack cost row, in hand: hoverable, and it names the cost.
+	var card: CardData = db.get_card("grave_whelp")
+	var atk: AttackData = null
+	if card != null and card.attack_lines().size() > 0:
+		atk = card.attack_lines()[0]
+	if atk == null or atk.total_cost() <= 0:
+		check(false, "a priced attack exists to test")
+		return
+
+	var view := make_view(card, null, MODE_HAND)
+	root.add_child(view)
+	await process_frame
+
+	var rows := find_node_named(view, "AttackRows")
+	var box: Control = null
+	if rows != null and rows.get_child_count() > 0:
+		var row: Node = rows.get_child(0)
+		if row.get_child_count() > 0 and row.get_child(0) is Control:
+			box = row.get_child(0)
+
+	check(box != null, "the attack cost row is a node of its own")
+	if box != null:
+		check(box.tooltip_text != "", "the cost row carries a tooltip")
+		check(box.mouse_filter != Control.MOUSE_FILTER_IGNORE,
+			"the cost row can receive a hover")
+		check(box.tooltip_text.contains(str(atk.total_cost())),
+			"the tooltip names the cost")
+	view.queue_free()
+	await process_frame
+
+	## On a real body the tooltip must state what is attached and what is still owed.
+	var u := Unit.new(card)
+	u.attached = 1
+	var bview := make_view(card, u, MODE_HAND)
+	root.add_child(bview)
+	await process_frame
+	var brows := find_node_named(bview, "AttackRows")
+	var bbox: Control = null
+	if brows != null and brows.get_child_count() > 0:
+		var brow: Node = brows.get_child(0)
+		if brow.get_child_count() > 0 and brow.get_child(0) is Control:
+			bbox = brow.get_child(0)
+	check(bbox != null and bbox.tooltip_text.contains("attached"),
+		"on a unit, the tooltip states what is already attached")
+	bview.queue_free()
+	await process_frame
+
+	## A priced support states its pool cost; a free one says it is free.
+	var priced: CardData = db.get_card("field_surgery")
+	if priced != null and priced.cost > 0:
+		var pv := make_view(priced, null, MODE_HAND)
+		root.add_child(pv)
+		await process_frame
+		var prow := find_node_named(pv, "PlayCost")
+		check(prow != null and prow.tooltip_text.contains(str(priced.cost)),
+			"a priced support's tooltip names its pool cost")
+		check(prow != null and prow.mouse_filter != Control.MOUSE_FILTER_IGNORE,
+			"the play-cost row can receive a hover")
+		pv.queue_free()
+		await process_frame
+	else:
+		check(false, "a priced support exists to test")
+		check(false, "a priced support row is hoverable")
+
+	## An energy card explains the turn + 1 rule rather than printing a cost.
+	var nrg: CardData = null
+	for id in db.all_ids():
+		var c: CardData = db.get_card(id)
+		if c != null and c.is_energy():
+			nrg = c
+			break
+	if nrg != null:
+		var nv := make_view(nrg, null, MODE_HAND)
+		root.add_child(nv)
+		await process_frame
+		var nrow := find_node_named(nv, "PlayCost")
+		check(nrow != null and nrow.tooltip_text != "",
+			"an energy card's cost row explains its scaling")
+		nv.queue_free()
+		await process_frame
+	else:
+		check(false, "an energy card exists to test")
+
+
+## A Deadweight Tool raises what every attack on that unit costs, and the tooltip
+## must report the raised number rather than the print.
+##
+## This is the assertion that justifies reading `Unit.attack_cost()` instead of
+## `AttackData.total_cost()`. Without it the tooltip would be wrong only on the one
+## card whose whole point is that it changes costs, which is the least likely place
+## for anyone to notice.
+func _test_cost_tooltip_reads_the_tool_tax(db) -> void:
+	var card: CardData = db.get_card("grave_whelp")
+	if card == null or card.attack_lines().size() == 0:
+		check(false, "a unit with an attack exists for the Tool tax test")
+		return
+	var atk: AttackData = card.attack_lines()[0]
+
+	var tool_card: CardData = null
+	for id in db.all_ids():
+		var c: CardData = db.get_card(id)
+		if c != null and c.is_tool() and c.has_effect("attack_cost_increase"):
+			tool_card = c
+			break
+	if tool_card == null:
+		check(false, "a cost-raising Tool exists")
+		return
+
+	var u := Unit.new(card)
+	u.tool = tool_card
+	var taxed: int = u.attack_cost(atk)
+	check(taxed > atk.total_cost(), "the Tool raises this unit's attack cost")
+
+	var view := make_view(card, u, MODE_HAND)
+	root.add_child(view)
+	await process_frame
+	var rows := find_node_named(view, "AttackRows")
+	var box: Control = null
+	if rows != null and rows.get_child_count() > 0:
+		var row: Node = rows.get_child(0)
+		if row.get_child_count() > 0 and row.get_child(0) is Control:
+			box = row.get_child(0)
+	## Asserted against the exact sentence rather than with `contains(str(taxed))`.
+	## A bare digit search is far too weak here: the printed cost is 1 and the taxed
+	## cost is 2, and the tooltip's colour-split line already contains a "1", so a
+	## substring check passed even with the bug deliberately reintroduced. Verified
+	## by sabotage in both directions — this form fails when the helper quotes the
+	## printed cost, the loose form did not.
+	check(box != null and box.tooltip_text.contains("Costs %d energy" % taxed),
+		"the tooltip reports the RAISED cost, not the printed one")
+	check(box != null and not box.tooltip_text.contains("Costs %d energy" % atk.total_cost()),
+		"the tooltip does not quote the printed cost on a taxed unit")
+	## And it names the tax rather than leaving an unexplained gap between the icons
+	## drawn and the number charged.
+	check(box != null and box.tooltip_text.contains("Tool on this unit adds"),
+		"the tooltip explains where the extra cost comes from")
+	view.queue_free()
+	await process_frame
+
+
+## Each faction's energy token carries a distinct drawn mark, so colour is never
+## the only channel saying which energy this is.
+##
+## Checked as geometry rather than as pixels: `_mark_shape` must return a real
+## polygon for every faction in the palette, and no two factions may return the
+## same one. A pixel comparison would break on every tweak to a coordinate, which
+## is the same reason the rest of this file checks nodes rather than positions.
+func _test_faction_marks(db) -> void:
+	print("Every faction's energy token has its own mark:")
+	var Icon = load("res://scripts/ui/EnergyIcon.gd")
+	var seen := {}
+	var pal: Object = root.get_node_or_null("Palette")
+	if pal == null:
+		check(false, "Palette is available for the mark test")
+		return
+
+	for key in pal.FACTION_RAMPS.keys():
+		var ic = Icon.new(Color.WHITE, true, false, 12.0, str(key))
+		var shape: PackedVector2Array = ic._mark_shape(str(key), Vector2(6, 6), 6.0)
+		## Void is the sanctioned exception: it is drawn as a hole with a hot rim
+		## rather than as a figure, so it has no polygon by design.
+		if str(key) == "void":
+			check(shape.size() == 0, "void draws a hole rather than a figure")
+		else:
+			check(shape.size() >= 3, "%s has a mark polygon" % key)
+			var sig := str(shape)
+			check(not seen.has(sig), "%s's mark is distinct from every other" % key)
+			seen[sig] = true
+		ic.free()
+
+	## The mark is skipped below MARK_MIN_PX, which is what keeps a 7px board card
+	## from drawing a smudge. Asserted against the real metric rather than a literal,
+	## so a change to either one surfaces here.
+	var CV = load(CARD_VIEW)
+	var board_px: float = float(CV.METRICS["icon_size"]["board"])
+	var hand_px: float = float(CV.METRICS["icon_size"]["hand"])
+	var probe = Icon.new(Color.WHITE, true, false, 12.0, "hel")
+	check(probe.MARK_MIN_PX > board_px,
+		"the mark is skipped at the board card's icon size (%d)" % board_px)
+	check(probe.MARK_MIN_PX <= hand_px,
+		"the mark is drawn at the hand card's icon size (%d)" % hand_px)
+	probe.free()
+
+## An attack's conditional rider has to be ON the card.
+##
+## The attack row drew cost icons, name and damage and never `atk.text`, so every
+## conditional was invisible on the frame that printed it: `Ember Strike` rendered
+## as "28" with nothing to say stoking adds 10, and `THE LAST TOLL` rendered as "—"
+## with nothing to say it destroys both boards. That is the same "correct in the
+## engine, invisible on the board" failure the spent-Judgment chip was fixed for,
+## and it had been live for 26 attack lines across every faction.
+##
+## The other half of the rule is that a rider must NOT restate the damage — a
+## "28 damage" line next to a "28" is noise on a 132px card.
+func _test_attack_rider_text(db) -> void:
+	var forge: CardData = db.get_card("forge_cindspark")
+	check(forge != null, "fixture forge_cindspark exists")
+	if forge != null:
+		var view := make_view(forge, null, MODE_HAND)
+		root.add_child(view)
+		await process_frame
+		check(find_label(view, "stoked this turn") != null,
+			"a Stoke payoff rider is drawn on the attack row")
+		check(find_label(view, "+10 damage") != null,
+			"the rider states the actual bonus")
+		view.queue_free()
+
+	## The pre-existing case: an effect attack with no damage number at all.
+	var queen: CardData = db.get_card("hel_queen")
+	if queen != null:
+		var qv := make_view(queen, null, MODE_HAND)
+		root.add_child(qv)
+		await process_frame
+		check(find_label(qv, "Destroy every unit") != null,
+			"THE LAST TOLL prints what it does")
+		qv.queue_free()
+
+	## And a plain damage attack stays clean — no restatement of its own number.
+	var plain: CardData = db.get_card("grave_whelp")
+	if plain != null:
+		var pv := make_view(plain, null, MODE_HAND)
+		root.add_child(pv)
+		await process_frame
+		check(find_label(pv, "12 damage") == null,
+			"a plain damage attack does not restate its number as a rider")
+		check(find_label(pv, "Gnaw") != null, "but the attack name is still there")
+		pv.queue_free()

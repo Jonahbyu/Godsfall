@@ -14,6 +14,13 @@ signal game_over(winner_index: int)
 ##   choices: Array[String] card ids   on_pick: func(index: int) -> void
 signal choice_required(p, prompt: String, choices: Array, on_pick: Callable)
 
+## How much a free end-of-turn `Rekindle` ability puts back into a Sanctuary
+## pool each turn. Deliberately far below the printed 100 those cards carry: the
+## card's identity is "a shield that comes back", not "a shield that is never
+## gone". At 30 a Sanctuary 100 body takes four quiet turns to refill, so
+## sustained pressure still gets through while a single big hit still feeds it.
+const SANCTUARY_RECHARGE := 30
+
 const P1 := 0
 const P2 := 1
 
@@ -161,6 +168,73 @@ func _is_void_card(id: String) -> bool:
 	return c != null and c.faction == "void"
 
 
+## ------------------------------------------------------------------ Storm
+##
+## Tempest `Storm`: a GLOBAL board counter both players read — the same category
+## as the Gap, a property of the board rather than of a card. It is 0 until a
+## Tempest card raises it, and it never falls.
+##
+## Unlike the Gap it is SYMMETRIC: one number shared by both players, where each
+## player has their own Gap. What is asymmetric is who profits — a Tempest unit's
+## Storm instance is doubled, which is the dial to cut if Storm proves too strong.
+var storm: int = 0
+
+
+## Raise the global counter. Cards only ever add; nothing lowers Storm.
+func raise_storm(n: int) -> void:
+	if n <= 0:
+		return
+	storm += n
+	_log("The storm builds — Storm is now %d." % storm)
+	state_changed.emit()
+
+
+## The extra damage instance an attack from `u` carries.
+##
+## ONE instance of N, never N instances of 1. That is not a detail: `Resist X`
+## reduces each incoming *instance* to a minimum of 1, so N separate ticks would
+## pierce armour entirely as Storm climbed — a wider anti-shield break than
+## Forge's `stoked_unpreventable`, printed on a global number. One instance keeps
+## Resist working exactly as printed.
+func storm_damage_for(u: Unit) -> int:
+	if storm <= 0:
+		return 0
+	if u != null and u.card != null and u.card.faction == "tempest":
+		return storm * 2
+	return storm
+
+
+## Whether Storm is worth showing. Same rule and same reason as
+## `gap_is_relevant()`: the number is real at all times, but nothing reads it
+## without Tempest in the game, so a permanent meter would be clutter in most
+## matchups. Checked against decks, hands and discards as well as the boards so
+## the readout does not blink in and out as Tempest units are drawn and killed.
+func storm_is_relevant() -> bool:
+	if storm > 0:
+		return true
+	for p in players:
+		if p == null:
+			continue
+		for pile in [p.deck, p.hand, p.discard]:
+			for id in pile:
+				if _is_tempest_card(str(id)):
+					return true
+		for u in p.all_units():
+			if u != null and _is_tempest_card(u.card.id):
+				return true
+	return false
+
+
+## Guards against a null lookup, so an id removed from the data cannot take the
+## readout down with it. Mirrors `_is_void_card`.
+func _is_tempest_card(id: String) -> bool:
+	var db = _card_db()
+	if db == null:
+		return false
+	var c = db.get_card(id)
+	return c != null and c.faction == "tempest"
+
+
 ## CardDB by node lookup rather than by its global name.
 ##
 ## Under `--script` the autoload node exists but the identifier `CardDB` is not
@@ -303,7 +377,9 @@ func refresh_aura(p: Player) -> void:
 ## It resolves through `_deal_lane_damage`, the same chain every other attack
 ## uses, so it respects shielding and cannot reach past a living board.
 func resolve_auto_fire(p: Player, enemy: Player) -> void:
-	var bonus: int = earth_for(p) * earth_rate(p)
+	## Half rate, matching attack damage — auto-fire is damage, so it takes the
+	## offensive half of the aura rather than the defensive full one.
+	var bonus: int = (earth_for(p) * earth_rate(p)) / 2
 	for bi in p.boards.size():
 		var b: Board = p.boards[bi]
 		for si in Board.SLOT_COUNT:
@@ -511,13 +587,50 @@ func charge(p: Player, u: Unit, n: int) -> bool:
 func queue_attack(p: Player, u: Unit, atk: AttackData, target = null) -> bool:
 	if finished or in_setup() or atk.is_ability:
 		return false
-	var need := u.pool_needed(atk)
+	## Forge: an attack whose cost is waived because this unit stoked this turn.
+	## Checked BEFORE affordability, so a stoked unit may queue an attack it could
+	## not otherwise pay for — which is the whole point of the payoff. The discount
+	## expires with the flag, so unlike attached energy it buys nothing permanent.
+	var free_attack: bool = atk.has_effect("stoked_free_attack") and u.has_stoked()
+
+	var need := 0 if free_attack else u.pool_needed(atk)
 	if need > p.pool:
 		return false
 
 	if need > 0:
 		p.pool -= need
 		u.attached += need
+	if free_attack:
+		_log("  Stoked: %s costs no energy this turn." % atk.name)
+
+	## Forge `stoked_immediate`: resolve now instead of at end of turn. Breaks the
+	## turn structure deliberately — it kills a blocker BEFORE the rest of the
+	## volley, which is what makes it interact with volley ordering and no-overkill.
+	## Never queued, so the attack lock cannot re-fire it and it is not cancellable;
+	## that is the cost of acting early.
+	if atk.has_effect("stoked_immediate") and _stoke_meets_threshold(u, atk):
+		u.last_attack = atk
+		var pos: Array = _find_unit_position(p, u)
+		_log("%s uses %s immediately (stoked)." % [p.display_name, atk.name])
+		_resolve_line_effects(p, opponent_of(players.find(p)), u, atk, target,
+			pos[0], pos[1])
+		_cleanup_dead(p)
+		_cleanup_dead(opponent_of(players.find(p)))
+		state_changed.emit()
+		return true
+
+	## Forge `stoked_extra_attack`: a second slot on a unit that already has one
+	## queued. Only reachable when a Stoke payoff granted it this turn, and the
+	## grant expires with the flag, so it never becomes standing multi-attack.
+	if u.queued_attack != null:
+		if not u.can_queue_extra():
+			return false
+		u.extra_attack = atk
+		u.extra_target = target
+		u.last_attack = atk
+		_log("%s queues a SECOND attack, %s, on %s." % [p.display_name, atk.name, u.card.name])
+		state_changed.emit()
+		return true
 
 	u.queued_attack = atk
 	u.queued_target = target
@@ -547,13 +660,44 @@ func use_ability(p: Player, u: Unit, ab: AttackData, target = null) -> bool:
 	if not u.can_use_ability(ab):
 		return false
 
+	## Scrap needs its victim chosen and validated BEFORE anything is spent, so an
+	## ability that cannot legally resolve costs nothing. `target` carries the unit
+	## to destroy; it must be another unit this player controls.
+	var scrapped: Unit = null
+	if ab.scrap:
+		scrapped = _resolve_scrap_target(p, u, target)
+		if scrapped == null:
+			return false
+
+	## Whether THIS activation is the repeat a `stoked_twice` grant paid for, read
+	## before `spend_ability` consumes the grant. The riders need it so the line
+	## cannot re-grant its own permission — see `_resolve_stoke_riders`.
+	var was_repeat: bool = u.has_used_ability(ab)
+
 	var burned := ab.consume_cost()
 	u.spend_ability(ab)
 
+	## Stoke: spend the unit's own HP and flag it for this turn's payoffs. Paid
+	## before the line's effects resolve, because those effects are what READ the
+	## flag — "if this unit stoked this turn, ..." has to already be true.
+	var stoked := 0
+	if ab.stoke > 0:
+		stoked = u.pay_stoke(ab.stoke)
+		if stoked > 0:
+			_resolve_stoke_riders(p, u, ab, stoked, was_repeat)
+
+	if ab.scrap and scrapped != null:
+		_scrap_unit(p, scrapped)
+
+	var parts: Array[String] = []
 	if burned > 0:
-		_log("%s uses %s (Consume %d — %d attached left)." % [
-			u.card.name, ab.name, burned, u.attached
-		])
+		parts.append("Consume %d" % burned)
+	if stoked > 0:
+		parts.append("Stoke %d" % stoked)
+	if scrapped != null:
+		parts.append("Scrap %s" % scrapped.card.name)
+	if parts.size() > 0:
+		_log("%s uses %s (%s)." % [u.card.name, ab.name, ", ".join(parts)])
 	else:
 		_log("%s uses %s." % [u.card.name, ab.name])
 
@@ -568,6 +712,143 @@ func use_ability(p: Player, u: Unit, ab: AttackData, target = null) -> bool:
 	_cleanup_dead(opponent_of(players.find(p)))
 	state_changed.emit()
 	return true
+
+
+## Effects that fire at the moment a unit Stokes, rather than on a later attack.
+##
+## These are the lines that make Stoke a state worth being IN rather than only a
+## price — `stoked_heal_back` in particular refunds the HP while deliberately
+## leaving `stoked_this_turn` set, so every other payoff on the board stays on.
+## That is the whole reason the flag is separate from what it paid for.
+func _resolve_stoke_riders(p: Player, u: Unit, ab: AttackData, stoked: int,
+		was_repeat: bool = false) -> void:
+	var enemy: Player = opponent_of(players.find(p))
+
+	## Stoke as the weapon itself: the burn splashes outward onto the enemy board
+	## this unit faces. Obeys the shielding chain like every other damage source —
+	## `_deal_lane_damage` is what enforces that, so it is reused rather than
+	## reimplemented.
+	if ab.has_effect("stoked_cleave"):
+		var per: int = ab.effect_value("stoked_cleave", 100)
+		var splash: int = int(stoked * per / 100.0)
+		var pos: Array = _find_unit_position(p, u)
+		if splash > 0 and pos[0] >= 0:
+			_log("  Stoke cleaves outward for %d." % splash)
+			_deal_lane_damage(p, enemy, u, pos[0], pos[1], splash, ab)
+
+	## Heal the HP just spent. NOT a cost eraser: the unit still counts as having
+	## stoked, so anything reading the flag this turn is unaffected. Applied after
+	## cleave so the splash is computed from what was actually paid.
+	if ab.has_effect("stoked_heal_back"):
+		var pct: int = ab.effect_value("stoked_heal_back", 100)
+		var back: int = int(stoked * pct / 100.0)
+		if back > 0 and u.is_alive():
+			var healed: int = heal_unit(p, u, back)
+			if healed > 0:
+				_log("  %s draws the heat back in: heals %d (still counts as stoked)." % [
+					u.card.name, healed])
+
+	## Every rider below is gated on the THRESHOLD if the line prints one, so a
+	## small Stoke turns on the ordinary payoffs and only a body committing real
+	## HP reaches the ones that break a rule. `_stoke_meets_threshold` is the one
+	## place that comparison lives, so a new payoff cannot drift from it.
+
+	## Forge: draw off the burn. Forge spends its hand fast — every Stoke payoff
+	## is a card that had to already be on the board — so card flow is a payoff
+	## class in its own right rather than a rider bolted onto a damage line.
+	if ab.has_effect("stoked_draw") and _stoke_meets_threshold(u, ab):
+		var n: int = ab.effect_value("stoked_draw", 1)
+		var got: Array = p.draw(n)
+		if got.size() > 0:
+			_log("  Stoked: draws %d." % got.size())
+
+	## Forge: a second Stoke this turn. Breaks the once-per-turn ability limit for
+	## Stoke lines only and for exactly one extra use, which is what doubles every
+	## amount-scaling payoff on this body. The grant is consumed by the second use
+	## (Unit.spend_ability), never by the end of the turn alone.
+	## Granted only on the FIRST use of the line — `was_repeat` is true when THIS
+	## activation was itself the one the grant paid for. Re-granting there would
+	## make Stoke unlimited: the line would refresh its own permission every time
+	## it resolved, which is precisely the engine the once-per-turn limit exists
+	## to prevent. Caught by the "third stoke refused" assertion, not by reading.
+	if ab.has_effect("stoked_twice") and _stoke_meets_threshold(u, ab) 			and not was_repeat:
+		u.extra_stoke_allowed = true
+		_log("  Stoked: %s may stoke again this turn." % u.card.name)
+
+	## Forge: the pool skips its decay this turn. The rule-break on the game's
+	## central tax, and the reason the economy chain exists.
+	if ab.has_effect("stoked_no_decay") and _stoke_meets_threshold(u, ab):
+		p.decay_suspended = true
+		_log("  Stoked: your pool does not decay this turn.")
+
+	## Forge: this unit's attacks cost less this turn. Weaker than a free attack
+	## and it stacks across a multi-attack turn, which is why it lives on the
+	## chain that also grants the extra attack slot.
+	if ab.has_effect("stoked_cost_reduction") and _stoke_meets_threshold(u, ab):
+		var cut: int = ab.effect_value("stoked_cost_reduction", 1)
+		u.cost_reduction_this_turn += cut
+		_log("  Stoked: %s's attacks cost %d less this turn." % [u.card.name, cut])
+
+	## Forge: a second attack slot this turn — conditional Windfury. The condition
+	## sits on a Forge body, which is what keeps it clear of the standing rule that
+	## Windfury may never share a card with Judgment.
+	if ab.has_effect("stoked_extra_attack") and _stoke_meets_threshold(u, ab):
+		u.extra_attack_allowed = true
+		_log("  Stoked: %s may attack twice this turn." % u.card.name)
+
+
+## Does this unit's Stoke this turn clear the line's printed threshold?
+##
+## A payoff with no `stoked_threshold` fires on the bare flag; one that prints a
+## threshold fires only above it. Kept in a single function because every payoff
+## in the faction asks the same question, and a second copy is how the geometry
+## breaks would eventually drift from the ordinary buffs.
+func _stoke_meets_threshold(u: Unit, line: AttackData) -> bool:
+	if not u.has_stoked():
+		return false
+	var thr: int = line.effect_value("stoked_threshold", 0)
+	return thr == 0 or u.stoked_this_turn >= thr
+
+
+## The unit a Scrap cost will destroy, or null if the choice is not legal.
+##
+## Scrap eats ANOTHER unit you control — never itself. A line that ate its own
+## body would resolve with nothing left to have resolved from, and it collapses
+## into "sacrifice this for damage", which is a different and worse card.
+##
+## With no explicit target the engine picks the weakest legal body (lowest HP,
+## then least attached), which is what a player scrapping for value would choose
+## and what lets the AI and the headless harnesses use these lines without a UI.
+func _resolve_scrap_target(p: Player, u: Unit, target) -> Unit:
+	var candidates: Array[Unit] = []
+	for other in p.all_units():
+		if other != u and other.is_alive():
+			candidates.append(other)
+	if candidates.is_empty():
+		return null
+	if target is Unit and candidates.has(target):
+		return target
+	var best: Unit = candidates[0]
+	for c in candidates:
+		if c.hp < best.hp or (c.hp == best.hp and c.attached < best.attached):
+			best = c
+	return best
+
+
+## Destroy a scrapped unit through the ordinary death path.
+##
+## Forge gets no private kind of death: the body dies, so `Toll` refunds, `Rise`
+## returns it, `Essence` may pay for it, its attached energy is lost and its Tool
+## is discarded. That is the opposite of retreat, which is the ALTERNATIVE to
+## dying and fires none of them.
+func _scrap_unit(p: Player, victim: Unit) -> void:
+	for bi in p.boards.size():
+		var b: Board = p.boards[bi]
+		for si in b.slots.size():
+			if b.slots[si] == victim:
+				victim.hp = 0
+				_kill(p, b, si, victim)
+				return
 
 
 ## Where a unit is standing: [board_index, slot_index], or [-1, -1] if it is not
@@ -1539,6 +1820,12 @@ func _resolve_attacks(p: Player) -> void:
 
 func _execute_attack(p: Player, enemy: Player, u: Unit, bi: int, si: int) -> void:
 	var atk: AttackData = u.queued_attack
+	## Forge: a second attack granted by `stoked_extra_attack`. Read BEFORE
+	## clear_queue wipes both slots, and resolved after the primary so the pair
+	## follows the same "each attack resolves fully before the next" rule the
+	## volley already obeys — including no-overkill between the two.
+	var second: AttackData = u.extra_attack
+	var second_target = u.extra_target
 	u.clear_queue()
 
 	## An attack's cost stays attached, but Consume destroys it on resolution.
@@ -1548,6 +1835,14 @@ func _execute_attack(p: Player, enemy: Player, u: Unit, bi: int, si: int) -> voi
 		_log("%s consumes %d energy (%d attached left)." % [u.card.name, burned, u.attached])
 
 	_resolve_line_effects(p, enemy, u, atk, u.queued_target, bi, si)
+
+	if second != null and u.is_alive() and not finished:
+		var burned2 := second.consume_cost()
+		if burned2 > 0:
+			u.attached = max(0, u.attached - burned2)
+			_log("%s consumes %d energy (%d attached left)." % [u.card.name, burned2, u.attached])
+		_log("%s attacks again: %s." % [u.card.name, second.name])
+		_resolve_line_effects(p, enemy, u, second, second_target, bi, si)
 
 
 ## Everything a line does once it resolves, shared by attacks and abilities.
@@ -1611,14 +1906,23 @@ func _resolve_line_effects(p: Player, enemy: Player, u: Unit, atk: AttackData,
 	if atk.damage > 0 and bi >= 0:
 		var dmg: int = atk.damage + u.tool_damage_bonus()
 
-		## Earth: the attacker's board-wide aura adds +1 damage per point (at the
-		## current rate). Read at resolution like Rift, and for the same reason —
-		## the board can change between queueing and resolving, and both players
-		## can see it.
-		var earth_bonus: int = earth_for(p) * earth_rate(p)
+		## Earth: the attacker's board-wide aura adds damage at HALF rate, rounded
+		## down. Read at resolution like Rift, and for the same reason — the board
+		## can change between queueing and resolving, and both players can see it.
+		##
+		## Why half on offense and full on defense: one point of Earth pays into
+		## every unit's max HP, both towers' HP, AND every attack, so at full rate
+		## a single aura point is worth six-plus stat points while costing one.
+		## Measured over 1M games, Deep Grove ran a mean aura of 14.6 (peak 78) —
+		## +14.6 damage on every attack from every body, for free, which is why
+		## every Earth deck sat at 70-83% while the game averaged 50%. Halving the
+		## OFFENSIVE half keeps Gaia's identity (it still grows, still buffs
+		## towers, still raises the ceiling on its own bodies) and removes the part
+		## that was doubling as an undercosted damage engine. See `gaia.md`.
+		var earth_bonus: int = (earth_for(p) * earth_rate(p)) / 2
 		if earth_bonus > 0:
 			dmg += earth_bonus
-			_log("  Earth %d: +%d damage." % [earth_for(p), earth_bonus])
+			_log("  Earth %d: +%d damage (half rate)." % [earth_for(p), earth_bonus])
 
 		## Rift N: +N damage per point of Gap. Read at resolution rather than at
 		## queue time, so the number the player sees when they commit can move —
@@ -1629,6 +1933,44 @@ func _resolve_line_effects(p: Player, enemy: Player, u: Unit, atk: AttackData,
 				dmg += bonus
 				_log("  Rift %d: +%d damage (Gap %d)." % [u.rift(), bonus, gap_for(p)])
 
+		## ------------------------------------------------------ Forge: Stoke payoffs
+		##
+		## Stoke sets a per-unit state; THESE are what read it. The flag is
+		## per-unit by default — unit A stoking does not turn on unit B's attack —
+		## and a line that reads another unit's flag has to print that it does
+		## (`stoked_ally` below), which makes board-wide reading the deliberate
+		## rule-break rather than the baseline.
+		if u.has_stoked():
+			## Flat bonus for having stoked at all.
+			if atk.has_effect("stoked_bonus_damage"):
+				var sb: int = atk.effect_value("stoked_bonus_damage", 0)
+				dmg += sb
+				_log("  Stoked: +%d damage." % sb)
+
+			## Scales with the AMOUNT stoked, which is what makes a large printed
+			## Stoke worth having. Without a scaling payoff every deck would run
+			## the cheapest body that turns the flag on.
+			if atk.has_effect("stoked_scale_damage"):
+				var per_hp: int = maxi(1, atk.effect_value("stoked_scale_damage", 2))
+				var scaled: int = u.stoked_this_turn / per_hp
+				if scaled > 0:
+					dmg += scaled
+					_log("  Stoked %d: +%d damage." % [u.stoked_this_turn, scaled])
+
+			## Threshold payoffs: only a body that commits real HP unlocks these.
+			var thresh: int = atk.effect_value("stoked_threshold", 0)
+			var over: bool = thresh > 0 and u.stoked_this_turn >= thresh
+			if over and atk.has_effect("stoked_threshold_damage"):
+				var tb: int = atk.effect_value("stoked_threshold_damage", 0)
+				dmg += tb
+				_log("  Stoked %d (>= %d): +%d damage." % [u.stoked_this_turn, thresh, tb])
+
+			## Double the whole attack, riders included — read last so it doubles
+			## everything above it.
+			if atk.has_effect("stoked_double") and (thresh == 0 or over):
+				dmg *= 2
+				_log("  Stoked: damage doubled.")
+
 		## A rider that pays per energy destroyed. Zero against an uncharged
 		## body, which is what makes Void efficient against the committed and
 		## weak against the empty board.
@@ -1637,7 +1979,7 @@ func _resolve_line_effects(p: Player, enemy: Player, u: Unit, atk: AttackData,
 			dmg += per * voided
 			_log("  %d energy unmade: +%d damage." % [voided, per * voided])
 
-		_deal_lane_damage(p, enemy, u, bi, si, dmg, atk)
+		_deliver_attack_damage(p, enemy, u, bi, si, dmg, atk)
 
 	## Rider effects
 	if atk.has_effect("also_hit_tower") and bi >= 0:
@@ -1755,6 +2097,89 @@ func _damage_unit(target: Unit, amount: int, source_label: String) -> int:
 
 
 ## The targeting rule: slot across -> leftmost living unit -> tower -> throne.
+## Where an attack's damage actually lands, once the amount is final.
+##
+## Everything before this point decided HOW MUCH; this decides WHERE, and it is
+## the one place Forge's geometry payoffs live. Ordinary attacks fall straight
+## through to `_deal_lane_damage`, so the default path is untouched — each break
+## below is a printed rule-break gated on a Stoke that already happened.
+##
+## The breaks are deliberately exclusive rather than cumulative: an attack that
+## sweeps does not also strike a second board, because two geometry breaks on one
+## line is a card that should have been cut rather than a stacking rule.
+func _deliver_attack_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int,
+		dmg: int, atk: AttackData) -> void:
+	var stoked_ok: bool = u != null and _stoke_meets_threshold(u, atk)
+
+	## Forge: hit BOTH enemy boards. Breaks the per-board rule that makes the two
+	## lanes independent fights, so it is reserved for a Stage 2 behind a
+	## threshold. Each board still resolves its own shielding chain — this widens
+	## which board is reached, it does not reach past anyone's units.
+	if stoked_ok and atk.has_effect("stoked_both_boards"):
+		_log("  Stoked: %s strikes both boards." % atk.name)
+		for b2 in enemy.boards.size():
+			_deal_lane_damage(p, enemy, u, b2, si, dmg, atk)
+			if finished:
+				return
+		return
+
+	## Forge: hit EVERY living unit on the target board. Pairs with no-overkill —
+	## clearing the front rank is what exposes everything behind it to the rest of
+	## the volley. Structures are untouched: a sweep is a unit weapon, and letting
+	## it fall through to a tower on an empty board would make it a second
+	## shielding break rather than a wide one.
+	if stoked_ok and atk.has_effect("stoked_sweep") and bi >= 0:
+		var sb: Board = enemy.boards[bi]
+		var hit: int = 0
+		for s2 in Board.SLOT_COUNT:
+			var v: Unit = sb.slots[s2]
+			if v != null and v.is_alive():
+				_deal_lane_damage(p, enemy, u, bi, s2, dmg, atk)
+				hit += 1
+				if finished:
+					return
+		if hit == 0:
+			## Nothing to sweep — fall through so the attack is never simply
+			## wasted, exactly as a normal attack redirects rather than fizzling.
+			_deal_lane_damage(p, enemy, u, bi, si, dmg, atk)
+		else:
+			_log("  Stoked: %s sweeps %d units." % [atk.name, hit])
+		return
+
+	_deal_lane_damage(p, enemy, u, bi, si, dmg, atk)
+
+	## Forge: splash the tower behind the target WITHOUT bypassing the shield.
+	## The softer reach payoff — it never redirects the attack, it adds a second
+	## smaller hit, so a defended board still costs the attacker its main damage.
+	if stoked_ok and atk.has_effect("stoked_also_tower") and bi >= 0:
+		var n: int = atk.effect_value("stoked_also_tower", 0)
+		if n > 0:
+			var eb2: Board = enemy.boards[bi]
+			if eb2.tower_alive():
+				eb2.tower_take_damage(n)
+				_record_damage(p, u.card.id, "tower", n)
+				_log("  Stoked: %s also scorches the tower for %d (%d HP left)." % [
+					atk.name, n, eb2.tower_hp])
+			else:
+				var d: int = enemy.throne_take_damage(n)
+				_record_damage(p, u.card.id, "throne", d)
+				_log("  Stoked: %s also scorches the throne for %d." % [atk.name, d])
+				_check_throne(enemy)
+
+	## Tempest `Storm`: every attack carries ONE additional instance of the global
+	## counter — 2N from a Tempest body. It resolves as its own instance through
+	## the ordinary targeting chain, so if the main attack killed the defender it
+	## retargets to the next living unit, and falls through to the tower once the
+	## board is clear. Storm therefore quietly rewards clearing a board.
+	##
+	## Appended at the END, after the geometry breaks have returned: a sweeping or
+	## both-boards attack must not multiply its Storm instance across every target.
+	## Inert at Storm 0, which is every game without a Tempest card in it.
+	var storm_dmg: int = storm_damage_for(u)
+	if storm_dmg > 0 and not finished:
+		_deal_lane_damage(p, enemy, u, bi, si, storm_dmg, atk)
+
+
 ##
 ## Living units shield the structures behind them: while anything on the enemy
 ## board is alive, this attack can only hit a unit. The redirect is deterministic
@@ -1764,6 +2189,25 @@ func _damage_unit(target: Unit, amount: int, source_label: String) -> int:
 ## Shielding never crosses boards — everything here reads `enemy.boards[bi]`.
 func _deal_lane_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int, dmg: int, atk: AttackData) -> void:
 	var eb: Board = enemy.boards[bi]
+
+	## Forge: a stoked attack may reach past the shield to this board's structures.
+	## The deliberate rule-break, and the same shape Heaven's `The Gate Opens` uses:
+	## it is gated on the unit having spent real HP this turn, so it is a reward for
+	## commitment rather than a free bypass. Structures only — it never skips a unit
+	## to hit a different unit.
+	if u != null and u.has_stoked() and atk.has_effect("stoked_ignore_shield"):
+		var thr: int = atk.effect_value("stoked_threshold", 0)
+		if thr == 0 or u.stoked_this_turn >= thr:
+			if eb.tower_alive():
+				eb.tower_take_damage(dmg)
+				_log("*** Stoked: %s burns past the wall for %d to the TOWER (%d HP left)." % [
+					atk.name, dmg, eb.tower_hp])
+			else:
+				enemy.throne_take_damage(dmg)
+				_log("*** Stoked: %s burns past the wall for %d to the THRONE (%d HP left)." % [
+					atk.name, dmg, enemy.throne_hp])
+				_check_throne(enemy)
+			return
 
 	## 1. The slot directly across, if someone living is standing in it.
 	var defender: Unit = eb.unit_at(si)
@@ -1780,6 +2224,20 @@ func _deal_lane_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int, dmg:
 		## first or a unit could die, be saved by Judgment, and only then discover it
 		## held a shield that would have stopped the hit outright.
 		var incoming: int = dmg
+
+		## Forge `stoked_unpreventable`: this attack ignores Sanctuary and Resist.
+		## The printed answer to shield decks, and the reason Forge/Heaven has a
+		## reason to exist now that Stoke itself no longer interacts with them.
+		## Gated on the flag (and the threshold if the line prints one), so it is
+		## bought with HP rather than granted by the card merely existing.
+		if u != null and atk.has_effect("stoked_unpreventable") 				and _stoke_meets_threshold(u, atk):
+			var raw := defender.take_damage(incoming)
+			_record_damage(p, u.card.id, "unit", raw)
+			_log("%s uses %s: %d to %s — unpreventable (%d HP left)." % [
+				u.card.name, atk.name, raw, defender.card.name, max(0, defender.hp)])
+			_after_defender_damaged(p, enemy, u, defender, atk, raw)
+			return
+
 		var had_sanctuary: bool = defender.sanctuary_active
 		var through: int = defender.absorb(incoming)
 		if had_sanctuary and through < incoming:
@@ -1792,43 +2250,7 @@ func _deal_lane_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int, dmg:
 		var dealt := defender.take_damage(_apply_resist(defender, through))
 		_record_damage(p, u.card.id, "unit", dealt)
 		_log("%s uses %s: %d to %s (%d HP left)." % [u.card.name, atk.name, dealt, defender.card.name, max(0, defender.hp)])
-
-		## --- Step 4: defensive Judgment. A unit that would die survives at N instead.
-		## Checked before the offensive half so the Heaven mirror resolves by ordering
-		## rather than by a special-case tiebreak rule.
-		if defender.hp <= 0 and defender.has_judgment():
-			defender.hp = defender.judgment()
-			defender.judgment_spent = true
-			_log("  Judgment: %s survives at %d HP. Its charge is spent." % [defender.card.name, defender.hp])
-
-		## --- Step 5: offensive Judgment. Anything left standing at or below the
-		## attacker's N is executed.
-		##
-		## `elif` matters: a unit whose Judgment just saved it at step 4 sits at exactly
-		## N, which would otherwise satisfy this check for any attacker with an equal or
-		## larger N and immediately delete the save it just made.
-		elif defender.hp > 0 and u.has_judgment() and defender.hp <= u.judgment():
-			_log("  Judgment: %s executes %s at %d HP." % [u.card.name, defender.card.name, defender.hp])
-			defender.hp = 0
-			u.judgment_spent = true
-			## The execute is itself a death, so the defender's own Judgment may still
-			## save it — both charges spend and the body lives at N.
-			if defender.has_judgment():
-				defender.hp = defender.judgment()
-				defender.judgment_spent = true
-				_log("  Judgment: %s survives the execute at %d HP. Both charges spent." % [defender.card.name, defender.hp])
-
-		## --- Step 6: Retribution fires back at the attacker. Iron Standard stacks with
-		## the defender's printed value. A unit marked dead still deals its recoil —
-		## nothing leaves the board until _cleanup_dead runs after the whole volley.
-		## `Resist X` reads "reduce each incoming instance of damage" — recoil is an
-		## instance, so it is resisted. Sanctuary is deliberately NOT applied here:
-		## this line has always bypassed it, `CLAUDE.md` says it should not, and
-		## changing it would alter Heaven's behaviour. Recorded in gaia.md instead.
-		var retr: int = defender.total_retribution()
-		if retr > 0:
-			var r := u.take_damage(_apply_resist(u, retr))
-			_log("  Retribution: %s takes %d back (%d HP left)." % [u.card.name, r, max(0, u.hp)])
+		_after_defender_damaged(p, enemy, u, defender, atk, dealt)
 		return
 
 	## 3./4. The board is clear, so the structures are reachable.
@@ -1845,6 +2267,52 @@ func _deal_lane_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int, dmg:
 	_record_damage(p, u.card.id, "throne", dealt3)
 	_log("%s uses %s: %d to the enemy THRONE (%d HP left)." % [u.card.name, atk.name, dealt3, enemy.throne_hp])
 	_check_throne(enemy)
+
+
+## Steps 4-6 of the within-attack damage order, once damage has landed on a unit.
+##
+## Extracted so the ordinary path and Forge's `stoked_unpreventable` path cannot
+## drift: both have to run defensive Judgment, then offensive Judgment, then
+## Retribution, in exactly that order. Two code paths for one question is one path
+## too many — the drag-and-drop legality bug in the decision log is the same shape.
+func _after_defender_damaged(p: Player, _enemy: Player, u: Unit, defender: Unit,
+		_atk: AttackData, _dealt: int) -> void:
+	## --- Step 4: defensive Judgment. A unit that would die survives at N instead.
+	## Checked before the offensive half so the Heaven mirror resolves by ordering
+	## rather than by a special-case tiebreak rule.
+	if defender.hp <= 0 and defender.has_judgment():
+		defender.hp = defender.judgment()
+		defender.judgment_spent = true
+		_log("  Judgment: %s survives at %d HP. Its charge is spent." % [defender.card.name, defender.hp])
+
+	## --- Step 5: offensive Judgment. Anything left standing at or below the
+	## attacker's N is executed.
+	##
+	## `elif` matters: a unit whose Judgment just saved it at step 4 sits at exactly
+	## N, which would otherwise satisfy this check for any attacker with an equal or
+	## larger N and immediately delete the save it just made.
+	elif defender.hp > 0 and u.has_judgment() and defender.hp <= u.judgment():
+		_log("  Judgment: %s executes %s at %d HP." % [u.card.name, defender.card.name, defender.hp])
+		defender.hp = 0
+		u.judgment_spent = true
+		## The execute is itself a death, so the defender's own Judgment may still
+		## save it — both charges spend and the body lives at N.
+		if defender.has_judgment():
+			defender.hp = defender.judgment()
+			defender.judgment_spent = true
+			_log("  Judgment: %s survives the execute at %d HP. Both charges spent." % [defender.card.name, defender.hp])
+
+	## --- Step 6: Retribution fires back at the attacker. Iron Standard stacks with
+	## the defender's printed value. A unit marked dead still deals its recoil —
+	## nothing leaves the board until _cleanup_dead runs after the whole volley.
+	## `Resist X` reads "reduce each incoming instance of damage" — recoil is an
+	## instance, so it is resisted. Sanctuary is deliberately NOT applied here:
+	## this line has always bypassed it, `CLAUDE.md` says it should not, and
+	## changing it would alter Heaven's behaviour. Recorded in gaia.md instead.
+	var retr: int = defender.total_retribution()
+	if retr > 0:
+		var r := u.take_damage(_apply_resist(u, retr))
+		_log("  Retribution: %s takes %d back (%d HP left)." % [u.card.name, r, max(0, u.hp)])
 
 
 func _resolve_eot_effects(p: Player) -> void:
@@ -1872,8 +2340,11 @@ func _resolve_eot_effects(p: Player) -> void:
 			continue
 		for ab in u.card.ability_lines():
 			if ab.has_effect("eot_restore_sanctuary"):
-				u.restore_sanctuary()
-				_log("%s rekindles its Sanctuary." % u.card.name)
+				## Partial, not a full refill. A free repeating restore to a
+				## printed 100 prevents more per turn than any attack deals.
+				u.recharge_sanctuary(SANCTUARY_RECHARGE)
+				_log("%s rekindles its Sanctuary (+%d, now %d)."
+					% [u.card.name, SANCTUARY_RECHARGE, u.sanctuary_pool])
 
 	_resolve_tool_effects(p)
 
@@ -1946,7 +2417,8 @@ func _resolve_towers(p: Player) -> void:
 			## `_tower_strike`'s half-rate rule like any other damage, so it raises
 			## the number the half is taken FROM and never the rate itself —
 			## CLAUDE.md's hard line on tower support is untouched.
-			var aura: int = earth_for(owner) * earth_rate(owner)
+			## Half rate: this is the aura's OFFENSIVE half (see the attack path).
+			var aura: int = (earth_for(owner) * earth_rate(owner)) / 2
 			_tower_strike(owner, enemy, bi, base + b.tower_damage_bonus + aura, "tower fire")
 
 			## Crossfire reaches the *other* enemy board. Stacked copies each

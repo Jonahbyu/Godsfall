@@ -98,7 +98,7 @@ static func _l_board() -> Dictionary:
 		"steps": [
 			{
 				"title": "Two boards, two fights",
-				"text": "You have [b]two boards[/b]. Each is a lane three slots wide, and the rightmost slot is taken by your [color=#6b8fbf]tower[/color] until it dies — so you have [b]two usable slots per board, four in total[/b].\n\nBehind both boards sits your [color=#bf6b9e]throne[/color] at 100 HP. [b]Lose the throne and you lose the game.[/b] That is the only way to lose.",
+				"text": "You have [b]two boards[/b]. Each is a lane three slots wide, and the rightmost slot is taken by your [color=#6b8fbf]tower[/color] until it dies — so you have [b]two usable slots per board, four in total[/b].\n\nBehind both boards sits your [color=#bf6b9e]throne[/color] at 150 HP. [b]Lose the throne and you lose the game.[/b] That is the only way to lose.",
 				"allow": [],
 				"read_more": "board",
 			},
@@ -139,7 +139,7 @@ static func _l_board() -> Dictionary:
 			},
 			{
 				"title": "Round 1",
-				"text": "Round 1 has begun and you drew a card. You draw [b]one card per turn[/b] from a 60-card deck, and your hand caps at 10.\n\nA turn is: draw, do whatever you like in any order, then end the turn — and [b]everything you queued resolves when the turn ends[/b], not when you click it.",
+				"text": "Round 1 has begun and you drew your cards. You draw [b]two cards per turn[/b] from a 60-card deck, and your hand caps at 10.\n\nA turn is: draw, do whatever you like in any order, then end the turn — and [b]everything you queued resolves when the turn ends[/b], not when you click it.",
 				"allow": [],
 				"read_more": "turn",
 			},
@@ -424,7 +424,7 @@ static func _l_towers() -> Dictionary:
 		"steps": [
 			{
 				"title": "Each board has a tower",
-				"text": "A tower has 50 HP, sits in the third slot, and [b]fires at the board across from it every turn[/b].\n\nIt is not a wall. It is an [b]attrition engine[/b] — every turn you fail to answer it, it eats another unit.",
+				"text": "A tower has 75 HP, sits in the third slot, and [b]fires at the board across from it every turn[/b].\n\nIt is not a wall. It is an [b]attrition engine[/b] — every turn you fail to answer it, it eats another unit.",
 				"allow": [],
 				"read_more": "towers",
 			},
@@ -611,7 +611,7 @@ static func _l_support() -> Dictionary:
 			},
 			{
 				"title": "Hand size is the cost",
-				"text": "With no play limit, what stops you? [b]A support is a card you drew instead of a unit[/b], in a game where you draw one per turn.\n\nPlaying four supports in a turn means you spent four draws to do it. That is the whole limiter.",
+				"text": "With no play limit, what stops you? [b]A support is a card you drew instead of a unit[/b], in a game where you draw two per turn.\n\nPlaying four supports in a turn means you spent two turns of draw to do it. That is the whole limiter.",
 				"allow": [],
 			},
 			{
@@ -916,7 +916,7 @@ static func _l_deckbuilding() -> Dictionary:
 		"steps": [
 			{
 				"title": "Exactly 60 cards",
-				"text": "Not \"up to\" — [b]a deck that is not exactly 60 cards cannot be taken into a fight.[/b]\n\nA fixed size means an opening hand of 6 and one draw per turn represent the same fraction of the deck in every game, so the ratios you choose are real decisions rather than something you can dodge by trimming the list.",
+				"text": "Not \"up to\" — [b]a deck that is not exactly 60 cards cannot be taken into a fight.[/b]\n\nA fixed size means an opening hand of 8 and two draws per turn represent the same fraction of the deck in every game, so the ratios you choose are real decisions rather than something you can dodge by trimming the list.",
 				"read_more": "deckbuilding",
 			},
 			{
@@ -1006,6 +1006,7 @@ static func compendium() -> Array:
 			_p_kw_consume(), _p_kw_judgment(), _p_kw_sanctuary(), _p_kw_windfury(),
 			_p_kw_resist(), _p_kw_siphon(), _p_kw_void(), _p_kw_rift(),
 			_p_kw_earth(), _p_kw_essence(),
+			_p_kw_stoke(), _p_kw_scrap(),
 		]},
 		{"title": "Factions", "pages": [
 			_p_factions(), _p_gap(),
@@ -1041,7 +1042,7 @@ Deployment is unconstrained — the constraint is [i]acting[/i]. A board full of
 Three things stand between you and it:
 • Their [b]units[/b], which shield everything behind them
 • Their two [b]towers[/b], one per board
-• Their [b]throne[/b] at 100 HP, which grows +5 max HP every round
+• Their [b]throne[/b] at 150 HP, which grows +5 max HP every round
 
 [b]The three decisions that matter[/b]
 [b]1.[/b] When to play an energy card — it is worth more the longer you hold it, but you may only play one per turn, so a skipped play can never be made up.
@@ -1056,14 +1057,14 @@ static func _p_board() -> Dictionary:
 While towers live: [b]2 usable unit slots per board — 4 total.[/b]
 When both towers die: [b]3 slots per board — 6 total.[/b]
 
-[code]              ENEMY THRONE (100 HP)
+[code]              ENEMY THRONE (150 HP)
    ┌─────────────────────┐  ┌─────────────────────┐
    │  [ 1 ][ 2 ][TOWER]  │  │  [ 1 ][ 2 ][TOWER]  │   enemy
    └─────────────────────┘  └─────────────────────┘
    ┌─────────────────────┐  ┌─────────────────────┐
    │  [ 1 ][ 2 ][TOWER]  │  │  [ 1 ][ 2 ][TOWER]  │   yours
    └─────────────────────┘  └─────────────────────┘
-              YOUR THRONE (100 HP)[/code]
+              YOUR THRONE (150 HP)[/code]
 
 [b]Each board is its own fight.[/b] An attack resolves entirely within the board it faces. Units on your other board defend nothing here — if the board being attacked has no living units, its tower is exposed no matter how crowded the board beside it is.
 
@@ -1102,12 +1103,12 @@ static func _p_setup() -> Dictionary:
 	return {"id": "setup", "title": "Setup & Opening Hand", "body":
 "Before round 1:
 
-[b]1.[/b] Both players draw [b]6 cards[/b], guaranteed to contain a Basic unit.
+[b]1.[/b] Both players draw [b]8 cards[/b], guaranteed to contain [b]two[/b] Basic units.
 [b]2.[/b] Each player may [b]mulligan once[/b].
 [b]3.[/b] Both players deploy Basics into empty slots. Nothing else — no energy, no supports, no attacks.
 [b]4.[/b] Round 1 begins. Towers are silent through it.
 
-[b]The guaranteed Basic is a deal filter, not a stacked hand.[/b] The deck is reshuffled and re-dealt whole rather than a Basic being searched to the top, so everything except the guarantee stays as random as the deck makes it.
+[b]The guaranteed Basics are a deal filter, not a stacked hand.[/b] The deck is reshuffled and re-dealt whole rather than Basics being searched to the top, so everything except the guarantee stays as random as the deck makes it.
 
 It exists because [b]a hand with no Basic cannot take a single action all turn[/b]: units are the only free play, a Stage 1 needs a body on the board, and energy with nothing to charge does nothing.
 
@@ -1262,8 +1263,8 @@ This makes intra-turn ordering matter [b]more[/b], not less. Sequencing a volley
 
 static func _p_towers() -> Dictionary:
 	return {"id": "towers", "title": "Towers & Throne", "body":
-"[b]Tower[/b] — one per board, 2 total. 50 HP. Gains +5 max HP per round.
-[b]Throne[/b] — 100 HP. Gains +5 max HP per round.
+"[b]Tower[/b] — one per board, 2 total. 75 HP. Gains +5 max HP per round.
+[b]Throne[/b] — 150 HP. Gains +5 max HP per round.
 
 [b]Growth is per round[/b], not per turn — once both players have acted.
 
@@ -1298,7 +1299,7 @@ static func _p_support() -> Dictionary:
 	return {"id": "support", "title": "Support, Tools & Tower Support", "body":
 "[b]Support cards[/b] are one-shot effects: play, resolve, discard. Usually free, [b]no per-turn limit[/b], no item/supporter split.
 
-[b]Hand size is the cost.[/b] A support is a card you drew instead of a unit, in a game where you draw one per turn.
+[b]Hand size is the cost.[/b] A support is a card you drew instead of a unit, in a game where you draw two per turn.
 
 [b]The power band[/b]
 A support sits at roughly [b]one turn of tempo[/b]. Nothing should win a game on its own.
@@ -1546,6 +1547,40 @@ static func _p_kw_resist() -> Dictionary:
 Resist applies in both damage paths and to Retribution recoil.
 
 Deliberately [b]not[/b] part of any faction's identity, Gaia's included — the shared keyword list exists so any card can reach for it on flavour."}
+
+
+static func _p_kw_stoke() -> Dictionary:
+	return {"id": "kw_stoke", "title": "Stoke N", "keyword": "stoke", "faction": "Forge signature", "body":
+"[b]A free once-per-turn ability: deal N damage to this unit. It has [i]stoked[/i] until the end of your turn.[/b]
+
+[b]Stoke does not pay for anything by itself.[/b] Activating it is the whole action — you lose the HP, and the unit is now flagged. [b]Other lines read that flag[/b]: \"if this unit stoked this turn, +10 damage\", \"...this attack costs no energy\", \"...it burns past living units\".
+
+That separation is the entire keyword. The HP is spent [b]before you know what you will need it for[/b], and everything that pays you back has to already be on the board.
+
+[b]Stoke damage is unpreventable.[/b] Sanctuary does not absorb it, Resist does not reduce it, and Retribution does not recoil — there is no attacker. It is a [b]cost you choose to pay[/b], not damage from a source. If it went through the damage path, a shielded body would stoke for free and the faction's central cost would be optional in exactly the matchups where it has to be real.
+
+[b]It may kill the unit paying it[/b], and that death is an ordinary one — Toll refunds, Rise returns it, Essence may pay for it. Forge gets no private kind of death.
+
+[b]The flag is per-unit.[/b] Unit A stoking does not turn on unit B's attack. A card that reads another unit's flag has to print that it does.
+
+[b]N varies by unit[/b], and that is a balance axis: a Basic prints Stoke 20, a Stage 2 may print Stoke 50. The anchor is roughly [b]20 HP ≈ 1 energy of value[/b]. Payoffs that scale with the amount, or that require a threshold, are what make a large printed Stoke worth having."}
+
+
+static func _p_kw_scrap() -> Dictionary:
+	return {"id": "kw_scrap", "title": "Scrap", "keyword": "scrap", "faction": "Forge signature", "body":
+"[b]An ability cost: destroy another unit you control to activate this line.[/b]
+
+Where Stoke spends a body gradually, Scrap spends one outright.
+
+[b]Another unit — never itself.[/b] A line that ate its own body would resolve with nothing left to have resolved from.
+
+[b]The scrapped unit really dies.[/b] Toll refunds, Rise returns it, Essence may pay for it, its attached energy is lost and its Tool is discarded. That is the opposite of [b]retreat[/b], which is the alternative to dying and fires none of them.
+
+That is also the deliberate multi-faction door: [b]Forge/Hel[/b] scraps a Toll body and gets paid for the fuel.
+
+[b]It charges every single use.[/b] An attack's cost stays attached and fires free every turn after — an annuity. Scrap, like Consume, is the opposite, which is what lets a free once-per-turn ability be strong without becoming a permanent engine.
+
+[b]Scrap is rare[/b], and the reason is board width: every Scrap costs a slot, and a thin board is a board whose tower is about to be exposed."}
 
 
 static func _p_kw_siphon() -> Dictionary:

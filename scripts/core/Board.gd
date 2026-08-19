@@ -8,8 +8,8 @@ const SLOT_COUNT := 3
 const TOWER_SLOT := 2
 
 var slots: Array = [null, null, null]   ## Array[Unit or null]
-var tower_hp: int = 50
-var tower_max_hp: int = 50
+var tower_hp: int = 75
+var tower_max_hp: int = 75
 
 ## The permanent tower supports on this tower, in the order they were played.
 ## There is no cap: a tower may hold any number, including repeats of the same

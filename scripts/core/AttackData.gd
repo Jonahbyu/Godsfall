@@ -36,10 +36,19 @@ var effects: Array = []          ## Array[Dictionary] — {op: String, n: int}
 ## True when this line is an ability rather than an attack.
 var is_ability: bool = false
 
-## Consume N — attached energy *destroyed* on activation, not merely required.
-## The only cost an ability may carry, and priced on the steeper Consume curve
-## (~20 damage per energy consumed) when it deals damage at all. See CLAUDE.md.
+## Consume N — attached energy *destroyed* on activation, not merely required,
+## priced on the steeper Consume curve (~20 damage per energy consumed) when it
+## deals damage at all. See CLAUDE.md.
 var consume: int = 0
+
+## Stoke N — Forge. HP this line spends from the unit activating it. A cost the
+## controller chooses to pay, so it is unpreventable: Sanctuary, Resist and
+## Retribution all ignore it. Sets `Unit.stoked_this_turn`, which other lines read.
+var stoke: int = 0
+
+## Scrap — Forge. This line destroys ANOTHER unit you control on activation.
+## The scrapped unit dies through the normal path, so Toll / Rise / Essence fire.
+var scrap: bool = false
 
 
 static func from_dict(d: Dictionary) -> AttackData:
@@ -52,6 +61,8 @@ static func from_dict(d: Dictionary) -> AttackData:
 	a.effects = d.get("effects", [])
 	a.is_ability = bool(d.get("ability", false))
 	a.consume = int(d.get("consume", 0))
+	a.stoke = int(d.get("stoke", 0))
+	a.scrap = bool(d.get("scrap", false))
 	## Read whichever color key is present rather than hard-coding one. This was
 	## `c.get("hel", 0)`, which silently priced every Heaven attack at 0 the moment
 	## Heaven shipped with `{"heaven": N}` cost blocks.
@@ -75,6 +86,13 @@ func total_cost() -> int:
 	return cost_faction + cost_colorless
 
 
+## True when this line prints any non-energy cost. Abilities are free unless they
+## print one of these; none of them is ever paid from the pool. See CLAUDE.md,
+## "Abilities are free".
+func has_printed_cost() -> bool:
+	return consume > 0 or stoke > 0 or scrap
+
+
 ## Energy destroyed when this line resolves. Only Consume ever destroys energy —
 ## an ordinary attack's cost stays attached and pays for itself every turn after.
 func consume_cost() -> int:
@@ -84,7 +102,14 @@ func consume_cost() -> int:
 ## "1 Hel, 1 colorless" — or for an ability, "Free" / "Consume 1".
 func cost_string() -> String:
 	if is_ability:
-		return "Consume %d" % consume if consume > 0 else "Free"
+		var costs: Array[String] = []
+		if consume > 0:
+			costs.append("Consume %d" % consume)
+		if stoke > 0:
+			costs.append("Stoke %d" % stoke)
+		if scrap:
+			costs.append("Scrap")
+		return ", ".join(costs) if costs.size() > 0 else "Free"
 	var parts: Array[String] = []
 	if cost_faction > 0:
 		parts.append("%d %s" % [cost_faction, cost_color.capitalize() if cost_color != "" else "colored"])

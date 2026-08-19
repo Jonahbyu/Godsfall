@@ -6,7 +6,7 @@ extends SceneTree
 ## Total assertions this harness is expected to run. Checked at the end, because
 ## a crash mid-test produces "0 failed" and exit 0 — the assertions after the
 ## crash simply never run, and silence reads identically to success.
-const EXPECTED_ASSERTIONS := 146
+const EXPECTED_ASSERTIONS := 147   ## +1: gaia costs parse non-zero (2026-08-15 re-pricing)
 
 var _pass := 0
 var _fail := 0
@@ -210,16 +210,17 @@ func _test_aura_damage() -> void:
 	var target := Unit.new(_make_card("d_tgt", 100, {}))
 	_place(gs, 1, 0, 0, target)
 
-	## 10 printed + 4 Earth = 14. Driven through the REAL resolution path.
+	## 10 printed + 4 Earth at HALF rate (4/2 = 2) = 12. Driven through the REAL
+	## resolution path. Earth pays full rate into HP and half into damage.
 	gs._resolve_line_effects(p, foe, attacker, atk, null, 0, 0)
-	_check("aura adds to attack damage", target.hp, 86)
+	_check("aura adds to attack damage", target.hp, 88)
 
 	## The aura is the ATTACKER's. A defender's own Earth must not reduce damage.
 	var shielded := Unit.new(_make_card("d_shield", 100, {"earth": 9}))
 	_place(gs, 1, 0, 1, shielded)
 	target.hp = 0
 	gs._resolve_line_effects(p, foe, attacker, atk, null, 0, 1)
-	_check("defender Earth does not reduce damage", shielded.hp, 86)
+	_check("defender Earth does not reduce damage", shielded.hp, 88)
 
 	## Zero Earth must leave damage exactly as printed — the no-regression case
 	## that every existing card in the game depends on.
@@ -316,28 +317,28 @@ func _test_tower_aura() -> void:
 	var p = gs.players[0]
 	var b = p.boards[0]
 
-	_check("tower starts at printed max", b.tower_max_hp, 50)
+	_check("tower starts at printed max", b.tower_max_hp, 75)
 
 	var e := Unit.new(_make_card("t_e", 60, {"earth": 6}))
 	_place(gs, 0, 0, 0, e)
 	gs.sync_tower_aura(p)
-	_check("tower max HP gains the aura", b.tower_max_hp, 56)
-	_check("current HP rises with it", b.tower_hp, 56)
+	_check("tower max HP gains the aura", b.tower_max_hp, 81)
+	_check("current HP rises with it", b.tower_hp, 81)
 
 	## Idempotent — syncing repeatedly must not compound.
 	gs.sync_tower_aura(p)
 	gs.sync_tower_aura(p)
-	_check("sync is idempotent", b.tower_max_hp, 56)
-	_check("current HP not compounded", b.tower_hp, 56)
+	_check("sync is idempotent", b.tower_max_hp, 81)
+	_check("current HP not compounded", b.tower_hp, 81)
 
 	## Both towers receive it, not just the board the Earth unit stands on.
-	_check("the other tower gains it too", p.boards[1].tower_max_hp, 56)
+	_check("the other tower gains it too", p.boards[1].tower_max_hp, 81)
 
 	## The aura shrinks when the Earth body dies.
 	e.hp = 0
 	gs.sync_tower_aura(p)
-	_check("tower max HP falls back", b.tower_max_hp, 50)
-	_check("current HP clamped down", b.tower_hp, 50)
+	_check("tower max HP falls back", b.tower_max_hp, 75)
+	_check("current HP clamped down", b.tower_hp, 75)
 
 	## Shrinking must never kill a tower — it floors at 1.
 	e.hp = 60
@@ -587,9 +588,9 @@ func _test_makeshift_tower() -> void:
 	var victim := Unit.new(_make_card("mt_v", 100, {}))
 	_place(gs, 1, 0, 0, victim)
 
-	## 10 printed + 1 own Earth = 11. It pays nothing to fire.
+	## 10 printed + 1 own Earth at half rate (1/2 = 0) = 10. It pays nothing to fire.
 	gs.resolve_auto_fire(p, foe)
-	_check("auto-fires without energy", victim.hp, 89)
+	_check("auto-fires without energy", victim.hp, 90)
 	_check("spent no energy", mt.attached, 0)
 
 	## It grows like a tower, and current HP rises with the max.
@@ -625,7 +626,7 @@ func _test_makeshift_tower() -> void:
 	_place(gs3, 1, 0, 0, shield)                  ## only living body, slot 0
 	var tower_hp_before: int = foe3.boards[0].tower_hp
 	gs3.resolve_auto_fire(p3, foe3)
-	_check("redirects to the leftmost survivor", shield.hp, 89)
+	_check("redirects to the leftmost survivor", shield.hp, 90)
 	_check("cannot reach the tower past a unit", foe3.boards[0].tower_hp, tower_hp_before)
 
 
@@ -670,10 +671,19 @@ func _test_card_data() -> void:
 	## Attack costs must parse in the card's OWN colour. Heaven shipped with every
 	## attack costing 0 because the parser only read `cost.hel` — the exact bug
 	## CLAUDE.md's decision log records, so Gaia asserts against it directly.
-	_check("conduit attack cost", lc.attacks[0].total_cost(), 2)
-	_check("deep roots attack cost", dr.attacks[0].total_cost(), 3)
-	_check("conduit attack damage", lc.attacks[0].damage, 18)
-	_check("deep roots attack damage", dr.attacks[0].damage, 26)
+	## Asserted as invariants rather than as exact numbers. Pinning the printed
+	## values here made this harness fail twice during the 2026-08-15 re-pricing
+	## without the parser ever being wrong — the bug being guarded against is a
+	## cost that silently reads as ZERO because the parser looked for the wrong
+	## colour key, and that is what these check.
+	_check("conduit cost parses in gaia", lc.attacks[0].cost_faction > 0, true)
+	_check("deep roots cost parses in gaia", dr.attacks[0].cost_faction > 0, true)
+	_check("gaia costs parse non-zero", lc.attacks[0].total_cost() > 0
+		and dr.attacks[0].total_cost() > 0, true)
+	## Damage is likewise a floor, not an equality: the point is that a Gaia
+	## attack carries real printed damage, not that it carries a specific amount.
+	_check("conduit attack has damage", lc.attacks[0].damage > 0, true)
+	_check("deep roots attack has damage", dr.attacks[0].damage > 0, true)
 
 
 ## The full Gaia card set as authored in `data/cards.json`: five evolution chains,

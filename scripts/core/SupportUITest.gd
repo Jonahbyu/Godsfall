@@ -157,7 +157,7 @@ func _test_targeted_support() -> void:
 
 	combat._pick_support_target(u)
 	await process_frame
-	_ok("healed on click", u.hp == 30)      ## Shore Up is the 20 HP baseline
+	_ok("healed on click", u.hp == 42)      ## Shore Up is the 32 HP baseline
 	_ok("pick mode cleared", combat._pending_support == null)
 	_ok("card left hand", not you.hand.has("shore_up"))
 
@@ -256,7 +256,7 @@ func _test_support_drop() -> void:
 	_ok("heal is droppable on a damaged friendly unit", combat._can_drop_on_unit(pay, u))
 	combat._drop_on_unit(pay, u)
 	await process_frame
-	_ok("dropping the heal healed the unit", u.hp == 30)
+	_ok("dropping the heal healed the unit", u.hp == 42)
 	_ok("dropped heal left hand", not you.hand.has("shore_up"))
 
 	## 2. Tower support stays click-only — a tower is not a unit.

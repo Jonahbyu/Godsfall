@@ -14,9 +14,26 @@ extends RefCounted
 
 var gs: GameState
 
+## Heuristic generation. "v1" is the original behaviour, preserved byte-for-byte
+## so balance samples taken before this change remain comparable; "v2" adds
+## saving-toward-attacks, focus fire, and volley ordering.
+##
+## The variant exists because the AI is the measuring instrument for every
+## balance number in the design docs. Changing it silently would invalidate the
+## existing readings without anyone noticing which ones.
+var variant: String = "v1"
+
 
 func _init(state: GameState) -> void:
 	gs = state
+
+
+func set_variant(v: String) -> void:
+	variant = v
+
+
+func _v2() -> bool:
+	return variant == "v2"
 
 
 ## Setup: mulligan if the opening hand is unplayable, then put Basics down.
@@ -89,6 +106,57 @@ func _use_abilities(p: Player) -> void:
 			gs.use_ability(p, u, ab)
 
 
+## Whether Stoking is worth the HP right now.
+##
+## Three things have to be true, and the first is the one a naive "free abilities
+## are always taken" rule gets wrong: **Stoke pays nothing by itself.** It sets a
+## flag that a LATER line reads, so stoking on a body with no payoff is pure
+## self-harm.
+func _stoke_worth_it(p: Player, u: Unit, ab: AttackData) -> bool:
+	## 1. Something on this unit has to actually read the flag. The flag is
+	##    per-unit, so another unit's payoff is no reason to burn this one.
+	var has_payoff := false
+	for ln in u.card.attacks:
+		if ln == ab:
+			continue
+		for e in ln.effects:
+			if String(e.get("op", "")).begins_with("stoked_"):
+				has_payoff = true
+				break
+
+	## The expansion put several payoffs on the STOKE LINE ITSELF rather than on
+	## a later attack — draw, the decay skip, the extra attack slot, the second
+	## Stoke, the discount. Those pay out the moment the ability resolves, so the
+	## loop above (which deliberately skips `ab`) cannot see them and the AI would
+	## refuse to use a card whose whole point is the ability. `stoked_heal_back`
+	## is NOT in this list: it refunds the cost and pays nothing on its own, which
+	## is exactly the no-op case rule 1 exists to catch.
+	if not has_payoff:
+		for op in ["stoked_draw", "stoked_no_decay", "stoked_extra_attack",
+				"stoked_twice", "stoked_cost_reduction", "stoked_cleave"]:
+			if ab.has_effect(op):
+				has_payoff = true
+				break
+	## A self-refunding Stoke (heal-back) is worth taking on its own terms only
+	## when something else reads the flag — otherwise it is a no-op that costs a
+	## once-per-turn activation.
+	if not has_payoff:
+		return false
+
+	## 2. Survive it. The AI does not model racing, so it never stokes itself to
+	##    death — a body that dies to its own cost has bought nothing unless the
+	##    payoff already resolved, which it has not at this point in the turn.
+	var refunds: bool = ab.has_effect("stoked_heal_back")
+	if not refunds and u.hp <= ab.stoke:
+		return false
+
+	## 3. Do not stoke a body already too hurt to take a hit afterwards. Half the
+	##    printed max is a rough line, and it is skipped when the cost refunds.
+	if not refunds and u.hp - ab.stoke < u.max_hp() / 4:
+		return false
+	return true
+
+
 ## Free abilities are always taken. A Consume has to justify the energy it
 ## destroys, so it is only used when there is something to gain.
 func _ability_worth_it(p: Player, u: Unit, ab: AttackData) -> bool:
@@ -101,6 +169,26 @@ func _ability_worth_it(p: Player, u: Unit, ab: AttackData) -> bool:
 			if other.is_alive() and other.attached > 0:
 				return true
 		return false
+
+	## ------------------------------------------------------------ Forge
+	##
+	## Stoke and Scrap are FREE in the pool sense but expensive in HP and bodies,
+	## so the "free abilities are always taken" default is actively harmful here:
+	## it would burn the board down every turn whether or not a payoff follows.
+	## These checks run ahead of the free/Consume split for the same reason the
+	## Siphon one does — once per turn per unit is itself a cost.
+	if ab.stoke > 0:
+		return _stoke_worth_it(p, u, ab)
+	if ab.scrap:
+		## Never scrap the last body: a thin board is a board whose tower is
+		## about to be exposed, and shielding is what keeps a structure alive.
+		var living := 0
+		for other in p.all_units():
+			if other.is_alive():
+				living += 1
+		if living <= 2:
+			return false
+		return _stoke_worth_it(p, u, ab) if ab.stoke > 0 else true
 
 	if ab.consume <= 0:
 		## Consume the Fallen destroys a friendly body — only worth it when
@@ -421,15 +509,96 @@ func _queue_attacks(p: Player) -> void:
 
 	candidates.sort_custom(func(a, b): return _score(a, enemy) > _score(b, enemy))
 
+	## v2 tracks projected damage per enemy unit across the whole volley, so
+	## attacks can be aimed rather than each one scored against the board as it
+	## stands. Without this the AI spreads damage by default and never converts a
+	## volley into a kill — which makes *clearing a board* look far harder than
+	## the rules make it, and clearing a board is the gate on reaching a tower.
+	var projected: Dictionary = {}      ## Unit -> damage already aimed at it
+
 	for c in candidates:
 		var u: Unit = c["u"]
-		if u.queued_attack != null:
+		## One queued attack per unit — EXCEPT when a Forge `stoked_extra_attack`
+		## payoff granted a second slot this turn. Without this exception the AI
+		## could never use the grant at all: it would stoke, pay the HP, and then
+		## skip the unit here because it already had something queued. Found by
+		## probing which ops actually fire in AI games rather than by reading.
+		if u.queued_attack != null and not u.can_queue_extra():
 			continue
 		var atk: AttackData = c["atk"]
 		## Skip the 20-cost bomb unless it's actually reachable.
 		if u.pool_needed(atk) > p.pool:
 			continue
-		gs.queue_attack(p, u, atk)
+		if _v2():
+			var pick: Unit = _focus_target(p, enemy, u, atk, c["bi"], c["si"], projected)
+			if pick != null:
+				var dmg: int = atk.damage + _bonus_damage(u, atk, pick)
+				projected[pick] = int(projected.get(pick, 0)) + dmg
+			gs.queue_attack(p, u, atk, pick)
+		else:
+			gs.queue_attack(p, u, atk)
+
+
+## v2 focus fire: name the enemy unit this attack should hit.
+##
+## Returns null to leave the attack untargeted (the v1 behaviour: slot across,
+## then leftmost survivor), which is correct whenever no named target is better
+## than the default.
+##
+## The rule is "finish what the volley has already committed to killing, else
+## start on the target we are most likely to finish". Damage already aimed at a
+## unit earlier in this volley is counted, so three attacks converge instead of
+## each independently picking the same healthiest body and overkilling it.
+##
+## Targeting is deliberately conservative about *structures*: a named target must
+## be a living unit, and once a board is projected clear the attack is left
+## untargeted so it falls through the chain to the tower on its own.
+func _focus_target(p: Player, enemy: Player, u: Unit, atk: AttackData,
+		bi: int, si: int, projected: Dictionary) -> Unit:
+	var eb: Board = enemy.boards[bi]
+	var living: Array = []
+	for slot in Board.SLOT_COUNT:
+		var d: Unit = eb.unit_at(slot)
+		if d != null and d.is_alive():
+			living.append(d)
+	if living.is_empty():
+		return null
+
+	## If everything on this board is already projected dead, don't name a target
+	## — the attack should fall through to the tower.
+	var all_dead := true
+	for d in living:
+		if int(projected.get(d, 0)) < d.hp:
+			all_dead = false
+			break
+	if all_dead:
+		return null
+
+	var best: Unit = null
+	var best_score := -1.0
+	for d in living:
+		var already: int = int(projected.get(d, 0))
+		var remaining: int = d.hp - already
+		if remaining <= 0:
+			continue                     ## already dead in projection; don't overkill
+		var dmg: float = float(atk.damage + _bonus_damage(u, atk, d))
+		var score: float
+		if dmg >= float(remaining):
+			## A kill, and the cheaper the overkill the better — spending a 50
+			## on a 12 HP body wastes the volley's concentration.
+			score = 1000.0 - float(dmg - remaining)
+		else:
+			## No kill available: chip whatever we come closest to finishing, so
+			## the *next* attack in the volley has a kill to take.
+			score = 100.0 - float(remaining - dmg)
+		if score > best_score:
+			best_score = score
+			best = d
+
+	## Leaving it untargeted is equivalent when the pick is the default anyway.
+	if best != null and best == eb.unit_at(si):
+		return null
+	return best
 
 
 ## Higher is better: prefer lethal-on-defender, then damage per energy.
@@ -494,12 +663,86 @@ func _bonus_damage(u: Unit, atk: AttackData, defender: Unit) -> int:
 
 
 func _dump_leftover_energy(p: Player) -> void:
-	## Bank the rest on the toughest unit so decay can't eat it.
 	if p.pool <= 0:
 		return
+	if _v2():
+		_bank_leftover_energy_v2(p)
+		return
+	## Bank the rest on the toughest unit so decay can't eat it.
 	var best: Unit = null
 	for u in p.all_units():
 		if best == null or u.hp > best.hp:
 			best = u
 	if best != null:
 		gs.charge(p, best, p.pool)
+
+
+## v2 banking: charge toward the cheapest attack the board cannot yet afford,
+## and only bank the surplus that decay would actually take.
+##
+## v1 dumped the entire pool onto the single toughest body every turn. That is
+## not a neutral simplification for measurement purposes — it has three effects
+## that all bias the numbers this simulation exists to produce:
+##
+##   - The pool is empty at every decision point, so an expensive attack is
+##     never reachable and reads as unplayable whatever its printed cost.
+##   - Energy piles onto one unit far past what its own attacks cost, and dies
+##     with it, inflating how punishing unit death looks.
+##   - For Void specifically it maximises the Gap by accident, which the design
+##     docs already flag as having produced a bad tuning decision.
+##
+## Decay is 20% floored, so a pool at or under 4 loses exactly 1 whether it holds
+## 1 or 4. Holding a small pool is therefore nearly free, and holding a large one
+## is taxed — so the rule is: fund the next attack, then keep a small float, then
+## bank whatever is left rather than letting decay eat it.
+func _bank_leftover_energy_v2(p: Player) -> void:
+	## 1. Put energy where it completes a real attack. Cheapest gap first, so the
+	##    board converts pool into activations as fast as possible.
+	var guard := 0
+	while p.pool > 0 and guard < 12:
+		guard += 1
+		var target: Unit = null
+		var gap := 999
+		for u in p.all_units():
+			if not u.is_alive():
+				continue
+			for atk in u.card.attack_lines():
+				var need: int = u.pool_needed(atk)
+				if need <= 0 or need > p.pool:
+					continue
+				if need < gap:
+					gap = need
+					target = u
+		if target == null:
+			break
+		gs.charge(p, target, gap)
+
+	if p.pool <= 0:
+		return
+
+	## 2. Keep a float that decay cannot meaningfully tax, so there is pool
+	##    available next turn for a support or a newly-deployed body. Below the
+	##    floor the 20% rule takes the same 1 energy regardless.
+	const FLOAT_KEEP := 4
+	if p.pool <= FLOAT_KEEP:
+		return
+
+	## 3. Bank the taxable surplus on the body most likely to survive to spend it.
+	##    "Toughest" in v1 meant highest current HP; a unit's *attacks* matter
+	##    too, since energy on a body with nothing expensive to buy is stranded.
+	var best: Unit = null
+	var best_score := -1.0
+	for u in p.all_units():
+		if not u.is_alive():
+			continue
+		var ceiling := 0
+		for atk in u.card.attack_lines():
+			ceiling = max(ceiling, u.attack_cost(atk))
+		## Room left before this unit's own biggest attack is fully funded.
+		var room: int = max(0, ceiling - u.attached)
+		var score := float(u.hp) + 20.0 * float(min(room, p.pool))
+		if score > best_score:
+			best_score = score
+			best = u
+	if best != null:
+		gs.charge(p, best, p.pool - FLOAT_KEEP)

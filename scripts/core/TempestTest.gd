@@ -9,7 +9,7 @@ extends SceneTree
 ## Total assertions this harness is expected to run. Checked at the end, because
 ## a crash mid-file produces "0 failed" and exit 0 — the assertions after the
 ## crash simply never run, and silence reads identically to success.
-const EXPECTED_ASSERTIONS := 10
+const EXPECTED_ASSERTIONS := 19
 
 const CardDataS = preload("res://scripts/core/CardData.gd")
 const UnitS = preload("res://scripts/core/Unit.gd")
@@ -58,6 +58,8 @@ func _initialize() -> void:
 
 	_test_charge_counter()
 	_test_charge_persistence()
+	_test_storm_counter()
+	_test_storm_instance()
 
 	print("%d passed, %d failed" % [_pass, _fail])
 	if _pass + _fail != EXPECTED_ASSERTIONS:
@@ -103,3 +105,85 @@ func _test_charge_persistence() -> void:
 	_check("a raised Charge rate reads modified", m.charge_rate(), 8)
 	m.evolve_into(evolved)
 	_check("the modifier cleared - this is the new print", m.charge_rate(), 8)
+
+
+# ------------------------------------------------------------------ helpers
+
+func _new_game():
+	return load("res://scripts/core/GameState.gd").new([], [])
+
+
+func _place(gs, side: int, bi: int, si: int, u: Unit) -> void:
+	gs.players[side].boards[bi].slots[si] = u
+
+
+## A unit of any faction, with arbitrary keywords and lines.
+func _make(id: String, faction: String, hp: int, kws: Dictionary,
+		lines: Array = []) -> Unit:
+	var kw_list: Array = []
+	for k in kws:
+		kw_list.append({"kw": k, "n": kws[k]})
+	return UnitS.new(CardDataS.from_dict({
+		"id": id, "name": id, "type": "unit", "faction": faction,
+		"stage": "basic", "hp": hp, "keywords": kw_list, "attacks": lines,
+	}))
+
+
+func _attack_line(dmg: int, effects: Array = []) -> Dictionary:
+	return {"id": "swing", "name": "Swing", "damage": dmg, "effects": effects}
+
+
+func _test_storm_counter() -> void:
+	var gs = _new_game()
+	_check("Storm starts at 0", gs.storm, 0)
+	gs.raise_storm(2)
+	_check("raise_storm raises it", gs.storm, 2)
+	gs.raise_storm(3)
+	_check("Storm accumulates and never falls", gs.storm, 5)
+	## Symmetric: one number, not one per player. Unlike the Gap.
+	_check("a non-Tempest attacker gets N", gs.storm_damage_for(null), 5)
+
+
+## Drive ONE real attack through the engine and return the HP the defender lost.
+## Calls _deal_lane_damage via _deliver_attack_damage rather than simulating the
+## rule: a test that reimplements what it checks proves nothing about the engine.
+func _attack_for(gs, faction: String, dmg: int, resist: int = 0,
+		scale: int = 0) -> int:
+	var fx: Array = []
+	if scale > 0:
+		fx.append({"op": "storm_scale_damage", "n": scale})
+	var atk_dict := _attack_line(dmg, fx)
+	var a := _make("atk", faction, 100, {}, [atk_dict])
+	var dkw := {}
+	if resist > 0:
+		dkw["resist"] = resist
+	var d := _make("def", "hel", 500, dkw, [])
+	_place(gs, 0, 0, 0, a)
+	_place(gs, 1, 0, 0, d)
+	var before: int = d.hp
+	var atk = a.card.attacks[0]
+	gs._deliver_attack_damage(gs.players[0], gs.players[1], a, 0, 0, dmg, atk)
+	return before - d.hp
+
+
+func _test_storm_instance() -> void:
+	## A 20-damage attack at Storm 3 from a NON-Tempest unit deals 20 + 3.
+	var gs = _new_game()
+	gs.raise_storm(3)
+	_check("Storm adds one instance of N", _attack_for(gs, "hel", 20), 23)
+
+	## A Tempest attacker's Storm instance is doubled.
+	var gs2 = _new_game()
+	gs2.raise_storm(3)
+	_check("a Tempest unit's Storm instance is 2N", _attack_for(gs2, "tempest", 20), 26)
+
+	## ONE instance, not N: against Resist 10, Storm 3 is fully blunted rather
+	## than becoming three 1-damage ticks that pierce armour.
+	var gs3 = _new_game()
+	gs3.raise_storm(3)
+	_check("Resist blunts the Storm instance normally", _attack_for(gs3, "hel", 20, 10), 11)
+
+	## Storm 0 changes nothing at all.
+	var gs4 = _new_game()
+	_check("no Storm, no extra instance", _attack_for(gs4, "hel", 20), 20)
+	_check("and the counter stays 0", gs4.storm, 0)
