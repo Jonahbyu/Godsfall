@@ -9,7 +9,7 @@ extends SceneTree
 ## Total assertions this harness is expected to run. Checked at the end, because
 ## a crash mid-file produces "0 failed" and exit 0 — the assertions after the
 ## crash simply never run, and silence reads identically to success.
-const EXPECTED_ASSERTIONS := 39
+const EXPECTED_ASSERTIONS := 46
 
 const CardDataS = preload("res://scripts/core/CardData.gd")
 const UnitS = preload("res://scripts/core/Unit.gd")
@@ -63,6 +63,7 @@ func _initialize() -> void:
 	_test_charge_growth()
 	_test_charge_kill_vs_judgment()
 	_test_discharge()
+	_test_storm_ops()
 
 	print("%d passed, %d failed" % [_pass, _fail])
 	if _pass + _fail != EXPECTED_ASSERTIONS:
@@ -356,3 +357,71 @@ func _test_discharge() -> void:
 	_discharge(gs4, sx, heir)
 	_check("transfer empties the source", sx.charge, 0)
 	_check("and fills the destination", heir.charge, 18)
+
+
+func _enemy_tower_hp(gs) -> int:
+	return gs.players[1].boards[0].tower_hp
+
+
+func _test_storm_ops() -> void:
+	## storm_scale_damage adds N per point of Storm to the attack itself, on top
+	## of Storm's own instance.
+	var gs = _new_game()
+	gs.raise_storm(4)
+	## base 20 + (3 x 4 scale) = 32, plus a 4-point Storm instance = 36
+	_check("storm_scale_damage scales the attack", _attack_for(gs, "hel", 20, 0, 3), 36)
+
+	## discharge_sweep splits the counter across every living unit on the board.
+	var gs2 = _new_game()
+	var w := _place_discharger(gs2, 5, "discharge_sweep")
+	w.add_charge(30)
+	var f1 := _place_defender(gs2, 500)
+	var f2 := _make("f2", "hel", 500, {}, [])
+	var f3 := _make("f3", "hel", 500, {}, [])
+	_place(gs2, 1, 0, 1, f2)
+	_place(gs2, 1, 0, 2, f3)
+	_discharge(gs2, w)
+	_swing(gs2, w)
+	## 30 split three ways = 10 each; the base attack lands on the first as well.
+	_check("sweep reaches the second unit", 500 - f2.hp, 10)
+	_check("and the third", 500 - f3.hp, 10)
+
+	## discharge_structures reaches the tower PAST a living blocker.
+	var gs3 = _new_game()
+	## The rider sits on the ATTACK, not on the ability: _deal_lane_damage reads
+	## the attack that is resolving, and the ability only arms the counter.
+	var d3 := _make("brk", "tempest", 100, {"charge": 5}, [
+		_attack_line(20, [{"op": "charge_on_damage", "n": 5},
+						  {"op": "discharge_structures"}]),
+		{"id": "disc", "name": "Discharge", "damage": 0, "ability": true,
+		 "effects": [{"op": "discharge_single", "n": 2}]},
+	])
+	_place(gs3, 0, 0, 0, d3)
+	var d := d3
+	d.add_charge(30)
+	_place_defender(gs3, 500)
+	var t_before := _enemy_tower_hp(gs3)
+	_discharge(gs3, d)
+	_swing(gs3, d)
+	_ok("discharge_structures reaches the tower past a wall",
+		_enemy_tower_hp(gs3) < t_before)
+
+	## ...and the base keyword does NOT.
+	var gs4 = _new_game()
+	var e := _place_discharger(gs4, 5, "discharge")
+	e.add_charge(30)
+	var blocker := _place_defender(gs4, 500)
+	var t4 := _enemy_tower_hp(gs4)
+	_discharge(gs4, e)
+	_swing(gs4, e)
+	_check("a plain discharge never reaches a shielded tower", _enemy_tower_hp(gs4), t4)
+	_ok("it hit the blocker instead", blocker.hp < 500)
+
+	## storm_raise on an ability raises the global counter.
+	var gs5 = _new_game()
+	var f := _make("caller", "tempest", 60, {}, [
+		{"id": "raise", "name": "Rising Air", "damage": 0, "ability": true,
+		 "effects": [{"op": "storm_raise", "n": 2}]}])
+	_place(gs5, 0, 0, 0, f)
+	gs5.use_ability(gs5.players[0], f, f.card.attacks[0])
+	_check("storm_raise raises the global counter", gs5.storm, 2)

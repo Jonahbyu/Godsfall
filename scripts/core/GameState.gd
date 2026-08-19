@@ -2171,6 +2171,13 @@ func _deliver_attack_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int,
 	## to the attack's own damage so it passes through Sanctuary, Resist and the
 	## targeting chain exactly as printed damage does — a discharge is a bigger
 	## swing, not a new damage source that dodges the rules.
+	## Tempest: this attack scales with the global Storm counter. Folded into the
+	## attack's own damage rather than added as a further instance — one extra
+	## instance per attack is the rule, and a second would re-open the
+	## Resist-piercing hole the one-instance decision exists to close.
+	if atk != null and atk.has_effect("storm_scale_damage") and storm > 0:
+		dmg += atk.effect_value("storm_scale_damage", 0) * storm
+
 	var disc: int = 0
 	if u != null and u.pending_discharge > 0:
 		disc = u.pending_discharge * maxi(1, u.pending_discharge_mult)
@@ -2231,6 +2238,27 @@ func _deliver_attack_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int,
 				_log("  Stoked: %s also scorches the throne for %d." % [atk.name, d])
 				_check_throne(enemy)
 
+	## `discharge_sweep` splits the counter as evenly as possible across every
+	## living unit on the board. Structures are untouched, matching Forge's sweep:
+	## letting a wide attack fall through to a tower would make it a shielding
+	## break as well as a wide one.
+	if disc > 0 and u.pending_discharge_mode == "discharge_sweep" and not finished:
+		var sb: Board = enemy.boards[bi] if bi >= 0 else null
+		if sb != null:
+			var living: Array = []
+			for s3 in Board.SLOT_COUNT:
+				var lv: Unit = sb.slots[s3]
+				if lv != null and lv.is_alive():
+					living.append(s3)
+			if living.size() > 0:
+				var each: int = maxi(1, int(u.pending_discharge / living.size()))
+				for s4 in living:
+					if s4 == si:
+						continue
+					_deal_lane_damage(p, enemy, u, bi, s4, each, atk)
+					if finished:
+						break
+
 	## The baseline discharge also strikes a SECOND living unit on that board, for
 	## the counter (not the multiplied total). `discharge_single` deliberately does
 	## not, and `discharge_sweep` spread itself across the board instead.
@@ -2279,6 +2307,24 @@ func _deal_lane_damage(p: Player, enemy: Player, u: Unit, bi: int, si: int, dmg:
 	## it is gated on the unit having spent real HP this turn, so it is a reward for
 	## commitment rather than a free bypass. Structures only — it never skips a unit
 	## to hit a different unit.
+	## Tempest: a discharge that PRINTS the break may reach this board's structures
+	## past living units. The base keyword is units-only, matching Forge's sweep;
+	## this is the printed exception per design principle #1, and it is gated on a
+	## discharge actually being in flight so the rider cannot fire on a bare swing.
+	if u != null and u.pending_discharge > 0 and atk.has_effect("discharge_structures"):
+		if eb.tower_alive():
+			var dealt_t := eb.tower_take_damage(dmg)
+			_record_damage(p, u.card.id, "tower", dealt_t)
+			_log("*** %s discharges %d past the wall into the TOWER (%d HP left)." % [
+				atk.name, dealt_t, eb.tower_hp])
+		else:
+			var dealt_th := enemy.throne_take_damage(dmg)
+			_record_damage(p, u.card.id, "throne", dealt_th)
+			_log("*** %s discharges %d past the wall into the THRONE." % [
+				atk.name, dealt_th])
+			_check_throne(enemy)
+		return
+
 	if u != null and u.has_stoked() and atk.has_effect("stoked_ignore_shield"):
 		var thr: int = atk.effect_value("stoked_threshold", 0)
 		if thr == 0 or u.stoked_this_turn >= thr:
