@@ -203,69 +203,77 @@ These are first-pass numbers, not yet checked against the live card pool's media
 Tempest's Charge table was. **Flagged as needing the same derivation pass** before any
 card is authored.
 
-**Ferocity N: printed values not yet derived.** A first instinct is N=1 on cheap
-token-summoner Basics (they die often, so even 1 stack per death adds up) and N=2–3 on
-scarcer, more deliberate sacrifice payoffs — but this needs to be checked against how many
-friendly deaths a real game plausibly produces on one board (bounded by 2–3 slots per
-board and a ~9.5-round mean game length) before it is pinned.
+**A card printing both Molt and Ferocity sits at the bottom of its Molt band**:
+
+| Stage | Molt HP band | Molt+Ferocity HP (bottom of band) |
+|---|---|---|
+| Basic | 30–60 | **30–35** |
+| Stage 1 | 60–95 | **60–68** |
+| Stage 2 | 90–140 | **90–100** |
+
+**Ferocity N, by stage: 1 / 2 / 3.** Basic trackers (and disposable token-style Basics)
+print N=1; Stage 1 sacrifice payoffs print N=2; N=3 is reserved for one Stage 2
+build-around. See *Open Questions* for the reasoning.
 
 ---
 
 ## Open Questions
 
-- **Damage discount, unresolved.** Every faction pays for its signature keywords below the
-  standard damage curve — Judgment -1/3, Sanctuary -18%, Gaia ~9/energy against the
-  standard 12. Molt's cost is paid entirely in the HP band (see above), which may be
-  sufficient on its own without an additional rate cut — a Molt unit's *damage* is
-  otherwise ordinary, it just has a smaller body. Ferocity's cost is the steep one
-  (a full friendly death per stack, far scarcer than Earth's near-free trigger), which
-  argues against stacking a further discount on top of that scarcity. **Working default:
-  no separate damage-rate discount for either keyword, cost paid in HP-band and
-  stack-scarcity instead** — but this is exactly the kind of call the Tempest doc flagged
-  as "must be settled before any card is authored" and then left open; it should not be
-  left open again here. Needs explicit confirmation before card authoring starts.
-- **What N should Ferocity print, by source card and by stage?** Not yet derived against
-  the live card pool the way Tempest's Charge table was. See *Numbers* above.
-- **Does a Molt+Ferocity unit need its own, higher HP-band carve-out?** The two keywords
-  combo hard (immortal-feeling body that only gets angrier) — worth checking whether a
-  card printing both should sit at the very bottom of even the Molt band, since it is
-  strictly more powerful than either keyword alone.
-- **Token summoners — not yet designed at all.** The pitch that started this ("big units
-  that sacrifice summoning tokens that die") implies a sub-theme of cheap, disposable
-  Basics whose whole job is dying in front of a Ferocity carrier. None of these are
-  sketched: what they cost, how expendable they are, whether any of them print Molt
-  themselves (a token that Molts is arguably a contradiction — it stops being disposable).
-- **Interaction with `Rise`.** A unit cannot logically hold both `Rise` and `Molt` doing
-  their stated jobs at once — both fire "when this unit would die." Needs an explicit
-  precedence rule, or a decision that no card ever prints both.
-- **Interaction with `Essence`.** Gaia's `Essence` moves a dying unit's Earth and attached
-  energy to the nearest ally on death. If a Molt unit's death is intercepted before it
-  "counts" as a death for Essence's purposes, that needs stating — likely Molt fires first
-  and Essence simply never triggers, since the unit didn't end up in the discard.
-- **Interaction with `Toll` / `Decay` / any other on-death trigger.** Same question as
-  above, generalized: does Molt firing suppress every other on-death effect (Toll, Rise,
-  Essence, Decay-adjacent triggers), or only some? **Working default: Molt fully replaces
-  normal death handling — no discard, no Toll, no Rise, no Essence — since the unit is
-  defined to not have died.** This mirrors how retreat already suppresses Toll and Rise
-  for the identical reason ("the unit didn't die"). Needs confirmation.
-- **Should Molt-return be visible/telegraphed, or silent?** The rules generally favor
-  legible state (spent Judgment/Sanctuary render live on the card). A Molt trigger should
-  presumably get the same treatment other death-adjacent state changes get (Motion.gd's
-  pop/flash vocabulary) once this reaches engine work — flagged for that phase, not a
-  design blocker now.
+**Resolved 2026-08-20, before card authoring**, so the generator has real numbers rather
+than TBDs to build against:
+
+- **Damage discount: none.** Confirmed as the working default. HP-band (Molt) and
+  death-scarcity (Ferocity) already tax both keywords; a third rate cut would be
+  double-taxing in a way none of the other five factions do — each of them pays exactly
+  once, in whichever currency fits the keyword.
+- **Ferocity N, by stage:** N=1 on cheap/disposable Basics — they are expected to die
+  often, so even 1 stack per death compounds — N=2 on Stage 1 sacrifice payoffs, N=3
+  reserved for a single Stage 2 build-around. Bounded by the board (2–3 usable slots per
+  side) and the ~9.5-round mean game length: a real game plausibly feeds a Ferocity
+  tracker single digits to low teens of stacks, not dozens, so N above 3 is not needed
+  and would make the keyword swingy rather than steady.
+- **Molt+Ferocity combo carve-out: yes.** A card printing both sits at the *bottom* of the
+  already-reduced Molt HP band (see Numbers), enforced by the generator rather than left
+  to author discretion — it is strictly stronger than either keyword alone and should
+  never also be printed at the top of its band.
+- **Interaction with `Rise`: no card ever prints both.** Rather than invent a precedence
+  rule for two keywords that both claim "when this unit would die," the generator refuses
+  the combination outright. Cheaper than adjudicating it, and nothing about either
+  keyword's identity needs the other.
+- **Interaction with `Essence` / `Toll` / `Decay` / any other on-death trigger: confirmed.**
+  Molt fully replaces normal death handling — no discard, no Toll, no Rise, no Essence —
+  because the unit is defined to not have died. Mirrors retreat's existing suppression of
+  Toll and Rise for the identical reason.
+- **Token summoners — still not designed as their own sub-theme**, but the roster below
+  includes disposable Basics that feed Ferocity without themselves printing Molt (a
+  self-Molting token would contradict its own job of being disposable). A dedicated
+  token-summoner mechanic (a unit that prints multiple bodies at once) remains unbuilt and
+  is not required for the baseline set.
+- **Should Molt-return be visible/telegraphed, or silent?** Deferred to engine work, not a
+  design blocker — flagged in Engine Cost.
 
 ---
 
 ## Not Yet Designed
 
-- **The card set.** No chains, no names, no cards, no art grammar.
-- **Wilds energy.** Colour, and the energy token's drawn mark — must be one closed figure,
-  distinct in greyscale from the eight that already exist (bone, sun, hole, leaf, flame,
-  bolt, and Wyrd's reserved four-point star already claim four of the remaining shapes).
+- ~~**The card set.**~~ **Baseline written** — `tools/add_wilds_faction.py` holds 15
+  units in 6 chains, 3 faction-locked supports, and the energy card (19 cards total).
+  Validated by `--dry-run` against every rule this spec states (HP bands including the
+  Molt and Molt+Ferocity carve-outs, the two-line rule, retreat formula, Ferocity's
+  pinned per-stage N, no round-1 openers, no card printing both Molt and Rise). **Not yet
+  applied to `data/cards.json`** — `--apply` correctly refuses, because `molt`,
+  `ferocity_gain`, and `ferocity_bonus` are not implemented in the engine yet (see Engine
+  Cost). No card art.
+- **Wilds energy.** Named (`Rawhide`) in the generator. The token's drawn mark — must be
+  one closed figure, distinct in greyscale from the eight that already exist (bone, sun,
+  hole, leaf, flame, bolt, and Wyrd's reserved four-point star already claim four of the
+  remaining shapes) — is still undesigned.
 - **Whether Wilds has a defensive archetype at all**, or whether — like Tempest's
   offence-only Charge — that is a deliberate omission answered by a rule-breaker card
-  later rather than by the keyword pair itself.
-- **The damage discount derivation.** Blocking for card authoring — see Open Questions.
+  later rather than by the keyword pair itself. The baseline roster leans offensive; no
+  Sanctuary/Resist-style wall exists yet.
+- ~~**The damage discount derivation.**~~ **Resolved** — see Open Questions: no separate
+  discount for either keyword.
 
 ---
 
