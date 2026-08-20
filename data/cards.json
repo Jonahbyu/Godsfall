@@ -13555,11 +13555,11 @@
      "id": "grum_shrug",
      "name": "Shrug It Off",
      "damage": 0,
-     "text": "This unit heals 10.",
+     "text": "Heal 12. If this unit has already spent its Molt, heal 24 instead.",
      "effects": [
       {
-       "op": "heal",
-       "n": 10
+       "op": "heal_spent_molt",
+       "n": 12
       }
      ],
      "ability": true
@@ -13594,14 +13594,14 @@
      }
     },
     {
-     "id": "grum_shake",
-     "name": "Shake It Off",
+     "id": "grum_shed",
+     "name": "Shed Early",
      "damage": 0,
-     "text": "This unit heals 18.",
+     "text": "Trigger this unit's own Molt now, without dying.",
      "effects": [
       {
-       "op": "heal",
-       "n": 18
+       "op": "self_molt",
+       "n": 1
       }
      ],
      "ability": true
@@ -13639,11 +13639,11 @@
      "id": "grum_stand",
      "name": "Stand Back Up",
      "damage": 0,
-     "text": "This unit heals 30.",
+     "text": "Trigger this unit's own Molt now, without dying.",
      "effects": [
       {
-       "op": "heal",
-       "n": 30
+       "op": "self_molt",
+       "n": 1
       }
      ],
      "ability": true
@@ -14010,15 +14010,11 @@
      "id": "scarl_thicken",
      "name": "Thicken the Hide",
      "damage": 0,
-     "text": "This unit heals 8 and grows Retribution 5 until end of turn.",
+     "text": "Grows Retribution 14 until end of turn.",
      "effects": [
       {
-       "op": "heal",
-       "n": 8
-      },
-      {
        "op": "temp_retribution",
-       "n": 5
+       "n": 14
       }
      ],
      "ability": true
@@ -14056,15 +14052,11 @@
      "id": "scarl_harden",
      "name": "Harden the Hide",
      "damage": 0,
-     "text": "This unit heals 14 and grows Retribution 8 until end of turn.",
+     "text": "Grows Retribution 22 until end of turn.",
      "effects": [
       {
-       "op": "heal",
-       "n": 14
-      },
-      {
        "op": "temp_retribution",
-       "n": 8
+       "n": 22
       }
      ],
      "ability": true
@@ -14218,6 +14210,1268 @@
       }
      ],
      "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_bristlgrub",
+   "name": "Bristlgrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 44,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "resist",
+     "n": 4
+    }
+   ],
+   "flavor": "Everything about it is pointed outward.",
+   "attacks": [
+    {
+     "id": "bristl_jab",
+     "name": "Jab",
+     "damage": 19,
+     "text": "19 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_bristlhide",
+   "name": "Bristlhide",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 84,
+   "retreat": 2,
+   "evolves_from": "wilds_bristlgrub",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "resist",
+     "n": 6
+    }
+   ],
+   "flavor": "It does not chase. It has never had to.",
+   "attacks": [
+    {
+     "id": "bristl_drive",
+     "name": "Drive Back",
+     "damage": 40,
+     "text": "40 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "bristl_set",
+     "name": "Set the Quills",
+     "damage": 0,
+     "text": "Grows Retribution 18 until end of turn.",
+     "effects": [
+      {
+       "op": "temp_retribution",
+       "n": 18
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_bristlwarden",
+   "name": "Bristlwarden",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 128,
+   "retreat": 3,
+   "evolves_from": "wilds_bristlhide",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "resist",
+     "n": 8
+    }
+   ],
+   "flavor": "The ground around it is not safe and has not been for some time.",
+   "attacks": [
+    {
+     "id": "bristl_impale",
+     "name": "Impale",
+     "damage": 84,
+     "text": "84 damage.",
+     "cost": {
+      "wilds": 5,
+      "colorless": 4
+     }
+    },
+    {
+     "id": "bristl_bramble",
+     "name": "Bramble Wall",
+     "damage": 0,
+     "text": "Grows Retribution 30 until end of turn.",
+     "effects": [
+      {
+       "op": "temp_retribution",
+       "n": 30
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_rendcub",
+   "name": "Rendcub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 50,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "It counts what it takes down, not what it loses.",
+   "attacks": [
+    {
+     "id": "rend_slash",
+     "name": "Slash",
+     "damage": 21,
+     "text": "21 damage. This unit gains 1 Ferocity.",
+     "effects": [
+      {
+       "op": "ferocity_on_damage",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_rendfang",
+   "name": "Rendfang",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 94,
+   "retreat": 2,
+   "evolves_from": "wilds_rendcub",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "Every wound it opens teaches it where the next one goes.",
+   "attacks": [
+    {
+     "id": "rend_open",
+     "name": "Open Up",
+     "damage": 44,
+     "text": "44 damage. This unit gains 1 Ferocity.",
+     "effects": [
+      {
+       "op": "ferocity_on_damage",
+       "n": 1
+      }
+     ],
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_rendravager",
+   "name": "Rendravager",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 140,
+   "retreat": 3,
+   "evolves_from": "wilds_rendfang",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 3
+    }
+   ],
+   "flavor": "It no longer needs anything to die nearby. It manages on its own.",
+   "attacks": [
+    {
+     "id": "rend_ruin",
+     "name": "Ruin",
+     "damage": 90,
+     "text": "90 damage. This unit gains 2 Ferocity.",
+     "effects": [
+      {
+       "op": "ferocity_on_damage",
+       "n": 2
+      }
+     ],
+     "cost": {
+      "wilds": 5,
+      "colorless": 5
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_lurkgrub",
+   "name": "Lurkgrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 62,
+   "retreat": 1,
+   "flavor": "It waits where the light stops.",
+   "attacks": [
+    {
+     "id": "lurk_shove",
+     "name": "Shove",
+     "damage": 27,
+     "text": "27 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "lurk_crush",
+     "name": "Crush",
+     "damage": 35,
+     "text": "35 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_lurkmaw",
+   "name": "Lurkmaw",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 110,
+   "retreat": 2,
+   "evolves_from": "wilds_lurkgrub",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "Nothing it takes is ever found again.",
+   "attacks": [
+    {
+     "id": "lurk_swallow",
+     "name": "Swallow",
+     "damage": 48,
+     "text": "48 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_lurkbrute",
+   "name": "Lurkbrute",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 162,
+   "retreat": 4,
+   "evolves_from": "wilds_lurkmaw",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 3
+    }
+   ],
+   "flavor": "The shape in the dark was always this big. You simply could not see it.",
+   "attacks": [
+    {
+     "id": "lurk_devour",
+     "name": "Devour",
+     "damage": 98,
+     "text": "98 damage.",
+     "cost": {
+      "wilds": 6,
+      "colorless": 5
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_nibgrub",
+   "name": "Nibgrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 32,
+   "retreat": 0,
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    }
+   ],
+   "flavor": "Barely worth killing. That is the entire problem with it.",
+   "attacks": [
+    {
+     "id": "nib_gnash",
+     "name": "Gnash",
+     "damage": 18,
+     "text": "18 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "nib_worry",
+     "name": "Worry",
+     "damage": 24,
+     "text": "24 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_nibrunt",
+   "name": "Nibrunt",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 30,
+   "retreat": 0,
+   "evolves_from": "wilds_nibgrub",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "retribution",
+     "n": 10
+    }
+   ],
+   "flavor": "It gets up. It always gets up. Once.",
+   "attacks": [
+    {
+     "id": "nib_bite",
+     "name": "Bite",
+     "damage": 19,
+     "text": "19 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_grondcub",
+   "name": "Grondcub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 42,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    }
+   ],
+   "flavor": "Heavier than it has any right to be.",
+   "attacks": [
+    {
+     "id": "grond_stomp",
+     "name": "Stomp",
+     "damage": 20,
+     "text": "20 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_grondtusk",
+   "name": "Grondtusk",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 88,
+   "retreat": 2,
+   "evolves_from": "wilds_grondcub",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    }
+   ],
+   "flavor": "It does not go around things.",
+   "attacks": [
+    {
+     "id": "grond_batter",
+     "name": "Batter",
+     "damage": 42,
+     "text": "42 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_grondbrute",
+   "name": "Grondbrute",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 136,
+   "retreat": 3,
+   "evolves_from": "wilds_grondtusk",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    }
+   ],
+   "flavor": "It has been buried twice. Neither took.",
+   "attacks": [
+    {
+     "id": "grond_flatten",
+     "name": "Flatten",
+     "damage": 96,
+     "text": "96 damage.",
+     "cost": {
+      "wilds": 6,
+      "colorless": 5
+     }
+    },
+    {
+     "id": "grond_shrug",
+     "name": "Shrug Off the Ruin",
+     "damage": 0,
+     "text": "Trigger this unit's own Molt now, without dying.",
+     "effects": [
+      {
+       "op": "self_molt",
+       "n": 1
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_skittgrub",
+   "name": "Skittgrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 40,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "There are more of them than you counted.",
+   "attacks": [
+    {
+     "id": "skitt_nip",
+     "name": "Nip",
+     "damage": 19,
+     "text": "19 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_skittwhelp",
+   "name": "Skittwhelp",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 44,
+   "retreat": 1,
+   "evolves_from": "wilds_skittgrub",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "Individually, not a problem.",
+   "attacks": [
+    {
+     "id": "skitt_swarm",
+     "name": "Swarm",
+     "damage": 22,
+     "text": "22 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_skittfang",
+   "name": "Skittfang",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 86,
+   "retreat": 2,
+   "evolves_from": "wilds_skittwhelp",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "Collectively, the last thing several people saw.",
+   "attacks": [
+    {
+     "id": "skitt_overrun",
+     "name": "Overrun",
+     "damage": 45,
+     "text": "45 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_hoftgrub",
+   "name": "Hoftgrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 54,
+   "retreat": 1,
+   "flavor": "It eats, it sleeps, it objects to being disturbed.",
+   "attacks": [
+    {
+     "id": "hoft_butt",
+     "name": "Butt",
+     "damage": 25,
+     "text": "25 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_hofthide",
+   "name": "Hofthide",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 100,
+   "retreat": 2,
+   "evolves_from": "wilds_hoftgrub",
+   "keywords": [
+    {
+     "kw": "resist",
+     "n": 5
+    }
+   ],
+   "flavor": "The objection has grown considerably.",
+   "attacks": [
+    {
+     "id": "hoft_charge",
+     "name": "Charge",
+     "damage": 46,
+     "text": "46 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_vorncub",
+   "name": "Vorncub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 46,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "It is learning the shape of a fight.",
+   "attacks": [
+    {
+     "id": "vorn_rake",
+     "name": "Rake",
+     "damage": 21,
+     "text": "21 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_vornfang",
+   "name": "Vornfang",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 92,
+   "retreat": 2,
+   "evolves_from": "wilds_vorncub",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "It has the shape of it now.",
+   "attacks": [
+    {
+     "id": "vorn_maul",
+     "name": "Maul",
+     "damage": 44,
+     "text": "44 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_vornreaver",
+   "name": "Vornreaver",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 148,
+   "retreat": 3,
+   "evolves_from": "wilds_vornfang",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 3
+    }
+   ],
+   "flavor": "One for the body. One for whatever is behind it.",
+   "attacks": [
+    {
+     "id": "vorn_first",
+     "name": "First Cut",
+     "damage": 52,
+     "text": "52 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 4
+     }
+    },
+    {
+     "id": "vorn_second",
+     "name": "Second Cut",
+     "damage": 58,
+     "text": "58 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_thornggrub",
+   "name": "Thornggrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 38,
+   "retreat": 0,
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "retribution",
+     "n": 14
+    }
+   ],
+   "flavor": "Killing it is not the expensive part. Killing it twice is.",
+   "attacks": [
+    {
+     "id": "thorng_prick",
+     "name": "Prick",
+     "damage": 19,
+     "text": "19 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_thornghide",
+   "name": "Thornghide",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 76,
+   "retreat": 1,
+   "evolves_from": "wilds_thornggrub",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "retribution",
+     "n": 20
+    }
+   ],
+   "flavor": "It bleeds on purpose, and never only its own.",
+   "attacks": [
+    {
+     "id": "thorng_lash",
+     "name": "Lash",
+     "damage": 40,
+     "text": "40 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_thorngwarden",
+   "name": "Thorngwarden",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 122,
+   "retreat": 3,
+   "evolves_from": "wilds_thornghide",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "retribution",
+     "n": 28
+    }
+   ],
+   "flavor": "Everything that has ever hit it is also dead.",
+   "attacks": [
+    {
+     "id": "thorng_reprisal",
+     "name": "Reprisal",
+     "damage": 82,
+     "text": "82 damage.",
+     "cost": {
+      "wilds": 5,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_yelpgrub",
+   "name": "Yelpgrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 30,
+   "retreat": 0,
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "It is furious and it is very small.",
+   "attacks": [
+    {
+     "id": "yelp_snap",
+     "name": "Snap",
+     "damage": 18,
+     "text": "18 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_yelprunt",
+   "name": "Yelprunt",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 34,
+   "retreat": 0,
+   "evolves_from": "wilds_yelpgrub",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "The noise it makes is out of all proportion.",
+   "attacks": [
+    {
+     "id": "yelp_tear",
+     "name": "Tear",
+     "damage": 19,
+     "text": "19 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_yelpfang",
+   "name": "Yelpfang",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 62,
+   "retreat": 1,
+   "evolves_from": "wilds_yelprunt",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "It grew. It did not calm down.",
+   "attacks": [
+    {
+     "id": "yelp_savage",
+     "name": "Savage",
+     "damage": 34,
+     "text": "34 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_mottgrub",
+   "name": "Mottgrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 66,
+   "retreat": 1,
+   "flavor": "Slow. Extremely difficult to argue with.",
+   "attacks": [
+    {
+     "id": "mott_slam",
+     "name": "Slam",
+     "damage": 28,
+     "text": "28 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_motttusk",
+   "name": "Motttusk",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 116,
+   "retreat": 2,
+   "evolves_from": "wilds_mottgrub",
+   "flavor": "It has never once changed direction.",
+   "attacks": [
+    {
+     "id": "mott_wreck",
+     "name": "Wreck",
+     "damage": 50,
+     "text": "50 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "mott_bull",
+     "name": "Bull Through",
+     "damage": 58,
+     "text": "58 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_mottbrute",
+   "name": "Mottbrute",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 170,
+   "retreat": 4,
+   "evolves_from": "wilds_motttusk",
+   "keywords": [
+    {
+     "kw": "resist",
+     "n": 6
+    }
+   ],
+   "flavor": "The word for it is geological.",
+   "attacks": [
+    {
+     "id": "mott_ruin",
+     "name": "Ruination",
+     "damage": 104,
+     "text": "104 damage.",
+     "cost": {
+      "wilds": 6,
+      "colorless": 6
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_gralcub",
+   "name": "Gralcub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 48,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "It is looking past you already.",
+   "attacks": [
+    {
+     "id": "gral_gore",
+     "name": "Gore",
+     "damage": 22,
+     "text": "22 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_gralmaw",
+   "name": "Gralmaw",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 96,
+   "retreat": 2,
+   "evolves_from": "wilds_gralcub",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "Bodies are in the way. That is all bodies are.",
+   "attacks": [
+    {
+     "id": "gral_break",
+     "name": "Break Through",
+     "damage": 46,
+     "text": "46 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_gralravager",
+   "name": "Gralravager",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 144,
+   "retreat": 3,
+   "evolves_from": "wilds_gralmaw",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 3
+    }
+   ],
+   "flavor": "It has stopped being interested in the guards.",
+   "attacks": [
+    {
+     "id": "gral_topple",
+     "name": "Topple",
+     "damage": 88,
+     "text": "88 damage. Also deals 20 to that board's tower.",
+     "effects": [
+      {
+       "op": "also_hit_tower",
+       "n": 20
+      }
+     ],
+     "cost": {
+      "wilds": 5,
+      "colorless": 5
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_sketgrub",
+   "name": "Sketgrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 36,
+   "retreat": 0,
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    }
+   ],
+   "flavor": "It sheds on a schedule nobody else agreed to.",
+   "attacks": [
+    {
+     "id": "sket_bite",
+     "name": "Bite",
+     "damage": 19,
+     "text": "19 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "sket_shed",
+     "name": "Shed",
+     "damage": 0,
+     "text": "Trigger this unit's own Molt now, without dying.",
+     "effects": [
+      {
+       "op": "self_molt",
+       "n": 1
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_skethide",
+   "name": "Skethide",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 72,
+   "retreat": 1,
+   "evolves_from": "wilds_sketgrub",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    }
+   ],
+   "flavor": "What it leaves behind is still warm.",
+   "attacks": [
+    {
+     "id": "sket_rake",
+     "name": "Rake",
+     "damage": 38,
+     "text": "38 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "sket_slough",
+     "name": "Slough",
+     "damage": 0,
+     "text": "Trigger this unit's own Molt now, without dying.",
+     "effects": [
+      {
+       "op": "self_molt",
+       "n": 1
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_crutgrub",
+   "name": "Crutgrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 42,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "It is always at the edge of the fight, watching the middle.",
+   "attacks": [
+    {
+     "id": "crut_gnaw",
+     "name": "Gnaw",
+     "damage": 19,
+     "text": "19 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_crutcub",
+   "name": "Crutcub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 46,
+   "retreat": 1,
+   "evolves_from": "wilds_crutgrub",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "It has never started anything and has finished several.",
+   "attacks": [
+    {
+     "id": "crut_rend",
+     "name": "Rend",
+     "damage": 21,
+     "text": "21 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_cruttusk",
+   "name": "Cruttusk",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 88,
+   "retreat": 2,
+   "evolves_from": "wilds_crutcub",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "It has been keeping count since before you arrived.",
+   "attacks": [
+    {
+     "id": "crut_carve",
+     "name": "Carve",
+     "damage": 44,
+     "text": "44 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
     }
    ]
   },

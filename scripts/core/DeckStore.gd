@@ -278,6 +278,18 @@ func sample_decks() -> Array:
 			"name": "Never Really Died",
 			"cards": _never_really_died(),
 		},
+		## Added with the 2026-08-20 expansion, which took Wilds from 20 units to
+		## 59. The three lists above were built against the baseline roster and
+		## between them used 15 of the new 39 bodies not at all — the same gap
+		## the eight bestiary decks were added to close.
+		{
+			"name": "Thickskin",
+			"cards": _thickskin(),
+		},
+		{
+			"name": "Blood Debt",
+			"cards": _blood_debt(),
+		},
 	]
 
 
@@ -1974,4 +1986,86 @@ func _never_really_died() -> Dictionary:
 		"muster": 4,
 		"gravekeepers_ledger": 3,
 		"wilds_energy": 19,
+	}
+
+
+## **Thickskin** — the defensive Wilds list, and the answer to an open question.
+##
+## `wilds.md` asked outright whether Wilds has a defensive archetype at all, and
+## specified that if it does not, the fix is a CARD rather than a change to
+## either signature. This is that card set: Bristl prints `Resist` on a Molt
+## body, so chip has to get through the armour twice, and Thorng prints heavy
+## `Retribution` on a Molt body, so the standard answer to Molt — kill it twice —
+## costs the attacker real HP both times.
+##
+## Mott is the beef: no signature at all, just the largest bodies in the colour,
+## because a wall deck needs something that simply does not fold. `Second Skin`
+## puts a borrowed Molt on a Mott, which is the most expensive body in the deck
+## to have to kill twice.
+##
+## Evolution check: Bristlhide needs Bristlgrub, Bristlwarden needs Bristlhide,
+## Thornghide needs Thornggrub, Thorngwarden needs Thornghide, Motttusk needs
+## Mottgrub, Mottbrute needs Motttusk. All bases are in the list.
+func _thickskin() -> Dictionary:
+	return {
+		## Resist on a Molt body — the armour has to be beaten twice.
+		"wilds_bristlgrub": 4,
+		"wilds_bristlhide": 3,
+		"wilds_bristlwarden": 2,
+		## Retribution on a Molt body — killing it twice costs twice.
+		"wilds_thornggrub": 4,
+		"wilds_thornghide": 3,
+		"wilds_thorngwarden": 2,
+		## The beef. No keyword, just the biggest bodies Wilds prints.
+		"wilds_mottgrub": 3,
+		"wilds_motttusk": 2,
+		"wilds_mottbrute": 2,
+		## A borrowed Molt on the largest body in the deck.
+		"wilds_second_skin": 3,
+		"shore_up": 4,
+		"field_rites": 3,
+		"reinforced_base": 2,
+		"muster": 4,
+		"wilds_energy": 19,
+	}
+
+
+## **Blood Debt** — the Ferocity deck that does not need your cooperation.
+##
+## The structural weakness of a Ferocity list is that an opponent who refuses to
+## trade never turns the counter on. Rend is the printed answer — it banks a
+## stack from damage DEALT, so the deck feeds itself. Gral is the other half:
+## a tracker whose attack reaches past the body it kills into the tower, so a
+## fed board can actually close rather than accumulating stacks forever.
+##
+## Vorn is the payoff for a board that has been fed — two attack lines on one
+## Stage 2, so every stack is spent twice a turn instead of once. Skitt and Crut
+## are the cheap wide trackers that make `Stampede` worth a card.
+##
+## Evolution check: Rendfang needs Rendcub, Rendravager needs Rendfang, Gralmaw
+## needs Gralcub, Gralravager needs Gralmaw, Vornfang needs Vorncub, Vornreaver
+## needs Vornfang, Skittfang needs Skittgrub or Skittwhelp, Cruttusk needs
+## Crutgrub or Crutcub. All bases are in the list.
+func _blood_debt() -> Dictionary:
+	return {
+		## Stacks from damage dealt — the deck feeds itself.
+		"wilds_rendcub": 4,
+		"wilds_rendfang": 3,
+		"wilds_rendravager": 2,
+		## Reach: a fed tracker that hits the tower behind the body.
+		"wilds_gralcub": 3,
+		"wilds_gralmaw": 2,
+		"wilds_gralravager": 2,
+		## Two lines on one Stage 2 — every stack spent twice a turn.
+		"wilds_vorncub": 3,
+		"wilds_vornfang": 2,
+		"wilds_vornreaver": 2,
+		## Cheap wide trackers, so Stampede is worth the slot.
+		"wilds_skittgrub": 3,
+		"wilds_crutgrub": 3,
+		"wilds_stampede": 3,
+		"wilds_cull_the_weak": 2,
+		"muster": 4,
+		"gravekeepers_ledger": 2,
+		"wilds_energy": 20,
 	}

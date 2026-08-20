@@ -724,6 +724,27 @@ func _live_keyword_line() -> String:
 			p = "%s %d" % [p.split(" ")[0], live]
 
 		kept.append(p)
+
+	## ---- Keywords the unit HOLDS but never PRINTED.
+	##
+	## The loop above walks `card.keyword_line()`, so it can only ever hide or
+	## rewrite a keyword the card already printed — a keyword *granted* in play
+	## has no part to iterate over and was therefore invisible on the board.
+	##
+	## That is the spent-Judgment bug in its other direction, and it had shipped
+	## twice: `Second Skin` grants Molt to a body that prints none, and `Aegis of
+	## the Choir` grants Sanctuary to a body that prints none. Both were tracked
+	## correctly by the engine and shown nowhere, which to a player is
+	## indistinguishable from the card having done nothing.
+	##
+	## Appended rather than merged into the loop because these are, by
+	## definition, the cases the printed line does not mention.
+	var lower_all := text.to_lower()
+	if unit.granted_molt and not lower_all.contains("molt"):
+		kept.append("Molt")
+	if unit.sanctuary_active and not lower_all.contains("sanctuary"):
+		kept.append("Sanctuary" if unit.sanctuary_pool <= 0 else "Sanctuary %d" % unit.sanctuary_pool)
+
 	return ", ".join(kept)
 
 

@@ -198,6 +198,47 @@ func _discharge_worth_it(p: Player, u: Unit, ab: AttackData) -> bool:
 	return false
 
 
+## Should this body cash its own Molt right now, without being killed for it?
+##
+## Molt returns the unit at full HP with its attached energy intact, so shedding
+## is genuinely good in exactly two situations and bad in every other one:
+##
+##   1. The body is nearly dead. The reprieve was going to be spent this turn
+##      anyway; spending it now converts it into a full heal on our own terms
+##      instead of the opponent's.
+##   2. A Ferocity tracker is watching. The shed is a friendly death on that
+##      board, so it feeds the counter — this is the faction's whole combo, and
+##      it is the reason to shed a body that is NOT in danger.
+##
+## Refused otherwise, because the keyword is one-shot and only evolution gives
+## it back: a Molt spent on a healthy body with nothing watching is simply gone.
+func _self_molt_worth_it(p: Player, u: Unit) -> bool:
+	if not u.has_molt():
+		return false
+
+	## 1. About to die anyway — bank the full heal now.
+	var maxhp: int = gs.effective_max_hp(p, u)
+	if u.hp * 3 <= maxhp:
+		return true
+
+	## 2. Something on THIS board reads the death. Own-board only, matching the
+	## keyword's own scoping — a tracker on the other board is not fed by this.
+	for bi in p.boards.size():
+		var holds_us := false
+		for su in p.boards[bi].slots:
+			if su == u:
+				holds_us = true
+				break
+		if not holds_us:
+			continue
+		for other in p.boards[bi].slots:
+			if other != null and other != u and other.is_alive() and other.has_ferocity():
+				return true
+		break
+
+	return false
+
+
 func _ability_worth_it(p: Player, u: Unit, ab: AttackData) -> bool:
 	## Checked ahead of the free/Consume split, because a Siphon or Void ability
 	## with nothing to take is a wasted activation whether or not it charges —
@@ -233,6 +274,35 @@ func _ability_worth_it(p: Player, u: Unit, ab: AttackData) -> bool:
 			if t.is_alive():
 				theirs_n += 1
 		return mine_n >= theirs_n
+
+	## ------------------------------------------------------------- Wilds
+	##
+	## Same trap as Stoke and Discharge, and the sharpest version of it:
+	## `self_molt` costs no pool energy at all, so the "free abilities are always
+	## taken" default would shed a body at FULL HP every single turn — spending
+	## the best reprieve in the game for nothing and handing the opponent a free
+	## tempo swing. A cost the engine does not charge in pool energy is invisible
+	## to a heuristic that measures pool energy; this is the third faction to
+	## need that stated explicitly.
+	if ab.has_effect("self_molt"):
+		return _self_molt_worth_it(p, u)
+
+	## The heal is only ever worth an activation when there is damage to undo,
+	## and it is worth twice as much once the Molt is gone — so hold it while
+	## the body is healthy rather than topping off 4 HP.
+	if ab.has_effect("heal_spent_molt"):
+		var hs_max: int = gs.effective_max_hp(p, u)
+		var hs_amt: int = ab.effect_value("heal_spent_molt", 0)
+		if not u.has_molt():
+			hs_amt *= 2
+		## Require at least half the heal to actually land, so the ability is
+		## never spent overhealing.
+		return (hs_max - u.hp) >= int(hs_amt / 2.0)
+
+	## Banking stacks by hand is always fine — it costs nothing and nothing on
+	## the board gets worse for it.
+	if ab.has_effect("gain_stacks"):
+		return true
 
 	## ------------------------------------------------------------ Forge
 	##

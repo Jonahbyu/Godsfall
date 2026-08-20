@@ -181,24 +181,31 @@ CHAINS = [
 
     # 1. The reference chain. Molt alone -- the keyword's clean teach, no
     #    Ferocity muddying the read. Ordinary damage on a reduced body.
+    # NOTE (2026-08-20): this chain originally printed `heal 10 / 18 / 30` --
+    # the same ability at three sizes, and a free self-heal is also the most
+    # PASSIVE thing a brute-force faction can print. It fought the identity
+    # twice over: Wilds is the colour that wants to trade constantly, and a
+    # heal button rewards declining the trade. Replaced with lines that read
+    # the chain's OWN keyword, so the reference chain now teaches Molt instead
+    # of being a plain body with a button on it.
     ("Grum", [
         ("grub", "basic", 40, KW(molt=1), [
             A("grum_gnash", "Gnash", 19, "19 damage."),
             AB("grum_shrug", "Shrug It Off",
-               "This unit heals 10.",
-               [{"op": "heal", "n": 10}]),
+               "Heal 12. If this unit has already spent its Molt, heal 24 instead.",
+               [{"op": "heal_spent_molt", "n": 12}]),
         ], "It has died before. It did not think it was worth mentioning."),
         ("maw", "stage1", 78, KW(molt=1), [
             A("grum_rend", "Rend", 44, "44 damage."),
-            AB("grum_shake", "Shake It Off",
-               "This unit heals 18.",
-               [{"op": "heal", "n": 18}]),
+            AB("grum_shed", "Shed Early",
+               "Trigger this unit's own Molt now, without dying.",
+               [{"op": "self_molt", "n": 1}]),
         ], "Whatever took the last one off didn't take enough."),
         ("brute", "stage2", 118, KW(molt=1), [
             A("grum_maul", "Maul", 88, "88 damage."),
             AB("grum_stand", "Stand Back Up",
-               "This unit heals 30.",
-               [{"op": "heal", "n": 30}]),
+               "Trigger this unit's own Molt now, without dying.",
+               [{"op": "self_molt", "n": 1}]),
         ], "It has stopped counting. There is no longer a number to keep."),
     ]),
 
@@ -278,14 +285,14 @@ CHAINS = [
         ("cub", "basic", 36, KW(molt=1), [
             A("scarl_claw", "Claw", 19, "19 damage."),
             AB("scarl_thicken", "Thicken the Hide",
-               "This unit heals 8 and grows Retribution 5 until end of turn.",
-               [{"op": "heal", "n": 8}, {"op": "temp_retribution", "n": 5}]),
+               "Grows Retribution 14 until end of turn.",
+               [{"op": "temp_retribution", "n": 14}]),
         ], "The scars come back with it, every time, a little thicker."),
         ("fang", "stage1", 70, KW(molt=1), [
             A("scarl_rip", "Rip", 38, "38 damage."),
             AB("scarl_harden", "Harden the Hide",
-               "This unit heals 14 and grows Retribution 8 until end of turn.",
-               [{"op": "heal", "n": 14}, {"op": "temp_retribution", "n": 8}]),
+               "Grows Retribution 22 until end of turn.",
+               [{"op": "temp_retribution", "n": 22}]),
         ], "It is not healing wrong. It is healing like this on purpose."),
     ]),
 
@@ -322,6 +329,242 @@ CHAINS = [
                "This unit gains 2 Ferocity stacks.",
                [{"op": "gain_stacks", "n": 2}]),
         ], "It keeps a tally. It has stopped needing to."),
+    ]),
+
+    # =====================================================================
+    # EXPANSION (2026-08-20) -- 20 units to full parity, matching the pass
+    # Forge (19->63) and Tempest (20->66) each took.
+    #
+    # Same three-tier discipline the bestiary waves used: a roster this size
+    # is mostly COLLECTION content (a 60-card deck picks ~12 unit slots from
+    # ~57 candidates), so pitching every card at one power level produces
+    # interchangeable creatures. Roughly: vanillas at the bottom, staples in
+    # the middle, a small number of genuine build-arounds.
+    #
+    # Signature density is held near the 73-100% the built colours measure --
+    # deliberately NOT 100%, because a faction where every card carries the
+    # keyword is the sameness failure the bestiary waves recorded.
+    # =====================================================================
+
+    # 9. The defensive archetype -- the faction's stated hole, closed with a
+    #    CARD rather than a change to either signature (exactly as wilds.md's
+    #    open question specified the answer should look). Resist on a Molt
+    #    body: hard to chip down, and the chip that does land is answered.
+    ("Bristl", [
+        ("grub", "basic", 44, KW(molt=1, resist=4), [
+            A("bristl_jab", "Jab", 19, "19 damage."),
+        ], "Everything about it is pointed outward."),
+        ("hide", "stage1", 84, KW(molt=1, resist=6), [
+            A("bristl_drive", "Drive Back", 40, "40 damage."),
+            AB("bristl_set", "Set the Quills",
+               "Grows Retribution 18 until end of turn.",
+               [{"op": "temp_retribution", "n": 18}]),
+        ], "It does not chase. It has never had to."),
+        ("warden", "stage2", 128, KW(molt=1, resist=8), [
+            A("bristl_impale", "Impale", 84, "84 damage."),
+            AB("bristl_bramble", "Bramble Wall",
+               "Grows Retribution 30 until end of turn.",
+               [{"op": "temp_retribution", "n": 30}]),
+        ], "The ground around it is not safe and has not been for some time."),
+    ]),
+
+    # 10. The Ferocity engine that does not need the opponent's cooperation.
+    #     A Ferocity deck whose opponent refuses to trade has no way to turn
+    #     the counter on -- this chain is the printed answer, growing from
+    #     damage DEALT instead of from friendly deaths.
+    ("Rend", [
+        ("cub", "basic", 50, KW(ferocity=1), [
+            A("rend_slash", "Slash", 21, "21 damage. This unit gains 1 Ferocity.",
+              [{"op": "ferocity_on_damage", "n": 1}]),
+        ], "It counts what it takes down, not what it loses."),
+        ("fang", "stage1", 94, KW(ferocity=2), [
+            A("rend_open", "Open Up", 44, "44 damage. This unit gains 1 Ferocity.",
+              [{"op": "ferocity_on_damage", "n": 1}]),
+        ], "Every wound it opens teaches it where the next one goes."),
+        ("ravager", "stage2", 140, KW(ferocity=3), [
+            A("rend_ruin", "Ruin", 90, "90 damage. This unit gains 2 Ferocity.",
+              [{"op": "ferocity_on_damage", "n": 2}]),
+        ], "It no longer needs anything to die nearby. It manages on its own."),
+    ]),
+
+    # 11. Staple beef. No signature at the Basic (evolves into one, per the
+    #     standing rule), plain big bodies -- the cards a Wilds deck runs when
+    #     it wants a wall rather than a plan.
+    ("Lurk", [
+        ("grub", "basic", 62, [], [
+            A("lurk_shove", "Shove", 27, "27 damage."),
+            A("lurk_crush", "Crush", 35, "35 damage."),
+        ], "It waits where the light stops."),
+        ("maw", "stage1", 110, KW(ferocity=2), [
+            A("lurk_swallow", "Swallow", 48, "48 damage."),
+        ], "Nothing it takes is ever found again."),
+        ("brute", "stage2", 162, KW(ferocity=3), [
+            A("lurk_devour", "Devour", 98, "98 damage."),
+        ], "The shape in the dark was always this big. You simply could not see it."),
+    ]),
+
+    # 12. Molt fodder, second flavour -- two more disposable Basics so the
+    #     combo decks are not all fighting over four copies of one Whelp.
+    ("Nib", [
+        ("grub", "basic", 32, KW(molt=1), [
+            A("nib_gnash", "Gnash", 18, "18 damage."),
+            A("nib_worry", "Worry", 24, "24 damage."),
+        ], "Barely worth killing. That is the entire problem with it."),
+        ("runt", "basic", 30, KW(molt=1, retribution=10), [
+            A("nib_bite", "Bite", 19, "19 damage."),
+        ], "It gets up. It always gets up. Once."),
+    ]),
+
+    # 13. The tall Molt investment -- a Stage 2 whose Molt is the plan, not
+    #     insurance. Big enough that returning it at full HP with its energy
+    #     intact is a genuine tempo swing.
+    ("Grond", [
+        ("cub", "basic", 42, KW(molt=1), [
+            A("grond_stomp", "Stomp", 20, "20 damage."),
+        ], "Heavier than it has any right to be."),
+        ("tusk", "stage1", 88, KW(molt=1), [
+            A("grond_batter", "Batter", 42, "42 damage."),
+        ], "It does not go around things."),
+        ("brute", "stage2", 136, KW(molt=1), [
+            A("grond_flatten", "Flatten", 96, "96 damage."),
+            AB("grond_shrug", "Shrug Off the Ruin",
+               "Trigger this unit's own Molt now, without dying.",
+               [{"op": "self_molt", "n": 1}]),
+        ], "It has been buried twice. Neither took."),
+    ]),
+
+    # 14. Wide Ferocity, second flavour. Cheap trackers with real damage, so
+    #     the go-wide plan has enough bodies to actually go wide with.
+    ("Skitt", [
+        ("grub", "basic", 40, KW(ferocity=1), [
+            A("skitt_nip", "Nip", 19, "19 damage."),
+        ], "There are more of them than you counted."),
+        ("whelp", "basic", 44, KW(ferocity=1), [
+            A("skitt_swarm", "Swarm", 22, "22 damage."),
+        ], "Individually, not a problem."),
+        ("fang", "stage1", 86, KW(ferocity=2), [
+            A("skitt_overrun", "Overrun", 45, "45 damage."),
+        ], "Collectively, the last thing several people saw."),
+    ]),
+
+    # 15. Vanillas. Clean, cheap, no keyword at the bottom -- the bottom of
+    #     the power curve the tier discipline requires, and the cards that
+    #     make the keyword-carrying ones feel like a choice.
+    ("Hoft", [
+        ("grub", "basic", 54, [], [
+            A("hoft_butt", "Butt", 25, "25 damage."),
+        ], "It eats, it sleeps, it objects to being disturbed."),
+        ("hide", "stage1", 100, KW(resist=5), [
+            A("hoft_charge", "Charge", 46, "46 damage."),
+        ], "The objection has grown considerably."),
+    ]),
+
+    # 16. The last build-around: a Stage 2 that turns a board of corpses into
+    #     reach. Ferocity 3 plus a printed Windfury-free second attack line,
+    #     so a fed tracker converts its stacks into two swings rather than one.
+    ("Vorn", [
+        ("cub", "basic", 46, KW(ferocity=1), [
+            A("vorn_rake", "Rake", 21, "21 damage."),
+        ], "It is learning the shape of a fight."),
+        ("fang", "stage1", 92, KW(ferocity=2), [
+            A("vorn_maul", "Maul", 44, "44 damage."),
+        ], "It has the shape of it now."),
+        ("reaver", "stage2", 148, KW(ferocity=3), [
+            A("vorn_first", "First Cut", 52, "52 damage."),
+            A("vorn_second", "Second Cut", 58, "58 damage."),
+        ], "One for the body. One for whatever is behind it."),
+    ]),
+
+    # 17. Molt + Retribution as a genuine wall, one tier above Bristl. The
+    #     card that punishes the standard answer to Molt (kill it twice):
+    #     both kills cost the attacker real HP.
+    ("Thorng", [
+        ("grub", "basic", 38, KW(molt=1, retribution=14), [
+            A("thorng_prick", "Prick", 19, "19 damage."),
+        ], "Killing it is not the expensive part. Killing it twice is."),
+        ("hide", "stage1", 76, KW(molt=1, retribution=20), [
+            A("thorng_lash", "Lash", 40, "40 damage."),
+        ], "It bleeds on purpose, and never only its own."),
+        ("warden", "stage2", 122, KW(molt=1, retribution=28), [
+            A("thorng_reprisal", "Reprisal", 82, "82 damage."),
+        ], "Everything that has ever hit it is also dead."),
+    ]),
+
+    # 18. Ferocity + Molt at the wide end -- the cheap version of Thrash, so
+    #     the combo plan has a low curve as well as a tall one.
+    ("Yelp", [
+        ("grub", "basic", 30, KW(molt=1, ferocity=1), [
+            A("yelp_snap", "Snap", 18, "18 damage."),
+        ], "It is furious and it is very small."),
+        ("runt", "basic", 34, KW(molt=1, ferocity=1), [
+            A("yelp_tear", "Tear", 19, "19 damage."),
+        ], "The noise it makes is out of all proportion."),
+        ("fang", "stage1", 62, KW(molt=1, ferocity=2), [
+            A("yelp_savage", "Savage", 34, "34 damage."),
+        ], "It grew. It did not calm down."),
+    ]),
+
+    # 19. Big vanilla beef -- the top of the no-signature curve. Runs in any
+    #     Wilds list that just wants a body that does not fold.
+    ("Mott", [
+        ("grub", "basic", 66, [], [
+            A("mott_slam", "Slam", 28, "28 damage."),
+        ], "Slow. Extremely difficult to argue with."),
+        ("tusk", "stage1", 116, [], [
+            A("mott_wreck", "Wreck", 50, "50 damage."),
+            A("mott_bull", "Bull Through", 58, "58 damage."),
+        ], "It has never once changed direction."),
+        ("brute", "stage2", 170, KW(resist=6), [
+            A("mott_ruin", "Ruination", 104, "104 damage."),
+        ], "The word for it is geological."),
+    ]),
+
+    # 20. The Ferocity finisher that reaches. A tall tracker whose payoff is
+    #     tower damage, giving the grind deck a way to actually close rather
+    #     than accumulating stacks forever against a wall.
+    ("Gral", [
+        ("cub", "basic", 48, KW(ferocity=1), [
+            A("gral_gore", "Gore", 22, "22 damage."),
+        ], "It is looking past you already."),
+        ("maw", "stage1", 96, KW(ferocity=2), [
+            A("gral_break", "Break Through", 46, "46 damage."),
+        ], "Bodies are in the way. That is all bodies are."),
+        ("ravager", "stage2", 144, KW(ferocity=3), [
+            A("gral_topple", "Topple", 88, "88 damage. Also deals 20 to that board's tower.",
+              [{"op": "also_hit_tower", "n": 20}]),
+        ], "It has stopped being interested in the guards."),
+    ]),
+
+    # 21. Utility Molt -- a chain whose ability manufactures the friendly
+    #     death a Ferocity board wants, without needing a support card in
+    #     hand for it. The engine piece of the combo, printed on a body.
+    ("Sket", [
+        ("grub", "basic", 36, KW(molt=1), [
+            A("sket_bite", "Bite", 19, "19 damage."),
+            AB("sket_shed", "Shed",
+               "Trigger this unit's own Molt now, without dying.",
+               [{"op": "self_molt", "n": 1}]),
+        ], "It sheds on a schedule nobody else agreed to."),
+        ("hide", "stage1", 72, KW(molt=1), [
+            A("sket_rake", "Rake", 38, "38 damage."),
+            AB("sket_slough", "Slough",
+               "Trigger this unit's own Molt now, without dying.",
+               [{"op": "self_molt", "n": 1}]),
+        ], "What it leaves behind is still warm."),
+    ]),
+
+    # 22. Cheap Ferocity filler, closing out the curve. Two Basics and a
+    #     Stage 1, nothing clever -- the staples a grind list runs four of.
+    ("Crut", [
+        ("grub", "basic", 42, KW(ferocity=1), [
+            A("crut_gnaw", "Gnaw", 19, "19 damage."),
+        ], "It is always at the edge of the fight, watching the middle."),
+        ("cub", "basic", 46, KW(ferocity=1), [
+            A("crut_rend", "Rend", 21, "21 damage."),
+        ], "It has never started anything and has finished several."),
+        ("tusk", "stage1", 88, KW(ferocity=2), [
+            A("crut_carve", "Carve", 44, "44 damage."),
+        ], "It has been keeping count since before you arrived."),
     ]),
 ]
 
@@ -416,6 +659,14 @@ PLANNED_SUPPORT_OPS = {
     "ferocity_reads_any_death",  # Trophy Rack (Tool)
     "temp_retribution",          # Scarl's ability lines
     "gain_stacks",               # Reave's ability line
+    # Added 2026-08-20 with the expansion. All three are UNIT-line ops wired
+    # into `_resolve_line_effects`, not the support dispatcher -- the two
+    # paths do not share a dispatcher, and an op wired into only one of them
+    # parses fine and silently does nothing on the other (the dead-data trap
+    # this project has now hit three times).
+    "self_molt",                 # Grum / Grond -- cash Molt on demand
+    "heal_spent_molt",           # Grumgrub -- heal that doubles once Molt is gone
+    "ferocity_on_damage",        # Rend -- stacks from damage dealt, not deaths
 }
 
 
@@ -521,6 +772,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--replace", action="store_true",
+                    help="With --apply: revise cards this generator already "
+                         "wrote, instead of refusing on duplicate ids.")
     args = ap.parse_args()
 
     cards = build()
@@ -561,9 +815,24 @@ def main():
         existing = db[key] if key else db
         ids = {c["id"] for c in existing}
         dupes = [c["id"] for c in cards if c["id"] in ids]
-        if dupes:
+        if dupes and not args.replace:
             print(f"\nREFUSING TO APPLY -- these ids already exist: {dupes}")
+            print("\nPass --replace to REVISE them in place (this is what an expansion")
+            print("or a card-text fix wants). Without it the guard stands, because the")
+            print("far more common accident is applying the same generator twice.")
             sys.exit(1)
+
+        if args.replace:
+            # Drop every Wilds card this generator owns, then re-add. Rewriting
+            # rather than appending is what lets the generator stay the single
+            # source of truth for the faction: a card's text is edited HERE and
+            # re-applied, never hand-patched in the JSON where the next run
+            # would silently revert it.
+            mine = {c["id"] for c in cards}
+            kept = [c for c in existing if c["id"] not in mine]
+            removed = len(existing) - len(kept)
+            existing[:] = kept
+            print(f"\nReplacing: dropped {removed} existing card(s) this generator owns.")
         existing.extend(cards)
         CARDS.write_text(json.dumps(db, indent=1, ensure_ascii=False) + "\n",
                          encoding="utf-8")

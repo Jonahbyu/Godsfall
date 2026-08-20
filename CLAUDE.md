@@ -2309,7 +2309,7 @@ with no console errors.
 Implemented: main menu, deck select, deck builder, combat vs. a heuristic AI, **both
 factions in full** — 15 Hel units and 13 Heaven units, each with its own energy card — the
 38 neutral supports, and the full turn/energy/combat rule set. Card data is data-driven
-from `data/cards.json` (**448 cards**: 61 Hel, 59 Heaven, 66 Void, 63 Gaia, 63 Forge, 66 Tempest, 27 Wilds, 43 neutral).
+from `data/cards.json` (**487 cards**: 61 Hel, 59 Heaven, 66 Void, 63 Gaia, 63 Forge, 66 Tempest, 66 Wilds, 43 neutral).
 
 **Heaven is built — two factions now exist.** 13 units, an energy card, and one Tool,
 implementing the `Judgment` and `Sanctuary` keywords and the within-attack damage
@@ -2348,8 +2348,8 @@ tests seed and round-trip deck data, and while they shared the real path, **ever
 silently destroyed the player's saved decks.** Any new harness that touches `DeckStore`
 must call `use_sandbox_path()` before it writes.
 
-**Thirty-three sample decks ship as the starter collection** — six Hel, four Heaven, four
-Void, four Gaia, seven Forge, five Tempest, three Wilds — laid down on first run by
+**Thirty-five sample decks ship as the starter collection** — six Hel, four Heaven, four
+Void, four Gaia, seven Forge, five Tempest, five Wilds — laid down on first run by
 `DeckStore.sample_decks()`. Each is built around a single idea rather than a spread of the
 card pool, because a deck holding one of everything has no plan to read and plays the same
 whatever you draw:
@@ -2384,6 +2384,8 @@ whatever you draw:
 | **Second Life** | Wilds | Molt aggro. Trade constantly and come back exactly as strong; `Scarl`'s ability punishes the second attack into it. No Ferocity — the clean Molt teach. | 20 |
 | **The Long Tally** | Wilds | Ferocity grind. Several cheap trackers rather than one tall investment; runs no healing at all, because every friendly death is a stack somewhere on the board. No Molt. | 15 |
 | **Never Really Died** | Wilds | The combo the faction is built around — `Thrash`'s own Molt feeds its own Ferocity counter, and Molt-carrying `Whelp` fodder feeds it twice per card. `Cull the Weak` and `Shed the Skin` manufacture the feed on demand. | 19 |
+| **Thickskin** | Wilds | The defensive list, and the answer to `wilds.md`'s own open question — `Bristl` is Resist on a Molt body (beat the armour twice), `Thorng` is Retribution on a Molt body (killing it twice costs twice), `Mott` is 170 HP of nothing-clever. | 19 |
+| **Blood Debt** | Wilds | Ferocity that needs no cooperation. `Rend` banks a stack off damage **dealt**, so an opponent who refuses to trade cannot switch the counter off; `Gral` reaches past the body into the tower; `Vorn` spends every stack twice a turn. | 20 |
 
 **Every sample deck is exactly 60 cards**, not merely under the cap — `DeckStoreTest`
 asserts it, because a shipped deck should be battle-ready as printed rather than a
@@ -2876,8 +2878,8 @@ Two guards worth keeping: the writer never raises (a balance log that can fail a
 or break a game is worse than no log), and a stall is recorded as `NO WINNER — stalled at
 round N`, since that is the single most important thing the file can capture.
 
-Verified by seventeen headless harnesses, all passing — run 2026-08-16 after the Forge
-expansion, **1238 counted assertions** across the thirteen that count (`SceneSmokeTest`, `PlaythroughTest` and
+Verified by eighteen headless harnesses, all passing — run 2026-08-20 after the Wilds
+expansion, **1281 counted assertions** across the fifteen that count (`SceneSmokeTest`, `PlaythroughTest` and
 `TutorialWalkTest` report pass/fail without a count and are not in that total):
 
 | Harness | Covers |
@@ -2898,6 +2900,7 @@ expansion, **1238 counted assertions** across the thirteen that count (`SceneSmo
 | `ForgeTest.gd` | 143 assertions: `Stoke` as a cost rather than a damage event (**`Sanctuary` does not absorb it and `Resist` does not reduce it** — the two assertions the file runs first, because they are the whole reason the keyword has the shape it does), the flag as an *amount* so scaling and threshold payoffs read one field, Hold the Slot still flooring it at 1 HP, lethal Stoke firing `Toll` through the ordinary death path, the flag clearing each turn, affordability refusing a partial payment, `Scrap` (weakest-body default, an explicit target honoured, never itself, refused with no other unit and costing nothing when refused, and firing the victim's `Toll`), all **nineteen** payoff ops **driven through the real damage pipeline** (the original nine, plus the ten the 2026-08-16 expansion built — unpreventable damage, the board sweep, both-boards, the tower splash, the extra attack slot, immediate resolution, the cost discount, the decay skip, draw, and the second Stoke), every one of them **verified by putting the bug back**, `stoked_heal_back` refunding the HP while **leaving the flag set**, cleave obeying the shielding chain, the threshold gate on the shielding break, ability cost parsing for all three non-energy costs, and the roster invariants (HP bands, two-line rule, retreat formula, Stoke only on an ability and never above the body's own HP) |
 | `KeywordModTest.gd` | 15 assertions on the keyword modifier layer: every previously-flat keyword (`toll`, `siphon`, `decay`, `judgment`, `essence`, `resist`) accepting a modifier, unbounded stacking, the accessors reporting the modified value rather than only the raw dictionary, the floor at 0 applying **on read** so a −5 then +5 returns to the print, and modifiers clearing on both `Rise` and evolution. Verified by reverting `toll()` to its flat form and watching two assertions fail before restoring the fix |
 | `TempestTest.gd` | 56 assertions: the `Charge` counter and its spend, persistence **through evolution** with the rate changing and the value carrying, the reset on `Rise`, the global `Storm` counter, Storm's extra damage instance (one instance of N and not N of 1, doubled for a Tempest body, blunted normally by `Resist`, and inert at Storm 0), Charge growing on damage **dealt** and never taken, `charge_on_kill` **not** paying when defensive Judgment rescued the body, all four Discharge modes plus `charge_transfer` **driven through the real `use_ability` and `_deliver_attack_damage`**, `discharge_structures` reaching a tower past a wall while a plain discharge does not, `storm_scale_damage`, `Retribution` firing once per attack rather than once per instance, and both Tempest supports checked against the **shipped card data** rather than a fixture |
+| `WildsTest.gd` | 43 assertions: `Molt` inverting every axis of `Rise` (full HP, same slot, **attached energy retained** — the printed exception to *attached energy is lost when the unit dies* — and the keyword spent on the copy but **restored by evolution**), `Ferocity`'s per-stack +2 HP / +1 damage, the trigger scoped **per board** and never crossing, a unit's **own Molt feeding its own counter** and the stacks surviving that death, all three new unit-line ops (`self_molt`, `heal_spent_molt`, `ferocity_on_damage`) **driven through the real `use_ability` and `_resolve_line_effects`** rather than simulated, `self_molt` refusing when there is no Molt to spend, **granted Molt rendering on the board card** (the bug that had shipped twice), and the shipped roster's HP bands, two-line rule, pinned Ferocity N and op-reachability. Every op verified by putting the bug back. |
 | `LayoutTest.gd` | 37 assertions on what the UI *draws*: every entry in `Palette.GLYPH` being renderable by the actual theme font, every double-quoted literal across the twenty-one UI source files containing no character the font lacks (comments exempt — their ASCII diagrams are never rendered), all four screens building in **both** the desktop and phone layouts, and — the assertion that matters most — **no phone layout exceeding the 540-unit phone viewport**, measured with `get_combined_minimum_size()` and ignoring content inside a horizontally scrolling container. The glyph half reads the source rather than the running scene on purpose: a label built only in a rare branch — an error state, a disabled button's tooltip — is never instantiated by a smoke test, and those are exactly the strings that ship broken. The overflow half exists because its absence is what let mobile mode ship as pure zoom: every screen *built* fine, which is all the build assertions ever checked |
 
 The Heaven pipeline tests deliberately call `GameState._deal_lane_damage` rather than
@@ -4792,3 +4795,57 @@ even if the rule text later changes. Keep entries to one or two lines.
   already use. A card needs no dedicated ability line to carry either one; the printed
   `keywords` block is the whole mechanism, which is what let the baseline ship with
   several one-line Basics rather than every card needing a matching ability line.
+
+- **A granted keyword was invisible on the board, and it had shipped twice.**
+  `CardView._live_keyword_line()` walks `card.keyword_line()` — the **printed** keywords —
+  so it could only ever hide or rewrite a keyword the card already prints. A keyword
+  *granted in play* has no part to iterate over, so `Second Skin`'s Molt and `Aegis of the
+  Choir`'s Sanctuary were both tracked correctly by the engine and rendered **nowhere**.
+  This is the spent-`Judgment` bug running in the other direction, and it is the same
+  lesson at a higher level of generality: **the engine being right is not the card being
+  readable**, and to a player an effect that is correct and invisible is indistinguishable
+  from one that did nothing. Fixed by appending, after the printed loop, any keyword the
+  unit *holds* but never *printed* — the cases the printed line does not mention are by
+  definition the ones the loop cannot reach. Guarded in `WildsTest` and verified by
+  putting the bug back.
+- **Wilds' abilities were rewritten before the roster was expanded, because three of the
+  six were the same card at three sizes.** `heal 10 / 18 / 30` down the Grum chain, plus
+  two more that were that heal with a rider. Two things were wrong with it and only one is
+  about repetition: a free self-heal is also the most **passive** line this colour can
+  print, and Wilds is the faction whose whole plan is trading constantly — a heal button
+  rewards declining the trade it is built to want. They now read the chain's **own
+  keyword**: `heal_spent_molt` pays double once the reprieve is gone, and `self_molt`
+  cashes the Molt on demand. `self_molt` is the one that earns its slot, because it is a
+  real decision rather than a button — it **spends** a one-shot keyword only evolution
+  restores, and on a board holding a Ferocity tracker it manufactures a friendly death on
+  demand. **The general shape: a chain that prints the same ability at three sizes is
+  usually a chain whose ability does not read its own faction.**
+- **Wilds expanded 27 → 66 cards the day it shipped, and unlike Forge it did not need to
+  be engine-first.** Forge's expansion had to build ten ops before it could write cards,
+  because nine of eleven catalogued payoffs were designed and unimplemented, so every new
+  chain would otherwise have reprinted the one op that existed. Wilds' signatures are
+  **keywords read passively**, so the roster was never gated that way — the three new ops
+  exist for the *ability rewrites*, not for the chains. Landed at **59 units / 22 chains /
+  86% signature density**, inside the 73–100% the built colours measure, with 6 bodies
+  printing no keyword at all. The generator gained `--replace` so cards it already wrote
+  are **revised in place**: a card's text is edited in the generator and re-applied, never
+  hand-patched in the JSON where the next run would silently revert it.
+- **`self_molt` needed its own AI heuristic, which is the third time this exact trap has
+  been hit.** Stoke needed `_stoke_worth_it()`, Discharge needed `_discharge_worth_it()`,
+  and now Molt needs `_self_molt_worth_it()` — every time because **a cost the engine does
+  not charge in pool energy is invisible to a heuristic that measures pool energy**. The
+  "free abilities are always taken" default would have shed a healthy body every single
+  turn, spending the best reprieve in the game for nothing. It now sheds only when the
+  body is nearly dead anyway, or when a Ferocity tracker on that board is watching — the
+  two cases where the death is worth having. Teaching the AI moved `ferocity` log events
+  from 0 to 29 across four games. **Op-reachability stays a third question**, distinct
+  from "the op resolves" and "a card prints it": `self_molt` still fires zero times in AI
+  play and is proven only by direct probe and by `WildsTest`.
+- **Wilds had shipped with no test harness while every other faction had one.**
+  `WildsTest.gd` closes that, and its assertion-count guard immediately earned its keep:
+  four signature mismatches (`_deliver_attack_damage`'s real arity, `CardView._init`'s
+  arguments, and `CardData.type`/`stage` being **enums rather than strings**) each made
+  assertions silently *not run*, and the run reported "0 failed" every time. A green suite
+  is only evidence if you know how many assertions it was supposed to run. The expected
+  count was then set to the measured 43 rather than the estimated 48 — a guard edited
+  reflexively to match whatever ran is no guard at all.

@@ -2106,6 +2106,49 @@ func _resolve_line_effects(p: Player, enemy: Player, u: Unit, atk: AttackData,
 		u.add_ferocity(sn)
 		_log("  %s gains %d Ferocity (now %d)." % [u.card.name, sn, u.ferocity_stacks])
 
+	## `heal_spent_molt` — a self-heal that doubles once this body's Molt is
+	## gone. Deliberately not a flat heal: a Molt unit at full keyword already
+	## holds the best reprieve in the game, so the heal is small then and only
+	## becomes real insurance after the reprieve is spent. Keeps the ability
+	## reading the chain's own keyword rather than being a generic button.
+	if atk.is_ability and atk.has_effect("heal_spent_molt"):
+		var hsm: int = atk.effect_value("heal_spent_molt", 0)
+		if not u.has_molt():
+			hsm *= 2
+		var hsm_done: int = heal_unit(p, u, hsm)
+		_log("%s uses %s: heals %d (%d/%d)." % [
+			u.card.name, atk.name, hsm_done, u.hp, effective_max_hp(p, u)])
+
+	## `self_molt` — cash this body's own Molt on demand, without waiting to be
+	## killed. Routes through the SAME `_kill` path a combat death uses rather
+	## than calling `make_molted()` directly, which is what makes it fire
+	## Ferocity on the board exactly as a real death would (and is why a unit
+	## carrying both signatures feeds its own counter from this).
+	##
+	## Deliberately NOT free of consequence: it spends the Molt, so the body
+	## that comes back cannot do it again until it evolves. Refused outright
+	## when there is no Molt to spend, so the ability can never be a no-op that
+	## silently eats the unit's once-per-turn.
+	if atk.is_ability and atk.has_effect("self_molt"):
+		if not u.has_molt():
+			_log("%s has no Molt to shed." % u.card.name)
+			return
+		var smb: Array = _find_unit_position(p, u)
+		if int(smb[0]) >= 0:
+			_log("%s sheds its skin." % u.card.name)
+			_kill(p, p.boards[int(smb[0])], int(smb[1]), u)
+
+	## `ferocity_on_damage` — a Ferocity tracker that also grows from dealing
+	## damage, not only from watching friendlies die. The one printed answer to
+	## the faction's structural weakness: a Ferocity deck whose opponent simply
+	## refuses to trade has no other way to turn the counter on.
+	if atk.has_effect("ferocity_on_damage") and not atk.is_ability:
+		var fod: int = atk.effect_value("ferocity_on_damage", 1)
+		if u.has_ferocity():
+			u.add_ferocity(fod)
+			_log("  %s grows %d Ferocity from the kill-hunger (now %d)." % [
+				u.card.name, fod, u.ferocity_stacks])
+
 	## Gaia: consolidate a friendly unit's Earth onto another. Essence without the
 	## death — it is how a board banks its grown Earth onto one survivor before a
 	## wipe, which is the counterplay to the aura being killable.

@@ -347,6 +347,409 @@ def register(m):
         talon(d, 0.48, 0.54, 0.36, 0.48, WILD_DEEP)
         talon(d, 0.46, 0.50, 0.22, 0.30, WILD_HOT)
 
+    # ==================================================================
+    # EXPANSION (2026-08-20) -- 14 more chains.
+    #
+    # The grammar is PARTITIONED, not varied: every chain below gets its
+    # own object, chosen so no two share a silhouette at 78px. The wave-2
+    # lesson, restated because it has cost real time on every faction:
+    # "another tooth" and "another hide" identify nothing once a roster is
+    # this large, so the objects were assigned before any of them was drawn.
+    #
+    #   Bristl -- quills: a spined ridge, points outward
+    #   Rend   -- the split: a single deep cleft opening
+    #   Lurk   -- the swallowing maw: a dark round throat
+    #   Nib    -- the chip: a small broken shard
+    #   Grond  -- the boulder-shell: a heavy domed carapace
+    #   Skitt  -- the many-legged mass: a clustered body
+    #   Hoft   -- the hoof: one blunt cloven print
+    #   Vorn   -- the paired blade-claws: two hooks crossed
+    #   Thorng -- the barb: a hooked thorn, backward-facing
+    #   Yelp   -- the small open mouth: a round cry
+    #   Mott   -- the slab: a massive squared block of muscle
+    #   Gral   -- the horn: one forward-driving spike
+    #   Sket   -- the shed husk: a hollow split casing
+    #   Crut   -- the notched bone: a shaft with tally marks
+    # ==================================================================
+
+    def quills(d, cx, cy, w, h, col, n=5):
+        """A spined ridge -- one closed body with points driven out of it."""
+        pts = [(cx - w, cy + h * 0.55), (cx - w * 0.86, cy - h * 0.05)]
+        for i in range(n):
+            f = i / float(n - 1)
+            bx = cx - w * 0.80 + w * 1.60 * f
+            pts.append((bx - w * 0.10, cy - h * 0.15))
+            pts.append((bx, cy - h * (0.72 + 0.26 * (1 - abs(f - 0.5) * 2))))
+            pts.append((bx + w * 0.10, cy - h * 0.15))
+        pts += [(cx + w * 0.86, cy - h * 0.05), (cx + w, cy + h * 0.55)]
+        poly(d, pts, fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+        poly(d, [(cx - w * 0.55, cy + h * 0.10), (cx + w * 0.55, cy + h * 0.10),
+                 (cx + w * 0.40, cy + h * 0.44), (cx - w * 0.40, cy + h * 0.44)],
+             fill=dark(col, 0.28))
+
+    @art("wilds_bristlgrub")
+    def _bristlgrub(d, t):
+        quills(d, 0.50, 0.62, 0.20, 0.24, WILD, n=4)
+
+    @art("wilds_bristlhide")
+    def _bristlhide(d, t):
+        quills(d, 0.50, 0.62, 0.26, 0.30, WILD, n=5)
+
+    @art("wilds_bristlwarden")
+    def _bristlwarden(d, t):
+        quills(d, 0.50, 0.64, 0.32, 0.36, WILD_DEEP, n=7)
+        quills(d, 0.50, 0.60, 0.18, 0.20, WILD_HOT, n=4)
+
+    # ------------------------------------------------------------------
+
+    def cleft(d, cx, cy, w, h, col):
+        """A deep split. The GAP is the subject, so the two halves must never
+        meet at the top or bottom -- twice now they have, and each time the
+        outlines re-closed into one silhouette that read as a shield with a
+        stripe. They are now offset VERTICALLY as well as apart, so no pair of
+        vertices lines up and the eye reads two separate pieces of one thing."""
+        poly(d, [(cx - w * 0.42, cy - h * 0.86), (cx - w * 1.08, cy - h * 0.30),
+                 (cx - w * 0.96, cy + h * 0.62), (cx - w * 0.34, cy + h * 1.00)],
+             fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+        poly(d, [(cx + w * 0.34, cy - h * 1.00), (cx + w * 0.96, cy - h * 0.62),
+                 (cx + w * 1.08, cy + h * 0.30), (cx + w * 0.42, cy + h * 0.86)],
+             fill=dark(col, 0.26), outline=dark(WILD_DEEP, 0.35), width=3)
+
+    @art("wilds_rendcub")
+    def _rendcub(d, t):
+        cleft(d, 0.50, 0.56, 0.18, 0.26, WILD)
+
+    @art("wilds_rendfang")
+    def _rendfang(d, t):
+        cleft(d, 0.50, 0.56, 0.24, 0.32, WILD)
+
+    @art("wilds_rendravager")
+    def _rendravager(d, t):
+        cleft(d, 0.50, 0.55, 0.30, 0.40, WILD_DEEP)
+        cleft(d, 0.50, 0.55, 0.15, 0.22, BLOOD_HOT)
+
+    # ------------------------------------------------------------------
+
+    def maw(d, cx, cy, r, col):
+        """A swallowing throat.
+
+        First draft drew 8 evenly-spaced radial teeth around a ring, which is
+        the definition of a COG -- mechanical, and wrong for a faction that is
+        grown rather than forged. A throat is identified by DEPTH, so it is
+        drawn as an irregular funnel narrowing inward instead."""
+        poly(d, [(cx - r, cy - r * 0.52), (cx - r * 0.44, cy - r),
+                 (cx + r * 0.50, cy - r * 0.94), (cx + r, cy - r * 0.30),
+                 (cx + r * 0.86, cy + r * 0.66), (cx + r * 0.10, cy + r),
+                 (cx - r * 0.70, cy + r * 0.74)],
+             fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+        poly(d, [(cx - r * 0.62, cy - r * 0.30), (cx - r * 0.22, cy - r * 0.64),
+                 (cx + r * 0.34, cy - r * 0.56), (cx + r * 0.62, cy - r * 0.10),
+                 (cx + r * 0.50, cy + r * 0.42), (cx - r * 0.04, cy + r * 0.62),
+                 (cx - r * 0.46, cy + r * 0.40)],
+             fill=dark(col, 0.42))
+        poly(d, [(cx - r * 0.30, cy - r * 0.06), (cx + r * 0.06, cy - r * 0.26),
+                 (cx + r * 0.30, cy + r * 0.06), (cx + r * 0.10, cy + r * 0.32),
+                 (cx - r * 0.20, cy + r * 0.24)],
+             fill=dark(HIDE_DARK, 0.6))
+
+    @art("wilds_lurkgrub")
+    def _lurkgrub(d, t):
+        maw(d, 0.50, 0.56, 0.22, WILD)
+
+    @art("wilds_lurkmaw")
+    def _lurkmaw(d, t):
+        maw(d, 0.50, 0.56, 0.28, WILD)
+
+    @art("wilds_lurkbrute")
+    def _lurkbrute(d, t):
+        maw(d, 0.50, 0.55, 0.34, WILD_DEEP)
+        maw(d, 0.50, 0.55, 0.18, WILD_HOT)
+
+    # ------------------------------------------------------------------
+
+    def shard(d, cx, cy, w, h, col):
+        """A small broken chip -- one angular closed fragment."""
+        poly(d, [(cx - w * 0.20, cy - h), (cx + w * 0.72, cy - h * 0.34),
+                 (cx + w * 0.34, cy + h * 0.62), (cx - w * 0.80, cy + h * 0.86),
+                 (cx - w * 0.92, cy - h * 0.10)],
+             fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+        poly(d, [(cx - w * 0.18, cy - h * 0.80), (cx + w * 0.44, cy - h * 0.28),
+                 (cx - w * 0.10, cy + h * 0.10)], fill=light(col, 0.38))
+
+    @art("wilds_nibgrub")
+    def _nibgrub(d, t):
+        shard(d, 0.50, 0.58, 0.20, 0.24, WILD)
+
+    @art("wilds_nibrunt")
+    def _nibrunt(d, t):
+        shard(d, 0.50, 0.57, 0.22, 0.27, WILD_HOT)
+
+    # ------------------------------------------------------------------
+
+    def carapace(d, cx, cy, w, h, col):
+        """A heavy domed shell -- broad, low, plated."""
+        poly(d, [(cx - w, cy + h * 0.60), (cx - w * 0.90, cy - h * 0.12),
+                 (cx - w * 0.52, cy - h * 0.78), (cx, cy - h),
+                 (cx + w * 0.52, cy - h * 0.78), (cx + w * 0.90, cy - h * 0.12),
+                 (cx + w, cy + h * 0.60)],
+             fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+        ## Overlapping PLATES, not vertical bars: bars inside a dome read as
+        ## a cage. Each plate is a shallow band stepping up the shell.
+        for i, f in enumerate((0.46, 0.06, -0.34)):
+            sw = 0.94 - i * 0.22
+            poly(d, [(cx - w * sw, cy + h * f),
+                     (cx + w * sw, cy + h * (f - 0.04)),
+                     (cx + w * (sw - 0.10), cy + h * (f - 0.34)),
+                     (cx - w * (sw - 0.10), cy + h * (f - 0.30))],
+                 fill=dark(col, 0.20 + i * 0.10))
+
+    @art("wilds_grondcub")
+    def _grondcub(d, t):
+        carapace(d, 0.50, 0.60, 0.22, 0.20, WILD)
+
+    @art("wilds_grondtusk")
+    def _grondtusk(d, t):
+        carapace(d, 0.50, 0.60, 0.28, 0.25, WILD)
+
+    @art("wilds_grondbrute")
+    def _grondbrute(d, t):
+        carapace(d, 0.50, 0.62, 0.35, 0.31, WILD_DEEP)
+        carapace(d, 0.50, 0.58, 0.19, 0.17, WILD_HOT)
+
+    # ------------------------------------------------------------------
+
+    def cluster(d, cx, cy, r, col):
+        """A many-bodied mass -- overlapping rounds, never one clean circle."""
+        ## Spread far enough that the rounds do not merge into one blob, and
+        ## spiked outward so the silhouette reads as MANY bodies rather than
+        ## as a single lumpy one.
+        for dx, dy, s in ((-1.05, 0.42, 0.50), (1.05, 0.42, 0.50),
+                          (-0.72, -0.62, 0.42), (0.72, -0.62, 0.42),
+                          (0.0, 0.02, 0.82)):
+            bx, by = cx + r * dx, cy + r * dy
+            for ang in (-0.9, -0.3, 0.3, 0.9):
+                poly(d, [(bx - r * 0.10, by), (bx + r * 0.10, by),
+                         (bx + r * (s + 0.55) * ang, by + r * (s + 0.60))],
+                     fill=dark(col, 0.35))
+            circle(d, bx, by, r * s,
+                   fill=col if s < 0.8 else light(col, 0.25),
+                   outline=dark(WILD_DEEP, 0.35), width=3)
+
+    @art("wilds_skittgrub")
+    def _skittgrub(d, t):
+        cluster(d, 0.50, 0.58, 0.16, WILD)
+
+    @art("wilds_skittwhelp")
+    def _skittwhelp(d, t):
+        cluster(d, 0.50, 0.58, 0.18, WILD_HOT)
+
+    @art("wilds_skittfang")
+    def _skittfang(d, t):
+        cluster(d, 0.50, 0.57, 0.23, WILD)
+
+    # ------------------------------------------------------------------
+
+    def hoof(d, cx, cy, w, h, col):
+        """One blunt cloven print -- two lobes with a gap between them."""
+        ## WEDGES, not rectangles: narrow at the top, splayed and rounded at
+        ## the ground. Straight-sided quads read as two plain bars.
+        for s in (-1.0, 1.0):
+            poly(d, [(cx + s * w * 0.10, cy - h * 0.92),
+                     (cx + s * w * 0.46, cy - h * 0.66),
+                     (cx + s * w * 0.96, cy + h * 0.34),
+                     (cx + s * w * 0.72, cy + h * 0.92),
+                     (cx + s * w * 0.18, cy + h * 0.86)],
+                 fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+
+    @art("wilds_hoftgrub")
+    def _hoftgrub(d, t):
+        hoof(d, 0.50, 0.56, 0.20, 0.26, WILD)
+
+    @art("wilds_hofthide")
+    def _hofthide(d, t):
+        hoof(d, 0.50, 0.56, 0.26, 0.32, WILD_HOT)
+
+    # ------------------------------------------------------------------
+
+    def hook_blade(d, cx, cy, w, h, col, s=1.0):
+        """A broad hooked claw. Deliberately NOT a reuse of Reave's talon():
+        that shape is slender by design, and at Vorn's paired widths two of
+        them read as thin scratches rather than as claws. This one is wide-
+        bellied, so it survives being drawn twice at half size."""
+        poly(d, [
+            (cx - s * w * 0.55, cy + h * 0.95), (cx - s * w * 0.16, cy + h * 0.10),
+            (cx + s * w * 0.20, cy - h * 0.60), (cx + s * w * 0.86, cy - h * 0.98),
+            (cx + s * w * 0.44, cy - h * 0.30), (cx + s * w * 0.30, cy + h * 0.36),
+            (cx + s * w * 0.10, cy + h * 0.95),
+        ], fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+        poly(d, [(cx + s * w * 0.10, cy - h * 0.42), (cx + s * w * 0.60, cy - h * 0.82),
+                 (cx + s * w * 0.30, cy - h * 0.28), (cx + s * w * 0.06, cy + h * 0.24)],
+             fill=light(col, 0.34))
+
+    @art("wilds_vorncub")
+    def _vorncub(d, t):
+        hook_blade(d, 0.34, 0.56, 0.24, 0.28, WILD, s=1.0)
+        hook_blade(d, 0.66, 0.56, 0.24, 0.28, WILD, s=-1.0)
+
+    @art("wilds_vornfang")
+    def _vornfang(d, t):
+        hook_blade(d, 0.32, 0.56, 0.30, 0.34, WILD, s=1.0)
+        hook_blade(d, 0.68, 0.56, 0.30, 0.34, WILD, s=-1.0)
+
+    @art("wilds_vornreaver")
+    def _vornreaver(d, t):
+        hook_blade(d, 0.30, 0.58, 0.34, 0.40, WILD_DEEP, s=1.0)
+        hook_blade(d, 0.70, 0.58, 0.34, 0.40, WILD_DEEP, s=-1.0)
+        hook_blade(d, 0.50, 0.50, 0.22, 0.28, BLOOD_HOT, s=1.0)
+
+    # ------------------------------------------------------------------
+
+    def barb(d, cx, cy, w, h, col):
+        """A hooked thorn -- the hook curls BACK, which is what makes it a barb."""
+        poly(d, [(cx - w * 0.18, cy + h), (cx - w * 0.06, cy - h * 0.20),
+                 (cx + w * 0.34, cy - h), (cx + w * 0.10, cy - h * 0.16),
+                 (cx + w * 0.62, cy - h * 0.02), (cx + w * 0.16, cy + h * 0.18),
+                 (cx + w * 0.20, cy + h)],
+             fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+
+    @art("wilds_thornggrub")
+    def _thornggrub(d, t):
+        barb(d, 0.50, 0.56, 0.20, 0.26, WILD)
+
+    @art("wilds_thornghide")
+    def _thornghide(d, t):
+        barb(d, 0.50, 0.56, 0.25, 0.32, WILD)
+
+    @art("wilds_thorngwarden")
+    def _thorngwarden(d, t):
+        barb(d, 0.44, 0.58, 0.28, 0.36, WILD_DEEP)
+        barb(d, 0.60, 0.52, 0.18, 0.24, BLOOD_HOT)
+
+    # ------------------------------------------------------------------
+
+    def cry(d, cx, cy, r, col):
+        """A small open mouth -- a round hole ringed by body. Deliberately
+        SMALLER and rounder than Lurk's maw, and toothless, so the two do not
+        collide: this one is a noise, that one is a throat."""
+        ellipse(d, cx - r, cy - r * 1.15, cx + r, cy + r * 1.15,
+                fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+        ellipse(d, cx - r * 0.48, cy - r * 0.62, cx + r * 0.48, cy + r * 0.72,
+                fill=dark(HIDE_DARK, 0.5))
+
+    @art("wilds_yelpgrub")
+    def _yelpgrub(d, t):
+        cry(d, 0.50, 0.57, 0.17, WILD)
+
+    @art("wilds_yelprunt")
+    def _yelprunt(d, t):
+        cry(d, 0.50, 0.57, 0.19, WILD_HOT)
+
+    @art("wilds_yelpfang")
+    def _yelpfang(d, t):
+        cry(d, 0.50, 0.56, 0.23, WILD)
+
+    # ------------------------------------------------------------------
+
+    def slab(d, cx, cy, w, h, col):
+        """A squared block of muscle -- the biggest, bluntest shape in the set."""
+        poly(d, [(cx - w, cy - h * 0.78), (cx + w, cy - h * 0.90),
+                 (cx + w * 0.94, cy + h * 0.92), (cx - w * 0.94, cy + h * 0.80)],
+             fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+        ## A lit TOP face, not a centered inset panel: an inset inside a quad
+        ## is a picture frame, which is exactly how the first draft read. The
+        ## top face makes it a solid block seen slightly from above.
+        poly(d, [(cx - w, cy - h * 0.78), (cx + w, cy - h * 0.90),
+                 (cx + w * 0.80, cy - h * 0.42), (cx - w * 0.84, cy - h * 0.30)],
+             fill=light(col, 0.30))
+        ## One deep seam across the mass, so it has grain rather than being flat.
+        poly(d, [(cx - w * 0.90, cy + h * 0.22), (cx + w * 0.92, cy + h * 0.14),
+                 (cx + w * 0.92, cy + h * 0.34), (cx - w * 0.90, cy + h * 0.42)],
+             fill=dark(col, 0.34))
+
+    @art("wilds_mottgrub")
+    def _mottgrub(d, t):
+        slab(d, 0.50, 0.58, 0.22, 0.22, WILD)
+
+    @art("wilds_motttusk")
+    def _motttusk(d, t):
+        slab(d, 0.50, 0.58, 0.28, 0.27, WILD)
+
+    @art("wilds_mottbrute")
+    def _mottbrute(d, t):
+        slab(d, 0.50, 0.58, 0.35, 0.33, WILD_DEEP)
+        slab(d, 0.50, 0.55, 0.19, 0.18, WILD_HOT)
+
+    # ------------------------------------------------------------------
+
+    def horn(d, cx, cy, w, h, col):
+        """One forward-driving spike -- straight where Boar's tusk curves."""
+        poly(d, [(cx - w * 0.62, cy + h), (cx - w * 0.30, cy + h * 0.86),
+                 (cx + w * 0.72, cy - h), (cx + w * 0.20, cy + h * 0.44),
+                 (cx + w * 0.06, cy + h)],
+             fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+        poly(d, [(cx - w * 0.10, cy + h * 0.62), (cx + w * 0.54, cy - h * 0.72),
+                 (cx + w * 0.18, cy + h * 0.30)], fill=light(col, 0.34))
+
+    @art("wilds_gralcub")
+    def _gralcub(d, t):
+        horn(d, 0.48, 0.58, 0.20, 0.26, WILD)
+
+    @art("wilds_gralmaw")
+    def _gralmaw(d, t):
+        horn(d, 0.48, 0.58, 0.26, 0.32, WILD)
+
+    @art("wilds_gralravager")
+    def _gralravager(d, t):
+        horn(d, 0.44, 0.60, 0.30, 0.38, WILD_DEEP)
+        horn(d, 0.56, 0.54, 0.20, 0.26, BLOOD_HOT)
+
+    # ------------------------------------------------------------------
+
+    def husk(d, cx, cy, w, h, col):
+        """A hollow split casing -- the shed skin itself, open down one side."""
+        poly(d, [(cx - w * 0.10, cy - h), (cx - w * 0.92, cy - h * 0.32),
+                 (cx - w * 0.78, cy + h * 0.80), (cx + w * 0.02, cy + h),
+                 (cx + w * 0.24, cy + h * 0.30), (cx - w * 0.12, cy - h * 0.30)],
+             fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+        poly(d, [(cx + w * 0.16, cy - h * 0.86), (cx + w * 0.90, cy - h * 0.20),
+                 (cx + w * 0.82, cy + h * 0.72), (cx + w * 0.30, cy + h * 0.40)],
+             fill=dark(col, 0.30), outline=dark(WILD_DEEP, 0.35), width=3)
+
+    @art("wilds_sketgrub")
+    def _sketgrub(d, t):
+        husk(d, 0.50, 0.57, 0.20, 0.26, WILD)
+
+    @art("wilds_skethide")
+    def _skethide(d, t):
+        husk(d, 0.50, 0.57, 0.26, 0.32, WILD_HOT)
+
+    # ------------------------------------------------------------------
+
+    def tally_bone(d, cx, cy, w, h, col, marks=4):
+        """A shaft cut with tally marks -- the counter, made an object."""
+        poly(d, [(cx - w * 0.26, cy - h), (cx + w * 0.26, cy - h),
+                 (cx + w * 0.30, cy + h), (cx - w * 0.30, cy + h)],
+             fill=col, outline=dark(WILD_DEEP, 0.35), width=3)
+        for i in range(marks):
+            f = -0.62 + (1.24 / max(1, marks - 1)) * i if marks > 1 else 0.0
+            poly(d, [(cx - w * 0.30, cy + h * f),
+                     (cx + w * 0.30, cy + h * (f - 0.06)),
+                     (cx + w * 0.30, cy + h * (f + 0.10)),
+                     (cx - w * 0.30, cy + h * (f + 0.16))],
+                 fill=dark(col, 0.42))
+
+    @art("wilds_crutgrub")
+    def _crutgrub(d, t):
+        tally_bone(d, 0.50, 0.56, 0.15, 0.26, WILD, marks=3)
+
+    @art("wilds_crutcub")
+    def _crutcub(d, t):
+        tally_bone(d, 0.50, 0.56, 0.16, 0.28, WILD_HOT, marks=4)
+
+    @art("wilds_cruttusk")
+    def _cruttusk(d, t):
+        tally_bone(d, 0.50, 0.55, 0.19, 0.34, WILD, marks=6)
+
     # -------------------------------------------------------------- supports
 
     @art("wilds_second_skin")

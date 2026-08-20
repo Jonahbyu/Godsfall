@@ -1,7 +1,8 @@
 # Wilds — Faction Design
 
-**Status:** built 2026-08-20. **27 cards, 20 units, 8 chains** — the newest of the seven
-colours. Both keywords implemented; three sample decks.
+**Status:** built 2026-08-20, **expanded the same day to full parity**. **66 cards, 59
+units, 22 chains** — level with Tempest (66/59) and Void (66/60). Both keywords
+implemented; five sample decks; every card carries art; `WildsTest.gd` covers the pair.
 **Sentence:** *the beast that keeps getting back up, and the one that gets worse the
 longer you let it stand over the bodies.*
 
@@ -216,8 +217,17 @@ double-taxing in a way none of the other five factions do.
 
 ## The Card Set
 
-One generator: `tools/add_wilds_faction.py`. **20 units, 8 chains, 6 supports/Tool, 1
-energy card**, 27 cards total, applied to `data/cards.json`.
+One generator: `tools/add_wilds_faction.py`. **59 units, 22 chains, 6 supports/Tool, 1
+energy card**, 66 cards total, applied to `data/cards.json`.
+
+The generator gained a `--replace` flag with the expansion. Cards it already wrote are
+**revised in place** rather than appended, which is what keeps it the single source of
+truth for the faction: a card's text is edited in the generator and re-applied, never
+hand-patched in the JSON where the next run would silently revert it. The duplicate-id
+guard still stands without the flag, because the far more common accident is applying
+the same generator twice.
+
+### The baseline chains
 
 | Chain | Idea | Keywords |
 |---|---|---|
@@ -232,7 +242,53 @@ energy card**, 27 cards total, applied to `data/cards.json`.
 
 **Not every Wilds unit carries Molt or Ferocity.** Boar and Reave's Basics print neither,
 by the same discipline every other faction's roster follows — a faction where every card
-has the keyword is the sameness failure the bestiary waves documented.
+has the keyword is the sameness failure the bestiary waves documented. Across the full
+roster **signature density is 86%**, inside the 73–100% the other built colours measure.
+
+### The expansion chains
+
+Fourteen more chains, added the same day, in the three power tiers the bestiary waves
+established — a 60-card deck picks ~12 unit slots from ~59 candidates, so most of a
+roster this size is *collection* content, and pitching every card at one power level
+produces interchangeable creatures.
+
+| Chain | Idea | Keywords |
+|---|---|---|
+| **Bristl**grub → hide → warden | The defensive archetype, closing an open question below | Molt + Resist 4/6/8 |
+| **Rend**cub → fang → ravager | Ferocity that feeds itself off damage **dealt**, not friendly deaths | Ferocity 1/2/3 |
+| **Lurk**grub → maw → brute | Staple beef; vanilla Basic into a large Ferocity body | — → Ferocity 2/3 |
+| **Nib**grub, runt | Molt fodder, second flavour, so combo decks don't fight over one Whelp | Molt, Retribution |
+| **Grond**cub → tusk → brute | The tall Molt investment — returning it is a real tempo swing | Molt |
+| **Skitt**grub, whelp → fang | Wide Ferocity, second flavour — enough bodies to actually go wide | Ferocity 1/2 |
+| **Hoft**grub → hide | Vanillas; the bottom of the curve that makes keywords feel chosen | — → Resist 5 |
+| **Vorn**cub → fang → reaver | Two attack lines on one Stage 2, so stacks are spent twice a turn | Ferocity 1/2/3 |
+| **Thorng**grub → hide → warden | Heavy Retribution on a Molt body — killing it twice costs twice | Molt + Retribution 14/20/28 |
+| **Yelp**grub, runt → fang | The cheap version of Thrash; the combo plan's low curve | Molt + Ferocity |
+| **Mott**grub → tusk → brute | The largest bodies in the colour, no signature at all | — → Resist 6 |
+| **Gral**cub → maw → ravager | Reach: a fed tracker whose attack also hits the tower | Ferocity 1/2/3 |
+| **Sket**grub → hide | Manufactures the friendly death a Ferocity board wants, on a body | Molt |
+| **Crut**grub, cub → tusk | Cheap Ferocity staples a grind list runs four of | Ferocity 1/2 |
+
+### Abilities were rewritten, not just added to
+
+The baseline shipped six abilities and **three of them were the same card at three sizes**
+— `heal 10 / 18 / 30` down the Grum chain, with two more being that heal plus a rider. A
+free self-heal is also the most *passive* thing this colour can print: Wilds is the faction
+that wants to trade constantly, and a heal button rewards declining the trade.
+
+They now read the chain's **own keyword** instead:
+
+| Card | Was | Now |
+|---|---|---|
+| Grumgrub | heal 10 | **`heal_spent_molt`** — heal 12, doubling to 24 once Molt is spent |
+| Grummaw / Grumbrute | heal 18 / 30 | **`self_molt`** — trigger your own Molt now, without dying |
+| Scarl (both) | heal + Retribution | **Retribution 14 / 22**, the heal dropped entirely |
+
+`self_molt` is the load-bearing one, and it is a genuine decision rather than a button: it
+converts a full heal-and-refresh into a **spent** keyword, and on a board holding a Ferocity
+tracker it also *manufactures a friendly death on demand*. It routes through the same
+`_kill` path a combat death uses, which is what makes it feed Ferocity exactly as a real
+death would — including its own, on a body carrying both signatures.
 
 ### Supports
 
@@ -253,6 +309,8 @@ is bought with a deckbuilding commitment, a cost the 43 neutral supports never p
 | **Second Life** | Molt aggro. Grum, Whelp, Scarl — trade constantly, come back exactly as strong. No Ferocity. |
 | **The Long Tally** | Ferocity grind. Snarl, Gnaw, Boar, Reave — every death makes the board angrier. No Molt, no healing (wants its own units to die). |
 | **Never Really Died** | The combo the faction is built around. Thrash plus Molt-carrying Whelp fodder, with Cull the Weak / Shed the Skin to manufacture the feed on demand. |
+| **Thickskin** | The defensive list. Bristl (Resist on a Molt body — the armour must be beaten twice) and Thorng (Retribution on a Molt body — killing it twice costs twice), with Mott as beef. |
+| **Blood Debt** | Ferocity that needs no cooperation. Rend banks stacks off damage dealt, Gral reaches past the body into the tower, Vorn spends every stack twice a turn. |
 
 ---
 
@@ -289,25 +347,49 @@ duplicating the logic — one path, not two that could quietly drift apart.
 
 - **Ferocity N values are a first pass, not yet checked against a large sample of real
   games.** 1/2/3 by stage was derived from board size and mean game length, not measured.
-- **Does Wilds have a defensive archetype at all?** The shipped roster leans offensive —
-  Snarl, Gnaw and Reave are all attackers, and Whelp/Scarl trade rather than wall. If the
-  faction proves one-dimensional, the answer is a *card* that prints a Resist/Sanctuary
-  rider as a rule-breaker, not a change to either signature.
+- ~~**Does Wilds have a defensive archetype at all?**~~ **Answered 2026-08-20, and
+  answered the way this entry specified** — with *cards*, not a change to either
+  signature. **Bristl** prints `Resist 4/6/8` on a Molt body, so chip has to beat the
+  armour twice; **Thorng** prints `Retribution 14/20/28` on a Molt body, so the standard
+  answer to Molt (kill it twice) costs the attacker both times; **Mott** is keyword-less
+  beef topping out at 170 HP. The **Thickskin** sample deck is the archetype assembled.
+  Whether it is *good* is unmeasured.
 - **`Trophy Rack`'s any-board read is the one printed rule-break in the set — is it too
   strong on a wide board?** It was authored as the sanctioned exception (design principle
   #1) but has not been measured in a wide-board matchup.
-- **AI heuristics do not yet value Molt or Ferocity specially.** `AIPlayer` plays Wilds
-  with the same generic heuristics every other faction gets — it does not know a Molt
-  trade is safe, and it does not prioritize feeding a Ferocity tracker over an unrelated
-  play. The live probe run during development (`Never Really Died` vs `Starve`, 25
-  rounds) showed both keywords firing correctly, but that is not a balance reading.
+- **AI heuristics are now partial rather than absent, and the gap that remains is
+  measurable.** The expansion added `_self_molt_worth_it()` for the same reason Forge
+  needed `_stoke_worth_it()` and Tempest needed `_discharge_worth_it()`: **a cost the
+  engine does not charge in pool energy is invisible to a heuristic that measures pool
+  energy**, so the "free abilities are always taken" default would have shed a healthy
+  body every turn, spending the best reprieve in the game for nothing. It now sheds only
+  when the body is nearly dead anyway, or when a Ferocity tracker on that board is
+  watching. Measured over four AI games, `ferocity` log events went 0 → 29 and the
+  damage-fed `ferocity_on_damage` op went 0 → 10. `self_molt` still fires **zero** times
+  in AI play — the heuristic is deliberately conservative and the AI rarely leaves a unit
+  below a third — so the op is proven by direct probe and by `WildsTest`, not by games.
+  The AI still does not know a Molt trade is safe, and does not prioritise feeding a
+  tracker. **None of these numbers is a balance reading.**
+- **Wilds lost every AI game measured during the expansion** — four games, rounds 5–9,
+  against Blood Debt / The Long Tally / Thickskin foils. Four games is noise and the AI
+  plays the faction's signature ability zero times, so this is a prompt to measure
+  properly rather than a finding. It is recorded because the games are also **short**
+  (5–9 against a ~9.5 field mean), which is the shape a faction that is simply
+  undercosted-on-defence would produce.
 - ~~**No card art yet.**~~ **Done, 2026-08-20** — `tools/wilds_art.py`, 8 distinct
   visual objects (torn hide, open jaw, coiled whip-tail, a single tooth, a tusk pair,
   claw marks, a gnawed bone-end, a talon), registered into `make_card_art.py`. Fixed a
   real pre-existing gap in the same pass: Tempest's cards had been falling back to plain
   teal for their backdrop tint since that faction shipped, because `FACTION` never had a
   `tempest` entry — caught and fixed alongside Wilds' own addition.
-- **`wilds.md` itself is new** — unlike `forge.md` and `tempest.md`, which each went
-  through a full engine-first expansion pass (Forge 19→63 cards, Tempest 20→66), Wilds
-  has shipped only its baseline. Whether it gets the same expansion treatment is Jonah's
-  call, not assumed here.
+- ~~**Wilds has shipped only its baseline.**~~ **Expanded 2026-08-20** — 27 → 66 cards,
+  20 → 59 units, matching the pass Forge (19→63) and Tempest (20→66) each took. Unlike
+  those two the expansion was **not** engine-first: Wilds' signatures are keywords read
+  passively, so the roster was never blocked on missing ops the way Forge's was. Three
+  unit-line ops were added for the ability rewrites (`self_molt`, `heal_spent_molt`,
+  `ferocity_on_damage`), each wired into `_resolve_line_effects` and each verified by
+  putting the bug back.
+- **`WildsTest.gd` now exists — Wilds had shipped without a harness while every other
+  faction had one.** 43 assertions covering both keywords, all three new ops driven
+  through the real entry points, the per-board trigger scoping, the own-Molt combo, and
+  the shipped card data. All four sabotage passes failed the suite as intended.
