@@ -45,6 +45,14 @@ FACTION = {
     "gaia": HP_GREEN,
     "heaven": GOLD,
     "neutral": TOWER,
+    ## Both added 2026-08-20. Tempest cards had been falling back to plain
+    ## TOWER teal for their backdrop tint since the faction shipped -- the
+    ## per-card emblems in tempest_art.py/tempest_art2.py already draw in the
+    ## right blue, but the frame and glow behind them did not match. Caught
+    ## while adding Wilds and fixed alongside it rather than left as a
+    ## separate follow-up, since both are one-line entries in this same dict.
+    "tempest": (88, 184, 217),  # Theme.gd tempest.base
+    "wilds": (143, 122, 74),    # Theme.gd wilds.base
 }
 
 SS = 4  # supersample factor
@@ -2029,6 +2037,8 @@ def _register_bestiary():
     tempest_art.register(sys.modules[__name__])
     import tempest_art2
     tempest_art2.register(sys.modules[__name__])
+    import wilds_art
+    wilds_art.register(sys.modules[__name__])
 
 
 def main():
