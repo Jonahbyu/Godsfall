@@ -351,8 +351,7 @@ the kind of exception design principle #1 calls for.
   to carry either one; a card's `keywords` block is the whole mechanism, the same shape
   `Rise`, `Judgment` and `Sanctuary` already use. Three sample decks ship: `Second Life`
   (Molt-lean), `The Long Tally` (Ferocity-lean), `Never Really Died` (the Thrash combo).
-  No card art yet — falls back to the initials placeholder, same as any card shipped
-  before someone draws its emblem.
+  Card art shipped the same day — see `tools/wilds_art.py` and the note below.
 - **Wilds energy.** Named (`Rawhide`). The token's drawn mark (a fang) is **built** —
   see `EnergyIcon.gd`'s `wilds` case, one closed figure distinct in greyscale from every
   other faction's mark.

@@ -301,7 +301,12 @@ duplicating the logic — one path, not two that could quietly drift apart.
   trade is safe, and it does not prioritize feeding a Ferocity tracker over an unrelated
   play. The live probe run during development (`Never Really Died` vs `Starve`, 25
   rounds) showed both keywords firing correctly, but that is not a balance reading.
-- **No card art yet.** All 27 cards fall back to the initials placeholder.
+- ~~**No card art yet.**~~ **Done, 2026-08-20** — `tools/wilds_art.py`, 8 distinct
+  visual objects (torn hide, open jaw, coiled whip-tail, a single tooth, a tusk pair,
+  claw marks, a gnawed bone-end, a talon), registered into `make_card_art.py`. Fixed a
+  real pre-existing gap in the same pass: Tempest's cards had been falling back to plain
+  teal for their backdrop tint since that faction shipped, because `FACTION` never had a
+  `tempest` entry — caught and fixed alongside Wilds' own addition.
 - **`wilds.md` itself is new** — unlike `forge.md` and `tempest.md`, which each went
   through a full engine-first expansion pass (Forge 19→63 cards, Tempest 20→66), Wilds
   has shipped only its baseline. Whether it gets the same expansion treatment is Jonah's
