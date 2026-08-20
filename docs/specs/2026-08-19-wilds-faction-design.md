@@ -254,6 +254,64 @@ than TBDs to build against:
 
 ---
 
+## Card Concepts
+
+Six chains, one idea each — the same discipline the Tempest and Hel starter decks used.
+Built in `tools/add_wilds_faction.py`; not yet applied to `data/cards.json` (see *Not Yet
+Designed*). Naming follows the bestiary system: a shared stem per chain, a suffix pool
+per faction (`-grub/-runt/-cub` at Basic, `-maw/-hide/-fang` at Stage 1,
+`-brute/-warden/-ravager` at Stage 2), guttural and short-vowelled — nothing ringing
+(Heaven) and nothing sibilant (Tempest).
+
+**1. Grum — Molt alone, the clean teach.** No Ferocity on this chain at all, so a new
+player learns what Molt does without a second mechanic muddying the read. Ordinary
+damage on the reduced Molt band (Grumgrub 40 → Grummaw 78 → Grumbrute 118), plus a small
+self-heal ability so the chain has *some* second line beyond the attack. *"It has died
+before. It did not think it was worth mentioning."*
+
+**2. Snarl — Ferocity alone, the clean teach.** The mirror of Grum: no Molt, so a dead
+Snarl unit is actually dead and the counter's growth is the only thing to watch. Basic
+through Stage 2 climb Ferocity 1 → 2 → 3 in step with the pinned per-stage values, and
+each carries a passive line ("Watch the Pack" / "Circle the Kill" / "Gorge") that both
+grows the stack and grants its +2 HP/+1 damage payout. *"It has learned to count the ones
+that don't get back up."*
+
+**3. Thrash — the build-around.** Both signatures on every card, at the
+Molt+Ferocity-carved-out HP band (Thrashrunt 32 → Thrashfang 65 → Thrashwarden 96) — the
+smallest bodies in the faction, because this chain is strictly stronger per-card than
+either Grum or Snarl alone. The Stage 2's attack (`Unmake`) explicitly scales with the
+held stack count, which is the payoff the other two chains only imply. *"It never really
+died. That is the whole design of it."*
+
+**4. Whelp — the fodder.** Two Basics, no further evolution, no Molt (a self-Molting
+token would contradict its own job of being disposable) — this is what dies in front of
+Snarl and Thrash to feed their stacks. Each prints `Retribution` as a real keyword rather
+than a rider, so killing one costs something even though it's meant to die. *"It was
+never going to be the one that lived."*
+
+**5. Boar — vanilla into keyword.** A plain-stat Basic (no keywords at all) that evolves
+into a Stage 1 carrying Ferocity 2. This is the chain that satisfies the standing rule
+that a keyword-less Basic must evolve into something that isn't — and it reads as the
+in-fiction moment a young animal starts noticing the bodies. *"It has started noticing
+who doesn't get up."*
+
+**6. Scarl — Molt as a moment, not just a safety net.** Same keyword as Grum, different
+idea: instead of a self-heal, each stage's ability reads the *next* Molt trigger itself
+("Thicken the Hide" / "Harden the Hide") and grants the returning copy temporary
+`Resist`. This is the chain that argues Molt is something a card can build around, not
+only insurance sitting quietly on the card. *"The scars come back with it, every time, a
+little thicker."*
+
+**Supports.** `Second Skin` (free) grants Molt to a unit that lacks it, until its next
+death or evolution — a way to try the keyword on a body that doesn't print it. `Cull the
+Weak` (1 energy) sacrifices a small friendly unit on demand, feeding a Ferocity tracker
+without waiting for combat to produce the death. `Trophy Rack` (Tool) is the one printed
+rule-break in the set — it reads *any* death on either of your boards, friendly or enemy,
+not just the own-board-friendly-only trigger every unit keyword uses, which is exactly
+the kind of exception design principle #1 calls for.
+
+---
+
 ## Not Yet Designed
 
 - ~~**The card set.**~~ **Baseline written** — `tools/add_wilds_faction.py` holds 15
