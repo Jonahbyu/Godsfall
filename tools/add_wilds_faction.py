@@ -5,9 +5,10 @@ nature as a threat, not a garden (that's Gaia). Its signatures are `Molt`
 (when this unit would die, it is instantly replaced in the same slot by an
 exact copy at full HP with all attached energy retained -- the copy loses
 Molt, restored only by evolving) and `Ferocity N` (a per-unit stack counter
-that grows N per FRIENDLY death on this unit's own board, additive into
-+2 max HP / +1 damage per stack held, wiped on death unless answered by the
-unit's own Molt).
+that grows N per FRIENDLY death on this unit's own board -- including a death
+answered by Molt or Rise, and including a unit's own Molt feeding its own
+counter -- additive into +2 max HP / +1 damage per stack held, wiped on death
+unless answered by the unit's own Molt).
 
 See docs/specs/2026-08-19-wilds-faction-design.md for the design, including
 the resolved Open Questions this generator builds against:
@@ -19,20 +20,32 @@ the resolved Open Questions this generator builds against:
   * No card ever prints both `Molt` and the shared `Rise` -- both claim
     "when this unit would die" and adjudicating a precedence rule is not
     worth it when nothing about either keyword's identity needs the other.
+  * Ferocity's trigger fires on a Molt-death and a Rise-death too, at the
+    moment of death, including a unit's own Molt feeding its own stacks
+    (settled 2026-08-20; Whelp carries Molt for exactly this reason).
+
+Both signatures are printed as KEYWORDS, not as attack/ability effects --
+unlike Tempest's Charge/Discharge or Forge's Stoke/Scrap, neither has an
+activation a player chooses to use. Molt fires automatically on death; the
++2 HP / +1 damage per Ferocity stack is a passive, always-on read of the
+counter, the same shape Rise, Judgment and Sanctuary already use. So a card
+needs no dedicated "ability line" to carry either keyword -- `keywords: [...]`
+is the whole mechanism, and CardData.keyword_line() already renders it. A
+one-line Basic (an attack, nothing else) is a normal, common shape in this
+card pool (205 of ~230 units already ship that way) and is not a sign the
+card is unfinished.
 
 Like tools/add_tempest_faction.py this **enforces the design rules rather
 than trusting the author**:
 
   * HP bands (Molt's own reduced bands, further reduced for the combo),
     the two-line rule, retreat = HP/40.
-  * Ferocity only within its per-stage N, and every Ferocity body must
-    carry something that reads its own stacks (the +HP/+damage grant is
-    passive and implicit -- but a card claiming the keyword with nothing
-    else going on is still checked for the vanilla-must-evolve rule).
+  * Ferocity only within its per-stage N.
   * Molt and Rise never coexist on one card.
-  * Only ops the engine implements, PLUS the planned Wilds ops -- and
-    --apply is refused while any planned op is still missing, so
-    unplayable cards can never reach cards.json.
+  * Only ops the engine implements for the LINES that use them (Molt and
+    Ferocity themselves need no op -- see above -- but a card may still
+    carry a genuine ability, and those ops are checked exactly as every
+    other faction's are).
 
 Run:  python tools/add_wilds_faction.py --dry-run    # then --apply
 """
@@ -63,7 +76,8 @@ MOLT_HP_BAND = {"basic": (30, 60), "stage1": (60, 95), "stage2": (90, 140)}
 
 # A card printing BOTH signatures sits at the very bottom of its Molt band --
 # it is strictly stronger than either keyword alone (immortal-feeling body
-# that only gets angrier) and must never also be printed at the top of it.
+# that only gets angrier, and doubly so now that its own Molt feeds its own
+# stacks) and must never also be printed at the top of it.
 MOLT_FEROCITY_HP_BAND = {
     "basic": (30, 35), "stage1": (60, 68), "stage2": (90, 100),
 }
@@ -78,31 +92,10 @@ FEROCITY_N = {"basic": 1, "stage1": 2, "stage2": 3}
 # Wilds adds none of them.
 MAX_NEW_OPENER_COST = 3
 
-# The ops this faction needs. None are built yet -- the engine work is
-# listed in the spec's "Engine Cost" table. Declared here so the generator
-# can tell "planned but missing" apart from "typo", and so --apply stays
-# refused until the engine catches up.
-PLANNED_OPS = {
-    "molt",              # the death-interception + full-HP/energy replacement
-    "ferocity_gain",     # grow this unit's stack counter by N per friendly
-                          # death on its own board (the passive trigger)
-    "ferocity_bonus",    # the +2 HP / +1 damage per stack the counter grants
-                          # while held -- declared even though it is meant to
-                          # be implicit/always-on, so the keyword's payoff is
-                          # a real op the engine can point to rather than a
-                          # bonus with no name
-}
-
-# `molt` and `ferocity_gain`/`ferocity_bonus` are declared on the KEYWORD,
-# not as attack/ability effects the way Charge or Stoke are -- Molt has no
-# activation (it fires on death) and Ferocity's growth is passive (it fires
-# on ANY friendly death on the board, not on something this card does). So
-# neither needs a "spender" op the way Charge needs Discharge: the keyword
-# IS the mechanic. This is a deliberate difference from Tempest/Forge's
-# ability-based signatures, not an oversight -- see the design spec's
-# Engine Cost table, which routes both through GameState's death-resolution
-# path and Unit's keyword-value accessors rather than through use_ability()
-# or queue_attack().
+# Ops that GENUINE ability/attack lines in this roster use. Molt and Ferocity
+# are NOT here -- they are keywords, read automatically by the engine, and
+# need no op of their own (see the module docstring). Everything below this
+# faction actually needs is already implemented elsewhere in the game.
 
 
 def implemented_ops():
@@ -142,7 +135,9 @@ def A(aid, name, dmg, text, effects=None, cost=None):
 
 
 def AB(aid, name, text, effects=None, consume=0, dmg=0):
-    """An ability line. Free unless it prints a non-energy cost."""
+    """A genuine ability line -- something the player chooses to activate.
+    Free unless it prints a non-energy cost. Molt and Ferocity are NEVER
+    expressed this way; see the module docstring."""
     return {"_kind": "ability", "id": aid, "name": name, "damage": dmg,
             "text": text, "effects": effects or [], "_consume": consume}
 
@@ -172,13 +167,14 @@ ENERGY = {
 # vowels, nothing ringing (that's Heaven) and nothing sibilant (that's
 # Tempest).
 #
-#   Basic:   -grub  -runt  -cub
-#   Stage 1: -maw   -hide  -fang
-#   Stage 2: -brute -warden -ravager
+#   Basic:   -grub  -runt  -cub  -whelp
+#   Stage 1: -maw   -hide  -fang  -tusk
+#   Stage 2: -brute -warden -ravager -reaver
 #
-# Six chains, one idea each, the same discipline the Tempest/Hel starter
-# decks used. Each chain owns a distinct piece of the design so the faction
-# reads as six plans rather than six piles of the same card.
+# Eight chains, one idea each. Each chain owns a distinct piece of the design
+# so the faction reads as eight plans rather than eight piles of the same
+# card, and there are enough bodies here to build three genuinely different
+# 60-card decks without every list running the same six units.
 
 CHAINS = [
     # ("Stem", [(suffix, stage, hp, keywords, lines, flavor), ...])
@@ -207,81 +203,59 @@ CHAINS = [
     ]),
 
     # 2. The reference chain for Ferocity alone -- no Molt, so a dead one is
-    #    actually dead. The chain that teaches the counter reads clean.
+    #    actually dead. The chain that teaches the counter reads clean: one
+    #    attack line, and the keyword itself does the rest.
     ("Snarl", [
         ("cub", "basic", 46, KW(ferocity=1), [
             A("snarl_bite", "Bite", 20, "20 damage."),
-            AB("snarl_watch", "Watch the Pack",
-               "Passive: gains Ferocity stacks when a friendly unit on this "
-               "board dies.",
-               [{"op": "ferocity_gain", "n": 1},
-                {"op": "ferocity_bonus", "n": 1}]),
         ], "It has learned to count the ones that don't get back up."),
         ("hide", "stage1", 90, KW(ferocity=2), [
             A("snarl_savage", "Savage", 46, "46 damage."),
-            AB("snarl_circle", "Circle the Kill",
-               "Passive: gains Ferocity stacks when a friendly unit on this "
-               "board dies.",
-               [{"op": "ferocity_gain", "n": 2},
-                {"op": "ferocity_bonus", "n": 2}]),
         ], "Every body on the ground makes the next fight shorter."),
         ("ravager", "stage2", 145, KW(ferocity=3), [
             A("snarl_rampage", "Rampage", 100, "100 damage."),
-            AB("snarl_gorge", "Gorge",
-               "Passive: gains Ferocity stacks when a friendly unit on this "
-               "board dies.",
-               [{"op": "ferocity_gain", "n": 3},
-                {"op": "ferocity_bonus", "n": 3}]),
         ], "It stopped being hungry a long time ago. It kept the habit."),
     ]),
 
     # 3. The combo build-around. Both signatures at once, at the reduced
     #    Molt+Ferocity band -- the card the spec's carve-out exists for.
+    #    Its own Molt feeds its own Ferocity counter (settled 2026-08-20),
+    #    so this chain is the clearest demonstration of that interaction:
+    #    every near-death makes it both survive AND grow.
     ("Thrash", [
         ("runt", "basic", 32, KW(molt=1, ferocity=1), [
             A("thrash_snap", "Snap", 18, "18 damage."),
-            AB("thrash_bristle", "Bristle",
-               "Passive: gains Ferocity stacks when a friendly unit on this "
-               "board dies.",
-               [{"op": "ferocity_gain", "n": 1},
-                {"op": "ferocity_bonus", "n": 1}]),
         ], "Small enough to lose, angry enough that losing it costs you."),
         ("fang", "stage1", 65, KW(molt=1, ferocity=2), [
             A("thrash_gore", "Gore", 32, "32 damage."),
-            AB("thrash_rally", "Rally the Wound",
-               "Passive: gains Ferocity stacks when a friendly unit on this "
-               "board dies.",
-               [{"op": "ferocity_gain", "n": 2},
-                {"op": "ferocity_bonus", "n": 2}]),
         ], "It has been dying and getting up the whole fight. It is furious "
            "about it."),
         ("warden", "stage2", 96, KW(molt=1, ferocity=3), [
-            A("thrash_unmake", "Unmake", 58,
-              "58 damage, plus 1 per Ferocity stack held.",
-              [{"op": "ferocity_bonus", "n": 3}]),
-            AB("thrash_endure", "Endure the Field",
-               "Passive: gains Ferocity stacks when a friendly unit on this "
-               "board dies.",
-               [{"op": "ferocity_gain", "n": 3},
-                {"op": "ferocity_bonus", "n": 3}]),
+            A("thrash_unmake", "Unmake", 58, "58 damage."),
         ], "It never really died. That is the whole design of it."),
     ]),
 
-    # 4. The fodder chain. Cheap, disposable, no Molt (a self-Molting token
-    #    would contradict its own job) -- exists to die in front of chain 2
-    #    and chain 3's Ferocity trackers. Two Basics, nowhere further to go,
-    #    each carrying `Retribution` as a printed keyword rather than an
-    #    attack rider -- it bites back once before it goes down, which is
-    #    what makes trading into it a real cost rather than a free kill.
+    # 4. The fodder chain. Cheap, disposable, and carries Molt on purpose --
+    #    reversed 2026-08-20. Earlier drafts withheld Molt on the reasoning
+    #    that a self-Molting token contradicts being disposable; that only
+    #    held while Ferocity ignored Molt-deaths. Now that a unit's own Molt
+    #    is itself a qualifying friendly death, a Whelp that Molts feeds a
+    #    nearby tracker TWICE -- once on the Molt, once on its real death --
+    #    so Molt makes better fodder, not contradictory fodder. At the plain
+    #    Molt HP band (Whelp does not itself carry Ferocity). Two Basics, no
+    #    further evolution, each also carrying `Retribution` as a printed
+    #    keyword so trading into it still costs something.
     ("Whelp", [
-        ("grub", "basic", 42, KW(retribution=12), [
+        ("grub", "basic", 34, KW(molt=1, retribution=12), [
             A("whelp_scratch", "Scratch", 19, "19 damage."),
             A("whelp_snap", "Snap and Run", 24, "24 damage."),
-        ], "Small, quick, and entirely spent the moment it matters."),
-        ("runt", "basic", 44, KW(retribution=14), [
+        ], "Small, quick, and entirely spent the moment it matters -- the "
+           "first time, anyway."),
+        ("runt", "basic", 36, KW(molt=1, retribution=14), [
             A("whelp_nip", "Nip", 19, "19 damage."),
             A("whelp_flail", "Flail", 26, "26 damage."),
-        ], "It was never going to be the one that lived."),
+        ], "It was never going to be the one that lived. It's on its second "
+           "try now."),
     ]),
 
     # 5. The vanilla-into-keyword chain, satisfying the standing rule that a
@@ -294,32 +268,60 @@ CHAINS = [
         ], "Nothing clever. It has not needed to be, yet."),
         ("hide", "stage1", 104, KW(ferocity=2), [
             A("boar_gore", "Gore", 42, "42 damage."),
-            AB("boar_low", "Lower the Head",
-               "Passive: gains Ferocity stacks when a friendly unit on this "
-               "board dies.",
-               [{"op": "ferocity_gain", "n": 2},
-                {"op": "ferocity_bonus", "n": 2}]),
         ], "It has started noticing who doesn't get up."),
     ]),
 
-    # 6. The Molt utility chain. Molt plus a rider that reads the return
-    #    itself rather than just banking HP back -- the chain that shows
-    #    Molt is a moment a card can build around, not only a safety net.
+    # 6. The Molt utility chain. Molt plus a GENUINE ability that reads the
+    #    return itself -- the chain that shows Molt is a moment a card can
+    #    build around, not only insurance sitting quietly on the card.
     ("Scarl", [
         ("cub", "basic", 36, KW(molt=1), [
             A("scarl_claw", "Claw", 19, "19 damage."),
             AB("scarl_thicken", "Thicken the Hide",
-               "The next time this unit would die and Molt, the copy gains "
-               "Resist 5 until end of turn.",
-               [{"op": "molt"}]),
+               "This unit heals 8 and grows Retribution 5 until end of turn.",
+               [{"op": "heal", "n": 8}, {"op": "temp_retribution", "n": 5}]),
         ], "The scars come back with it, every time, a little thicker."),
         ("fang", "stage1", 70, KW(molt=1), [
             A("scarl_rip", "Rip", 38, "38 damage."),
             AB("scarl_harden", "Harden the Hide",
-               "The next time this unit would die and Molt, the copy gains "
-               "Resist 8 until end of turn.",
-               [{"op": "molt"}]),
+               "This unit heals 14 and grows Retribution 8 until end of turn.",
+               [{"op": "heal", "n": 14}, {"op": "temp_retribution", "n": 8}]),
         ], "It is not healing wrong. It is healing like this on purpose."),
+    ]),
+
+    # 7. The wide-Ferocity chain. Cheap Basics that print Ferocity 1 alongside
+    #    real damage, so a deck can run several trackers rather than banking
+    #    everything onto one -- the counterpoint to Snarl and Thrash both
+    #    being single, tall investments.
+    ("Gnaw", [
+        ("whelp", "basic", 48, KW(ferocity=1), [
+            A("gnaw_worry", "Worry", 22, "22 damage."),
+        ], "It is not the strongest thing on the field. It is just always "
+           "there when something dies."),
+        ("tusk", "stage1", 92, KW(ferocity=2), [
+            A("gnaw_root", "Root Out", 47, "47 damage."),
+        ], "It has stopped flinching at the sound."),
+    ]),
+
+    # 8. The Stage 2 finisher. No Molt (nothing to lose it TO -- this is a
+    #    top-of-chain card the deck wants alive, not returning), Ferocity 3
+    #    on a body already big enough that the stacks are a bonus rather than
+    #    the plan. Its second line is a real ability: bank stacks manually off
+    #    its own damage taken, giving a deck a way to feed it even against an
+    #    opponent unwilling to trade into the board.
+    ("Reave", [
+        ("grub", "basic", 52, [], [
+            A("reave_gouge", "Gouge", 24, "24 damage."),
+        ], "It hasn't grown into its own claws yet."),
+        ("hide", "stage1", 98, KW(ferocity=2), [
+            A("reave_tear", "Tear", 45, "45 damage."),
+        ], "It is starting to notice how much easier this gets."),
+        ("reaver", "stage2", 152, KW(ferocity=3), [
+            A("reave_flense", "Flense", 92, "92 damage."),
+            AB("reave_remember", "Remember Every One",
+               "This unit gains 2 Ferocity stacks.",
+               [{"op": "gain_stacks", "n": 2}]),
+        ], "It keeps a tally. It has stopped needing to."),
     ]),
 ]
 
@@ -329,8 +331,9 @@ CHAINS = [
 #
 # Wilds-locked, following the precedent forge.md and tempest.md established:
 # a faction support is bought with a deckbuilding commitment, a cost the 43
-# neutral supports never pay. Kept small -- the faction's identity lives on
-# its bodies.
+# neutral supports never pay. Six here (up from three) so three decks can
+# each lean on a different pair without all of them fighting for the same
+# four copies of one card.
 
 SUPPORTS = [
     {
@@ -339,9 +342,9 @@ SUPPORTS = [
         "type": "support",
         "faction": "wilds",
         "cost": 0,
-        "text": "A unit you control gains Molt if it does not already have it, "
-                "until it next dies or evolves.",
-        "effects": [{"op": "molt"}],
+        "text": "A unit you control gains Molt if it does not already have "
+                "it, until it next dies or evolves.",
+        "effects": [{"op": "grant_molt"}],
         "flavor": "Borrowed, not printed. It still counts.",
     },
     {
@@ -350,10 +353,44 @@ SUPPORTS = [
         "type": "support",
         "faction": "wilds",
         "cost": 1,
-        "text": "Destroy a friendly unit with 40 HP or less. A unit you "
-                "control with Ferocity gains stacks as if it had died there.",
-        "effects": [{"op": "ferocity_gain", "n": 1}],
+        "text": "Destroy a friendly unit with 40 HP or less. Every Ferocity "
+                "tracker on its board gains stacks as if it had died there.",
+        "effects": [{"op": "sacrifice_small"}],
         "flavor": "The pack does not mourn. The pack recalculates.",
+    },
+    {
+        "id": "wilds_running_wound",
+        "name": "Running Wound",
+        "type": "support",
+        "faction": "wilds",
+        "cost": 0,
+        "text": "Deal 18 damage to a friendly unit. It cannot be reduced "
+                "below 1 HP by this.",
+        "effects": [{"op": "self_damage_floor", "n": 18}],
+        "flavor": "Pain that stays under your own control is a tool, not "
+                  "an injury.",
+    },
+    {
+        "id": "wilds_stampede",
+        "name": "Stampede",
+        "type": "support",
+        "faction": "wilds",
+        "cost": 2,
+        "text": "Every friendly unit with Ferocity gains 1 stack.",
+        "effects": [{"op": "gain_stacks_all_ferocity", "n": 1}],
+        "flavor": "One of them breaks first. The rest do not notice.",
+    },
+    {
+        "id": "wilds_shed_the_skin",
+        "name": "Shed the Skin",
+        "type": "support",
+        "faction": "wilds",
+        "cost": 1,
+        "text": "A friendly unit with Molt uses it immediately, without "
+                "dying first.",
+        "effects": [{"op": "force_molt"}],
+        "flavor": "Not every reason to leave the old body behind is an "
+                  "emergency.",
     },
     {
         "id": "wilds_trophy_rack",
@@ -362,15 +399,29 @@ SUPPORTS = [
         "faction": "wilds",
         "text": "This unit gains Ferocity stacks whenever ANY unit -- yours "
                 "or the opponent's -- dies on either of your boards.",
-        "effects": [{"op": "ferocity_gain", "n": 1}],
+        "effects": [{"op": "ferocity_reads_any_death"}],
         "flavor": "It does not care whose kill it was. It only counts.",
     },
 ]
 
+# Ops the SUPPORTS above need, which no other faction has printed yet. Molt
+# and Ferocity's core keyword behaviour needs none of these -- these are the
+# genuinely new one-shot/tool effects six new cards introduce.
+PLANNED_SUPPORT_OPS = {
+    "grant_molt",                # Second Skin
+    "sacrifice_small",           # Cull the Weak
+    "self_damage_floor",         # Running Wound
+    "gain_stacks_all_ferocity",  # Stampede
+    "force_molt",                # Shed the Skin
+    "ferocity_reads_any_death",  # Trophy Rack (Tool)
+    "temp_retribution",          # Scarl's ability lines
+    "gain_stacks",               # Reave's ability line
+}
+
 
 def build():
     """Assemble every Wilds card, validating as we go. Raises on any breach."""
-    ops = implemented_ops() | PLANNED_OPS
+    ops = implemented_ops() | PLANNED_SUPPORT_OPS
     out = [ENERGY]
     problems = []
 
@@ -409,7 +460,6 @@ def build():
 
             attacks = []
             has_kw = bool(kws)
-            grants_ferocity_bonus = False
 
             for ln in lines:
                 entry = {"id": ln["id"], "name": ln["name"],
@@ -421,8 +471,6 @@ def build():
                     op = e.get("op", "")
                     if op not in ops:
                         problems.append(f"{name}/{ln['name']}: op '{op}' is not implemented")
-                    if op == "ferocity_bonus":
-                        grants_ferocity_bonus = True
 
                 if ln["_kind"] == "ability":
                     entry["ability"] = True
@@ -436,15 +484,6 @@ def build():
                     entry["cost"] = split_colorless(total)
                 attacks.append(entry)
 
-            # A Ferocity body with no line granting its own bonus is dead
-            # data -- the counter would grow and never pay out. (The bonus
-            # is meant to be an always-on read of the stack count once the
-            # engine ships it; requiring the op on a line keeps the card
-            # data honest about which bodies actually claim the payout.)
-            if has_ferocity and not grants_ferocity_bonus:
-                problems.append(
-                    f"{name}: prints Ferocity {kwmap['ferocity']} but no line "
-                    f"grants ferocity_bonus")
             # A keyword-less Basic must evolve into one that carries something.
             if not has_kw and stage == "basic" and len(forms) == 1:
                 problems.append(f"{name}: vanilla Basic with nowhere to evolve")
@@ -486,7 +525,7 @@ def main():
 
     cards = build()
     live = implemented_ops()
-    missing = sorted(PLANNED_OPS - live)
+    missing = sorted(PLANNED_SUPPORT_OPS - live)
 
     units = [c for c in cards if c["type"] == "unit"]
     print(f"Wilds: {len(cards)} cards -- {len(units)} units, "
@@ -504,16 +543,18 @@ def main():
               f"[{kw}]  {costs}")
 
     if missing:
-        print(f"\n{len(missing)} planned op(s) NOT YET IMPLEMENTED in the engine:")
+        print(f"\n{len(missing)} planned support op(s) NOT YET IMPLEMENTED in the engine:")
         for m in missing:
             print("  *", m)
+        print("\n(Molt and Ferocity themselves are keyword-driven and need no op --")
+        print(" these are only the six new SUPPORT/TOOL effects, and are unrelated")
+        print(" to whether the two signature keywords work.)")
 
     if args.apply:
         if missing:
             print("\nREFUSING TO APPLY -- the engine does not implement these ops yet.")
             print("An unknown op parses fine and silently does nothing, so writing")
-            print("these cards now would ship a faction that loads and cannot play.")
-            print("Build the ops first (see the spec's Engine Cost table), then rerun.")
+            print("these cards now would ship supports that load and cannot play.")
             sys.exit(1)
         db = json.loads(CARDS.read_text(encoding="utf-8"))
         key = "cards" if isinstance(db, dict) else None

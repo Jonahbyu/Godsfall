@@ -264,6 +264,20 @@ func sample_decks() -> Array:
 			"name": "Storm Front",
 			"cards": _storm_front(),
 		},
+		## Wilds: the body-as-resource colour. Three decks, each leaning on one
+		## side of the pair before the combo chain that needs both.
+		{
+			"name": "Second Life",
+			"cards": _second_life(),
+		},
+		{
+			"name": "The Long Tally",
+			"cards": _the_long_tally(),
+		},
+		{
+			"name": "Never Really Died",
+			"cards": _never_really_died(),
+		},
 	]
 
 
@@ -1842,4 +1856,122 @@ func _storm_front() -> Dictionary:
 		"tempest_standing_front": 3,
 		"tempest_conductor": 2,
 		"tempest_energy": 21,
+	}
+
+
+## **Second Life** — trade constantly, come back exactly as strong.
+##
+## Wilds' aggro list. Grum is Molt's clean teach (ordinary damage, a self-heal to
+## buy the next trade), Whelp is disposable Molt fodder that survives its first
+## death and Retributes anything that finishes it off the second time, and Scarl
+## turns its own Molt into temporary Retribution so trading into it twice in one
+## game is actively dangerous. No Ferocity anywhere in this list on purpose — it
+## is the mirror of The Long Tally, which runs no Molt at all, so the two decks
+## demonstrate the two signatures cleanly before Never Really Died needs both.
+##
+## Evolution check: Grummaw needs Grumgrub, Grumbrute needs Grummaw, Whelprunt is
+## its own Basic (no evolution), Scarlfang needs Scarlcub. All bases are in the list.
+func _second_life() -> Dictionary:
+	return {
+		## The Molt line, complete.
+		"wilds_grumgrub": 4,
+		"wilds_grummaw": 3,
+		"wilds_grumbrute": 2,
+		## Fodder that Molts once before it really dies — feeds nothing here,
+		## since this list runs no Ferocity, but it trades twice for one card.
+		"wilds_whelpgrub": 4,
+		"wilds_whelprunt": 3,
+		## The utility Molt line — Thicken/Harden the Hide punishes the second
+		## attack into it.
+		"wilds_scarlcub": 4,
+		"wilds_scarlfang": 3,
+		## A cheap way to try Molt on a body that does not print it, and a way
+		## to force a Molt on your own terms rather than waiting for lethal.
+		"wilds_second_skin": 3,
+		"wilds_shed_the_skin": 2,
+		"wilds_running_wound": 2,
+		"shore_up": 4,
+		"field_rites": 2,
+		"muster": 4,
+		"wilds_energy": 20,
+	}
+
+
+## **The Long Tally** — every death makes the board angrier.
+##
+## Wilds' grind list. Snarl is Ferocity's clean teach (no Molt to muddy the
+## read), Gnaw runs Ferocity WIDE — several cheap trackers instead of one tall
+## investment — and Boar is the vanilla-into-keyword Basic that only starts
+## counting once it evolves. Reave caps the curve: a Stage 2 big enough that its
+## stacks are a bonus on top of an already-real body, with a manual "Remember
+## Every One" for the turns the opponent refuses to trade. `Stampede` is the
+## payoff for running several trackers at once — one card, every stack grows.
+##
+## No Molt anywhere in this list on purpose — see Second Life's note. Runs no
+## healing at all: this deck WANTS its own units to die, the same shape Hel's
+## Toll Engine uses, because every friendly death is a stack somewhere on the
+## board rather than a loss to be undone.
+##
+## Evolution check: Snarlhide needs Snarlcub, Snarlravager needs Snarlhide,
+## Gnawtusk needs Gnawwhelp, Boarhide needs Boargrub, Reavehide needs Reavegrub,
+## Reavereaver needs Reavehide. All bases are in the list.
+func _the_long_tally() -> Dictionary:
+	return {
+		## The Ferocity line, complete.
+		"wilds_snarlcub": 4,
+		"wilds_snarlhide": 3,
+		"wilds_snarlravager": 2,
+		## Wide Ferocity — several cheap trackers rather than one tall one.
+		"wilds_gnawwhelp": 4,
+		"wilds_gnawtusk": 3,
+		## Vanilla into Ferocity.
+		"wilds_boargrub": 3,
+		"wilds_boarhide": 2,
+		## The finisher, complete.
+		"wilds_reavegrub": 3,
+		"wilds_reavehide": 2,
+		"wilds_reavereaver": 2,
+		## Feed every tracker on the board at once, or feed one on demand.
+		"wilds_stampede": 3,
+		"wilds_cull_the_weak": 3,
+		"wilds_trophy_rack": 2,
+		"muster": 4,
+		"gravekeepers_ledger": 3,
+		"read_the_bones": 2,
+		"wilds_energy": 15,
+	}
+
+
+## **Never Really Died** — the combo the whole faction is built around.
+##
+## Thrash carries both signatures at once: its own Molt feeds its own Ferocity
+## counter, so every near-death makes it survive AND grow. Whelp is here as
+## fodder that ALSO carries Molt, so it can feed a Thrash tracker twice from
+## one card before it is finally gone — the interaction the 2026-08-20 spec
+## revision exists for. `Cull the Weak` and `Shed the Skin` are what let the
+## deck manufacture that feed on its own turn rather than only from combat, and
+## `Second Skin` can put a borrowed Molt on Whelp's OWN copy for a third life
+## if the game runs long enough to matter.
+##
+## Evolution check: Thrashfang needs Thrashrunt, Thrashwarden needs Thrashfang,
+## Whelprunt is its own Basic. Both bases are in the list.
+func _never_really_died() -> Dictionary:
+	return {
+		## The combo chain, complete and the heart of the deck.
+		"wilds_thrashrunt": 4,
+		"wilds_thrashfang": 3,
+		"wilds_thrashwarden": 3,
+		## Fodder that Molts once, feeding a nearby Thrash twice per card.
+		"wilds_whelpgrub": 4,
+		"wilds_whelprunt": 4,
+		## Manufacture the feed rather than waiting for combat to provide it.
+		"wilds_cull_the_weak": 4,
+		"wilds_shed_the_skin": 3,
+		"wilds_second_skin": 3,
+		"wilds_stampede": 2,
+		"wilds_running_wound": 2,
+		"shore_up": 2,
+		"muster": 4,
+		"gravekeepers_ledger": 3,
+		"wilds_energy": 19,
 	}

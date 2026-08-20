@@ -139,6 +139,12 @@ const KEYWORD_COLORS := {
 	## is a shared keyword rather than a Tempest one.
 	"charge":      Color("7fd4f5"),
 	"storm":       Color("4f8fd6"),
+	## Wilds signatures — the body itself as the resource. A raw, blood-leaning
+	## red-brown for both: distinct from Forge's warm orange-red (fuel spent
+	## deliberately) and from `retribution`'s recoil orange — this is flesh,
+	## not fire.
+	"molt":        Color("c46a5a"),
+	"ferocity":    Color("a8442f"),
 }
 
 
@@ -305,6 +311,18 @@ const KEYWORD_HELP := {
 		+ "Every attack deals one extra instance of N damage.
 "
 		+ "A Tempest unit's Storm instance is doubled.",
+	"molt":
+		"When this unit would die, it is INSTANTLY replaced in the same slot
+"
+		+ "by an exact copy at full HP, with all attached energy retained.
+"
+		+ "The copy loses Molt — only evolving restores it.",
+	"ferocity":
+		"Ferocity N — this unit gains N stacks whenever a friendly unit on its
+"
+		+ "own board dies (Molt and Rise both count). Each stack grants +2 max HP
+"
+		+ "and +1 damage, held until this unit dies — unless its own Molt saves them.",
 }
 
 

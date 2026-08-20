@@ -984,6 +984,8 @@ const UNIT_TARGET_OPS := [
 	"siphon_support", "void_all", "gap_damage",
 	## Tempest — Updraft banks a counter onto one of your bodies.
 	"charge_on_damage",
+	## Wilds — all four name a friendly unit.
+	"grant_molt", "sacrifice_small", "self_damage_floor", "force_molt",
 ]
 
 const TWO_UNIT_OPS := ["move_energy", "swap_slots"]
@@ -1064,6 +1066,31 @@ func _support_unit_candidates(p: Player, card: CardData) -> Array:
 	if card.has_effect("heal") or card.has_effect("heal_per_round"):
 		for u in mine.all_units():
 			if u.is_alive() and u.hp < u.max_hp():
+				out.append(u)
+		return out
+
+	## Second Skin: only a unit that does not already have Molt is a real
+	## target — offering a unit that already has it (which fizzles harmlessly
+	## in _resolve_support_effects) would be a wasted-play trap on a free card.
+	if card.has_effect("grant_molt"):
+		for u in mine.all_units():
+			if u.is_alive() and not u.has_molt():
+				out.append(u)
+		return out
+
+	## Cull the Weak: only a small friendly unit is legal, matching the
+	## printed 40 HP ceiling checked again at resolution.
+	if card.has_effect("sacrifice_small"):
+		for u in mine.all_units():
+			if u.is_alive() and u.max_hp() <= 40:
+				out.append(u)
+		return out
+
+	## Shed the Skin: only a unit that currently HAS Molt available (printed
+	## or granted, and not already spent) can be forced to use it.
+	if card.has_effect("force_molt"):
+		for u in mine.all_units():
+			if u.is_alive() and u.has_molt():
 				out.append(u)
 		return out
 
@@ -1412,6 +1439,86 @@ func _resolve_support_effects(p: Player, card: CardData, target) -> void:
 			var dealt4: int = _damage_unit(gt, amt, card.name)
 			_log("  %d to %s (Gap %d, %d HP left)." % [dealt4, gt.card.name, gap_for(p), max(0, gt.hp)])
 			_cleanup_dead(enemy)
+
+	## ---- Wilds
+	##
+	## `Second Skin` — grant Molt to a unit that lacks it, until its next death
+	## or evolution. See Unit.granted_molt for why this is a separate field
+	## rather than a kw_mod: Molt is a presence keyword (has_kw), not a
+	## numeric one, so there is nothing for add_kw_mod to raise.
+	if card.has_effect("grant_molt"):
+		var gm: Unit = target
+		if gm != null and gm.is_alive():
+			if gm.has_molt():
+				_log("  %s already has Molt — Second Skin has nothing to add." % gm.card.name)
+			else:
+				gm.granted_molt = true
+				_log("  %s gains Molt until it next dies or evolves." % gm.card.name)
+
+	## `Cull the Weak` — sacrifice a small friendly unit on demand, so a
+	## Ferocity deck is not purely reactive to what combat happens to kill.
+	## Routes through the SAME death path as any other death (`_kill`, via
+	## `_cleanup_dead`), so Ferocity's own "fires on every death on this
+	## board" trigger fires from this exactly as it would from combat — no
+	## separate stack-granting logic needed here at all.
+	if card.has_effect("sacrifice_small"):
+		var victim: Unit = target
+		if victim == null or not victim.is_alive():
+			_log("  No legal target for Cull the Weak.")
+		elif victim.max_hp() > 40:
+			_log("  %s is too large to Cull (over 40 HP)." % victim.card.name)
+		else:
+			victim.hp = 0
+			_log("  Cull the Weak destroys %s." % victim.card.name)
+			_cleanup_dead(p)
+
+	## `Running Wound` — a self-inflicted hit that can never kill, THIS
+	## instance only. See Unit.take_self_damage_floored for why this is not
+	## `protected_this_turn` toggled around the call.
+	if card.has_effect("self_damage_floor"):
+		var rw: Unit = target
+		if rw != null and rw.is_alive():
+			var self_dealt: int = rw.take_self_damage_floored(
+				card.effect_value("self_damage_floor", 0))
+			_log("  Running Wound: %d to %s (%d HP left)." % [
+				self_dealt, rw.card.name, rw.hp])
+
+	## `Stampede` — every Ferocity tracker you control gains a stack at once,
+	## board-wide but still per-unit (each tracker's OWN counter grows; this is
+	## not a shared pool). No death required, unlike the passive trigger — the
+	## support IS the event.
+	if card.has_effect("gain_stacks_all_ferocity"):
+		var sn2: int = card.effect_value("gain_stacks_all_ferocity", 0)
+		var grew: int = 0
+		for stu in p.all_units():
+			if stu.is_alive() and stu.has_ferocity():
+				stu.add_ferocity(sn2)
+				grew += 1
+		_log("  Stampede: %d Ferocity tracker(s) gain %d stack(s) each." % [grew, sn2])
+
+	## `Shed the Skin` — force a Molt-capable unit to use it immediately,
+	## without needing to actually die first. Reuses Unit.make_molted() so the
+	## replacement is IDENTICAL to a combat-triggered Molt (full HP, full
+	## energy, Ferocity stacks carried, Molt spent) — one construction path,
+	## not two that could quietly drift apart.
+	if card.has_effect("force_molt"):
+		var fm: Unit = target
+		if fm == null or not fm.is_alive() or not fm.has_molt():
+			_log("  No unit with an available Molt to shed.")
+		else:
+			var loc2 := p.find_unit(fm)
+			if loc2[0] < 0:
+				_log("  %s is not on the board." % fm.card.name)
+			else:
+				## This IS a qualifying friendly death for Ferocity's own
+				## trigger, same as a combat Molt — Shed the Skin does not
+				## get to skip the rule it is deliberately invoking.
+				var fb: Board = p.boards[loc2[0]]
+				_trigger_ferocity(p, fb)
+				var fcopy := fm.make_molted()
+				fb.slots[loc2[1]] = fcopy
+				_log("  Shed the Skin: %s Molts early — %d energy retained." % [
+					fm.card.name, fcopy.attached])
 
 
 ## Ask the player to pick `count` cards out of `choices`, then run `done` with
@@ -1975,6 +2082,30 @@ func _resolve_line_effects(p: Player, enemy: Player, u: Unit, atk: AttackData,
 		refresh_aura(p)
 		return
 
+	## Wilds: self-targeting ABILITY lines. All three act on the unit using the
+	## ability (`u`) rather than a picked `target` — Grum's self-heal, Scarl's
+	## Thicken/Harden the Hide, and Reave's Remember Every One are all "this
+	## unit does something to itself." Gated on `atk.is_ability`, the same
+	## signal `charge_transfer`/`storm_raise`/etc. above rely on implicitly
+	## (those ops are simply never printed on an attack line, enforced at
+	## authoring time) — stated explicitly here because `heal` is ALSO a valid
+	## support-targeting op elsewhere, so this op name is not ability-only the
+	## way theirs are, and it needs the real distinguishing check instead of a
+	## lane-position proxy.
+	if atk.is_ability and atk.has_effect("heal"):
+		var self_healed: int = heal_unit(p, u, atk.effect_value("heal", 0))
+		_log("%s uses %s: heals %d (%d/%d)." % [
+			u.card.name, atk.name, self_healed, u.hp, effective_max_hp(p, u)])
+	if atk.is_ability and atk.has_effect("temp_retribution"):
+		var rn: int = atk.effect_value("temp_retribution", 0)
+		u.temp_retribution += rn
+		_log("  %s grows Retribution %+d until end of turn (now %d)." % [
+			u.card.name, rn, u.total_retribution()])
+	if atk.is_ability and atk.has_effect("gain_stacks"):
+		var sn: int = atk.effect_value("gain_stacks", 0)
+		u.add_ferocity(sn)
+		_log("  %s gains %d Ferocity (now %d)." % [u.card.name, sn, u.ferocity_stacks])
+
 	## Gaia: consolidate a friendly unit's Earth onto another. Essence without the
 	## death — it is how a board banks its grown Earth onto one survivor before a
 	## wipe, which is the counterplay to the aura being killable.
@@ -2031,6 +2162,16 @@ func _resolve_line_effects(p: Player, enemy: Player, u: Unit, atk: AttackData,
 			if bonus > 0:
 				dmg += bonus
 				_log("  Rift %d: +%d damage (Gap %d)." % [u.rift(), bonus, gap_for(p)])
+
+		## Wilds Ferocity: +1 damage per stack held, additive like Rift and never
+		## a true multiplier (design principle #4 — concentrated damage beating
+		## spread damage on a 4-slot board is what makes linear formulas work).
+		## Per-unit, not a board-wide aura, so no Player-level sum is needed —
+		## the stack lives entirely on the attacker.
+		if u.has_ferocity() and u.ferocity_stacks > 0:
+			var fbonus: int = u.ferocity_dmg_bonus()
+			dmg += fbonus
+			_log("  Ferocity %d: +%d damage." % [u.ferocity_stacks, fbonus])
 
 		## ------------------------------------------------------ Forge: Stoke payoffs
 		##
@@ -2816,6 +2957,29 @@ func _try_essence(p: Player, b: Board, si: int, u: Unit) -> bool:
 
 
 func _kill(p: Player, b: Board, si: int, u: Unit) -> void:
+	## Wilds `Ferocity`: every friendly unit on THIS board gains stacks the
+	## moment a friendly unit here dies — including this death, regardless of
+	## what happens to `u` next. Fired first and unconditionally, because the
+	## trigger is "died," and Molt/Rise are both still a death by that
+	## definition (2026-08-19 wilds spec, resolved 2026-08-20). Own-board only,
+	## matching Essence and shielding — never crosses to the player's other
+	## board, EXCEPT for a unit holding `Trophy Rack`, the one printed
+	## rule-break that reads any death on either board (see the Tool's text).
+	_trigger_ferocity(p, b)
+
+	## Wilds `Molt`: fully replaces normal death handling. Checked before
+	## Essence, Toll, Rise, and the discard — none of them fire, because the
+	## unit is defined to not have died. This mirrors how retreat already
+	## suppresses Toll and Rise for the identical reason.
+	if u.has_molt():
+		var copy := u.make_molted()
+		b.slots[si] = copy
+		p.unit_died_this_turn = true
+		p.units_died_this_turn += 1
+		_log("%s Molts — replaced at full HP, %d energy retained." % [
+			u.card.name, copy.attached])
+		return
+
 	## Essence moves the investment off the body BEFORE the slot is cleared and
 	## before Toll's log line reads `u.attached` — the energy is passed on, not
 	## lost, and the "N attached energy lost" message has to reflect that.
@@ -2848,6 +3012,37 @@ func _kill(p: Player, b: Board, si: int, u: Unit) -> void:
 		_log("  %s will Rise next turn at half HP." % u.card.name)
 	else:
 		p.discard.append(u.card.id)
+
+
+## Grow every LIVING Ferocity tracker on `b` by its own printed rate, once, for
+## the one death `_kill` is currently resolving. Own-board only — never crosses
+## to the player's other board, matching Essence and shielding — EXCEPT for a
+## unit holding `Trophy Rack`, which reads any death on either of `p`'s boards
+## (the one printed rule-break for the keyword, design principle #1).
+##
+## Includes a unit whose OWN death this is: a Ferocity+Molt body counts its own
+## Molt-death as a qualifying friendly death on its own board (wilds spec).
+## Because this runs BEFORE the dying unit is removed from its slot, it is
+## still "on this board" at the moment the trigger fires, which is what makes
+## that self-feed possible without a special case here.
+func _trigger_ferocity(p: Player, b: Board) -> void:
+	for i in Board.SLOT_COUNT:
+		var tracker: Unit = b.slots[i]
+		if tracker != null and tracker.is_alive() and tracker.has_ferocity():
+			tracker.add_ferocity(tracker.ferocity_rate())
+
+	## Trophy Rack: a SEPARATE pass over the player's OTHER board(s), so a
+	## holder there also gains from this death. It cannot double-count itself
+	## if it happens to hold the Tool AND be on `b` — the loop above already
+	## grew it, and this second pass explicitly skips `b`.
+	for b2 in p.boards:
+		if b2 == b:
+			continue
+		for i2 in Board.SLOT_COUNT:
+			var t2: Unit = b2.slots[i2]
+			if t2 != null and t2.is_alive() and t2.has_ferocity() \
+					and t2.tool != null and t2.tool.has_effect("ferocity_reads_any_death"):
+				t2.add_ferocity(t2.ferocity_rate())
 
 
 func _check_throne(p: Player) -> void:

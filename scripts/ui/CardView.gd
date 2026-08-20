@@ -700,6 +700,17 @@ func _live_keyword_line() -> String:
 			## the rate; the interesting number — the one every decision about
 			## this unit turns on — is the counter. Same rule as Sanctuary's pool.
 			p = "Charge %d (+%d)" % [unit.charge, unit.charge_rate()]
+		elif lower.begins_with("molt"):
+			## Same shape as Rise: a spent one-shot keyword disappears from the
+			## board entirely, because "does this body still hold its charge?"
+			## has to be a lookup, not a sentence to read (CLAUDE.md).
+			if unit.lost_molt:
+				continue
+		elif lower.begins_with("ferocity"):
+			## Show what is BANKED, with the rate after it — identical reasoning
+			## to Charge above. The printed number is the per-death rate; the
+			## number every decision about this unit turns on is the stack count.
+			p = "Ferocity %d (+%d)" % [unit.ferocity_stacks, unit.ferocity_rate()]
 
 		## A keyword a card has RAISED on this body shows its live value, not its
 		## print. Same rule as the spent-Judgment fix: state the rules engine

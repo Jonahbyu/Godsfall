@@ -1,7 +1,13 @@
 # Wilds — Faction Design
 
-**Status:** designed, not built. No cards authored, no engine work done.
-**Date:** 2026-08-19
+**Status:** built. 20 units in 8 chains, 6 faction supports/tool, 1 energy card
+(27 cards total) are in `data/cards.json`; both signatures are implemented in
+the engine (`Unit.gd`, `GameState.gd`), rendered live on the card
+(`CardView.gd`), and documented in the Compendium. Three sample decks ship
+(`Second Life`, `The Long Tally`, `Never Really Died`). Verified against all
+20 headless harnesses (0 regressions) and a live AI-vs-AI probe showing both
+keywords firing correctly, including the Molt-feeds-own-Ferocity interaction.
+**Date:** 2026-08-19, engine work and cards landed 2026-08-20
 **Sentence:** *the beast that keeps getting back up, and the one that gets worse the
 longer you let it stand over the bodies.*
 
@@ -57,7 +63,7 @@ Wilds claims **two signatures**, matching every other faction's allowance.
 | Keyword | Effect |
 |---|---|
 | **Molt** | *(Wilds signature)* When this unit would die, it is instead replaced — immediately, in the same slot — by an exact copy of itself at full HP, with all attached energy retained. **The copy loses Molt.** Evolving a unit that has lost Molt restores it. |
-| **Ferocity N** | *(Wilds signature)* This unit tracks a stack counter, starting at 0. **Whenever a friendly unit on this unit's own board dies, it gains N stacks.** Each stack held grants **+2 max HP and +1 damage on every attack**, for as long as the stacks are held. **Stacks are lost when this unit dies** — unless the death is answered by its own `Molt`, in which case the copy keeps them. |
+| **Ferocity N** | *(Wilds signature)* This unit tracks a stack counter, starting at 0. **Whenever a friendly unit on this unit's own board dies — including a death answered by `Molt` or `Rise` — it gains N stacks.** The trigger fires at the moment of death itself, not at a later return; a unit carrying both Ferocity and Molt gains stacks from its **own** Molt-death too. Each stack held grants **+2 max HP and +1 damage on every attack**, for as long as the stacks are held. **Stacks are lost when this unit dies** — unless the death is answered by its own `Molt`, in which case the copy keeps them. |
 
 ### Molt — the reprieve, inverted
 
@@ -122,6 +128,24 @@ considered and set aside for being one more moving part than the fantasy needs.
 **Own board only, matching every other per-board rule in the game.** Shielding, `Essence`,
 and targeting are all explicitly scoped to a single board and never cross — Ferocity
 follows the same discipline rather than becoming the first board-crossing trigger.
+
+**The trigger is "died," and `Molt` and `Rise` both count — settled 2026-08-20 after the
+first draft was too narrow.** The original wording only fired on a unit actually reaching
+the discard, which quietly excluded the two most Wilds-flavored deaths in the game: a
+unit that Molts didn't "die" by that reading, and neither did one saved by `Rise`. That
+made the keyword read as "watches unlucky deaths" when the fiction is closer to "watches
+the board thin, however that happens." The trigger now fires at the **moment of death**
+regardless of what happens next — Molt-replacement, next-turn Rise, or a true discard all
+count identically, and none of them wait for a later event (a Rise-death procs Ferocity
+immediately, not when the card reappears next turn, so there is exactly one trigger point
+per death and nothing to track across a turn boundary).
+
+**A unit's own Molt feeds its own stacks.** A card printing both Ferocity and Molt counts
+its own Molt-death as a qualifying friendly death on its own board, gaining stacks from
+surviving its own near-death the same turn it happens. This reads correctly in the
+fiction — Thrash's flavor already says *"it never really died"* — and it means a
+Molt+Ferocity body is stronger than either signature suggests alone: every time it would
+die, it both gets a full second life **and** grows.
 
 **Additive, never a true multiplier**, despite the flavor language ("multiplier") in the
 original pitch. Design principle #4 states outright that concentrated damage beating
@@ -283,11 +307,16 @@ either Grum or Snarl alone. The Stage 2's attack (`Unmake`) explicitly scales wi
 held stack count, which is the payoff the other two chains only imply. *"It never really
 died. That is the whole design of it."*
 
-**4. Whelp — the fodder.** Two Basics, no further evolution, no Molt (a self-Molting
-token would contradict its own job of being disposable) — this is what dies in front of
-Snarl and Thrash to feed their stacks. Each prints `Retribution` as a real keyword rather
-than a rider, so killing one costs something even though it's meant to die. *"It was
-never going to be the one that lived."*
+**4. Whelp — the fodder, now with Molt.** Two Basics, no further evolution — this is what
+dies in front of Snarl and Thrash to feed their stacks. Reversed 2026-08-20: earlier
+drafts withheld Molt on the reasoning that a self-Molting token contradicts being
+disposable, but that logic only held while Ferocity ignored Molt-deaths. Now that a
+Molt-death is a qualifying friendly death in its own right, Molt makes a Whelp *better*
+fodder, not contradictory fodder — it can feed a nearby tracker on its Molt-death, keep
+fighting, and feed it again on its real death, all from one card. Each also prints
+`Retribution` as a real keyword rather than a rider, so killing one still costs something
+even though it's meant to die. *"It was never going to be the one that lived — it just
+took two tries."*
 
 **5. Boar — vanilla into keyword.** A plain-stat Basic (no keywords at all) that evolves
 into a Stage 1 carrying Ferocity 2. This is the chain that satisfies the standing rule
@@ -314,38 +343,54 @@ the kind of exception design principle #1 calls for.
 
 ## Not Yet Designed
 
-- ~~**The card set.**~~ **Baseline written** — `tools/add_wilds_faction.py` holds 15
-  units in 6 chains, 3 faction-locked supports, and the energy card (19 cards total).
-  Validated by `--dry-run` against every rule this spec states (HP bands including the
-  Molt and Molt+Ferocity carve-outs, the two-line rule, retreat formula, Ferocity's
-  pinned per-stage N, no round-1 openers, no card printing both Molt and Rise). **Not yet
-  applied to `data/cards.json`** — `--apply` correctly refuses, because `molt`,
-  `ferocity_gain`, and `ferocity_bonus` are not implemented in the engine yet (see Engine
-  Cost). No card art.
-- **Wilds energy.** Named (`Rawhide`) in the generator. The token's drawn mark — must be
-  one closed figure, distinct in greyscale from the eight that already exist (bone, sun,
-  hole, leaf, flame, bolt, and Wyrd's reserved four-point star already claim four of the
-  remaining shapes) — is still undesigned.
+- ~~**The card set.**~~ **Built and shipped**, 2026-08-20 — `tools/add_wilds_faction.py`
+  holds 20 units in 8 chains (Grum, Snarl, Thrash, Whelp, Boar, Scarl, Gnaw, Reave), 6
+  faction supports/tool, and the energy card (27 cards total), applied to
+  `data/cards.json`. Both signatures are keyword-driven rather than effect-driven — see
+  *Precedent check #1* and the generator's module docstring — so no ability line is needed
+  to carry either one; a card's `keywords` block is the whole mechanism, the same shape
+  `Rise`, `Judgment` and `Sanctuary` already use. Three sample decks ship: `Second Life`
+  (Molt-lean), `The Long Tally` (Ferocity-lean), `Never Really Died` (the Thrash combo).
+  No card art yet — falls back to the initials placeholder, same as any card shipped
+  before someone draws its emblem.
+- **Wilds energy.** Named (`Rawhide`). The token's drawn mark (a fang) is **built** —
+  see `EnergyIcon.gd`'s `wilds` case, one closed figure distinct in greyscale from every
+  other faction's mark.
 - **Whether Wilds has a defensive archetype at all**, or whether — like Tempest's
   offence-only Charge — that is a deliberate omission answered by a rule-breaker card
-  later rather than by the keyword pair itself. The baseline roster leans offensive; no
-  Sanctuary/Resist-style wall exists yet.
+  later rather than by the keyword pair itself. The shipped roster still leans offensive;
+  no Sanctuary/Resist-style wall exists yet. Still open.
 - ~~**The damage discount derivation.**~~ **Resolved** — see Open Questions: no separate
   discount for either keyword.
+- **The Ferocity trigger was widened after the baseline shipped, on Jonah's correction
+  2026-08-20.** The first cut only fired on a unit reaching the discard, which excluded
+  the two most Wilds-flavored deaths in the game — a unit's own trigger now also counts a
+  `Molt`-death and a `Rise`-death, fired at the moment of death rather than at any later
+  return, and a unit carrying both signatures counts its own Molt as a qualifying death on
+  its own board. `Whelp` was reversed to carry Molt for exactly this reason — a Molt'd
+  Whelp now feeds a nearby tracker twice per card instead of contradicting its own job of
+  being disposable. See the *Ferocity N* section above and the Card Concepts entry for
+  Whelp.
 
 ---
 
-## Engine Cost
+## Engine Cost — as built
 
-Not a plan, just the shape of the work, so it is not discovered late.
+Landed 2026-08-20. Kept for the record of where each piece lives, since the original
+table (written before anything was built) undersold two things worth naming here: Molt
+and Ferocity turned out to need **no attack/ability op at all**, and Ferocity's trigger
+ended up wider than first specified (see the note above).
 
 | Piece | Where | Notes |
 |---|---|---|
-| `Molt` death interception | `GameState._cleanup_dead` (or wherever death is finalized) | Must run **before** normal death handling — discard, Toll, Rise, Essence all need to be skipped, not merely followed by a summon. |
-| Exact-copy construction, full HP/energy | `Unit` | Likely close to `Unit.make_risen()` in shape, but preserving rather than halving/stripping — closer to "rebuild from `CardData`, then reattach the current energy total" than to Rise's reset. |
-| Molt lost on use, restored on evolve | `Unit.evolve_into()` | The one place it must be **granted back**, mirroring the one place Charge must **not** be reset. |
-| `Ferocity` per-unit stack counter | `Unit` | Same shape as `Unit.charge` (Tempest) — an int that persists across turns, rendered live. |
-| Ferocity trigger: friendly death, own board only | `GameState` death-resolution path | Needs the same per-board scoping `Essence` already uses — must not cross boards. |
-| Ferocity stacks carried through Molt, wiped otherwise | `Unit.evolve_into()` / death path / Molt's copy-construction | Three separate reset points to get consistent: normal death wipes, evolution wipes (per every other per-unit value), Molt's copy explicitly does not. |
-| Live stack count on the card | `CardView._live_keyword_line()` | Required by the standing rule that state the engine tracks per-unit has to be visible per-unit — same treatment Sanctuary's remaining pool and Charge's counter already get. |
-| HP band enforcement | Card generator (`tools/add_*_faction.py`-style) | Once numbers are pinned, the generator should refuse a Molt card outside its band, matching how the bestiary generator already refuses HP-band, two-line, and Judgment-cap violations. |
+| `Molt` death interception | `GameState._kill()` | Runs before Essence, Toll, Rise and the discard — all skipped when it fires, matching retreat's existing suppression. |
+| Exact-copy construction, full HP/energy | `Unit.make_molted()` | Mirrors `make_risen()` in shape, inverted in every value: full HP not half, full attached energy not zero, Ferocity stacks **carried** not wiped. |
+| Molt lost on use, restored on evolve | `Unit.lost_molt` / `Unit.evolve_into()` | Also `Unit.granted_molt`, for `Second Skin`'s borrowed grant — a separate field because Molt is a presence keyword (`has_kw`), not a numeric one `add_kw_mod` can raise. |
+| `Ferocity` per-unit stack counter | `Unit.ferocity_stacks`, `add_ferocity()` | Same shape as `Unit.charge` (Tempest), but does **not** survive evolution — it resets like `earth_grown`/`hp_grown`, since nothing in this spec gave it a Charge-style carry-through story. |
+| Ferocity's +2 HP / +1 damage payout | `Unit.max_hp()`, `GameState._deliver_attack_damage` | HP folded directly into `max_hp()` since it is pure per-unit state (no `Player` reference needed, unlike Earth's board-wide aura); damage read at resolution alongside Rift. |
+| Ferocity trigger: own board, fires on Molt/Rise too | `GameState._trigger_ferocity(p, b)` | Runs at the top of `_kill()`, before anything else, so a unit's own Molt-death is still "on this board" when it fires — that ordering is what makes the self-feed work with no special case. |
+| Ferocity stacks carried through Molt, wiped otherwise | `Unit.make_molted()` / `evolve_into()` / `make_risen()` | Three reset points, one deliberate exception: Molt's copy is the only place stacks survive. |
+| Live stack count / spent-Molt hidden | `CardView._live_keyword_line()` | `Ferocity N (+rate)`, same convention as Charge's banked-counter display; a spent Molt disappears from the chip line, same as Rise. |
+| HP band enforcement | `tools/add_wilds_faction.py` | Refuses a card outside its band (including the Molt+Ferocity carve-out) before writing, matching the bestiary/Forge/Tempest generators. |
+| Six new support/Tool ops | `GameState._resolve_support_effects`, `_support_unit_candidates`, `UNIT_TARGET_OPS` | `grant_molt`, `sacrifice_small`, `self_damage_floor`, `gain_stacks_all_ferocity`, `force_molt`, `ferocity_reads_any_death` — none of these existed anywhere else in the game; each needed its own targeting filter and dispatch case. |
+| Compendium coverage | `TutorialData.gd` (`_p_kw_molt`, `_p_kw_ferocity`) | Required by `TutorialTest`'s standing rule: a keyword in `Theme.KEYWORD_COLORS` with no page fails the suite. |

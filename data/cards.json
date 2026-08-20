@@ -13517,6 +13517,794 @@
     }
    ],
    "flavor": "Everything in the field wants to go through it, so it lets them."
+  },
+  {
+   "id": "wilds_energy",
+   "name": "Rawhide",
+   "type": "energy",
+   "faction": "wilds",
+   "flavor": "Something out there is still breathing."
+  },
+  {
+   "id": "wilds_grumgrub",
+   "name": "Grumgrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 40,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    }
+   ],
+   "flavor": "It has died before. It did not think it was worth mentioning.",
+   "attacks": [
+    {
+     "id": "grum_gnash",
+     "name": "Gnash",
+     "damage": 19,
+     "text": "19 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "grum_shrug",
+     "name": "Shrug It Off",
+     "damage": 0,
+     "text": "This unit heals 10.",
+     "effects": [
+      {
+       "op": "heal",
+       "n": 10
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_grummaw",
+   "name": "Grummaw",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 78,
+   "retreat": 1,
+   "evolves_from": "wilds_grumgrub",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    }
+   ],
+   "flavor": "Whatever took the last one off didn't take enough.",
+   "attacks": [
+    {
+     "id": "grum_rend",
+     "name": "Rend",
+     "damage": 44,
+     "text": "44 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
+    },
+    {
+     "id": "grum_shake",
+     "name": "Shake It Off",
+     "damage": 0,
+     "text": "This unit heals 18.",
+     "effects": [
+      {
+       "op": "heal",
+       "n": 18
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_grumbrute",
+   "name": "Grumbrute",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 118,
+   "retreat": 2,
+   "evolves_from": "wilds_grummaw",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    }
+   ],
+   "flavor": "It has stopped counting. There is no longer a number to keep.",
+   "attacks": [
+    {
+     "id": "grum_maul",
+     "name": "Maul",
+     "damage": 88,
+     "text": "88 damage.",
+     "cost": {
+      "wilds": 5,
+      "colorless": 5
+     }
+    },
+    {
+     "id": "grum_stand",
+     "name": "Stand Back Up",
+     "damage": 0,
+     "text": "This unit heals 30.",
+     "effects": [
+      {
+       "op": "heal",
+       "n": 30
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_snarlcub",
+   "name": "Snarlcub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 46,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "It has learned to count the ones that don't get back up.",
+   "attacks": [
+    {
+     "id": "snarl_bite",
+     "name": "Bite",
+     "damage": 20,
+     "text": "20 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_snarlhide",
+   "name": "Snarlhide",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 90,
+   "retreat": 2,
+   "evolves_from": "wilds_snarlcub",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "Every body on the ground makes the next fight shorter.",
+   "attacks": [
+    {
+     "id": "snarl_savage",
+     "name": "Savage",
+     "damage": 46,
+     "text": "46 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_snarlravager",
+   "name": "Snarlravager",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 145,
+   "retreat": 3,
+   "evolves_from": "wilds_snarlhide",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 3
+    }
+   ],
+   "flavor": "It stopped being hungry a long time ago. It kept the habit.",
+   "attacks": [
+    {
+     "id": "snarl_rampage",
+     "name": "Rampage",
+     "damage": 100,
+     "text": "100 damage.",
+     "cost": {
+      "wilds": 6,
+      "colorless": 5
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_thrashrunt",
+   "name": "Thrashrunt",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 32,
+   "retreat": 0,
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "Small enough to lose, angry enough that losing it costs you.",
+   "attacks": [
+    {
+     "id": "thrash_snap",
+     "name": "Snap",
+     "damage": 18,
+     "text": "18 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_thrashfang",
+   "name": "Thrashfang",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 65,
+   "retreat": 1,
+   "evolves_from": "wilds_thrashrunt",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "It has been dying and getting up the whole fight. It is furious about it.",
+   "attacks": [
+    {
+     "id": "thrash_gore",
+     "name": "Gore",
+     "damage": 32,
+     "text": "32 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_thrashwarden",
+   "name": "Thrashwarden",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 96,
+   "retreat": 2,
+   "evolves_from": "wilds_thrashfang",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "ferocity",
+     "n": 3
+    }
+   ],
+   "flavor": "It never really died. That is the whole design of it.",
+   "attacks": [
+    {
+     "id": "thrash_unmake",
+     "name": "Unmake",
+     "damage": 58,
+     "text": "58 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_whelpgrub",
+   "name": "Whelpgrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 34,
+   "retreat": 0,
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "retribution",
+     "n": 12
+    }
+   ],
+   "flavor": "Small, quick, and entirely spent the moment it matters -- the first time, anyway.",
+   "attacks": [
+    {
+     "id": "whelp_scratch",
+     "name": "Scratch",
+     "damage": 19,
+     "text": "19 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "whelp_snap",
+     "name": "Snap and Run",
+     "damage": 24,
+     "text": "24 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_whelprunt",
+   "name": "Whelprunt",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 36,
+   "retreat": 0,
+   "evolves_from": "wilds_whelpgrub",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    },
+    {
+     "kw": "retribution",
+     "n": 14
+    }
+   ],
+   "flavor": "It was never going to be the one that lived. It's on its second try now.",
+   "attacks": [
+    {
+     "id": "whelp_nip",
+     "name": "Nip",
+     "damage": 19,
+     "text": "19 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "whelp_flail",
+     "name": "Flail",
+     "damage": 26,
+     "text": "26 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_boargrub",
+   "name": "Boargrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 58,
+   "retreat": 1,
+   "flavor": "Nothing clever. It has not needed to be, yet.",
+   "attacks": [
+    {
+     "id": "boar_headbutt",
+     "name": "Headbutt",
+     "damage": 26,
+     "text": "26 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "boar_trample",
+     "name": "Trample",
+     "damage": 34,
+     "text": "34 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_boarhide",
+   "name": "Boarhide",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 104,
+   "retreat": 2,
+   "evolves_from": "wilds_boargrub",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "It has started noticing who doesn't get up.",
+   "attacks": [
+    {
+     "id": "boar_gore",
+     "name": "Gore",
+     "damage": 42,
+     "text": "42 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_scarlcub",
+   "name": "Scarlcub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 36,
+   "retreat": 0,
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    }
+   ],
+   "flavor": "The scars come back with it, every time, a little thicker.",
+   "attacks": [
+    {
+     "id": "scarl_claw",
+     "name": "Claw",
+     "damage": 19,
+     "text": "19 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "scarl_thicken",
+     "name": "Thicken the Hide",
+     "damage": 0,
+     "text": "This unit heals 8 and grows Retribution 5 until end of turn.",
+     "effects": [
+      {
+       "op": "heal",
+       "n": 8
+      },
+      {
+       "op": "temp_retribution",
+       "n": 5
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_scarlfang",
+   "name": "Scarlfang",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 70,
+   "retreat": 1,
+   "evolves_from": "wilds_scarlcub",
+   "keywords": [
+    {
+     "kw": "molt",
+     "n": 1
+    }
+   ],
+   "flavor": "It is not healing wrong. It is healing like this on purpose.",
+   "attacks": [
+    {
+     "id": "scarl_rip",
+     "name": "Rip",
+     "damage": 38,
+     "text": "38 damage.",
+     "cost": {
+      "wilds": 4,
+      "colorless": 1
+     }
+    },
+    {
+     "id": "scarl_harden",
+     "name": "Harden the Hide",
+     "damage": 0,
+     "text": "This unit heals 14 and grows Retribution 8 until end of turn.",
+     "effects": [
+      {
+       "op": "heal",
+       "n": 14
+      },
+      {
+       "op": "temp_retribution",
+       "n": 8
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_gnawwhelp",
+   "name": "Gnawwhelp",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 48,
+   "retreat": 1,
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "It is not the strongest thing on the field. It is just always there when something dies.",
+   "attacks": [
+    {
+     "id": "gnaw_worry",
+     "name": "Worry",
+     "damage": 22,
+     "text": "22 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_gnawtusk",
+   "name": "Gnawtusk",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 92,
+   "retreat": 2,
+   "evolves_from": "wilds_gnawwhelp",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "It has stopped flinching at the sound.",
+   "attacks": [
+    {
+     "id": "gnaw_root",
+     "name": "Root Out",
+     "damage": 47,
+     "text": "47 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_reavegrub",
+   "name": "Reavegrub",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "basic",
+   "hp": 52,
+   "retreat": 1,
+   "flavor": "It hasn't grown into its own claws yet.",
+   "attacks": [
+    {
+     "id": "reave_gouge",
+     "name": "Gouge",
+     "damage": 24,
+     "text": "24 damage.",
+     "cost": {
+      "wilds": 2,
+      "colorless": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_reavehide",
+   "name": "Reavehide",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage1",
+   "hp": 98,
+   "retreat": 2,
+   "evolves_from": "wilds_reavegrub",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 2
+    }
+   ],
+   "flavor": "It is starting to notice how much easier this gets.",
+   "attacks": [
+    {
+     "id": "reave_tear",
+     "name": "Tear",
+     "damage": 45,
+     "text": "45 damage.",
+     "cost": {
+      "wilds": 3,
+      "colorless": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "wilds_reavereaver",
+   "name": "Reavereaver",
+   "type": "unit",
+   "faction": "wilds",
+   "stage": "stage2",
+   "hp": 152,
+   "retreat": 3,
+   "evolves_from": "wilds_reavehide",
+   "keywords": [
+    {
+     "kw": "ferocity",
+     "n": 3
+    }
+   ],
+   "flavor": "It keeps a tally. It has stopped needing to.",
+   "attacks": [
+    {
+     "id": "reave_flense",
+     "name": "Flense",
+     "damage": 92,
+     "text": "92 damage.",
+     "cost": {
+      "wilds": 5,
+      "colorless": 5
+     }
+    },
+    {
+     "id": "reave_remember",
+     "name": "Remember Every One",
+     "damage": 0,
+     "text": "This unit gains 2 Ferocity stacks.",
+     "effects": [
+      {
+       "op": "gain_stacks",
+       "n": 2
+      }
+     ],
+     "ability": true
+    }
+   ]
+  },
+  {
+   "id": "wilds_second_skin",
+   "name": "Second Skin",
+   "type": "support",
+   "faction": "wilds",
+   "cost": 0,
+   "text": "A unit you control gains Molt if it does not already have it, until it next dies or evolves.",
+   "effects": [
+    {
+     "op": "grant_molt"
+    }
+   ],
+   "flavor": "Borrowed, not printed. It still counts."
+  },
+  {
+   "id": "wilds_cull_the_weak",
+   "name": "Cull the Weak",
+   "type": "support",
+   "faction": "wilds",
+   "cost": 1,
+   "text": "Destroy a friendly unit with 40 HP or less. Every Ferocity tracker on its board gains stacks as if it had died there.",
+   "effects": [
+    {
+     "op": "sacrifice_small"
+    }
+   ],
+   "flavor": "The pack does not mourn. The pack recalculates."
+  },
+  {
+   "id": "wilds_running_wound",
+   "name": "Running Wound",
+   "type": "support",
+   "faction": "wilds",
+   "cost": 0,
+   "text": "Deal 18 damage to a friendly unit. It cannot be reduced below 1 HP by this.",
+   "effects": [
+    {
+     "op": "self_damage_floor",
+     "n": 18
+    }
+   ],
+   "flavor": "Pain that stays under your own control is a tool, not an injury."
+  },
+  {
+   "id": "wilds_stampede",
+   "name": "Stampede",
+   "type": "support",
+   "faction": "wilds",
+   "cost": 2,
+   "text": "Every friendly unit with Ferocity gains 1 stack.",
+   "effects": [
+    {
+     "op": "gain_stacks_all_ferocity",
+     "n": 1
+    }
+   ],
+   "flavor": "One of them breaks first. The rest do not notice."
+  },
+  {
+   "id": "wilds_shed_the_skin",
+   "name": "Shed the Skin",
+   "type": "support",
+   "faction": "wilds",
+   "cost": 1,
+   "text": "A friendly unit with Molt uses it immediately, without dying first.",
+   "effects": [
+    {
+     "op": "force_molt"
+    }
+   ],
+   "flavor": "Not every reason to leave the old body behind is an emergency."
+  },
+  {
+   "id": "wilds_trophy_rack",
+   "name": "Trophy Rack",
+   "type": "tool",
+   "faction": "wilds",
+   "text": "This unit gains Ferocity stacks whenever ANY unit -- yours or the opponent's -- dies on either of your boards.",
+   "effects": [
+    {
+     "op": "ferocity_reads_any_death"
+    }
+   ],
+   "flavor": "It does not care whose kill it was. It only counts."
   }
  ]
 }

@@ -1008,6 +1008,7 @@ static func compendium() -> Array:
 			_p_kw_earth(), _p_kw_essence(),
 			_p_kw_stoke(), _p_kw_scrap(),
 			_p_kw_charge(), _p_kw_storm(),
+			_p_kw_molt(), _p_kw_ferocity(),
 		]},
 		{"title": "Factions", "pages": [
 			_p_factions(), _p_gap(),
@@ -1688,3 +1689,31 @@ Storm is a property of the [b]board[/b], not of a card — the same category as 
 [b]The extra instance obeys the targeting chain on its own.[/b] If the main attack killed the defender, the Storm instance retargets to the next living unit, and falls through to the tower once the board is clear — so Storm quietly rewards clearing a board.
 
 [b]Retribution still fires only once per attack[/b], not once per instance. Otherwise every wall's recoil would double the moment Storm appeared."}
+
+
+static func _p_kw_molt() -> Dictionary:
+	return {"id": "kw_molt", "title": "Molt", "keyword": "molt", "faction": "Wilds signature", "body":
+"[b]When this unit would die, it is instead replaced — immediately, in the same slot — by an exact copy of itself at full HP, with all attached energy retained. The copy loses Molt.[/b]
+
+Every other 'comes back from death' in the game routes through [i]Rise[/i]: next turn, an empty slot, half HP, attached energy already lost. Molt inverts every one of those — immediate, the same slot, full HP, and [b]full attached energy retained[/b], which is a deliberate, printed exception to 'attached energy is lost when the unit dies.'
+
+[b]Molt fully replaces normal death handling.[/b] No discard, no Toll, no Rise, no Essence — the unit is defined to not have died. This is the same reasoning retreat already uses.
+
+[b]The loop terminates because the keyword is spent, not because the body degrades.[/b] The copy is exactly as strong as the original, but it cannot Molt again until something restores the keyword — and the only restoration is [b]evolving[/b]. A card that Molts every death it can afford is eventually just a normal body, until it evolves and the whole cycle is live again on a bigger frame.
+
+[b]A Molt card prints a smaller body for its stage[/b] than an ordinary card would — the keyword is paid for in the HP band rather than as a free addition, the same house style Judgment and Sanctuary use."}
+
+
+static func _p_kw_ferocity() -> Dictionary:
+	return {"id": "kw_ferocity", "title": "Ferocity N", "keyword": "ferocity", "faction": "Wilds signature", "body":
+"[b]This unit tracks a stack counter, starting at 0. Whenever a friendly unit on its own board dies — including a death answered by Molt or Rise — it gains N stacks. Each stack held grants +2 max HP and +1 damage, for as long as it is held.[/b]
+
+Ferocity is [b]per-unit, not a shared aura[/b] — unlike Gaia's Earth, it is a private counter one specific body accumulates by watching deaths happen near it, and different Ferocity trackers on the same board can hold wildly different totals.
+
+[b]The trigger counts Molt-deaths and Rise-deaths, and fires at the moment of death itself[/b] — not later, when a Rise unit actually returns. A unit printing BOTH Ferocity and Molt counts its own Molt as a qualifying death on its own board, so it survives AND grows from the same near-death.
+
+[b]Own board only.[/b] Shielding, Essence and targeting all stop at the board line, and Ferocity follows the same rule.
+
+[b]Additive, never a true multiplier[/b] — every scaling mechanic in the game (Earth, Rift, Storm, Charge) grants a flat amount per point, because a compounding multiplier on a 4-slot board becomes dangerous fast.
+
+[b]Stacks are lost when this unit dies — unless the death is answered by its own Molt[/b], in which case the copy keeps every stack earned so far. That is the deliberate combo point of the pair: a unit carrying both signatures never really resets."}

@@ -359,6 +359,7 @@ func begin_turn() -> void:
 	for u in all_units():
 		u.protected_this_turn = false
 		u.decay_taken_this_turn = 0
+		u.temp_retribution = 0        ## Wilds: a this-turn Retribution grant expires
 		u.stoked_this_turn = 0        ## Forge: the Stoke flag lasts one turn
 		## Forge grants expire with the flag that bought them. Both are payoffs
 		## of a Stoke that happened THIS turn, so neither may outlive it — an

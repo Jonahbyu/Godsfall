@@ -7,6 +7,16 @@ var card: CardData
 var hp: int = 0
 var attached: int = 0            ## attached energy — immune to decay, lost on death
 var lost_rise: bool = false      ## true once Rise has been spent
+var lost_molt: bool = false      ## true once Molt has fired and not yet restored
+
+## Molt granted by a card (`Second Skin`) to a unit whose printed card lacks
+## it, until the unit's next death or evolution. Kept separate from the
+## printed keyword, same reasoning as `grant_sanctuary()` for a unit with no
+## printed Sanctuary: `has_molt()` below checks BOTH so granted Molt behaves
+## identically to printed Molt everywhere it matters, but a printed-keywords
+## check (kw() / has_kw()) alone would miss it, the same gap that made
+## `grant_sanctuary()` necessary in the first place.
+var granted_molt: bool = false
 var judgment_spent: bool = false ## true once Judgment has fired, either half
 
 ## Earth this unit has GROWN in play, above its printed value. Reset to 0 on Rise
@@ -27,6 +37,22 @@ var hp_grown: int = 0
 ## the correct play for the one faction whose resource is time would be never to
 ## evolve. It is still lost on death, on `Rise`, and on retreat.
 var charge: int = 0
+
+## Wilds `Ferocity N`: a banked stack counter that grows N per FRIENDLY death on
+## this unit's own board — including a death answered by Molt or Rise, and
+## including this same unit's own Molt-death (2026-08-19 wilds design spec).
+##
+## Unlike `charge`, this does NOT survive evolution: the spec's Numbers section
+## has no rate-carries-through-evolution story the way Tempest's does, so it
+## resets on evolve like every other grown value (earth_grown, hp_grown). It
+## also does not survive an ordinary death or a Rise — it is wiped, same as
+## attached energy — with exactly one printed exception: a unit's own `Molt`
+## copies it forward, because the fiction is that body never really died.
+var ferocity_stacks: int = 0
+
+## Wilds `Molt`: this unit's stack count survives being wiped by an evolution
+## reset ONLY via the explicit carry-through in the Molt copy-construction path
+## (see GameState._kill). Nothing else reads or writes it directly.
 
 ## A discharge that has been paid for and is riding this unit's next attack.
 ## Kept separate from `charge` because the counter is already spent — this is the
@@ -93,6 +119,13 @@ var protected_this_turn: bool = false
 
 ## Decay damage taken this turn, so Reconsecrate can undo it.
 var decay_taken_this_turn: int = 0
+
+## Wilds: Retribution granted only until end of turn — Scarl's "Thicken the
+## Hide" / "Harden the Hide" abilities. Kept separate from the printed keyword
+## (which total_retribution() also reads) so it visibly expires rather than
+## becoming a permanent kw_mod, the same reason protected_this_turn is its own
+## field instead of routing through add_kw_mod.
+var temp_retribution: int = 0
 
 ## HP this unit has Stoked this turn. Forge's signature: `Stoke N` is a free
 ## once-per-turn ability that deals N to this unit and sets this counter, and
@@ -215,8 +248,13 @@ func _reset_sanctuary() -> void:
 ## include the Earth aura — that depends on the owning player's whole board, and
 ## a Unit has no owner reference. Use `GameState.effective_max_hp(p, u)` for the
 ## aura-adjusted ceiling.
+##
+## Ferocity's +2-per-stack IS included here, unlike Earth: it is per-unit state
+## the Unit already owns outright, not a board-wide sum requiring a Player
+## reference, so there is no reason to push it out to GameState the way Earth's
+## aura has to be.
 func max_hp() -> int:
-	return card.max_hp + hp_grown
+	return card.max_hp + hp_grown + ferocity_hp_bonus()
 
 
 func is_alive() -> bool:
@@ -301,6 +339,48 @@ func resist() -> int:
 
 func has_rise() -> bool:
 	return card.has_kw("rise") and not lost_rise
+
+
+## --------------------------------------------------------------- Wilds keywords
+##
+## `Molt N` — when this unit would die, it is instantly replaced in the same
+## slot by a full-HP, full-energy copy of itself, and the copy loses Molt. Only
+## restored by evolving (see evolve_into()). Deliberately spent-on-use, the same
+## brake shape as Judgment and Rise, but the copy is otherwise exactly as strong
+## as the original rather than diminished (wilds design spec).
+func has_molt() -> bool:
+	if granted_molt:
+		return true
+	return card.has_kw("molt") and not lost_molt
+
+
+## `Ferocity N` — printed rate at which this unit's stack counter grows per
+## qualifying friendly death on its own board. Read through kw_value so a card
+## that raises Ferocity is honoured, exactly as every other keyword works.
+func ferocity_rate() -> int:
+	return kw_value("ferocity")
+
+
+func has_ferocity() -> bool:
+	return card.has_kw("ferocity")
+
+
+## Grow the banked stack counter. Floored at 0, same shape as add_charge().
+func add_ferocity(n: int) -> void:
+	ferocity_stacks = maxi(0, ferocity_stacks + n)
+
+
+## +2 max HP per stack held (wilds design spec's Numbers section). Folded into
+## max_hp() below so every reader of a unit's ceiling sees it with no separate
+## call site to remember, the same way hp_grown already works.
+func ferocity_hp_bonus() -> int:
+	return ferocity_stacks * 2
+
+
+## +1 damage per stack held, read at attack resolution alongside Rift — see
+## GameState._deliver_attack_damage.
+func ferocity_dmg_bonus() -> int:
+	return ferocity_stacks
 
 
 ## The printed Judgment value. Like Toll, buffs and damage never change it.
@@ -416,13 +496,15 @@ func tool_cost_penalty() -> int:
 	return 0
 
 
-## Retribution from the printed card plus any granted by a Tool (Iron Standard).
-## They stack — on a Mourning Bell with Iron Standard that's Retribution 20.
+## Retribution from the printed card plus any granted by a Tool (Iron Standard)
+## plus any this-turn grant (Wilds' Scarl chain). All three stack — on a
+## Mourning Bell with Iron Standard that's Retribution 20, and a Scarl unit
+## mid-Thicken stacks its temporary grant on top of whatever it prints.
 func total_retribution() -> int:
 	var n: int = retribution()
 	if tool != null and tool.has_effect("grant_retribution"):
 		n += tool.effect_value("grant_retribution", 0)
-	return n
+	return n + temp_retribution
 
 
 ## Heal, capped at printed max HP. Healing never goes above the printed number,
@@ -440,6 +522,18 @@ func heal(amount: int) -> int:
 func take_damage(amount: int) -> int:
 	var floor_hp: int = 1 if protected_this_turn else 0
 	var dealt: int = min(amount, max(0, hp - floor_hp))
+	hp -= dealt
+	return dealt
+
+
+## A self-inflicted hit that can never kill, floored at 1 HP for THIS instance
+## only — unlike Hold the Slot, the protection does not persist for the rest
+## of the turn (Wilds' `Running Wound`). Deliberately its own small function
+## rather than toggling `protected_this_turn` around the call, which would
+## leave the unit immune to unrelated damage for the rest of the turn if
+## anything else hit it in between.
+func take_self_damage_floored(amount: int) -> int:
+	var dealt: int = min(amount, max(0, hp - 1))
 	hp -= dealt
 	return dealt
 
@@ -589,9 +683,47 @@ func make_risen() -> Unit:
 	## This is the stacked-reprieve combo Heaven's Rise cards are built on.
 	u.judgment_spent = false
 	u._reset_sanctuary()
+	## A risen unit is a fresh printed card, so it has never spent Molt.
+	u.lost_molt = false
+	## Ferocity stacks are history, same reasoning as earth_grown and charge —
+	## Rise restores the card, not the accumulation. Fresh Units start at 0,
+	## this is belt-and-braces against a future make_risen copying more state.
+	u.ferocity_stacks = 0
 	## The Tool went to the discard with the body that died — a Rising unit
 	## comes back bare. Its evolution path is gone too: it returns as the
 	## printed card, not as a stack that could be retreated for free cards.
+	return u
+
+
+## Build the Molt replacement: full HP, full attached energy, Molt itself
+## spent. This is the inversion of make_risen() in every axis but one — see
+## the wilds design spec's comparison table — and the one shared axis is
+## exactly this function's existence: a printed keyword produces a fresh Unit
+## copy rather than mutating the dying one in place, the same shape Rise uses.
+func make_molted() -> Unit:
+	var u := Unit.new(card)
+	u.hp = card.max_hp                       ## FULL HP — the loud difference from Rise
+	u.lost_molt = true                       ## Molt is spent; only evolving restores it
+	u.attached = attached                    ## FULL attached energy — deliberate exception
+	                                          ## to "attached energy is lost when the unit
+	                                          ## dies" (CLAUDE.md), same spirit as Forge's
+	                                          ## stoked_unpreventable
+	## Grown history resets exactly like Rise — Molt restores the card, not the
+	## history, with ONE deliberate exception below.
+	u.earth_grown = 0
+	u.hp_grown = 0
+	u.charge = 0
+	u.kw_mods = {}
+	u.judgment_spent = false
+	u._reset_sanctuary()
+	## THE deliberate exception: Ferocity stacks carry forward through a unit's
+	## own Molt. Every other reset (ordinary death, Rise, evolution) wipes them;
+	## this is the one place the spec says they survive, because the fiction is
+	## that this body never really died at all.
+	u.ferocity_stacks = ferocity_stacks
+	## A Tool is discarded on Molt — the copy is not a returning card the way a
+	## risen unit's Tool-loss is; it never left the board, so nothing carries a
+	## Tool across a slot it never vacated. (Tools ride evolution, not Molt.)
 	return u
 
 
@@ -607,6 +739,20 @@ func evolve_into(new_card: CardData) -> void:
 	kw_mods = {}                             ## new printed card, new keyword values
 	hp = max(1, new_card.max_hp - missing)
 	lost_rise = false                        ## new printed card, new keywords
+	## Molt is the ONE place it must be granted back — the spec's whole brake on
+	## the keyword is "spent until you evolve," so this is where that promise is
+	## kept. Mirrors the one place Charge must NOT be reset, for the opposite
+	## faction identity: Tempest banks across evolution, Wilds resets on it.
+	lost_molt = false
+	## A GRANTED Molt (Second Skin) is printed to last "until it next dies or
+	## evolves" — this is the "or evolves" half. The new printed card gets to
+	## decide for itself whether it has Molt; it does not inherit a borrowed one.
+	granted_molt = false
+	## Ferocity stacks are history, same as earth_grown and hp_grown above — a
+	## grown value resets when the printed card underneath it changes, and
+	## Molt's copy-construction is the one place that rule is deliberately
+	## broken (GameState._kill), not this one.
+	ferocity_stacks = 0
 	judgment_spent = false                   ## new printed card, new charge
 	## `charge` is deliberately NOT reset here. It is the third thing to survive
 	## evolution, after attached energy and the Tool, and for the same reason:
