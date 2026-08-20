@@ -1378,6 +1378,7 @@ A **faction is an energy color.** Four are being built first; more are held in r
 | **Heaven** | Order, light, judgment | Protect | 🔨 Built — see `heaven.md` |
 | **Forge** | Fire, smithing, the primal | Kill | 🔨 Built — see `forge.md`. The aggro slot, and the only warm colour |
 | **Tempest** | Storm, pressure, the break | Bank | 🔨 Built — see `tempest.md`. The only faction whose resources persist and grow across turns |
+| **Wilds** | Flesh, beasts, raw physicality | Overwhelm | 🔨 Built — see `wilds.md`. Touches no energy at all; twists bodies, death and HP directly |
 
 Each faction must answer: *what does my deck do that no other faction can?*
 
@@ -1416,6 +1417,7 @@ rule-breakers.
 | **Gaia signature** | `Earth`, `Essence` | `gaia.md` |
 | **Forge signature** | `Stoke`, `Scrap` | `forge.md` |
 | **Tempest signature** | `Charge`, `Storm` | `tempest.md` |
+| **Wilds signature** | `Molt`, `Ferocity` | `wilds.md` |
 
 This replaced the earlier arrangement where `Rise` and `Retribution` lived in `hel.md`.
 Hel keeps both and no Hel card changed — they simply stopped being exclusive. Hel's two
@@ -1431,14 +1433,14 @@ Sanctuary as a defensive primitive.
 
 ### Future Factions
 
-**Forge is the fifth faction and its design is settled** — see `forge.md`. Its keywords,
-costs, and brakes are decided; no cards are authored and no engine work is done.
+**One candidate remains in reserve.** Forge, Tempest and Wilds have each shipped — see the
+faction table above and their respective `<faction>.md` files.
 
 | Candidate | Domain | Verb | Notes |
 |---|---|---|---|
 | ~~**Forge**~~ | Fire, smithing, the primal | Kill | **Built 2026-08-16 — no longer in reserve.** See the faction table above and `forge.md`. |
 | **Wyrd** | Fate, chance, transformation | Gamble | Randomness and transformation. Fun, hard to balance. |
-| **Wilds** | Flesh, beasts, raw physicality | Overwhelm | Big bodies, brute force. Distinct from Gaia's nurturing growth — this is nature as a threat, not a garden. |
+| ~~**Wilds**~~ | Flesh, beasts, raw physicality | Overwhelm | **Built 2026-08-20 — no longer in reserve.** See the faction table above and `wilds.md`. |
 | ~~**Tempest**~~ | Storm, pressure, the break | Bank | **Built 2026-08-17 — no longer in reserve.** Absorbed into Forge on 2026-08-16 and revived the next day under the clause that permitted it, as a genuinely different idea: the accumulation colour rather than the multi-attack one. See `tempest.md`. |
 
 **Tempest was absorbed and then revived, and the absorption clause is what made it
@@ -2307,7 +2309,7 @@ with no console errors.
 Implemented: main menu, deck select, deck builder, combat vs. a heuristic AI, **both
 factions in full** — 15 Hel units and 13 Heaven units, each with its own energy card — the
 38 neutral supports, and the full turn/energy/combat rule set. Card data is data-driven
-from `data/cards.json` (**421 cards**: 61 Hel, 59 Heaven, 66 Void, 63 Gaia, 63 Forge, 66 Tempest, 43 neutral).
+from `data/cards.json` (**448 cards**: 61 Hel, 59 Heaven, 66 Void, 63 Gaia, 63 Forge, 66 Tempest, 27 Wilds, 43 neutral).
 
 **Heaven is built — two factions now exist.** 13 units, an energy card, and one Tool,
 implementing the `Judgment` and `Sanctuary` keywords and the within-attack damage
@@ -2346,10 +2348,11 @@ tests seed and round-trip deck data, and while they shared the real path, **ever
 silently destroyed the player's saved decks.** Any new harness that touches `DeckStore`
 must call `use_sandbox_path()` before it writes.
 
-**Twenty-five sample decks ship as the starter collection** — six Hel, four Heaven, four
-Void, four Gaia, seven Forge — laid down on first run by `DeckStore.sample_decks()`. Each is built around a
-single idea rather than a spread of the card pool, because a deck holding one of everything
-has no plan to read and plays the same whatever you draw:
+**Thirty-three sample decks ship as the starter collection** — six Hel, four Heaven, four
+Void, four Gaia, seven Forge, five Tempest, three Wilds — laid down on first run by
+`DeckStore.sample_decks()`. Each is built around a single idea rather than a spread of the
+card pool, because a deck holding one of everything has no plan to read and plays the same
+whatever you draw:
 
 | Deck | Faction | Identity | Energy |
 |---|---|---|---|
@@ -2378,6 +2381,9 @@ has no plan to read and plays the same whatever you draw:
 | **Nothing Holds** | Forge | Every attacker can make its damage unpreventable — the printed answer to `Sanctuary` and `Resist`, and the reason Forge/Heaven is a real matchup rather than a keyword accident. | 18 |
 | **Bank the Heat** | Forge | The economy deck, and the only Forge list that plays long. `Fluxanvil` suspends the pool's decay and draws 2, so it *keeps* energy rather than spending it on arrival. | 21 |
 | **Standing Heat** | Forge | The wall that punishes being hit. `Annealanvil` is Retribution 25 / Resist 5 on 168 HP that heals back everything it stokes — the one Forge body that spends HP without running out. | 20 |
+| **Second Life** | Wilds | Molt aggro. Trade constantly and come back exactly as strong; `Scarl`'s ability punishes the second attack into it. No Ferocity — the clean Molt teach. | 20 |
+| **The Long Tally** | Wilds | Ferocity grind. Several cheap trackers rather than one tall investment; runs no healing at all, because every friendly death is a stack somewhere on the board. No Molt. | 15 |
+| **Never Really Died** | Wilds | The combo the faction is built around — `Thrash`'s own Molt feeds its own Ferocity counter, and Molt-carrying `Whelp` fodder feeds it twice per card. `Cull the Weak` and `Shed the Skin` manufacture the feed on demand. | 19 |
 
 **Every sample deck is exactly 60 cards**, not merely under the cap — `DeckStoreTest`
 asserts it, because a shipped deck should be battle-ready as printed rather than a
@@ -4758,3 +4764,31 @@ even if the rule text later changes. Keep entries to one or two lines.
   Both looked correctly costed line by line and neither was, and only aggregate play
   surfaced it — the assertion suites were green throughout, because every one of these was
   the rules working exactly as written.
+- **Wilds is the seventh faction, chosen over Wyrd, and it does not touch the energy
+  economy at all — the first faction that doesn't.** Every other colour twists energy
+  (recycles it, steals it, grows an aura off it, gates it behind reprieves, spends
+  HP/bodies instead of it, banks it over time); Wilds twists **bodies themselves** — HP,
+  death, and the board of corpses a fight leaves behind. Signatures are `Molt` (an
+  inversion of `Rise` on every axis: immediate not delayed, same slot not empty, full HP
+  not half, full attached energy retained not lost, spent-until-evolve rather than
+  spent-forever) and `Ferocity N` (a per-unit stack counter that grows when a friendly
+  unit on the same board dies, additive into +2 max HP / +1 damage per stack, wiped on
+  death unless the death is the tracker's own Molt). See `wilds.md`.
+- **Ferocity's trigger widened from "a unit reaches the discard" to "died," including a
+  unit's own Molt-death, after the baseline shipped.** The narrower reading excluded the
+  two most Wilds-flavored deaths in the game — a unit's own Molt didn't count as dying,
+  and neither did a save answered by the shared `Rise`. The corrected trigger fires at
+  the **moment of death** for every friendly death on the board, regardless of what
+  happens to the body next, so a unit printing both signatures gains stacks from
+  surviving its own near-death the same turn it happens. `Whelp` — cheap, disposable
+  fodder — was reversed to carry Molt for exactly this reason: a self-Molting token was
+  first reasoned to contradict being disposable, and that logic only held while Ferocity
+  ignored Molt-deaths. Once it doesn't, Molt makes better fodder, not contradictory
+  fodder, since one card can now feed a nearby tracker twice before it is finally gone.
+- **`Molt` and `Ferocity` are printed as keywords, not as attack/ability effects**, unlike
+  Tempest's Charge/Discharge or Forge's Stoke/Scrap. Neither has an activation a player
+  chooses to use: Molt fires automatically on death, and Ferocity's stat bonus is a
+  passive, always-on read of the counter — the same shape Rise, Judgment and Sanctuary
+  already use. A card needs no dedicated ability line to carry either one; the printed
+  `keywords` block is the whole mechanism, which is what let the baseline ship with
+  several one-line Basics rather than every card needing a matching ability line.
